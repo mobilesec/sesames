@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sv1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TableLayout
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+      <TableRow>
+          <TextView android:layout_height="wrap_content" 
+          			android:text="@string/calendarevent_xml_calendarEventTitle" 
+          			android:id="@+id/calendarEventTitle" 
+          			android:layout_width="wrap_content" 
+          			android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+      </TableRow>
+      <TableRow>
+      	<TextView 	android:layout_width="fill_parent"
+      				android:layout_height="fill_parent"
+      				android:text="@string/calendarevent_xml_titleTag"
+      				android:id="@+id/titleLabel">
+      	</TextView>
+      	<TextView	android:layout_width="fill_parent"
+      				android:layout_height = "fill_parent"
+      				android:inputType="textMultiLine"
+      				android:id="@+id/titleField"> 
+      	</TextView>	
+      					
+      </TableRow>
+      <TableRow>
+      	<TextView 	android:layout_width="fill_parent"
+      				android:layout_height="fill_parent"
+      				android:text="@string/calendarevent_xml_beginTag"
+      				android:id="@+id/beginLabel">
+      	</TextView>
+      	<TextView	android:layout_width="fill_parent"
+      				android:layout_height = "fill_parent"
+      				android:inputType="textMultiLine"
+      				android:id="@+id/beginField">  	
+      	</TextView>					
+      </TableRow>
+      <TableRow>
+      	<TextView 	android:layout_width="fill_parent"
+      				android:layout_height="fill_parent"
+      				android:text="@string/calendarevent_xml_endTag"
+      				android:id="@+id/endLabel">
+      	</TextView>
+      	<TextView	android:layout_width="fill_parent"
+      				android:layout_height = "fill_parent"
+      				android:inputType="textMultiLine"
+      				android:id="@+id/endField">  	
+      	</TextView>					
+      </TableRow>
+      <TableRow>
+      	<TextView 	android:layout_width="fill_parent"
+      				android:layout_height="fill_parent"
+      				android:text="@string/calendarevent_xml_allDayTag"
+      				android:id="@+id/allDayLabel">
+      	</TextView>
+      	<TextView	android:layout_width="fill_parent"
+      				android:layout_height = "fill_parent"
+      				android:inputType="textMultiLine"
+      				android:id="@+id/allDayField">  	
+      	</TextView>					
+      </TableRow>
+      <TableRow>
+      	<TextView 	android:layout_width="fill_parent"
+      				android:layout_height="fill_parent"
+      				android:text="@string/calendarevent_xml_descritpionTag"
+      				android:id="@+id/descriptionLabel">
+      	</TextView>
+      	<TextView	android:layout_width="fill_parent"
+      				android:layout_height = "fill_parent"
+      				android:inputType="textMultiLine"
+      				android:id="@+id/descriptionField">  	
+      	</TextView>					
+      </TableRow>
+      <TableRow>
+      	<TextView 	android:layout_width="fill_parent"
+      				android:layout_height="fill_parent"
+      				android:text="@string/calendarevent_xml_locationTag"
+      				android:id="@+id/locationLabel">
+      	</TextView>
+      	<TextView	android:layout_width="fill_parent"
+      				android:layout_height = "fill_parent"
+      				android:inputType="textMultiLine"
+      				android:id="@+id/locationField">  	
+      	</TextView>					
+      </TableRow>
+    </TableLayout>
+</ScrollView>

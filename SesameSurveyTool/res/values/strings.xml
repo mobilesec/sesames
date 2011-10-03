@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, SesameSurveyToolActivity!</string>
+    <string name="app_name">SesameSurveyTool</string>
+    <string name="wifi_recorder_view_xml_startButtonText">start recording</string>
+    <string name="wifi_recorder_view_xml_stopButtonText">stop recording</string>
+    <string name="WifiRecorder_toastMessageText">number of scans:</string>
+    <string name="wifi_recorder_view_xml_exportButtonText">export</string>
+    <string name="wifi_recorder_view_xml_selectLocButtonText">select Location</string>
+    <string name="WifiRecorder_invalidLocationToastMsg">scans will not be logged, location is invalid</string>
+    <string name="WifiRecorderView_chooseLocationDialogTitle">choose Location</string>
+    <string name="WifiRecorder_exportSuccessfulToastMsg">export successful</string>
+    <string name="WifiRecorder_exportMenuTitle">Export</string>
+    <string name="wifi_recorder_view_xml_autoModeCBText">automatic mode</string>
+    <string name="wifi_recorder_view_xml_MPReachedButtonText">current MP reached </string>
+    <string name="WifiRecorder_progressDialogPrefix">Measuring @ </string>
+    <string name="WifiRecorder_finishedToastMsg">measurement has finished</string>
+    <string name="wifi_recorder_view_currentMPLabelPrefix">current MP:  </string>
+    <string name="createMpView_xml_nameLabelText">Name:</string>
+    <string name="createMpView_xml_roomLabelText">Room:</string>
+    <string name="createMpView_addButtonText">add MP</string>
+    <string name="saveInformationView_relationNameLabelText">Relation name:</string>
+    <string name="saveInformationView_fileNameLabelText">Filename:</string>
+    <string name="saveInformationView_exportButtonText">export</string>
+</resources>

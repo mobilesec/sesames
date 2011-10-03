@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- type can either be "CRT" for certificate based VPN
+		 or "PSK" for pre-shared key based VPN or "CRT_PSK" for both options-->
+	<type>CRT_PSK</type>
+	
+	<!-- unique identifier for the connection -->
+	<id>svc</id>
+	
+	<!-- displayed connection name -->
+	<name>Sesame_VPN</name>
+	
+	<!-- the username associated with the connection -->
+	<savedUsername>test01</savedUsername>
+	
+	<!-- the password associated with the user -->
+	<userPass>testme!#</userPass>
+	
+	<!-- the server to connect to -->
+	<server>80.120.3.4</server>
+	
+	<!-- ******************************************************* -->
+	<!-- start of PSK portion tpof the file -->
+	<!-- ******************************************************* -->
+	
+	<!-- the pre-shared key for PSK -->
+	<PSK-key>testme!#</PSK-key>
+	
+	<!-- ******************************************************* -->
+	<!-- start of CRT portion of the file -->
+	<!-- ******************************************************* -->
+	
+	<!-- the name of the CA-certificate -->
+	<CA-certificateName>Gibraltar client IPSec certificate</CA-certificateName>
+	
+	<!-- the name of the user-certificate -->
+	<user-certificateName>Gibraltar client IPSec certificate</user-certificateName>
+
+</config>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item 	android:id="@+id/wifiMenuExport" 
+    		android:title="@string/WifiRecorder_exportMenuTitle"></item>
+    <item android:id="@+id/menu_add_raw" android:titleCondensed="add MP" android:title="add raw measurementpoint"></item>
+    <item android:id="@+id/menu_load_fpi" android:titleCondensed="load FPI" android:title="load Fingerprintinformation from assets"></item>
+    
+</menu>

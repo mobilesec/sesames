@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/locationLinearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:orientation="vertical">
+    <LinearLayout 	android:id="@+id/linearLayout1" 
+    				android:layout_height="wrap_content" 
+    				android:layout_width="wrap_content">
+        
+        <Button 	android:text="@string/location_xml_reverseGeoCodingButtonText" 
+        			android:id="@+id/location_updateButton" 
+        			android:layout_width="wrap_content" 
+        			android:layout_height="wrap_content"></Button>
+        
+        <CheckBox 	android:text="@string/location_xml_autoGeoCoderUpdateCheckBoxText" 
+        			android:id="@+id/location_autoUpdateCheckBox" 
+        			android:layout_width="wrap_content" 
+        			android:layout_height="wrap_content"></CheckBox>
+    </LinearLayout>
+    
+    <ScrollView
+        android:id="@+id/locationScrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        
+        <TableLayout
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent">
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_latitudeTag" 
+            			android:id="@+id/latitudeLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/latitudeField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_longitudeTag" 
+            			android:id="@+id/longitudeLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/longitudeField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+           <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_qualityTag" 
+            			android:id="@+id/qualityLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/qualityField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+           <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_offsetLatTag" 
+            			android:id="@+id/offsetLatLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/offsetLatField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+           <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_offsetLonTag" 
+            			android:id="@+id/offsetLonLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/offsetLonField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+           <TableRow >
+          	<TextView 	android:layout_width="match_parent" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_radiusTag" 
+            			android:id="@+id/radiusLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="fill_parent"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/radiusField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+           <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_nameTag" 
+            			android:id="@+id/nameLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/nameField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+           <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_line1Tag" 
+            			android:id="@+id/line1Label" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/line1Field" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+           <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_line2Tag" 
+            			android:id="@+id/line2Label" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/line2Field" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_line3Tag" 
+            			android:id="@+id/line3Label" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/line3Field" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_line4Tag" 
+            			android:id="@+id/line4Label" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/line4Field" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_houseTag" 
+            			android:id="@+id/houseLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/houseField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_streetTag" 
+            			android:id="@+id/streetLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/streetField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_xStreetTag" 
+            			android:id="@+id/xstreetLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/xstreetField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_unitTypeTag" 
+            			android:id="@+id/unitTypeLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/unitTypeField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_unitTag" 
+            			android:id="@+id/unitLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/unitField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_postalTag" 
+            			android:id="@+id/postalLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/postalField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_neighborhoodTag" 
+            			android:id="@+id/neighborhoodLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/neighborhoodField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+           </TableRow>
+           <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_cityTag" 
+            			android:id="@+id/cityLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/cityField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_countyTag" 
+            			android:id="@+id/countyLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/countyField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_stateTag" 
+            			android:id="@+id/stateLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/stateField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_countryTag" 
+            			android:id="@+id/countryLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/countryField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_countryCodeTag" 
+            			android:id="@+id/countryCodeLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/countryCodeField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_stateCodeTag" 
+            			android:id="@+id/stateCodeLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/stateCodeField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_countyCodeTag" 
+            			android:id="@+id/countyCodeLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/countyCodeField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_hashTag" 
+            			android:id="@+id/hashLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/hashField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_woeidTag" 
+            			android:id="@+id/woeidLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/woeidField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_woeTypeTag" 
+            			android:id="@+id/woeTypeLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/woeTypeField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+          <TableRow >
+          	<TextView 	android:layout_width="wrap_content" 
+            			android:layout_height="wrap_content" 
+            			android:text="@string/location_xml_uzipTag" 
+            			android:id="@+id/uzipLabel" 
+            			android:textAppearance="?android:attr/textAppearanceLarge">
+            </TextView>
+            
+            <EditText	android:layout_width="wrap_content"
+            			android:layout_height="wrap_content" 
+            			android:id="@+id/uzipField" android:inputType="numberDecimal" android:enabled="false">
+            </EditText>
+          </TableRow>
+        </TableLayout>
+    </ScrollView>
+</LinearLayout>

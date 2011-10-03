@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent" android:orientation="vertical">
+    <EditText	android:layout_weight="1" 
+    			android:id="@+id/wifiInfoField" 
+    			android:inputType="textMultiLine" 
+    			android:layout_height="wrap_content" 
+    			android:layout_width="wrap_content">
+    </EditText>
+    <LinearLayout 	android:layout_width="match_parent" 
+    				android:layout_height="wrap_content" 
+    				android:id="@+id/linearLayout1">
+        
+        <Button 	android:layout_height="wrap_content" 
+        			android:id="@+id/wifiScanButton" 
+        			android:text="@string/wifi_xml_scanButtonText" 
+        			android:layout_width="wrap_content"></Button>
+        
+        <CheckBox 	android:layout_height="wrap_content" 
+        			android:layout_width="wrap_content" 
+        			android:id="@+id/autoUpdateBox" 
+        			android:text="@string/wifi_xml_autoUpdateBoxText" 
+        			android:layout_gravity="right"></CheckBox>
+    </LinearLayout>
+    
+</LinearLayout>

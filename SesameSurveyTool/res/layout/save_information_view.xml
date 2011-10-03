@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:orientation="vertical" android:layout_height="wrap_content" android:layout_margin="10dip" android:layout_marginTop="10dip">
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_weight="1" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="center_vertical">
+        <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginTop="15dip" android:layout_width="wrap_content" android:layout_gravity="top" android:layout_height="fill_parent" android:id="@+id/relationNameLabel" android:text="@string/saveInformationView_relationNameLabelText"></TextView>
+        <EditText android:layout_width="match_parent" android:layout_weight="1" android:layout_height="wrap_content" android:id="@+id/saveInformationView_relationField"></EditText>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/linearLayout2" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="match_parent">
+        <TextView android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginTop="15dip" android:layout_height="match_parent" android:layout_gravity="top" android:text="@string/saveInformationView_fileNameLabelText" android:id="@+id/saveInformationFileNameLabel"></TextView>
+        <EditText android:layout_width="match_parent" android:layout_weight="1" android:layout_height="wrap_content" android:id="@+id/saveInformationpView_fileNameField"></EditText>
+    </LinearLayout>
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="@string/saveInformationView_exportButtonText" android:id="@+id/saveInformationView_exportButton"></Button>
+    
+</LinearLayout>

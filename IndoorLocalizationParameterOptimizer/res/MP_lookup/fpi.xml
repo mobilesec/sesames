@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Rooms><Room>
+	<Name>L2.MC</Name>
+	<Point>
+		<X>4485.5</X>
+		<Y>19.559221</Y>
+	</Point>
+	<Point>
+		<X>5469.5</X>
+		<Y>19.559221</Y>
+	</Point>
+	<Point>
+		<X>5469.5</X>
+		<Y>789.5592</Y>
+	</Point>
+	<Point>
+		<X>4483.5</X>
+		<Y>789.5592</Y>
+	</Point>
+</Room>
+<Room>
+	<Name>PL1.MC</Name>
+	<Point>
+		<X>3495.5</X>
+		<Y>1107.5592</Y>
+	</Point>
+	<Point>
+		<X>3495.5</X>
+		<Y>1655.5592</Y>
+	</Point>
+	<Point>
+		<X>2765.5</X>
+		<Y>1655.5592</Y>
+	</Point>
+	<Point>
+		<X>2765.5</X>
+		<Y>1107.5592</Y>
+	</Point>
+</Room>
+<Room>
+	<Name>L1.MC</Name>
+	<Point>
+		<X>3979.5</X>
+		<Y>19.559221</Y>
+	</Point>
+	<Point>
+		<X>3979.5</X>
+		<Y>789.5592</Y>
+	</Point>
+	<Point>
+		<X>2997.5</X>
+		<Y>789.5592</Y>
+	</Point>
+	<Point>
+		<X>2997.5</X>
+		<Y>19.559204</Y>
+	</Point>
+</Room>
+<Room>
+	<Name>PL2.MC</Name>
+	<Point>
+		<X>2765.5</X>
+		<Y>1107.5592</Y>
+	</Point>
+	<Point>
+		<X>2765.5</X>
+		<Y>1655.5592</Y>
+	</Point>
+	<Point>
+		<X>2029.5</X>
+		<Y>1655.5592</Y>
+	</Point>
+	<Point>
+		<X>2029.5</X>
+		<Y>1109.5592</Y>
+	</Point>
+</Room>
+<Room>
+	<Name>SRMC</Name>
+	<Point>
+		<X>2017.5</X>
+		<Y>2377.5593</Y>
+	</Point>
+	<Point>
+		<X>2017.5</X>
+		<Y>3117.5593</Y>
+	</Point>
+	<Point>
+		<X>1471.5</X>
+		<Y>3117.5593</Y>
+	</Point>
+	<Point>
+		<X>1471.5</X>
+		<Y>2377.5593</Y>
+	</Point>
+</Room>
+</Rooms>
+
+<FingerPrintItems>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  0</Name>
+	<Description>L2.MC</Description>
+	<X>4683.5</X>
+	<Y>219.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  1</Name>
+	<Description>L2.MC</Description>
+	<X>4883.5</X>
+	<Y>219.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  2</Name>
+	<Description>L2.MC</Description>
+	<X>5083.5</X>
+	<Y>219.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  3</Name>
+	<Description>L2.MC</Description>
+	<X>5283.5</X>
+	<Y>219.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  4</Name>
+	<Description>L2.MC</Description>
+	<X>4683.5</X>
+	<Y>419.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  5</Name>
+	<Description>L2.MC</Description>
+	<X>4883.5</X>
+	<Y>419.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  6</Name>
+	<Description>L2.MC</Description>
+	<X>5083.5</X>
+	<Y>419.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  7</Name>
+	<Description>L2.MC</Description>
+	<X>5283.5</X>
+	<Y>419.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  8</Name>
+	<Description>L2.MC</Description>
+	<X>4683.5</X>
+	<Y>619.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP  9</Name>
+	<Description>L2.MC</Description>
+	<X>4883.5</X>
+	<Y>619.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 10</Name>
+	<Description>L2.MC</Description>
+	<X>5083.5</X>
+	<Y>619.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 11</Name>
+	<Description>L2.MC</Description>
+	<X>5283.5</X>
+	<Y>619.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 12</Name>
+	<Description>PL1.MC</Description>
+	<X>2965.5</X>
+	<Y>1307.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 13</Name>
+	<Description>PL1.MC</Description>
+	<X>3165.5</X>
+	<Y>1307.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 14</Name>
+	<Description>PL1.MC</Description>
+	<X>3365.5</X>
+	<Y>1307.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 15</Name>
+	<Description>PL1.MC</Description>
+	<X>2965.5</X>
+	<Y>1507.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 16</Name>
+	<Description>PL1.MC</Description>
+	<X>3165.5</X>
+	<Y>1507.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 17</Name>
+	<Description>PL1.MC</Description>
+	<X>3365.5</X>
+	<Y>1507.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 18</Name>
+	<Description>L1.MC</Description>
+	<X>3197.5</X>
+	<Y>219.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 19</Name>
+	<Description>L1.MC</Description>
+	<X>3397.5</X>
+	<Y>219.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 20</Name>
+	<Description>L1.MC</Description>
+	<X>3597.5</X>
+	<Y>219.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 21</Name>
+	<Description>L1.MC</Description>
+	<X>3797.5</X>
+	<Y>219.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 22</Name>
+	<Description>L1.MC</Description>
+	<X>3197.5</X>
+	<Y>419.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 23</Name>
+	<Description>L1.MC</Description>
+	<X>3397.5</X>
+	<Y>419.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 24</Name>
+	<Description>L1.MC</Description>
+	<X>3597.5</X>
+	<Y>419.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 25</Name>
+	<Description>L1.MC</Description>
+	<X>3797.5</X>
+	<Y>419.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 26</Name>
+	<Description>L1.MC</Description>
+	<X>3197.5</X>
+	<Y>619.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 27</Name>
+	<Description>L1.MC</Description>
+	<X>3397.5</X>
+	<Y>619.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 28</Name>
+	<Description>L1.MC</Description>
+	<X>3597.5</X>
+	<Y>619.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 29</Name>
+	<Description>L1.MC</Description>
+	<X>3797.5</X>
+	<Y>619.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 30</Name>
+	<Description>PL2.MC</Description>
+	<X>2229.5</X>
+	<Y>1307.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 31</Name>
+	<Description>PL2.MC</Description>
+	<X>2429.5</X>
+	<Y>1307.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 32</Name>
+	<Description>PL2.MC</Description>
+	<X>2629.5</X>
+	<Y>1307.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 33</Name>
+	<Description>PL2.MC</Description>
+	<X>2229.5</X>
+	<Y>1507.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 34</Name>
+	<Description>PL2.MC</Description>
+	<X>2429.5</X>
+	<Y>1507.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 35</Name>
+	<Description>PL2.MC</Description>
+	<X>2629.5</X>
+	<Y>1507.5592</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 36</Name>
+	<Description>SRMC</Description>
+	<X>1671.5</X>
+	<Y>2577.5593</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 37</Name>
+	<Description>SRMC</Description>
+	<X>1871.5</X>
+	<Y>2577.5593</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 38</Name>
+	<Description>SRMC</Description>
+	<X>1671.5</X>
+	<Y>2777.5593</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 39</Name>
+	<Description>SRMC</Description>
+	<X>1871.5</X>
+	<Y>2777.5593</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 40</Name>
+	<Description>SRMC</Description>
+	<X>1671.5</X>
+	<Y>2977.5593</Y>
+</FingerPrintItem>
+<FingerPrintItem>
+	<Type>MP</Type>
+	<Name>MP 41</Name>
+	<Description>SRMC</Description>
+	<X>1871.5</X>
+	<Y>2977.5593</Y>
+</FingerPrintItem>
+</FingerPrintItems>

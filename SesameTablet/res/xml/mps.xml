@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<items>
+<MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 0</Name>
+	<Description>Room1</Description>
+	<X>101.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 1</Name>
+	<Description>Room1</Description>
+	<X>201.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 2</Name>
+	<Description>Room1</Description>
+	<X>301.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 3</Name>
+	<Description>Room1</Description>
+	<X>401.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 4</Name>
+	<Description>Room1</Description>
+	<X>501.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 5</Name>
+	<Description>Room1</Description>
+	<X>601.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 6</Name>
+	<Description>Room1</Description>
+	<X>701.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 7</Name>
+	<Description>Room1</Description>
+	<X>801.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 8</Name>
+	<Description>Room1</Description>
+	<X>901.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 9</Name>
+	<Description>Room1</Description>
+	<X>101.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 10</Name>
+	<Description>Room1</Description>
+	<X>201.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 11</Name>
+	<Description>Room1</Description>
+	<X>301.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 12</Name>
+	<Description>Room1</Description>
+	<X>401.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 13</Name>
+	<Description>Room1</Description>
+	<X>501.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 14</Name>
+	<Description>Room1</Description>
+	<X>601.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 15</Name>
+	<Description>Room1</Description>
+	<X>701.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 16</Name>
+	<Description>Room1</Description>
+	<X>801.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 17</Name>
+	<Description>Room1</Description>
+	<X>901.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 18</Name>
+	<Description>Room1</Description>
+	<X>101.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 19</Name>
+	<Description>Room1</Description>
+	<X>201.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 20</Name>
+	<Description>Room1</Description>
+	<X>301.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 21</Name>
+	<Description>Room1</Description>
+	<X>401.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 22</Name>
+	<Description>Room1</Description>
+	<X>501.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 23</Name>
+	<Description>Room1</Description>
+	<X>601.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 24</Name>
+	<Description>Room1</Description>
+	<X>701.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 25</Name>
+	<Description>Room1</Description>
+	<X>801.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 26</Name>
+	<Description>Room1</Description>
+	<X>901.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 27</Name>
+	<Description>Room1</Description>
+	<X>101.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 28</Name>
+	<Description>Room1</Description>
+	<X>201.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 29</Name>
+	<Description>Room1</Description>
+	<X>301.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 30</Name>
+	<Description>Room1</Description>
+	<X>401.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 31</Name>
+	<Description>Room1</Description>
+	<X>501.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 32</Name>
+	<Description>Room1</Description>
+	<X>601.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 33</Name>
+	<Description>Room1</Description>
+	<X>701.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 34</Name>
+	<Description>Room1</Description>
+	<X>801.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 35</Name>
+	<Description>Room1</Description>
+	<X>901.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 36</Name>
+	<Description>Room1</Description>
+	<X>101.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 37</Name>
+	<Description>Room1</Description>
+	<X>201.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 38</Name>
+	<Description>Room1</Description>
+	<X>301.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 39</Name>
+	<Description>Room1</Description>
+	<X>401.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 40</Name>
+	<Description>Room1</Description>
+	<X>501.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 41</Name>
+	<Description>Room1</Description>
+	<X>601.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 42</Name>
+	<Description>Room1</Description>
+	<X>701.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 43</Name>
+	<Description>Room1</Description>
+	<X>801.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 44</Name>
+	<Description>Room1</Description>
+	<X>901.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 45</Name>
+	<Description>Room2</Description>
+	<X>101.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 46</Name>
+	<Description>Room2</Description>
+	<X>201.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 47</Name>
+	<Description>Room2</Description>
+	<X>301.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 48</Name>
+	<Description>Room2</Description>
+	<X>401.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 49</Name>
+	<Description>Room2</Description>
+	<X>501.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 50</Name>
+	<Description>Room2</Description>
+	<X>601.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 51</Name>
+	<Description>Room2</Description>
+	<X>701.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 52</Name>
+	<Description>Room2</Description>
+	<X>801.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 53</Name>
+	<Description>Room2</Description>
+	<X>901.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 54</Name>
+	<Description>Room2</Description>
+	<X>101.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 55</Name>
+	<Description>Room2</Description>
+	<X>201.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 56</Name>
+	<Description>Room2</Description>
+	<X>301.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 57</Name>
+	<Description>Room2</Description>
+	<X>401.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 58</Name>
+	<Description>Room2</Description>
+	<X>501.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 59</Name>
+	<Description>Room2</Description>
+	<X>601.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 60</Name>
+	<Description>Room2</Description>
+	<X>701.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 61</Name>
+	<Description>Room2</Description>
+	<X>801.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 62</Name>
+	<Description>Room2</Description>
+	<X>901.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 63</Name>
+	<Description>Room2</Description>
+	<X>101.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 64</Name>
+	<Description>Room2</Description>
+	<X>201.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 65</Name>
+	<Description>Room2</Description>
+	<X>301.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 66</Name>
+	<Description>Room2</Description>
+	<X>401.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 67</Name>
+	<Description>Room2</Description>
+	<X>501.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 68</Name>
+	<Description>Room2</Description>
+	<X>601.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 69</Name>
+	<Description>Room2</Description>
+	<X>701.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 70</Name>
+	<Description>Room2</Description>
+	<X>801.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 71</Name>
+	<Description>Room2</Description>
+	<X>901.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 72</Name>
+	<Description>Room2</Description>
+	<X>101.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 73</Name>
+	<Description>Room2</Description>
+	<X>201.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 74</Name>
+	<Description>Room2</Description>
+	<X>301.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 75</Name>
+	<Description>Room2</Description>
+	<X>401.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 76</Name>
+	<Description>Room2</Description>
+	<X>501.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 77</Name>
+	<Description>Room2</Description>
+	<X>601.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 78</Name>
+	<Description>Room2</Description>
+	<X>701.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 79</Name>
+	<Description>Room2</Description>
+	<X>801.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 80</Name>
+	<Description>Room2</Description>
+	<X>901.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 81</Name>
+	<Description>Room2</Description>
+	<X>101.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 82</Name>
+	<Description>Room2</Description>
+	<X>201.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 83</Name>
+	<Description>Room2</Description>
+	<X>301.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 84</Name>
+	<Description>Room2</Description>
+	<X>401.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 85</Name>
+	<Description>Room2</Description>
+	<X>501.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 86</Name>
+	<Description>Room2</Description>
+	<X>601.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 87</Name>
+	<Description>Room2</Description>
+	<X>701.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 88</Name>
+	<Description>Room2</Description>
+	<X>801.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 89</Name>
+	<Description>Room2</Description>
+	<X>901.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 90</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 91</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 92</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 93</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>99.559204</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 94</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 95</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 96</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 97</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>199.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 98</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 99</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 100</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 101</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 102</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 103</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 104</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 105</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>399.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 106</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 107</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 108</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 109</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>499.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 110</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>599.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 111</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>599.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 112</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>599.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 113</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>599.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 114</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 115</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 116</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 117</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>699.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 118</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 119</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 120</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 121</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>799.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 122</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 123</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 124</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 125</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>899.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 126</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 127</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 128</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 129</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>999.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 130</Name>
+	<Description>Room3</Description>
+	<X>1101.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 131</Name>
+	<Description>Room3</Description>
+	<X>1201.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 132</Name>
+	<Description>Room3</Description>
+	<X>1301.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>MP</Type>
+	<Name>MP 133</Name>
+	<Description>Room3</Description>
+	<X>1401.5</X>
+	<Y>1099.5592</Y>
+</MeasurementPoint><MeasurementPoint>
+	<Type>AP</Type>
+	<Name>AP_1</Name>
+	<Description>null</Description>
+	<X>501.5</X>
+	<Y>299.5592</Y>
+</MeasurementPoint></items>

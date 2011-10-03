@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, SesameIndoorLocalizerActivity!</string>
+    <string name="app_name">SesameIndoorLocalizer</string>
+    <string name="SesameIndoorLocalizer_trainingsetSelectionTitle">Select Trainingset</string>
+    <string name="SesameIndoorLocalizer_classifierSelectionTitle">select classifier</string>
+    <string name="calibration_xml_showChartButtonText">show chart</string>
+    <string name="calibrationView_referenceSelectionDialogTitle">select reference dataset</string>
+    <string name="calibrationView_calibrationSelectionDilogTitle">select dataset for calibration</string>
+    <string name="main_localizationTabTitle">Localization</string>
+    <string name="SesameIndoorLocalizerActivity_evaluationDialogMessagePart1">Localization result was:</string>
+    <string name="SesameIndoorLocalizerActivity_evaluationDialogMessagePart2">Is that correct?</string>
+    <string name="SesameIndoorLocalizerActivity_evaluationDialogPositiveButtonText">Ja</string>
+    <string name="SesameIndoorLocalizerActivity_evaluationDialogNegativeButtonText">Nein</string>
+    <string name="SesameIndoorLocalizerActivity_evaluationDialogNeutralButtonText">Scannen abbrechen</string>
+    <string name="localizationView_localizeButtonText">localize</string>
+    <string name="sesameIndoorLocalizerServiceActivity_noLocationNotificationText">location could not be determined</string>
+    <string name="classificatorException_trainingDataNotSetMesage">training data not set</string>
+    <string name="classificatorException_classifierNotSetMesage">classifier not set</string>
+    <string name="classificatorException_noBssidRecognizedMessage">no BSSID recognized</string>
+</resources>

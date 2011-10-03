@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, SesameLibraryActivity!</string>
+    <string name="app_name">SesameLibrary</string>
+    <string name="VpnException_userNotSet">user not set</string>
+    <string name="VpnException_passwordNotSet">password not set</string>
+    <string name="VpnException_serverNotSet">server not set</string>
+    <string name="VpnException_defaultMessage">VPN exception</string>
+    <string name="VpnException_settingsNotValid">the passed vpn settings were invalid</string>
+    <string name="VpnException_settingsConflict">the specified connection mode is in conflict with the VPN settings</string>
+    <string name="calendarAccess_allCalendarListentry">ALL</string>
+    <string name="calendarevent_xml_calendarEventTitle">Calendar Event</string>
+    <string name="calendarevent_xml_titleTag">Title:</string>
+    <string name="calendarevent_xml_beginTag">Begin:</string>
+    <string name="calendarevent_xml_endTag">End:</string>
+    <string name="calendarevent_xml_allDayTag">All Day:</string>
+    <string name="calendarevent_xml_descritpionTag">Descritpion:</string>
+    <string name="calendarevent_xml_locationTag">Location:</string>
+    <string name="vpnBroadcastReceiver_connectionText">connecting, please wait...</string>
+    <string name="vpnBroadcastReceiver_disconnectedSuccessfullyMsg">disconnected successfully</string>
+    <string name="vpnBroadcastReceiver_connectedSuccessfullyMsg">connected successfully</string>
+    <string name="vpnBroadcastReceiver_connectionFailedMsg">connection failed</string>
+    <string name="vpnBroadcastReceiver_profileToastTag">profile:</string>
+    <string name="vpnBroadcastReceiver_stateToastTag">state:</string>
+    <string name="vpnBroadcastReceiver_errorToastTag">error:</string>
+    <string name="vpnBroadcastReceiver_connectionProgressDialogMessage">connecting...</string>
+    <string name="vpnBroadcastReceiver_connectionProgressDialogTitle">VPN</string>
+    <string name="vpnBroadcastReceiver_alertDialogNeutralButtonText">ok</string>
+    <string name="classificatorException_trainingDataNotSetMesage">training data not set</string>
+    <string name="classificatorException_classifierNotSetMesage">classifier not set</string>
+    <string name="classificatorException_noBssidRecognizedMessage">no BSSID recognized</string>
+</resources>

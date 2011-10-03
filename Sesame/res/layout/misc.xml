@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+    <Button android:text="@string/misc_xml_replaceKeystoreButtonText" 
+    		android:id="@+id/replaceKeyStoreButton" 
+    		android:layout_gravity="center" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"></Button>
+    <Button android:text="@string/misc_xml_storeCertificateButtonText" 
+    		android:id="@+id/certStoreButton" 
+    		android:layout_gravity="center" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"></Button>
+    
+    <Button android:text="@string/misc_xml_importCertificateButtonText" 
+    		android:id="@+id/certImportButton" 
+    		android:layout_gravity="center" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"></Button>
+    
+    <Button android:text="@string/misc_xml_toastDirectoriesButtonText" 
+    		android:id="@+id/toastDirectoriesButton" 
+    		android:layout_gravity="center" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"></Button>
+    
+    <Button android:text="@string/misc_xml_toastRunningServicesButtonText" 
+    		android:id="@+id/toastRunningServicesButton" 
+    		android:layout_gravity="center" 
+    		android:layout_width="wrap_content" 
+    		android:layout_height="wrap_content"></Button>
+</LinearLayout>

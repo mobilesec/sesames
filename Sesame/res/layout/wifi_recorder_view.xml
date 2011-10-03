@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				android:orientation="vertical" 
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				>
+    <CheckBox 	android:text="@string/wifi_recorder_view_xml_autoModeCBText" 
+    			android:id="@+id/WifiRecorderAutoModeCB" 
+    			android:layout_width="wrap_content" 
+    			android:layout_height="wrap_content"></CheckBox>
+
+	<Button android:id="@+id/setWifiRecordingLocation"
+			android:layout_width="wrap_content" 
+			android:text="@string/wifi_recorder_view_xml_selectLocButtonText"
+			android:layout_height="wrap_content" 
+			android:layout_gravity="center">
+	</Button>
+			
+	<Button android:text="@string/wifi_recorder_view_xml_startButtonText"
+			android:id="@+id/startWifiRecording" 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center">
+	</Button>
+
+	<Button android:id="@+id/stopWifiRecording"
+			android:layout_width="wrap_content" 
+			android:text="@string/wifi_recorder_view_xml_stopButtonText"
+			android:layout_height="wrap_content" 
+			android:layout_gravity="center">
+	</Button>
+	<Button android:text="@string/wifi_recorder_view_xml_MPReachedButtonText" 
+			android:id="@+id/MPReachedButton" 
+			android:layout_width="wrap_content" 
+			android:layout_gravity="center" 
+			android:layout_height="wrap_content"></Button>
+
+
+</LinearLayout>
