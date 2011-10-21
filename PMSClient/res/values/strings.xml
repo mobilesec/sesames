@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, PMSClientActivity!</string>
+    <string name="app_name">PMSClient</string>
+    <string name="main_xml_headerText">please select a device</string>
+    <string name="mainXML_sleepButtText">sleep</string>
+    <string name="mainXML_shutDownButtText">shut down</string>
+    <string name="mainXML_statusButtText">toast status</string>
+    <string name="mainXML_extendedStatusButtText">toast extended status</string>
+    <string name="mainXML_wakeupButtText">wake up</string>
+</resources>
