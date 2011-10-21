@@ -134,14 +134,23 @@ implements Runnable
 	/**
 	 * triggers the WifiManager to start a scan
 	 */
-	public void startSingleWifiScan()
+	public boolean startSingleWifiScan()
 	{
+		if(!mManager.isWifiEnabled())
+		{
+			return false;
+		}
 		Log.e(TAG, "initiating scan");
 		mManager.startScan();
+		return true;
 	}
 	
-	public void startContinuousScanning()
+	public boolean startContinuousScanning()
 	{
+		if(!mManager.isWifiEnabled())
+		{
+			return false;
+		}
 		mThreadRunning = true;
 //		try
 //		{
@@ -152,6 +161,7 @@ implements Runnable
 //			
 //		}
 		new Thread(this).start();
+		return true;
 	}
 	
 	/**

@@ -10,6 +10,7 @@ package at.sesame.fhooe.lib.util;
 import android.content.Context;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 
 public class DeviceStateInfo 
 {
@@ -40,12 +41,16 @@ public class DeviceStateInfo
 	 */
 	private static ConnectivityManager mCm;
 	
-	
 	/**
 	 * the LocationManager to retrieve location
 	 * information from
 	 */
 	private static LocationManager mLm;
+	
+	/**
+	 * the WifiManager to retrieve wifi information from
+	 */
+	private static WifiManager mWm;
 	
 	public static void setContext(Context _c)
 	{
@@ -57,6 +62,7 @@ public class DeviceStateInfo
 	{
 		mCm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 		mLm = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+		mWm = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
 	}
 	
 	/**
@@ -119,5 +125,10 @@ public class DeviceStateInfo
 	public static boolean isGPSLocationAvailable()
 	{
 		return mLm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	}
+	
+	public static boolean isWifiEnabled()
+	{
+		return mWm.isWifiEnabled();
 	}
 }

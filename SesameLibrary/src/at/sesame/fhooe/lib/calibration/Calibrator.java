@@ -3,14 +3,14 @@ package at.sesame.fhooe.lib.calibration;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import android.util.Log;
-import at.sesame.fhooe.lib.util.ArrayHelper;
-import at.sesame.fhooe.lib.util.InstanceHelper;
-
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+
+import android.util.Log;
+import at.sesame.fhooe.lib.util.ArrayHelper;
+import at.sesame.fhooe.lib.util.InstanceHelper;
 
 /**
  * this class offers methods to compute different kinds of normalization parameters to overcome

@@ -29,4 +29,11 @@
     <string name="classificatorException_trainingDataNotSetMesage">training data not set</string>
     <string name="classificatorException_classifierNotSetMesage">classifier not set</string>
     <string name="classificatorException_noBssidRecognizedMessage">no BSSID recognized</string>
+    <string name="PMSErrorMessage400">invalid target-state or JSON-data invalid</string>
+    <string name="PMSErrorMessage401">authorization on target computer failed</string>
+    <string name="PMSErrorMessage404">ID not known</string>
+    <string name="PMSErrorMessage406">os not supported/found</string>
+    <string name="PMSErrorMessage500">general HTTP error occured</string>
+    <string name="PMSErrorMessage501">the command is not supported by the target operating system</string>
+    <string name="PMSErrorMessageCodeNotRecognized">HTTP status code not recognized</string>
 </resources>

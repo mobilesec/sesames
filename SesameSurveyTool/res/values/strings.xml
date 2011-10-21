@@ -22,4 +22,6 @@
     <string name="saveInformationView_relationNameLabelText">Relation name:</string>
     <string name="saveInformationView_fileNameLabelText">Filename:</string>
     <string name="saveInformationView_exportButtonText">export</string>
+    <string name="createRoomView_roomNameLabelText">Name</string>
+    <string name="createRoomView_addButtonText">add Room</string>
 </resources>

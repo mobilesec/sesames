@@ -4,9 +4,9 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SesameLibrary"/>
-	<classpathentry kind="src" path="SesameLibrary_src"/>
-	<classpathentry kind="src" path="SesameLibrary_aidl"/>
 	<classpathentry kind="lib" path="lib/codegist-crest-1.0.1-all.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-all-1.8.5.jar"/>
+	<classpathentry kind="src" path="SesameLibrary_src"/>
+	<classpathentry kind="src" path="SesameLibrary_aidl"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

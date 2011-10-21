@@ -26,7 +26,7 @@ import at.sesame.fhooe.survey.WifiRecorderView;
  *
  */
 public class WifiRecorder
-implements IWifiScanReceiver, Runnable
+implements IWifiScanReceiver//, Runnable
 {
 	/**
 	 * the tag to identify the logger output of this class
@@ -73,16 +73,17 @@ implements IWifiScanReceiver, Runnable
 	/**
 	 * starts a new recording thread
 	 */
-	public void startRecording()
+	public boolean startRecording()
 	{	
 		if(null==mCurrentMP)
 		{
 			Toast.makeText(mOwner, "invalid MP", Toast.LENGTH_SHORT).show();
-			return;
+			return false;
 		}
 		String name = mCurrentMP.getName();
 		Log.e(TAG, "current MP name:"+name);
-		new Thread(this).start();
+		//new Thread(this).start();
+		return mWifiAccess.startSingleWifiScan();
 	}
 	
 	/**
@@ -135,10 +136,10 @@ implements IWifiScanReceiver, Runnable
 		mCurrentMP = _mp;
 	}
 	
-	@Override
-	public void run() 
-	{
-		Log.e(TAG, "scan started");
-		mWifiAccess.startSingleWifiScan();
-	}
+//	@Override
+//	public void run() 
+//	{
+//		Log.e(TAG, "scan started");
+//		mWifiAccess.startSingleWifiScan();
+//	}
 }

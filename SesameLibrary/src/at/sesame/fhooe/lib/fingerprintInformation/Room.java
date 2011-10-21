@@ -1,5 +1,6 @@
 package at.sesame.fhooe.lib.fingerprintInformation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import android.graphics.Path;
@@ -7,7 +8,13 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 
 public class Room 
+implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1811273500447655266L;
+
 	/**
 	 * the name of the room
 	 */
@@ -58,6 +65,15 @@ public class Room
 			mType = ShapeType.POLYGON;
 			mPath = createPathFromPoints(_points);
 		}
+	}
+	
+	/**
+	 * creates a new room without any position information
+	 * @param _name the name of the room
+	 */
+	public Room(String _name)
+	{
+		this(_name, new ArrayList<PointF>());
 	}
 
 	/**

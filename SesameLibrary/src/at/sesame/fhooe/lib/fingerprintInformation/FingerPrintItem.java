@@ -7,6 +7,7 @@
  ******************************************************************************/
 package at.sesame.fhooe.lib.fingerprintInformation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -14,8 +15,14 @@ import java.util.ArrayList;
  * @author Peter Riedl
  *
  */
-public abstract class FingerPrintItem 
+public abstract class FingerPrintItem
+implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -647859909770184105L;
+
 	/**
 	 *this enum specifies the two types
 	 *of FingerprintItems that are recognized

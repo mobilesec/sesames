@@ -38,6 +38,7 @@ import at.sesame.fhooe.lib.fingerprintInformation.FingerPrintItem;
 import at.sesame.fhooe.lib.fingerprintInformation.RawMeasurementPoint;
 import at.sesame.fhooe.lib.fingerprintInformation.FingerPrintItem.Type;
 import at.sesame.fhooe.lib.fingerprintInformation.MeasurementPoint;
+import at.sesame.fhooe.lib.fingerprintInformation.Room;
 import at.sesame.fhooe.lib.util.ARFFGenerator;
 import at.sesame.fhooe.lib.util.ARFFGenerator.ARFFType;
 import at.sesame.fhooe.survey.R;
@@ -67,7 +68,8 @@ implements OnClickListener, OnCheckedChangeListener
 	private static final int NO_BSSID_RSSI = -100;
 	
 	private static final int CREATE_MP_REQUEST_CODE = 0;
-	private static final int SAVE_INFORMATION_REQUEST_CODE = 1;
+	private static final int CREATE_ROOM_REQUEST_CODE = 1;
+	private static final int SAVE_INFORMATION_REQUEST_CODE = 2;
 	
 	/**
 	 * the WifiRecorder to record, store and export the fingerprints
@@ -92,6 +94,8 @@ implements OnClickListener, OnCheckedChangeListener
 	 * a list of all MeasurementPoints extracted from the xml file
 	 */
 	private ArrayList<MeasurementPoint> mMPs = new ArrayList<MeasurementPoint>();
+	
+	private ArrayList<Room>mRooms = new ArrayList<Room>();
 	
 	/**
 	 * a list of all AccessPoints extracted from the xml file.
@@ -151,10 +155,20 @@ implements OnClickListener, OnCheckedChangeListener
 	/**
 	 * initiates parsing of the xml file storing FingerprintItems
 	 */
-	private void getFPI() 
+	private void loadFPI() 
 	{
 		FPIParser parser = new FPIParser(getResources().getXml(R.xml.fpi));
 		parser.parse();
+		ArrayList<Room> parsedRooms = parser.getRooms();
+		
+		for(Room r:parsedRooms)
+		{
+			if(!mRooms.contains(r))
+			{
+				mRooms.add(r);
+			}
+		}
+		
 		ArrayList<FingerPrintItem> items = parser.getFingerPrintItems();
 		for(FingerPrintItem fpi:items)
 		{
@@ -258,7 +272,6 @@ implements OnClickListener, OnCheckedChangeListener
 			    public void onClick(DialogInterface dialog, int item) 
 			    {
 			    	setCurrentMP(getMPbyName(mLocations.get(item)));
-//			    	dismissDialog(LOCATION_SELECTION_DIALOG);
 			    	removeDialog(LOCATION_SELECTION_DIALOG);
 			    }
 			});
@@ -283,6 +296,11 @@ implements OnClickListener, OnCheckedChangeListener
 	{
 		Toast.makeText(getApplicationContext(), "no Measurementpoints yet", Toast.LENGTH_SHORT).show();
 	}
+	
+	private void toastWifiNotEnabled()
+	{
+		Toast.makeText(getApplicationContext(), "wifi is not enabled, please enable it to use this tool.", Toast.LENGTH_SHORT).show();
+	}
 
 
 
@@ -300,7 +318,10 @@ implements OnClickListener, OnCheckedChangeListener
 		{
 		case R.id.MPReachedButton:
 			showDialog(MEASUREMENT_IN_PROGRESS_DIALOG);
-			mRecorder.startRecording();
+			if(!mRecorder.startRecording())
+			{
+				toastWifiNotEnabled();
+			}
 			break;
 		case R.id.setWifiRecordingLocation:
 			showDialog(LOCATION_SELECTION_DIALOG);
@@ -317,22 +338,32 @@ implements OnClickListener, OnCheckedChangeListener
     }
 	
 	@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) 
+	{
+		Intent i;
         switch (item.getItemId()) 
         {
         case R.id.wifiMenuExport:
+        	i = new Intent();
+        	i.setClass(getApplicationContext(), SaveInformationView.class);
         	
-        	startActivityForResult(new Intent(getApplicationContext(), SaveInformationView.class), SAVE_INFORMATION_REQUEST_CODE);
-        	
+        	startActivityForResult(i, SAVE_INFORMATION_REQUEST_CODE);
             return true; 
         case R.id.menu_add_raw:
         	Log.e(TAG,"adding raw mp");
-        	Intent i = new Intent();
+        	i = new Intent();
         	i.setClass(getApplicationContext(), CreateMpView.class);
+        	i.putStringArrayListExtra("roomList", getRoomNameList());
         	startActivityForResult(i, CREATE_MP_REQUEST_CODE);
         	return true;
         case R.id.menu_load_fpi:
-        	getFPI();
+        	loadFPI();
+        	return true;
+        case R.id.menu_add_room:
+        	Log.e(TAG,"adding room");
+        	i = new Intent();
+        	i.setClass(getApplicationContext(), CreateRoomView.class);
+        	startActivityForResult(i, CREATE_ROOM_REQUEST_CODE);
         	return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -406,7 +437,6 @@ implements OnClickListener, OnCheckedChangeListener
 				toastEmptyMpList();
 				return;
 			}
-			Log.e(TAG,"check changed");
 			boolean state = arg0.isChecked();
 			if(null==mCurMpName||mCurMpName.isEmpty())
 			{
@@ -416,17 +446,24 @@ implements OnClickListener, OnCheckedChangeListener
 			mChangeLoc.setEnabled(!state);
 			break;
 		}
-		
 	}
 	
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode,Intent data) 
 	{
+		if(null==data)
+		{
+			Log.e(TAG, "data was null");
+			return;
+		}
 		switch(requestCode)
 		{
 		case CREATE_MP_REQUEST_CODE:
+
 			String name = data.getStringExtra(CreateMpView.RESULT_BUNDLE_NAME_KEY);
-			String room = data.getStringExtra(CreateMpView.RESULT_BUNDLE_ROOM_KEY);
-			RawMeasurementPoint rawMp = new RawMeasurementPoint(name, room);
+			String roomNameForMp = data.getStringExtra(CreateMpView.RESULT_BUNDLE_ROOM_KEY);
+			
+			RawMeasurementPoint rawMp = new RawMeasurementPoint(name, roomNameForMp);
 			if(null==getMPbyName(name))
 			{
 				mMPs.add(rawMp);
@@ -438,11 +475,7 @@ implements OnClickListener, OnCheckedChangeListener
 			
 			break;
 		case SAVE_INFORMATION_REQUEST_CODE:
-			if(null==data)
-			{
-				Log.e(TAG,"result of \"save information\" was null");
-				return;
-			}
+
 			String relation = data.getStringExtra(SaveInformationView.RESULT_BUNDLE_RELATION_KEY);
 			String fileName = data.getStringExtra(SaveInformationView.RESULT_BUNDLE_FILENAME_KEY);
 			boolean res = ARFFGenerator.writeSurveyResultsToArff(mMPs, fileName, relation, ARFFType.ROOM, NO_BSSID_RSSI);
@@ -455,7 +488,43 @@ implements OnClickListener, OnCheckedChangeListener
 				Toast.makeText(getApplicationContext(), "Export failed", Toast.LENGTH_SHORT).show();
 			}
 			break;
+		case CREATE_ROOM_REQUEST_CODE:
+			String roomName = data.getStringExtra(CreateRoomView.RESULT_BUNDLE_ROOM_NAME_KEY);
+			Room r = new Room(roomName);
+			mRooms.add(r);
+			Log.e(TAG, "processing result from room creation:"+roomName);
+			break;
 		}
-		
+	}
+	
+	/**
+	 * creates a list of all currently stored room names
+	 * @return a list of all room names
+	 */
+	private ArrayList<String> getRoomNameList()
+	{
+		ArrayList<String> res = new ArrayList<String>();
+		for(Room r:mRooms)
+		{
+			res.add(r.getName());
+		}
+		return res;
+	}
+	
+	/**
+	 * searches the list of rooms for a room with the passed name and returns it
+	 * @param _name the name of the room to look for
+	 * @return the room with the specified name, or null if the room was not found
+	 */
+	private Room getRoomByName(String _name)
+	{
+		for(Room r:mRooms)
+		{
+			if(r.getName().equals(_name))
+			{
+				return r;
+			}
+		}
+		return null;
 	}
 }

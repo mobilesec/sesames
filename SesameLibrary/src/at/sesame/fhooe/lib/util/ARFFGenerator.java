@@ -158,6 +158,7 @@ public class ARFFGenerator
 			exportBuffer.append("\n");
 			break;
 		}
+		Log.e(TAG, exportBuffer.toString());
 		mUniqueBssids= getUniqueBSSIDs(_items);
 
 		for(String s:mUniqueBssids)
