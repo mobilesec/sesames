@@ -1,13 +1,16 @@
+/***************************************************************************** 	
+ *  Project: Sesame-S Client
+ *  Description: mobile client for interaction with the sesame-s system
+ *  Author: Peter Riedl
+ *  Copyright: Peter Riedl, 10/2011
+ *
+ ******************************************************************************/
 package at.sesame.fhooe.pms;
 
 import java.util.ArrayList;
 
-import org.apache.http.client.HttpClient;
-
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -26,31 +29,73 @@ import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
 import at.sesame.fhooe.lib.pms.model.PMSStatus;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
-import at.sesame.fhooe.lib.pms.proxy.ProxyHelper;
 
+
+/**
+ * this activity provides the GUI for interaction with the Sesame-S
+ * Power Management Service
+ *
+ */
 public class PMSClientActivity 
 extends Activity
 implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 {
+	/**
+	 * the tag to identify the logger output of this class
+	 */
 	private static final String TAG = "PMSClientActivity";
-	private static final int NETWORKING_IN_PROGRESS_DIALOG_ID = 0;
+	
+	/**
+	 * the drop-down menu for device selection
+	 */
 	private Spinner mDeviceSelection;
+	
+	/**
+	 * the array adapter presenting the model for device selection
+	 */
 	private ArrayAdapter<String> mSpinnerAdapter;
 
+	/**
+	 * button to shut down the selected device
+	 */
 	private Button mShutDownButt;
+	
+	/**
+	 * button to wake the selected device up
+	 */
 	private Button mWakeupButt;
+	
+	/**
+	 * button to put the selected device to sleep
+	 */
 	private Button mSleepButt;
+	
+	/**
+	 * button to toast the status of the selected device
+	 */
 	private Button mStatusButt;
+	
+	/**
+	 * button to toast the extended status of the selected device
+	 */
 	private Button mExtendedStatusButt;
 
+	/**
+	 * the currently selected ControllableDevice
+	 */
 	private ControllableDevice mCurrentDevice;
-	private ArrayList<ControllableDevice> mDevices = new ArrayList<ControllableDevice>();
-
-	private Context mContext;
 	
+	/**
+	 * a list of all selectable devices
+	 */
+	private ArrayList<ControllableDevice> mDevices = new ArrayList<ControllableDevice>();
+	
+	/**
+	 * the ProgressDialog to indicate networking
+	 */
 	ProgressDialog mNetworkingDialog;
 
-	HttpClient mClient = ProxyHelper.getProxiedAllAcceptingHttpsClient();
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
@@ -62,8 +107,6 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 		setupNetworkingDialog();
 		
 		loadDevices();
-
-		
 
 		mSleepButt = (Button)findViewById(R.id.main_xml_sleepButt);
 		mSleepButt.setOnClickListener(this);
@@ -79,43 +122,11 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 
 		mWakeupButt = (Button)findViewById(R.id.main_xml_wakeupButt);
 		mWakeupButt.setOnClickListener(this);
-//		mContext = getApplicationContext();
-
-		
-		
-//		mNetworkingDialog.dismiss();
-		//		Button rawPoweroffTestButt = (Button)findViewById(R.id.main_xml_rawTestPoweroffButt);
-		//		rawPoweroffTestButt.setOnClickListener(this);
-		//		
-		//		Button rawWakeupTestButt = (Button)findViewById(R.id.main_xml_rawTestWakeupButt);
-		//		rawWakeupTestButt.setOnClickListener(this);
-		//		
-		//		Button rawExtendedStatusTestButt = (Button)findViewById(R.id.main_xml_rawExtendedTestButton);
-		//		rawExtendedStatusTestButt.setOnClickListener(this);
-		//		testRawClient();
-		//		String clients = PMSProvider.getPMS().getClients();
-		//		Log.e(TAG, clients);
-
-		//		String encodedURL;
-		//		try {
-		//			encodedURL = URLEncoder.encode("00:21:5A:17:40:CE", "UTF-8");
-		//			PMSProvider.getPMS().reportIdle(encodedURL, 10);
-		//		} catch (UnsupportedEncodingException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-		//		testReportIdleRaw();
-		//		try {
-		//			Thread.sleep(10000);
-		//		} catch (InterruptedException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-		//		PMSProvider.getPMS().reportIdle("00:21:5A:17:40:CE", 10);
-
-
 	}
 	
+	/**
+	 * creates the networking dialog
+	 */
 	private void setupNetworkingDialog()
 	{
 		mNetworkingDialog = new ProgressDialog(PMSClientActivity.this);
@@ -125,11 +136,47 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 	}
 	
+	/**
+	 * queries the mac addresses of all devices from the PMS, creates ControllableDeviecs from it
+	 * and triggers initialization of the drop-down menu
+	 */
+	private void loadDevices() 
+	{
+		showNetworkingDialog();
+		//only done in a own thread in order for the networking dialog to show
+		new Thread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				Looper.prepare(); //needed to fix exceptions with AsyncTasks started in this method
+				ArrayList<String> macs = new ArrayList<String>();
+				macs = PMSProvider.getDeviceList();
+				for(int i = 0;i<macs.size();i++)
+				{
+					ControllableDevice dev = new ControllableDevice(macs.get(i), "admin", "pwd", true);
+					mDevices.add(dev);
+					Log.e(TAG, dev.toString());
+				}
+				dismissNetworkingDialog();
+				initSpinner();
+				Looper.loop(); //needed to fix exceptions with AsyncTasks started in this method
+			}
+		}).start();
+		
+	}
+	
+	/**
+	 * shows the networking dialog
+	 */
 	private void showNetworkingDialog()
 	{
 		mNetworkingDialog.show();
 	}
 	
+	/**
+	 * dismisses the networking dialog if it is showing
+	 */
 	private void dismissNetworkingDialog()
 	{
 		if(mNetworkingDialog.isShowing())
@@ -138,10 +185,13 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 		}
 	}
 	
+	/**
+	 * fills the drop-down menu with hostnames of all ControllableDevices
+	 */
 	private void initSpinner()
 	{
-		runOnUiThread(new Runnable() {
-			
+		runOnUiThread(new Runnable() 
+		{	
 			@Override
 			public void run() 
 			{
@@ -152,205 +202,15 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 				mDeviceSelection.setAdapter(mSpinnerAdapter);
 				mDeviceSelection.setOnItemSelectedListener(PMSClientActivity.this);
 				
-				setCurrentDevice(mDeviceSelection.getSelectedItem());
-				
+				setCurrentDevice(mDeviceSelection.getSelectedItem());		
 			}
 		});
-		
 	}
 	
-//	@Override
-//	public Dialog onCreateDialog(int _id)
-//	{
-//		Dialog d = null;
-//		switch(_id)
-//		{
-//		case NETWORKING_IN_PROGRESS_DIALOG_ID:
-//			Log.e(TAG, "creating progress dialog");
-//			ProgressDialog progressDialog;
-//			progressDialog = new ProgressDialog(PMSClientActivity.this);
-//			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-//			progressDialog.setMessage("Networking in progress, please wait...");
-//			progressDialog.setCancelable(false);
-//			d = progressDialog;
-////			progressDialog.show();
-//			
-//			
-//		break;
-//		}
-//		d.show();
-//		return d;
-//		
-//	}
-
-	private void loadDevices() 
-	{
-		showNetworkingDialog();
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() 
-			{
-				Looper.prepare();
-				ArrayList<String> macs = new ArrayList<String>();
-				macs = PMSProvider.getDeviceList();
-				for(int i = 0;i<macs.size();i++)
-				{
-					ControllableDevice dev = new ControllableDevice(macs.get(i), "admin", "pwd", true);
-					mDevices.add(dev);
-//					mNetworkingDialog.setProgress((int)(((double)i/macs.size())*100));
-					Log.e(TAG, dev.toString());
-				}
-				dismissNetworkingDialog();
-				initSpinner();
-				Looper.loop();
-			}
-		}).start();
-		
-	}
-	//	private void testPoweroffRaw()//Post with json
-	//	{
-	//		new Thread(new Runnable() 
-	//		{
-	//			@Override
-	//			public void run() 
-	//			{
-	//				
-	//				String powerOffUrl = "http://80.120.3.4:8080/pms/00:21:5A:17:40:CE/poweroff";
-	//				
-	//				HttpPost powerOffRequest = new HttpPost(powerOffUrl);
-	//				powerOffRequest.addHeader("Content-Type", "application/json");
-	//				JSONObject jsonForPoweroff = new JSONObject();
-	//				try 
-	//				{
-	//					jsonForPoweroff.put("target-state", "shutdown");
-	//					jsonForPoweroff.put("os", "windows");
-	//					jsonForPoweroff.put("username", "admin");
-	//					jsonForPoweroff.put("password", "pwd");
-	//
-	//					powerOffRequest.setEntity(new ByteArrayEntity(jsonForPoweroff.toString().getBytes()));
-	//					HttpResponse resp = mClient.execute(powerOffRequest);
-	//					
-	//
-	//					Log.e(TAG, resp.getStatusLine().toString());
-	//				} catch (JSONException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				} catch (ClientProtocolException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				} catch (IOException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				}
-	//			}
-	//		}).start();
-	//	}
-
-	//	private void testReportIdleRaw()//Post with json
-	//	{
-	//		new Thread(new Runnable() 
-	//		{
-	//			@Override
-	//			public void run() 
-	//			{
-	//				String mac ="";
-	//				try {
-	//					mac = URLEncoder.encode("00:21:5A:17:40:CE", "UTF-8");
-	//				} catch (UnsupportedEncodingException e1) {
-	//					// TODO Auto-generated catch block
-	//					e1.printStackTrace();
-	//				}
-	//				String idleSinceUrl = "http://80.120.3.4:8080/pms/"+mac+"/report-idle";
-	////				String idleSinceUrl = "http://80.120.3.4:8080/pms/00:21:5A:17:40:CE/report-idle";
-	//				HttpPost idleSinceRequest = new HttpPost(idleSinceUrl);
-	//				idleSinceRequest.setHeader("Content-Type", "application/json");
-	//
-	//				JSONObject jsonForReportIdle = new JSONObject();
-	//				try 
-	//				{
-	//					jsonForReportIdle.put("idle-since", "10");
-	//					idleSinceRequest.setEntity(new ByteArrayEntity(jsonForReportIdle.toString().getBytes(/*"UTF-8"*/)));
-	//					HttpResponse resp = mClient.execute(idleSinceRequest);
-	//
-	//					
-	//
-	//					Log.e(TAG, resp.getStatusLine().toString());
-	//				} catch (JSONException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				} catch (ClientProtocolException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				} catch (IOException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				}
-	//			}
-	//		}).start();
-	//	}
-
-	//	private void testWakeupRaw()//Get
-	//	{
-	//		new Thread(new Runnable() 
-	//		{	
-	//			@Override
-	//			public void run() 
-	//			{
-	//				String wakeupUrl = "http://80.120.3.4:8080/pms/00:21:5A:17:40:CE/wakeup";
-	//				HttpGet wakeupRequest = new HttpGet(wakeupUrl);
-	//
-	//				try {
-	//					HttpResponse resp = mClient.execute(wakeupRequest);
-	//					Log.e(TAG, resp.getStatusLine().toString());
-	//				} catch (ClientProtocolException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				} catch (IOException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				}
-	//
-	//			}
-	//		}).start();
-	//	}
-
-	//	private void testExtendedStatusRaw()//Post
-	//	{
-	//		new Thread(new Runnable() 
-	//		{
-	//			@Override
-	//			public void run() 
-	//			{
-	//				String extendedStatusUrl = "http://80.120.3.4:8080/pms/"+mCurrentDevice.getMac()+"/extended-status";
-	//				HttpPost extendedStatusRequest = new HttpPost(extendedStatusUrl);
-	//				extendedStatusRequest.addHeader("Content-Type", "application/json");
-	//				JSONObject jsonForExtendedStatus = new JSONObject();
-	//
-	//				try {
-	//					jsonForExtendedStatus.put("username", "admin");
-	//					jsonForExtendedStatus.put("password", "pwd");
-	//					String empty = "{}";
-	//					extendedStatusRequest.setEntity(new ByteArrayEntity(empty.getBytes()));
-	//
-	//					HttpResponse resp = mClient.execute(extendedStatusRequest);
-	//					Log.e(TAG, resp.getStatusLine().toString());
-	//				} catch (JSONException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				} catch (ClientProtocolException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				} catch (IOException e) {
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				}
-	//
-	//
-	//			}
-	//		}).start();
-	//	}
-
+	/**
+	 * extracts the hostnames of all ControllableDevices and returns them in a list
+	 * @return a list of all available hostnames
+	 */
 	private ArrayList<String> getControllableHostNames()
 	{
 		ArrayList<String> hostnames = new ArrayList<String>();
@@ -361,6 +221,11 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 		return hostnames;
 	}
 
+	/**
+	 * sets the currently controlled device and enables/disables buttons based
+	 * on the alive-status of the current device
+	 * @param _item item that is currently selected in the drop-down menu
+	 */
 	private void setCurrentDevice(Object _item)
 	{
 		ControllableDevice curDev = getControllableDeviceFromSelectedItem(_item);
@@ -369,15 +234,15 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 			mCurrentDevice = curDev;
 			if(mCurrentDevice.isAlive())
 			{
-//				mWakeupButt.setEnabled(false);
-//				mSleepButt.setEnabled(true);
-//				mShutDownButt.setEnabled(true);
+				mWakeupButt.setEnabled(false);
+				mSleepButt.setEnabled(true);
+				mShutDownButt.setEnabled(true);
 			}
 			else
 			{
-//				mSleepButt.setEnabled(false);
-//				mShutDownButt.setEnabled(false);
-//				mWakeupButt.setEnabled(true);
+				mSleepButt.setEnabled(false);
+				mShutDownButt.setEnabled(false);
+				mWakeupButt.setEnabled(true);
 			}
 		}
 		else
@@ -386,6 +251,12 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 		}
 	}
 
+	/**
+	 * searches the list of ControllableDevices for a hostname specified by the _item parameter
+	 * @param _item contains a hostname to look up in the list of devices
+	 * @return the ControllableDevice specified by the _item parameter, null if no device matches the
+	 * specified hostname
+	 */
 	private ControllableDevice getControllableDeviceFromSelectedItem(Object _item)
 	{
 		for(ControllableDevice cd:mDevices)
@@ -404,24 +275,22 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
-
+	public void onNothingSelected(AdapterView<?> arg0) 
+	{
 	}
 
 	@Override
 	public void onClick(View v) 
 	{
-//		showDialog(NETWORKING_IN_PROGRESS_DIALOG_ID);
-//		ProgressDialog pd = ProgressDialog.show(PMSClientActivity.this, "networking", "Networking in progess, please wait...", true, false);
-		Log.e(TAG, "before dialogshow");
-		final ProgressDialog progressDialog = ProgressDialog.show(PMSClientActivity.this, "", "Networking in progress");
+//		final ProgressDialog progressDialog = ProgressDialog.show(PMSClientActivity.this, "", "Networking in progress");
+		showNetworkingDialog();
 		final int id = v.getId();
-		Log.e(TAG, "after dialogshow");
-		new Thread(new Runnable() {
-			
+		
+		new Thread(new Runnable() 
+		{	
 			@Override
-			public void run() {
+			public void run() 
+			{
 				switch(id)
 				{
 				case R.id.main_xml_sleepButt:
@@ -450,7 +319,6 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 					ExtendedPMSStatus extStatus = mCurrentDevice.getExtendedStatus();
 					if(null==extStatus)
 					{
-						//				Log.e(TAG, "extended status was null");
 						break;
 					}
 					toastOnUiThread(extStatus.toString());
@@ -466,24 +334,19 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 					}
 
 					break;
-					//		case R.id.main_xml_rawTestPoweroffButt:
-					//			testPoweroffRaw();
-					//			break;
-					//		case R.id.main_xml_rawExtendedTestButton:
-					//			testExtendedStatusRaw();
-					//			break;
-					//		case R.id.main_xml_rawTestWakeupButt:
-					//			testWakeupRaw();
-					//			break;
+
 				}
-//				dismissDialog(NETWORKING_IN_PROGRESS_DIALOG_ID);
-				progressDialog.dismiss();
-				
+				dismissNetworkingDialog();
 			}
 		}).start();
 		
 	}
 	
+	/**
+	 * whenever a thread other than the UI thread has to toast a message
+	 * this method has to be used
+	 * @param _msg the message to be toasted
+	 */
 	private void toastOnUiThread(final String _msg)
 	{
 		runOnUiThread(new Runnable() 
@@ -498,17 +361,8 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 	}
 
 	@Override
-	public void notifyError(final String _msg) {
-		runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				Toast.makeText(getApplicationContext(), _msg, Toast.LENGTH_LONG).show();
-				
-			}
-		});
-		
-
+	public void notifyError(final String _msg) 
+	{
+		toastOnUiThread(_msg);
 	}
-
 }

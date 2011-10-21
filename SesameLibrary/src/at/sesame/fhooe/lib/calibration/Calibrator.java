@@ -1,3 +1,10 @@
+/***************************************************************************** 	
+ *  Project: Sesame-S Client
+ *  Description: mobile client for interaction with the sesame-s system
+ *  Author: Peter Riedl
+ *  Copyright: Peter Riedl, 07/2011
+ *
+ ******************************************************************************/
 package at.sesame.fhooe.lib.calibration;
 
 import java.util.ArrayList;
