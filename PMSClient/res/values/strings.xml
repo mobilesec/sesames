@@ -8,4 +8,6 @@
     <string name="mainXML_statusButtText">toast status</string>
     <string name="mainXML_extendedStatusButtText">toast extended status</string>
     <string name="mainXML_wakeupButtText">wake up</string>
+    <string name="activeDeviceLabelBaseText">Active Devices </string>
+    <string name="nonActiveDeviceLabelBaseText">Inactive Devices </string>
 </resources>
