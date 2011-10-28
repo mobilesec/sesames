@@ -28,6 +28,7 @@ import at.sesame.fhooe.lib.calendar.CalendarEvent;
 public class CalendarEventAdapter 
 extends ArrayAdapter<CalendarEvent> 
 {
+	
 	/**
 	 * a list of all CalendarEvents
 	 */
@@ -67,10 +68,10 @@ extends ArrayAdapter<CalendarEvent>
         	titleField.setText(ce.getTitle());
         	
         	TextView beginField =(TextView) v.findViewById(R.id.beginField);
-        	beginField.setText(ce.getBeginDate().toLocaleString());
+        	beginField.setText(ce.getStartDateHC().toLocaleString());
         	
         	TextView endField =(TextView) v.findViewById(R.id.endField);
-        	endField.setText(ce.getEndDate().toLocaleString());
+        	endField.setText(ce.getEndDateHC().toLocaleString());
         	
         	TextView allDayField =(TextView) v.findViewById(R.id.allDayField);
         	allDayField.setText(""+ce.isAllDay());

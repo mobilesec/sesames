@@ -28,7 +28,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import at.sesame.fhooe.R;
 import at.sesame.fhooe.SesameTabletActivity;
-import at.sesame.fhooe.lib.calendar.CalendarAccess;
+import at.sesame.fhooe.lib.calendar.CalendarAccessHC;
 import at.sesame.fhooe.lib.calendar.CalendarEvent;
 
 /**
@@ -42,7 +42,7 @@ implements OnClickListener
 {
 	private static final String TAG = "CalendarView";
 	private static final int CALENDAR_SELECTION_DIALOG = 0;
-	private CalendarAccess mCalAccess= null;
+	private CalendarAccessHC mCalAccess= null;
 	
 	private ArrayList<CalendarEvent> mEvents = new ArrayList<CalendarEvent>();
 	private CalendarEventAdapter mCalendarEventAdapter;
@@ -53,7 +53,7 @@ implements OnClickListener
 		super.onCreate(_savedInstance);
 		setContentView(R.layout.calendar);
 		Log.e(TAG, "on Create");
-		mCalAccess = new CalendarAccess(this);
+		mCalAccess = new CalendarAccessHC(this);
 		mCalendarEventAdapter = new CalendarEventAdapter(this, R.layout.calendarevent, mEvents);
 		setListAdapter(mCalendarEventAdapter);
 		Log.e(TAG, "onActivityCreated");
@@ -129,7 +129,7 @@ implements OnClickListener
         mCalendarEventAdapter.notifyDataSetChanged();
 	}
 	
-	public CalendarAccess getCalendarAccess()
+	public CalendarAccessHC getCalendarAccess()
 	{
 		return mCalAccess;
 	}
