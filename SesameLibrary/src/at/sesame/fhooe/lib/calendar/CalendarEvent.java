@@ -9,6 +9,8 @@ package at.sesame.fhooe.lib.calendar;
 
 import java.util.Date;
 
+import android.util.Log;
+
 /**
  * this class represents a container for all information available for 
  * CalendarEvents on Android
@@ -17,6 +19,7 @@ import java.util.Date;
  */
 public class CalendarEvent 
 {
+	//pre ICS
 	private int mId;
 	private String mSyncaccount;
 	private String mSyncAccountType;
@@ -33,8 +36,8 @@ public class CalendarEvent
 	private int mEventStatus;
 	private int mSelfAttendeeStatus;
 	private String mCommentsUri;
-	private int mDtstart;
-	private int mDtend;
+	private long mDtstart;
+	private long mDtend;
 	private String mEventTimeZone;
 	private String mDuration;
 	private int mAllDay;
@@ -42,7 +45,7 @@ public class CalendarEvent
 	private int mTransparency;
 	private int mHasAlarm;
 	private int mHasExtendedProperties;
-	private String mRrule;
+	private String mRRule;
 	private String mExrule;
 	private String mExdate;
 	private String mOriginalEvent;
@@ -57,6 +60,23 @@ public class CalendarEvent
 	private int mDeleted;
 	private long mBegin;
 	private long mEnd;
+	
+	//ICS specifics
+	private int mAccessLevel;
+	private int mAvailability;
+	private int mCanInviteOthers;
+	private int mEventColor;
+	private String mEventEndTimezone;
+	private int mLastSynced;
+	private String mOriginalSyncId;
+	private String mRDate;
+	private String mStatus;
+	
+	
+	public CalendarEvent()
+	{
+		
+	}
 	
 	/**
 	 * creates a new CalendarEvent with all information present
@@ -99,7 +119,7 @@ public class CalendarEvent
 		this.mTransparency = _transparency;
 		this.mHasAlarm = _hasAlarm;
 		this.mHasExtendedProperties = _hasExtendedProperties;
-		this.mRrule = _rrule;
+		this.mRRule = _rrule;
 		this.mExrule = _exrule;
 		this.mExdate = _exdate;
 		this.mOriginalEvent = _originalEvent;
@@ -180,20 +200,20 @@ public class CalendarEvent
 		return mCommentsUri;
 	}
 
-	public int getDtstart() {
+	public long getDtstart() {
 		return mDtstart;
 	}
 	
-	public Date getBeginDate()
+	public Date getStartDateHC()
 	{
 		return new Date(mBegin);
 	}
 
-	public int getDtend() {
+	public long getDtend() {
 		return mDtend;
 	}
 	
-	public Date getEndDate()
+	public Date getEndDateHC()
 	{
 		return new Date(mEnd);
 	}
@@ -231,8 +251,8 @@ public class CalendarEvent
 		return mHasExtendedProperties;
 	}
 
-	public String getRrule() {
-		return mRrule;
+	public String getRRule() {
+		return mRRule;
 	}
 
 	public String getExrule() {
@@ -283,6 +303,271 @@ public class CalendarEvent
 		return mDeleted;
 	}
 	
+	public int getAccessLevel()
+	{
+		return mAccessLevel;
+	}
+	
+	public int getAvailability()
+	{
+		return mAvailability;
+	}
+	
+	public int getCanInviteOthers()
+	{
+		return mCanInviteOthers;
+	}
+	
+	public int getEventColor()
+	{
+		return mEventColor;
+	}
+	
+	public String getEventEndTimezone()
+	{
+		return mEventEndTimezone;
+	}
+	
+	public int getLastSynced()
+	{
+		return mLastSynced;
+	}
+	
+	public String getOriginalSyncId()
+	{
+		return mOriginalSyncId;
+	}
+	
+	public String getRDate()
+	{
+		return mRDate;
+	}
+	
+	public String getStatus()
+	{
+		return mStatus;
+	}
+	
+	public Date getStartDateICS()
+	{
+		return new Date(getDtstart());
+	}
+	
+	public Date getEndDateICS()
+	{
+		return new Date(getDtend());
+	}
+	
+	
+	//***********************************************
+	
+	public void setId(int _id) {
+		this.mId = _id;
+	}
+
+	public void setSyncaccount(String _syncaccount) {
+		this.mSyncaccount = _syncaccount;
+	}
+
+	public void setSyncAccountType(String _syncAccountType) {
+		this.mSyncAccountType = _syncAccountType;
+	}
+
+	public void setSyncId(String _syncId) {
+		this.mSyncId = _syncId;
+	}
+
+	public void setSyncVersion(String _syncVersion) {
+		this.mSyncVersion = _syncVersion;
+	}
+
+	public void setSyncTime(String _syncTime) {
+		this.mSyncTime = _syncTime;
+	}
+
+	public void setSyncLocalId(int _syncLocalId) {
+		this.mSyncLocalId = _syncLocalId;
+	}
+
+	public void setSyncDirty(int _syncDirty) {
+		this.mSyncDirty = _syncDirty;
+	}
+
+	public void setCalendarId(int _calendarId) {
+		this.mCalendarId = _calendarId;
+	}
+
+	public void setHtmlUri(String _htmlUri) {
+		this.mHtmlUri = _htmlUri;
+	}
+
+	public void setTitle(String _title) {
+		this.mTitle = _title;
+	}
+
+	public void setEventLocation(String _eventLocation) {
+		this.mEventLocation = _eventLocation;
+	}
+
+	public void setDescription(String _description) {
+		this.mDescription = _description;
+	}
+
+	public void setEventStatus(int _eventStatus) {
+		this.mEventStatus = _eventStatus;
+	}
+
+	public void setSelfAttendeeStatus(int _selfAttendeeStatus) {
+		this.mSelfAttendeeStatus = _selfAttendeeStatus;
+	}
+
+	public void setCommentsUri(String _commentsUri) {
+		this.mCommentsUri = _commentsUri;
+	}
+
+	public void setDtstart(long _dtstart) {
+		Log.e("CalendarEvent","dtstart = "+_dtstart);
+		this.mDtstart = _dtstart;
+	}
+
+	public void setDtend(long _dtend) {
+		this.mDtend = _dtend;
+	}
+
+	public void setEventTimeZone(String _eventTimeZone) {
+		this.mEventTimeZone = _eventTimeZone;
+	}
+
+	public void setDuration(String _duration) {
+		this.mDuration = _duration;
+	}
+
+	public void setAllDay(int _allDay) {
+		this.mAllDay = _allDay;
+	}
+
+	public void setVisibility(int _visibility) {
+		this.mVisibility = _visibility;
+	}
+
+	public void setTransparency(int _transparency) {
+		this.mTransparency = _transparency;
+	}
+
+	public void setHasAlarm(int _hasAlarm) {
+		this.mHasAlarm = _hasAlarm;
+	}
+
+	public void setHasExtendedProperties(int _hasExtendedProperties) {
+		this.mHasExtendedProperties = _hasExtendedProperties;
+	}
+
+	public void setRRule(String _rRule) {
+		this.mRRule = _rRule;
+	}
+
+	public void setExrule(String _exrule) {
+		this.mExrule = _exrule;
+	}
+
+	public void setExdate(String _exdate) {
+		this.mExdate = _exdate;
+	}
+
+	public void setOriginalEvent(String _originalEvent) {
+		this.mOriginalEvent = _originalEvent;
+	}
+
+	public void setOriginalInstanceTime(int _originalInstanceTime) {
+		this.mOriginalInstanceTime = _originalInstanceTime;
+	}
+
+	public void setOriginalAllDay(int _originalAllDay) {
+		this.mOriginalAllDay = _originalAllDay;
+	}
+
+	public void setLastDate(int _lastDate) {
+		this.mLastDate = _lastDate;
+	}
+
+	public void setHasAttendeeData(int _hasAttendeeData) {
+		this.mHasAttendeeData = _hasAttendeeData;
+	}
+
+	public void setGuestsCanModify(int _guestsCanModify) {
+		this.mGuestsCanModify = _guestsCanModify;
+	}
+
+	public void setGuestsCanInviteOthers(int _guestsCanInviteOthers) {
+		this.mGuestsCanInviteOthers = _guestsCanInviteOthers;
+	}
+
+	public void setGuestsCanSeeGuests(int _guestsCanSeeGuests) {
+		this.mGuestsCanSeeGuests = _guestsCanSeeGuests;
+	}
+
+	public void setOrganizer(String _organizer) {
+		this.mOrganizer = _organizer;
+	}
+
+	public void setDeleted(int _deleted) {
+		this.mDeleted = _deleted;
+	}
+
+	public void setBegin(long _begin) {
+		this.mBegin = _begin;
+	}
+
+	public void setEnd(long _end) {
+		this.mEnd = _end;
+	}
+	
+	public void setAccessLevel(int _accessLevel)
+	{
+		this.mAccessLevel = _accessLevel;
+	}
+	
+	public void setAvaialbility(int _availability)
+	{
+		this.mAvailability = _availability;
+	}
+	
+	public void setCanInviteOthers(int _canInviteOthers)
+	{
+		this.mCanInviteOthers = _canInviteOthers;
+	}
+	
+	public void setEventColor(int _evtCol)
+	{
+		this.mEventColor = _evtCol;
+	}
+	
+	public void setEventEndTimezone(String _evtEndTimezone)
+	{
+		this.mEventEndTimezone = _evtEndTimezone;
+	}
+	
+	public void setLastSynced(int _lastSynced)
+	{
+		this.mLastSynced = _lastSynced;
+	}
+	
+	public void setOriginalSyncId(String _originalSyncId)
+	{
+		this.mOriginalSyncId = _originalSyncId;
+	}
+	
+	public void setRDate(String _rDate)
+	{
+		this.mRDate = _rDate;
+	}
+	
+	public void setStatus(String _status)
+	{
+		this.mStatus = _status;
+	}
+	
+
 	@Override
 	public String toString() {
 		return "CalendarEvent [mId=" + mId + ", mCalendarId=" + mCalendarId
@@ -310,7 +595,7 @@ public class CalendarEvent
 				+ ", mVisibility=" + mVisibility + ", mTransparency="
 				+ mTransparency + ", mHasAlarm=" + mHasAlarm
 				+ ", mHasExtendedProperties=" + mHasExtendedProperties
-				+ ", mRrule=" + mRrule + ", mExrule=" + mExrule + ", mExdate="
+				+ ", mRrule=" + mRRule + ", mExrule=" + mExrule + ", mExdate="
 				+ mExdate + ", mOriginalEvent=" + mOriginalEvent
 				+ ", mOriginalInstanceTime=" + mOriginalInstanceTime
 				+ ", mOriginalAllDay=" + mOriginalAllDay + ", mLastDate="

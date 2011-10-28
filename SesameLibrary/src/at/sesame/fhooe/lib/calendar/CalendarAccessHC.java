@@ -24,7 +24,7 @@ import at.sesame.fhooe.lib.R;
  * @author Peter Riedl
  *
  */
-public class CalendarAccess 
+public class CalendarAccessHC 
 {
 	/**
 	 * the tag to identify the logger output of this class
@@ -57,7 +57,7 @@ public class CalendarAccess
 	 * creates a new CalendarAccess instance
 	 * @param _c the context of the CalendarAccess
 	 */
-	public CalendarAccess(Context _c)
+	public CalendarAccessHC(Context _c)
 	{
 		mContext = _c;
 	}

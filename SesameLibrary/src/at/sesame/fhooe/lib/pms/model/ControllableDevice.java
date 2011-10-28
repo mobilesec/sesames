@@ -9,6 +9,7 @@ package at.sesame.fhooe.lib.pms.model;
 
 import java.util.concurrent.ExecutionException;
 
+import android.util.Log;
 import at.sesame.fhooe.lib.pms.PMSProvider;
 import at.sesame.fhooe.lib.pms.asynctasks.ExtendedStatusTask;
 import at.sesame.fhooe.lib.pms.asynctasks.PowerOffTask;
@@ -23,6 +24,8 @@ import at.sesame.fhooe.lib.pms.service.IPMSService;
  */
 public class ControllableDevice 
 {
+	
+	private static final String TAG = "ControllableDevice";
 	/**
 	 * enumeration of possible power-off commands
 	 *
@@ -72,6 +75,8 @@ public class ControllableDevice
 	 * or rely on the auto-detect mode of the PMS
 	 */
 	private boolean mUseCredentials;
+	
+	private int mIdleSince;
 
 	/**
 	 * instance of the PMS
@@ -148,13 +153,18 @@ public class ControllableDevice
 	/**
 	 * queries the device's status and sets all members accordingly
 	 */
-	private void updateStatus()
+	public void updateStatus()
 	{
-		PMSStatus status = getStatus();
-		mHostname = status.getHostname();
-		mIp = status.getIp();
-		mOs = status.getOs();
-		mAlive = status.getAlive().equals("1")?true:false;
+		ExtendedPMSStatus extStat = getExtendedStatus();
+		if(null==extStat)
+		{
+			return;
+		}
+		mHostname = extStat.getHostname();
+		mIp = extStat.getIp();
+		mOs = extStat.getOs();
+		mAlive = extStat.getAlive().equals("1")?true:false;
+		mIdleSince = extStat.getIdleSince();
 	}
 
 	/**
@@ -186,6 +196,7 @@ public class ControllableDevice
 	 */
 	public ExtendedPMSStatus getExtendedStatus()
 	{
+		Log.e(TAG, "extended status");
 		if(null==mPms)
 		{
 			return null;
@@ -249,6 +260,11 @@ public class ControllableDevice
 	public boolean isAlive()
 	{
 		return mAlive;
+	}
+	
+	public int getIdleSince()
+	{
+		return mIdleSince;
 	}
 
 	@Override
