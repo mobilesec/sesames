@@ -1,4 +1,4 @@
-package at.sesame.fhooe.pms;
+package at.sesame.fhooe.pms.list;
 
 public interface IListEntry 
 {

@@ -10,4 +10,22 @@
     <string name="mainXML_wakeupButtText">wake up</string>
     <string name="activeDeviceLabelBaseText">Active Devices </string>
     <string name="nonActiveDeviceLabelBaseText">Inactive Devices </string>
+    <string name="mainXML_activeDeviceSelection_off_text">select active devices</string>
+    <string name="mainXML_activeDeviceSelection_on_text">deselect active devices</string>
+    <string name="mainXML_inactiveDeviceSelection_off_text">select inactive devices</string>
+    <string name="mainXML_inactiveDeviceSelection_on_text">deselect inactive devices</string>
+    <string name="mainXML_sleepAllButton_text">sleep</string>
+    <string name="mainXML_shutdownAllButton_text">shut down</string>
+    <string name="mainXML_wakeUpAllButton_text">wake up</string>
+    <string name="PMSClientActivity_activeDeviceActionDialogBaseMessage">The computer could still be in use (idle time:</string>
+    <string name="PMSClientActivity_activeDeviceDialogShutDownCommand">shut down</string>
+    <string name="PMSClientActivity_activeDeviceDialogSleepCommand">sleep</string>
+    <string name="PMSClientActivity_inactiveDeviceDialogWakeUpCommand">wake up</string>
+    <string name="PMSClientActivity_noNetworkDialogTitle">Internet Connection failed</string>
+    <string name="PMSClientActivity_noNetworkDialogMessage">You are currently not connected to the internet. please connect via 3G or wifi to use this app.</string>
+    <string name="PMSClientActivity_networkingProgressDialogTitle">Networking in progress, please wait...</string>
+    <string name="PMSClientActivity_activeDeviceSeparatorText">Active (</string>
+    <string name="PMSClientActivity_inactiveDeviceSeparatorText">Inactive (</string>
+    <string name="controllable_device_listitem_checkBox_text">select</string>
+    <string name="ControllableDeviceAdapter_idleLabel_text">Idle since:</string>
 </resources>

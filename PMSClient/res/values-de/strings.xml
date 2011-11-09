@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, PMSClientActivity!</string>
+    <string name="app_name">PMSClient</string>
+    <string name="main_xml_headerText">Gerät auswählen</string>
+    <string name="mainXML_sleepButtText">Ruhezustand</string>
+    <string name="mainXML_shutDownButtText">Herunterfahren</string>
+    <string name="mainXML_statusButtText">toast status</string>
+    <string name="mainXML_extendedStatusButtText">toast extended status</string>
+    <string name="mainXML_wakeupButtText">Einschalten</string>
+    <string name="activeDeviceLabelBaseText">In Betrieb </string>
+    <string name="nonActiveDeviceLabelBaseText">Ausgeschaltet</string>
+    <string name="mainXML_activeDeviceSelection_off_text">Aktive Geräte auswählen</string>
+    <string name="mainXML_activeDeviceSelection_on_text">Aktive Geräte abwählen</string>
+    <string name="mainXML_inactiveDeviceSelection_off_text">Inaktive Geräte auswählen</string>
+    <string name="mainXML_inactiveDeviceSelection_on_text">Inaktive Geräte abwählen</string>
+    <string name="mainXML_sleepAllButton_text">Ruhezustand</string>
+    <string name="mainXML_shutdownAllButton_text">Herunterfahren</string>
+    <string name="mainXML_wakeUpAllButton_text">Einschalten</string>
+    <string name="PMSClientActivity_activeDeviceActionDialogBaseMessage">Der Computer könnte noch in Betrieb sein (Ruhezeit:</string>
+    <string name="PMSClientActivity_activeDeviceDialogShutDownCommand">Herunterfahren</string>
+    <string name="PMSClientActivity_activeDeviceDialogSleepCommand">Ruhezustand</string>
+    <string name="PMSClientActivity_inactiveDeviceDialogWakeUpCommand">Einschalten</string>
+    <string name="PMSClientActivity_noNetworkDialogTitle">Keine Verbindung zum Internet</string>
+    <string name="PMSClientActivity_noNetworkDialogMessage">Sie sind nicht mit dem Internet verbunden. Bitte verbinden sie sich via 3G oder WLAN um diese Anwendung nutzen zu können.</string>
+    <string name="PMSClientActivity_networkingProgressDialogTitle">Datentransfer, bitte warten...</string>
+    <string name="PMSClientActivity_activeDeviceSeparatorText">In Betrieb (</string>
+    <string name="PMSClientActivity_inactiveDeviceSeparatorText">Ausgeschaltet (</string>
+    <string name="controllable_device_listitem_checkBox_text">Auswählen</string>
+    <string name="ControllableDeviceAdapter_idleLabel_text">Ruhezeit:</string>
+</resources>

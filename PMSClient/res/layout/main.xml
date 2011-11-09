@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center" android:id="@+id/main_headerLabel" android:text="@string/main_xml_headerText"></TextView>
-    <Spinner android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/main_xml_device_spinner"></Spinner>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout1">
-        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/mainXML_sleepButtText" android:id="@+id/main_xml_sleepButt"></Button>
-        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="fill_vertical" android:layout_weight="1" android:id="@+id/main_xml_shutDownButt" android:text="@string/mainXML_shutDownButtText"></Button>
+<LinearLayout android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ToggleButton
+            android:id="@+id/activeDeviceSelection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textOff="@string/mainXML_activeDeviceSelection_off_text"
+            android:textOn="@string/mainXML_activeDeviceSelection_on_text" />
+
+        <ToggleButton
+            android:id="@+id/inactiveDeviceSelection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textOff="@string/mainXML_inactiveDeviceSelection_off_text"
+            android:textOn="@string/mainXML_inactiveDeviceSelection_on_text" />
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/linearLayout2">
-        <Button android:layout_width="wrap_content" android:layout_weight="1" android:layout_height="wrap_content" android:id="@+id/main_xml_statusButt" android:text="@string/mainXML_statusButtText"></Button>
-        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/main_xml_extendedStatusButt" android:text="@string/mainXML_extendedStatusButtText"></Button>
+
+    <LinearLayout
+        android:id="@+id/activeDeviceControllContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/sleepButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/mainXML_sleepAllButton_text" />
+
+        <Button
+            android:id="@+id/shutDownButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/mainXML_shutdownAllButton_text" />
     </LinearLayout>
-    <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/main_xml_wakeupButt" android:text="@string/mainXML_wakeupButtText"></Button>
+
+    <LinearLayout
+        android:id="@+id/inactiveDeviceControllContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/wakeUpButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/mainXML_wakeUpAllButton_text" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/deviceList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
 </LinearLayout>

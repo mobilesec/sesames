@@ -1,179 +1,309 @@
-/***************************************************************************** 	
- *  Project: Sesame-S Client
- *  Description: mobile client for interaction with the sesame-s system
- *  Author: Peter Riedl
- *  Copyright: Peter Riedl, 10/2011
- *
- ******************************************************************************/
 package at.sesame.fhooe.pms;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources.NotFoundException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import at.sesame.fhooe.lib.pms.PMSProvider;
-import at.sesame.fhooe.lib.pms.errorhandling.ErrorForwarder;
-import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
-import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
-import at.sesame.fhooe.lib.pms.model.PMSStatus;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
+import at.sesame.fhooe.lib.pms.proxy.ProxyHelper;
+import at.sesame.fhooe.pms.list.ControllableDeviceAdapter;
+import at.sesame.fhooe.pms.list.ControllableDeviceListEntry;
+import at.sesame.fhooe.pms.list.IListEntry;
+import at.sesame.fhooe.pms.list.SeparatorListEntry;
 
-
-/**
- * this activity provides the GUI for interaction with the Sesame-S
- * Power Management Service
- *
- */
 public class PMSClientActivity 
-extends Activity
-implements OnItemSelectedListener, OnClickListener, IErrorReceiver
+extends Activity 
+implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 {
-	/**
-	 * the tag to identify the logger output of this class
-	 */
-	private static final String TAG = "PMSClientActivity";
-	
-	/**
-	 * the drop-down menu for device selection
-	 */
-	private Spinner mDeviceSelection;
-	
-	/**
-	 * the array adapter presenting the model for device selection
-	 */
-	private ArrayAdapter<String> mSpinnerAdapter;
+	private static final String TAG = "FancyPMSClientActivity";
 
-	/**
-	 * button to shut down the selected device
-	 */
-	private Button mShutDownButt;
-	
-	/**
-	 * button to wake the selected device up
-	 */
-	private Button mWakeupButt;
-	
-	/**
-	 * button to put the selected device to sleep
-	 */
-	private Button mSleepButt;
-	
-	/**
-	 * button to toast the status of the selected device
-	 */
-	private Button mStatusButt;
-	
-	/**
-	 * button to toast the extended status of the selected device
-	 */
-	private Button mExtendedStatusButt;
+	private static final int ACTIVE_DEVICE_ACTION_DIALOG = 0;
+	private static final int INACTIVE_DEVICE_ACTION_DIALOG = 1;
+	private static final int NO_NETWORK_DIALOG = 2;
 
-	/**
-	 * the currently selected ControllableDevice
-	 */
-	private ControllableDevice mCurrentDevice;
-	
-	/**
-	 * a list of all selectable devices
-	 */
-	private ArrayList<ControllableDevice> mDevices = new ArrayList<ControllableDevice>();
-	
+	private static final int IDLE_MINUTES_WARNING_THRESHOLD = 30;
+
+	private ArrayList<ControllableDevice> mAllDevices = new ArrayList<ControllableDevice>();
+	private HashMap<String, Boolean> mSelection = new HashMap<String, Boolean>();
+	private ArrayList<IListEntry> mEntries = new ArrayList<IListEntry>();
+
+
+	private ControllableDeviceAdapter mAdapter;
+
+	//	private Thread mDeviceStateRefreshThread = new Thread(this);
+	private DeviceStateUpdateThread mUpdateThread;
+//	private boolean mUpdating = true;
+//	private int mUpdatePeriod = 5000;
+
+	private ControllableDevice mSelectedDevice;
+
+	private ListView mDevList;
+	private ViewGroup mActiveDeviceControlContainer;
+	private ViewGroup mInactiveDeviceControlContainer;
+
+	private ToggleButton mActiveToggle;
+	private ToggleButton mInactiveToggle;
+
+	private Button mSleepAllButt;
+	private Button mPowerOffAllButt;
+	private Button mWakeUpAllButt;
+
+	private boolean mActionPending = false;
+
+	//	private final Object mLock = new Object();
+
+	private enum SelectedType
+	{
+		active,
+		inactive,
+		none
+	};
+
+//	Handler hendl = new Handler()
+//	{
+//		public void handleMessage(android.os.Message msg) 
+//		{
+//			Log.e(TAG, "handling");
+//			mUpdateThread.resumeAfterPause();
+//		};
+//	};
+
 	/**
 	 * the ProgressDialog to indicate networking
 	 */
-	ProgressDialog mNetworkingDialog;
+	private ProgressDialog mNetworkingDialog;
 
-
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) 
+	public void onCreate(Bundle _savedInstance)
 	{
-		super.onCreate(savedInstanceState);
+		super.onCreate(_savedInstance);
 		setContentView(R.layout.main);
-		ErrorForwarder.getInstance().register(this);
-		
+
 		setupNetworkingDialog();
-		
-		loadDevices();
+		if(!checkConnectivity())
+		{
+			showDialog(NO_NETWORK_DIALOG);
 
-		mSleepButt = (Button)findViewById(R.id.main_xml_sleepButt);
-		mSleepButt.setOnClickListener(this);
+			return;
+		}
+		queryControllableDevices();
 
-		mShutDownButt = (Button)findViewById(R.id.main_xml_shutDownButt);
-		mShutDownButt.setOnClickListener(this);
+		refreshListEntries();
+		mAdapter = new ControllableDeviceAdapter(this, mEntries);
+		mDevList = (ListView)findViewById(R.id.deviceList);
+		mDevList.setAdapter(mAdapter);
 
-		mStatusButt = (Button)findViewById(R.id.main_xml_statusButt);
-		mStatusButt.setOnClickListener(this);
+		mActiveDeviceControlContainer = (ViewGroup)findViewById(R.id.activeDeviceControllContainer);
+		mInactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
+		setControlContainerVisibility(View.GONE, View.GONE);
 
-		mExtendedStatusButt = (Button)findViewById(R.id.main_xml_extendedStatusButt);
-		mExtendedStatusButt.setOnClickListener(this);
+		mActiveToggle = (ToggleButton)findViewById(R.id.activeDeviceSelection);
+		mActiveToggle.setOnCheckedChangeListener(this);
 
-		mWakeupButt = (Button)findViewById(R.id.main_xml_wakeupButt);
-		mWakeupButt.setOnClickListener(this);
+		mInactiveToggle = (ToggleButton)findViewById(R.id.inactiveDeviceSelection);
+		mInactiveToggle.setOnCheckedChangeListener(this);
+
+		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
+		mSleepAllButt.setOnClickListener(this);
+
+		mPowerOffAllButt = (Button)findViewById(R.id.shutDownButton);
+		mPowerOffAllButt.setOnClickListener(this);
+
+		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
+		mWakeUpAllButt.setOnClickListener(this);
+
+		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
 	}
-	
+
+	private boolean checkConnectivity() 
+	{
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		//		mUpdating = false;
+		mUpdateThread.pause();
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+//		mUpdating = false;
+		mUpdateThread.pause();
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		Log.e(TAG, "onResume");
+		if(checkConnectivity())
+		{
+			mUpdateThread.start();
+//			mUpdateThread.resumeAfterPause();
+			//			mDeviceStateRefreshThread.start();
+
+		}
+	}
+
+	@Override
+	public Dialog onCreateDialog(int _id)
+	{
+		final Dialog d = new Dialog(this);
+
+		d.setContentView(R.layout.custom_action_dialog);
+		d.setTitle(mSelectedDevice.getHostname());
+		final ArrayList<String> strings = new ArrayList<String>();
+		ListView commands = (ListView)d.findViewById(R.id.cusomtActionDialogCommandList);
+		commands.setAdapter(new ArrayAdapter<String>(getApplicationContext(),R.layout.simple_pms_listitem, strings));
+		TextView message = (TextView)d.findViewById(R.id.messageLabel);
+
+		commands.setBackgroundColor(android.R.color.white);
+		switch(_id)
+		{
+		case ACTIVE_DEVICE_ACTION_DIALOG:
+			if(mSelectedDevice.getIdleSinceMinutes()<IDLE_MINUTES_WARNING_THRESHOLD)
+			{
+
+				message.setText(getString(R.string.PMSClientActivity_activeDeviceActionDialogBaseMessage)+mSelectedDevice.getIdleSinceMinutes()+")");
+			}
+			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogShutDownCommand));
+			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogSleepCommand));
+			strings.add(getString(android.R.string.cancel));
+			
+			commands.setOnItemClickListener(new OnItemClickListener() 
+			{
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					switch(arg2)
+					{
+					case 0:
+						mSelectedDevice.powerOff(PowerOffState.shutdown);
+						markDirty(mSelectedDevice);
+						d.dismiss();
+						break;
+					case 1:
+						mSelectedDevice.powerOff(PowerOffState.sleep);
+						markDirty(mSelectedDevice);
+						d.dismiss();
+						break;
+					case 2:
+						d.cancel();
+						break;
+					}
+				}
+			});	
+			break;
+
+		case INACTIVE_DEVICE_ACTION_DIALOG:
+			strings.add(getString(R.string.PMSClientActivity_inactiveDeviceDialogWakeUpCommand));
+			strings.add(getString(android.R.string.cancel));
+			commands.setOnItemClickListener(new OnItemClickListener() 
+			{
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					switch(arg2)
+					{
+					case 0:
+						mSelectedDevice.wakeUp();
+						markDirty(mSelectedDevice);
+						d.dismiss();
+						break;
+					case 1:
+						d.cancel();
+						break;
+					}
+				}
+			});
+			break;
+		case NO_NETWORK_DIALOG:
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setCancelable(true);
+			builder.setTitle(R.string.PMSClientActivity_noNetworkDialogTitle);
+			builder.setMessage(R.string.PMSClientActivity_noNetworkDialogMessage);
+
+			builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					finish();
+				}
+			});
+			return builder.create();
+		}
+		return d;
+	}
+
 	/**
 	 * creates the networking dialog
 	 */
 	private void setupNetworkingDialog()
 	{
 		mNetworkingDialog = new ProgressDialog(PMSClientActivity.this);
-		mNetworkingDialog.setMessage("Networking in progress, please wait...");
+		mNetworkingDialog.setMessage(getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
 		mNetworkingDialog.setCancelable(false);
 		mNetworkingDialog.setCanceledOnTouchOutside(false);
-		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	}
-	
-	/**
-	 * queries the mac addresses of all devices from the PMS, creates ControllableDeviecs from it
-	 * and triggers initialization of the drop-down menu
-	 */
-	private void loadDevices() 
-	{
-		showNetworkingDialog();
-		//only done in a own thread in order for the networking dialog to show
-		new Thread(new Runnable() 
-		{
-			@Override
-			public void run() 
-			{
-				Looper.prepare(); //needed to fix exceptions with AsyncTasks started in this method
-				ArrayList<String> macs = new ArrayList<String>();
-				macs = PMSProvider.getDeviceList();
-				for(int i = 0;i<macs.size();i++)
-				{
-					ControllableDevice dev = new ControllableDevice(macs.get(i), "admin", "pwd", true);
-					mDevices.add(dev);
-					Log.e(TAG, dev.toString());
-				}
-				dismissNetworkingDialog();
-				initSpinner();
-				Looper.loop(); //needed to fix exceptions with AsyncTasks started in this method
-			}
-		}).start();
-		
-	}
-	
+
 	/**
 	 * shows the networking dialog
 	 */
 	private void showNetworkingDialog()
 	{
-		mNetworkingDialog.show();
+		new Thread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				Looper.prepare();
+				mNetworkingDialog.show();
+				Looper.loop();
+			}
+		}).start();
 	}
-	
+
 	/**
 	 * dismisses the networking dialog if it is showing
 	 */
@@ -184,185 +314,525 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 			mNetworkingDialog.dismiss();
 		}
 	}
-	
-	/**
-	 * fills the drop-down menu with hostnames of all ControllableDevices
-	 */
-	private void initSpinner()
-	{
-		runOnUiThread(new Runnable() 
-		{	
-			@Override
-			public void run() 
-			{
-				mSpinnerAdapter= new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, getControllableHostNames());
-				mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-				mDeviceSelection = (Spinner)findViewById(R.id.main_xml_device_spinner);
-				mDeviceSelection.setAdapter(mSpinnerAdapter);
-				mDeviceSelection.setOnItemSelectedListener(PMSClientActivity.this);
-				
-				setCurrentDevice(mDeviceSelection.getSelectedItem());		
-			}
-		});
-	}
-	
 	/**
-	 * extracts the hostnames of all ControllableDevices and returns them in a list
-	 * @return a list of all available hostnames
+	 * parses the list of all devices, divides them into devices that are alive and those
+	 * that are not and sorts the alive devices by idle time
 	 */
-	private ArrayList<String> getControllableHostNames()
+	private void refreshListEntries() 
 	{
-		ArrayList<String> hostnames = new ArrayList<String>();
-		for(ControllableDevice cd:mDevices)
+		//		synchronized(mLock)
 		{
-			hostnames.add(cd.getHostname());
+			ArrayList<ControllableDevice> activeDevs = new ArrayList<ControllableDevice>();
+			ArrayList<ControllableDevice> inactiveDevs = new ArrayList<ControllableDevice>();
+
+			for(ControllableDevice cd:mAllDevices)
+			{
+				if(cd.isAlive())
+				{
+					activeDevs.add(cd);
+				}
+				else
+				{
+					inactiveDevs.add(cd);
+				}
+			}
+			Collections.sort(activeDevs, new ControllableDeviceComparator());
+			Collections.sort(inactiveDevs, new ControllableDeviceComparator());
+			mEntries.clear();
+			mEntries.add(new SeparatorListEntry(getString(R.string.PMSClientActivity_activeDeviceSeparatorText)+activeDevs.size()+")"));
+			for(ControllableDevice cd:activeDevs)
+			{
+				ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
+				cdle.setSelection(mSelection.get(cd.getHostname()));
+				mEntries.add(cdle);
+			}
+			mEntries.add(new SeparatorListEntry(getString(R.string.PMSClientActivity_inactiveDeviceSeparatorText)+inactiveDevs.size()+")"));
+			for(ControllableDevice cd:inactiveDevs)
+			{
+				ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
+				cdle.setSelection(mSelection.get(cd.getHostname()));
+				mEntries.add(cdle);
+			}
 		}
-		return hostnames;
 	}
 
-	/**
-	 * sets the currently controlled device and enables/disables buttons based
-	 * on the alive-status of the current device
-	 * @param _item item that is currently selected in the drop-down menu
-	 */
-	private void setCurrentDevice(Object _item)
+	private void queryControllableDevices() 
 	{
-		ControllableDevice curDev = getControllableDeviceFromSelectedItem(_item);
-		if(null!=curDev)
+		ArrayList<String> macs = PMSProvider.getDeviceList();
+		mNetworkingDialog.setMax(macs.size());
+		showNetworkingDialog();
+		//		synchronized(mLock)
 		{
-			mCurrentDevice = curDev;
-			if(mCurrentDevice.isAlive())
+			mAllDevices = new ArrayList<ControllableDevice>();
+			for(int i = 0;i<macs.size();i++)
 			{
-				mWakeupButt.setEnabled(false);
-				mSleepButt.setEnabled(true);
-				mShutDownButt.setEnabled(true);
+				ControllableDevice cd = new ControllableDevice(macs.get(i), "admin", "pwd", true);
+				mAllDevices.add(cd);
+				mSelection.put(cd.getHostname(), false);
+				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 			}
-			else
-			{
-				mSleepButt.setEnabled(false);
-				mShutDownButt.setEnabled(false);
-				mWakeupButt.setEnabled(true);
-			}
+		}
+		dismissNetworkingDialog();
+	}
+
+	//	@Override
+	//	public void run() 
+	//	{
+	//		while(mUpdating)
+	//		{
+	//			synchronized (mAllDevices) 
+	//			{
+	//				Log.e(TAG, "update started");
+	//				for(ControllableDevice cd:mAllDevices)
+	//				{
+	//					cd.updateStatus();
+	//					try {
+	//						Thread.sleep(10);
+	//					} catch (InterruptedException e) {
+	//						// TODO Auto-generated catch block
+	//						e.printStackTrace();
+	//					}
+	//					Log.e(TAG, cd.getHostname()+"updated...");
+	//				}
+	//
+	//				refreshListEntries();
+	//				Log.e(TAG, "list entries refreshed");
+	//				notifyAdapter();
+	//				Log.e(TAG, "updated");
+	//
+	//				try 
+	//				{
+	//					Thread.sleep(mUpdatePeriod);
+	//				} 
+	//				catch (InterruptedException e) 
+	//				{
+	//					e.printStackTrace();
+	//				}
+	//			}
+	//
+	//		}
+	//	}
+
+	public void handlePowerClick(ControllableDevice _cd)
+	{
+		ControllableDeviceListEntry cdle = getListEntryFromDevice(_cd);
+		if(null==cdle)
+		{
+			return;
+		}
+		mSelectedDevice = cdle.getControllableDevice();
+
+		if(mSelectedDevice.isAlive())
+		{
+
+			showDialog(ACTIVE_DEVICE_ACTION_DIALOG);
 		}
 		else
 		{
-			Log.e(TAG,"selected device was not found");
+			showDialog(INACTIVE_DEVICE_ACTION_DIALOG);
 		}
 	}
 
 	/**
-	 * searches the list of ControllableDevices for a hostname specified by the _item parameter
-	 * @param _item contains a hostname to look up in the list of devices
-	 * @return the ControllableDevice specified by the _item parameter, null if no device matches the
-	 * specified hostname
+	 * handles an attempt to select a device. if the list of selected devices already contains a device 
+	 * of different type (active/inactive) the device is not selected. 
+	 * @param _cd the device to select
+	 * @return true if the device was selected, false otherwise
 	 */
-	private ControllableDevice getControllableDeviceFromSelectedItem(Object _item)
+	public boolean handleSelectionAttempt(ControllableDevice _cd, boolean _checked)
 	{
-		for(ControllableDevice cd:mDevices)
+		boolean res = false;
+		ControllableDeviceListEntry cdle = getListEntryFromDevice(_cd);
+		if(null==cdle)
 		{
-			if(cd.getHostname().equals(_item))
+			return false;
+		}
+		switch (getSelectedType()) {
+		case none:
+			if(_checked)
 			{
-				return cd;
+				selectDevice(cdle);
+				res = true;
+			}
+			break;
+		case active:
+			if(cdle.getControllableDevice().isAlive())
+			{
+				selectDevice(cdle);
+				res = true;
+			}
+			else
+			{
+				toastSelectionFail();
+				res = false;
+			}
+			break;
+		case inactive:
+			if(cdle.getControllableDevice().isAlive())
+			{
+				toastSelectionFail();
+				res = false;
+			}
+			else
+			{
+				selectDevice(cdle);
+				res = true;
+			}
+			break;
+		}
+
+		if(getSelectedType()==SelectedType.none)
+		{
+			setControlContainerVisibility(View.GONE, View.GONE);
+		}
+		return res;
+	}
+
+	private void selectDevice(ControllableDeviceListEntry _cdle)
+	{
+		_cdle.setSelection(!_cdle.isSelected());
+		mSelection.put(_cdle.getControllableDevice().getHostname(), _cdle.isSelected());
+		notifyAdapter();
+		if(_cdle.getControllableDevice().isAlive())
+		{
+			setControlContainerVisibility(View.VISIBLE, View.GONE);
+		}
+		else
+		{
+			setControlContainerVisibility(View.GONE, View.VISIBLE);
+		}
+	}
+
+	private void toastSelectionFail()
+	{
+		Toast.makeText(this, "only devices from the same category (active/inactive) can be selected at the same time.", Toast.LENGTH_LONG).show();
+	}
+
+	private ControllableDeviceListEntry getListEntryFromDevice(ControllableDevice _cd)
+	{
+		for(IListEntry entry:mEntries)
+		{
+			if(entry instanceof ControllableDeviceListEntry)
+			{
+				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+				if(cdle.getControllableDevice().equals(_cd))
+				{
+					return cdle;
+				}
 			}
 		}
 		return null;
 	}
 
-	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
-		setCurrentDevice(mDeviceSelection.getSelectedItem());
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) 
+	private ArrayList<ControllableDevice> getSelectedDevices()
 	{
-	}
-
-	@Override
-	public void onClick(View v) 
-	{
-//		final ProgressDialog progressDialog = ProgressDialog.show(PMSClientActivity.this, "", "Networking in progress");
-		showNetworkingDialog();
-		final int id = v.getId();
-		
-		new Thread(new Runnable() 
-		{	
-			@Override
-			public void run() 
+		ArrayList<ControllableDevice> res = new ArrayList<ControllableDevice>();
+		synchronized (mAllDevices) {
+			for(ControllableDevice cd:mAllDevices)
 			{
-				switch(id)
+				if(mSelection.get(cd.getHostname()))
 				{
-				case R.id.main_xml_sleepButt:
-					if(mCurrentDevice.powerOff(PowerOffState.sleep))
-					{
-						toastOnUiThread("sleep of "+mCurrentDevice.getHostname()+" successful");
-					}
-					break;
-				case R.id.main_xml_shutDownButt:
-					if(mCurrentDevice.powerOff(PowerOffState.shutdown))
-					{
-						toastOnUiThread("shutdown of "+mCurrentDevice.getHostname()+" successful");
-					}
-					else
-					{
-						toastOnUiThread("shutdown of "+mCurrentDevice.getHostname()+" failed");
-					}
+					res.add(cd);
+				}
+			}
+		}
 
-					break;
-				case R.id.main_xml_statusButt:
-					PMSStatus status = mCurrentDevice.getStatus();
+		return res;
+	}
 
-					toastOnUiThread(status.toString());
-					break;
-				case R.id.main_xml_extendedStatusButt:
-					ExtendedPMSStatus extStatus = mCurrentDevice.getExtendedStatus();
-					if(null==extStatus)
-					{
-						break;
-					}
-					toastOnUiThread(extStatus.toString());
-					break;
-				case R.id.main_xml_wakeupButt:
-					if(mCurrentDevice.wakeUp())
-					{
-						toastOnUiThread("wakeup of "+mCurrentDevice.getHostname()+" successful");
-					}
-					else
-					{
-						toastOnUiThread("wakeup of "+mCurrentDevice.getHostname()+" failed");
-					}
+	private SelectedType getSelectedType()
+	{
+		ArrayList<ControllableDevice>selectedDevs = getSelectedDevices();
+		if(null==selectedDevs||selectedDevs.size()==0)
+		{
+			return SelectedType.none;
+		}
+		ControllableDevice cd = selectedDevs.get(0);
+		if(cd.isAlive())
+		{
+			return SelectedType.active;
+		}
+		else
+		{
+			return SelectedType.inactive;
+		}
+	}
 
-					break;
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+	{
+		deselectAll();
+		if(!isChecked)
+		{
+			return;
+		}
+		if(buttonView.equals(mActiveToggle))
+		{
+			mInactiveToggle.setOnCheckedChangeListener(null);
+			mInactiveToggle.setChecked(false);
+			mInactiveToggle.setOnCheckedChangeListener(this);
+			for(IListEntry entry:mEntries)
+			{
+				if(entry instanceof ControllableDeviceListEntry)
+				{
+					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+					if(cdle.getControllableDevice().isAlive())
+					{
+						selectDevice(cdle);
+					}
+				}
+			}
+		}
+		else if(buttonView.equals(mInactiveToggle))
+		{
+			mActiveToggle.setOnCheckedChangeListener(null);
+			mActiveToggle.setChecked(false);
+			mActiveToggle.setOnCheckedChangeListener(this);
+			for(IListEntry entry:mEntries)
+			{
+				if(entry instanceof ControllableDeviceListEntry)
+				{
+					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+					if(!cdle.getControllableDevice().isAlive())
+					{
+						selectDevice(cdle);
+					}
+				}
+			}
+		}	
+	}
+
+	private void deselectAll()
+	{
+		for(IListEntry entry:mEntries)
+		{
+			if(entry instanceof ControllableDeviceListEntry)
+			{
+				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+				cdle.setSelection(false);
+			}
+		}
+
+		for(ControllableDevice cd:mAllDevices)
+		{
+			mSelection.put(cd.getHostname(), false);
+		}
+		notifyAdapter();
+
+		setControlContainerVisibility(View.GONE, View.GONE);
+	}
+
+	private void setControlContainerVisibility(int _v1, int _v2)
+	{
+		mActiveDeviceControlContainer.setVisibility(_v1);
+		mInactiveDeviceControlContainer.setVisibility(_v2);
+	}
+
+	private void markDirty(final ControllableDevice _cd)
+	{
+
+		ControllableDeviceListEntry entry = getListEntryFromDevice(_cd);
+		entry.setDirty(true);
+		notifyAdapter();
+		Log.e(TAG, "marked dirty:"+_cd.getHostname());
+
+	}
+
+	@Override
+	public void onClick(View arg0) 
+	{
+
+		//		mDeviceStateRefreshThread.interrupt();
+		switch(arg0.getId())
+		{
+		case R.id.sleepButton:
+			powerOffSelectedDevices(PowerOffState.sleep);
+			break;
+		case R.id.shutDownButton:
+			Log.e(TAG, "shut down all");
+			powerOffSelectedDevices(PowerOffState.shutdown);
+			break;
+		case R.id.wakeUpButton:
+			Log.e(TAG, "wake up all");
+			wakeupSelectedDevices2();
+			break;
+		}
+		//		mDeviceStateRefreshThread.run();
+	}
+
+	private void powerOffSelectedDevices(final PowerOffState _state)
+	{
+		//		synchronized(mLock)
+		{
+			new Thread(new Runnable() 
+			{		
+				@Override
+				public void run() 
+				{
+					ArrayList<ControllableDevice> selDevs = getSelectedDevices();
+					for(ControllableDevice cd:selDevs)
+					{
+						markDirty(cd);
+					}
+					for(ControllableDevice cd:selDevs)
+					{
+						cd.powerOff(_state);
+					}
 
 				}
-				dismissNetworkingDialog();
-			}
-		}).start();
-		
+			}).start();
+		}
 	}
-	
-	/**
-	 * whenever a thread other than the UI thread has to toast a message
-	 * this method has to be used
-	 * @param _msg the message to be toasted
-	 */
-	private void toastOnUiThread(final String _msg)
+	private void wakeupSelectedDevices2()
 	{
-		runOnUiThread(new Runnable() 
-		{	
+		//		ProxyHelper.releaseConnections();
+		mUpdateThread.pause();
+		//		setActionPending(true);
+		//		try {
+		//			Thread.sleep(100);
+		//		} catch (InterruptedException e1) {
+		//			// TODO Auto-generated catch block
+		//			e1.printStackTrace();
+		//			Log.e(TAG, "sleep after updatepause interrupted");
+		//		}
+		Runnable r = new Runnable() 
+		{		
 			@Override
 			public void run() 
 			{
-				Toast.makeText(getApplicationContext(), _msg, Toast.LENGTH_LONG).show();
-				
+//				try{
+					ArrayList<ControllableDevice> selDevs = getSelectedDevices();
+					//				ArrayList<ControllableDevice> selDevs = new ArrayList<ControllableDevice>();
+					//				selDevs.add(getSelectedDevices().get(0));
+					//				selDevs.add(getSelectedDevices().get(1));
+					for(ControllableDevice cd:selDevs)
+					{
+						markDirty(cd);
+					}
+					for(int i = 0;i<selDevs.size();i++)
+					{
+						ControllableDevice cd = selDevs.get(i);
+						//					cd.wakeUp();
+						Log.e(TAG, "woke up:"+cd.getHostname());
+						//					Thread.yield();
+						//					try {
+						//						Thread.sleep(10);
+						//					} catch (InterruptedException e) {
+						//						// TODO Auto-generated catch block
+						//						e.printStackTrace();
+						//					}
+						Log.e(TAG, "finished device "+(i+1)+" of "+selDevs.size());
+					}
+					mUpdateThread.resumeAfterPause();
+//				}catch(Exception e)
+//				{
+//					Log.e(TAG, "exception in the difficult thread...");
+//					e.printStackTrace();
+//				}
+				//				hendl.sendMessage(new Message());
+				//				setActionPending(false);
+
+			}
+		};
+		Thread wakeupThread = new Thread(r);
+		//		wakeupThread.setUncaughtExceptionHandler(this);
+		wakeupThread.start();
+	}
+
+	private synchronized void setActionPending(boolean _val)
+	{
+		mActionPending = _val;
+	}
+
+	private void wakeupSelectedDevices() 
+	{
+		ProxyHelper.releaseConnections();
+		Log.e(TAG, "waking up all......");
+		//		mUpdateThread.pause();
+		//		synchronized (mLock) 
+		{
+			//			new Thread(new Runnable() 
+			//			{		
+			//				@Override
+			//				public void run() 
+			//				{
+			Log.e(TAG, "waking up selected devices");
+
+			//			new Thread(new Runnable() {
+			//
+			//				@Override
+			//				public void run() {
+			Log.e(TAG, "Thread for wakeup created");
+			final ArrayList<ControllableDevice> selDevs = getSelectedDevices();
+			for(ControllableDevice cd:selDevs)
+			{
+				markDirty(cd);
+			}
+			notifyAdapter();
+
+			new Thread(new Runnable() 
+			{	
+				@Override
+				public void run() 
+				{
+					for(final ControllableDevice cd:selDevs)
+					{
+						//						new Thread(new Runnable() {
+						//							
+						//							@Override
+						//							public void run() {
+						//								// TODO Auto-generated method stub
+						//								markDirty(cd);
+						//								notifyAdapter();
+						//							}
+						//						}).start();
+
+
+						cd.wakeUp();
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}	
+				}
+			}).start();
+
+
+		}
+	}
+
+	public void notifyDataUpdated()
+	{
+		//		if(mActionPending)
+		//		{
+		//			Log.e(TAG, "notify data cancled cause action is pending");
+		//			return;
+		//		}
+		Log.e(TAG, "notified by update thread");
+		refreshListEntries();
+		notifyAdapter();
+	}
+
+	private void notifyAdapter()
+	{
+		runOnUiThread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				mAdapter.notifyDataSetChanged();
+
 			}
 		});
+
 	}
 
 	@Override
-	public void notifyError(final String _msg) 
-	{
-		toastOnUiThread(_msg);
+	public void uncaughtException(Thread arg0, Throwable arg1) {
+		Log.e(TAG, "uncaught exception:"+arg1.getMessage());
+
 	}
 }

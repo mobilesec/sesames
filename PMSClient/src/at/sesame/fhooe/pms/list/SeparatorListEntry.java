@@ -1,4 +1,4 @@
-package at.sesame.fhooe.pms;
+package at.sesame.fhooe.pms.list;
 
 public class SeparatorListEntry 
 implements IListEntry 
@@ -20,5 +20,4 @@ implements IListEntry
 	{
 		return mTitle;
 	}
-
 }

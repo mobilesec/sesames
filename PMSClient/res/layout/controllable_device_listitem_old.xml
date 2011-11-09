@@ -3,7 +3,7 @@
     android:id="@+id/BorderedFrameLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/roundedrect"
+    android:background="@drawable/list_entry_bg"
     android:padding="10dip" >
 
     <LinearLayout
