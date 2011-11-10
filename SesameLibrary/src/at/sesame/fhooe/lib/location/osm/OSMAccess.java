@@ -18,7 +18,13 @@ public class OSMAccess
 	};
 	public static ArrayList<String> getClosestIndoorLocationDataUrl()
 	{
-		
+		double lat = 48.367;
+		double lon = 14.517;
+		double left = lon-0.01;
+		double right = lon+0.01;
+
+		double top = lat+0.01;
+		double bottom = lat-0.01;
 		return null;
 	}
 
