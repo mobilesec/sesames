@@ -25,8 +25,16 @@ extends AsyncTask<String, Void, Object>
 		String mac = arg0[0];
 		String user = arg0[1];
 		String pass = arg0[2];
-		Object res = PMSProvider.getPMS().extendedStatus(mac, user, pass);
-		return res;
+		try
+		{
+			Object res = PMSProvider.getPMS().extendedStatus(mac, user, pass);
+			return res;
+		}
+		catch(Exception e)
+		{
+			return new Boolean(false);
+		}
+
 	}
 
 }

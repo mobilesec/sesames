@@ -88,6 +88,12 @@ extends Service
 			}
 			return location;
 		}
+
+		@Override
+		public boolean queryAvailableLocalizationDataSources()throws RemoteException {
+			// TODO Auto-generated method stub
+			return false;
+		}
 	};
 	
 	@Override

@@ -3,6 +3,12 @@ package at.sesame.fhooe.localizationservice;
 interface ILocalizationService
 {
 	/**
+	* queries OSM for IndoorLocalizationNodes in the vicinity and sets data accordingly
+	* @return true if indoor localization data are available, false otherwise
+	*/
+	boolean queryAvailableLocalizationDataSources();
+	
+	/**
 	* sets the path to the set of used training data
 	*/
 	void setTrainingSetPath(String _path);

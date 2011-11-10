@@ -25,6 +25,7 @@ import at.sesame.fhooe.lib.R;
  *
  */
 public class CalendarAccessHC 
+implements ICalendarAccess
 {
 	/**
 	 * the tag to identify the logger output of this class
@@ -62,10 +63,7 @@ public class CalendarAccessHC
 		mContext = _c;
 	}
 	
-	/**
-	 * returns all calendars present on the device
-	 * @return names of all present calendars
-	 */
+
 	public String[] getCalendarNames()
 	{
 		ArrayList<String>buff = new ArrayList<String>();
@@ -88,11 +86,7 @@ public class CalendarAccessHC
 		return res;
 	}
 	
-	/**
-	 * returns the id of a calendar specified by its name
-	 * @param _name the name of the calendar
-	 * @return the id of the calendar
-	 */
+	
 	public int getCalendarIdByName(String _name)
 	{
 		Cursor c = getCalendarCursor();
@@ -121,11 +115,7 @@ public class CalendarAccessHC
 		return cursor;
 	}
 	
-	/**
-	 * returns a list of all CalendarEvents associated wit a passed calendar name
-	 * @param _calName the name of the calendar
-	 * @return a list of CalendarEvents
-	 */
+
 	public ArrayList<CalendarEvent> getEventsFromCalendar(String _calName)
 	{
 		ArrayList<CalendarEvent> res = new ArrayList<CalendarEvent>();

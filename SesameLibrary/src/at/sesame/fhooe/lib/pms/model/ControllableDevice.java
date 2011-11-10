@@ -22,8 +22,17 @@ import at.sesame.fhooe.lib.pms.service.IPMSService;
  * can provide status information, can be shut down, sent to sleep and woken up.
  *
  */
-public class ControllableDevice 
+public class ControllableDevice
+implements Runnable
 {
+//	private enum PMSCalls
+//	{
+//		sleep,
+//		shutDown,
+//		status,
+//		extendedStatus
+//	}
+//	private LinkedBlockingQueue mQueue;
 	
 	private static final String TAG = "ControllableDevice";
 	/**
@@ -35,6 +44,15 @@ public class ControllableDevice
 		shutdown,
 		sleep
 	}
+	
+	public enum OS
+	{
+		windows,
+		linux,
+		mac,
+		unknown
+	}
+	
 	/**
 	 * the MAC address of the device
 	 */
@@ -53,7 +71,7 @@ public class ControllableDevice
 	/**
 	 * the operating system of the device
 	 */
-	private String mOs;
+	private OS mOs;
 	
 	/**
 	 * the username of the device
@@ -77,6 +95,10 @@ public class ControllableDevice
 	private boolean mUseCredentials;
 	
 	private int mIdleSince;
+	
+//	private boolean mConsumerThreadRunning = true;
+//	
+//	private Thread mConsumerThread;
 
 	/**
 	 * instance of the PMS
@@ -98,6 +120,7 @@ public class ControllableDevice
 		mUseCredentials = _useCredentials;
 
 		mPms= PMSProvider.getPMS();
+//		mQueue = new LinkedBlockingQueue();
 		updateStatus();
 	}
 
@@ -107,18 +130,20 @@ public class ControllableDevice
 	 */
 	public boolean wakeUp()
 	{
-		try {
-			return new WakeupTask().execute(mMac).get();
+//		try
+		{
+			return mPms.wakeup(mMac);
+//			return new WakeupTask().execute(mMac).get();
 		} 
-		catch (InterruptedException e) 
-		{
-			e.printStackTrace();
-		}
-		catch (ExecutionException e) 
-		{
-			e.printStackTrace();
-		}
-		return false;
+//		catch (InterruptedException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		catch (ExecutionException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		return false;
 	}
 	
 	/**
@@ -162,9 +187,23 @@ public class ControllableDevice
 		}
 		mHostname = extStat.getHostname();
 		mIp = extStat.getIp();
-		mOs = extStat.getOs();
+		mOs = translateOsToEnum(extStat.getOs());
 		mAlive = extStat.getAlive().equals("1")?true:false;
 		mIdleSince = extStat.getIdleSince();
+	}
+
+	private OS translateOsToEnum(String os) 
+	{
+//		if(os.toLowerCase().equals("windows"))
+//		{
+//			return OS.windows;
+//		}
+//		else if(os.toLowerCase().equals("linux"))
+//		{
+//			return OS.linux;
+//		}
+//		return null;
+		return OS.valueOf(os);
 	}
 
 	/**
@@ -196,7 +235,6 @@ public class ControllableDevice
 	 */
 	public ExtendedPMSStatus getExtendedStatus()
 	{
-		Log.e(TAG, "extended status");
 		if(null==mPms)
 		{
 			return null;
@@ -206,7 +244,8 @@ public class ControllableDevice
 			Object res;
 			try 
 			{
-				res = new ExtendedStatusTask().execute(mMac, mUser, mPassword).get();
+//				res = new ExtendedStatusTask().execute(mMac, mUser, mPassword).get();
+				res = mPms.extendedStatus(mMac, mUser, mPassword);
 				if(res instanceof Boolean)
 				{
 					return null;
@@ -216,12 +255,19 @@ public class ControllableDevice
 					return (ExtendedPMSStatus) res;
 				}
 			} 
-			catch (InterruptedException e) 
-			{
-				e.printStackTrace();
-				return null;
-			} 
-			catch (ExecutionException e) 
+//			catch (InterruptedException e) 
+//			{
+//				
+////				e.printStackTrace();
+//				Log.e(TAG, "extendedStatus was interrupted. "+e.getMessage());
+//				return null;
+//			} 
+//			catch (ExecutionException e) 
+//			{
+//				e.printStackTrace();
+//				return null;
+//			}
+			catch(Exception e)
 			{
 				e.printStackTrace();
 				return null;
@@ -245,7 +291,7 @@ public class ControllableDevice
 		return mIp;
 	}
 
-	public String getOs() {
+	public OS getOs() {
 		return mOs;
 	}
 
@@ -266,6 +312,11 @@ public class ControllableDevice
 	{
 		return mIdleSince;
 	}
+	
+	public int getIdleSinceMinutes()
+	{
+		return getIdleSince()/60;
+	}
 
 	@Override
 	public String toString()
@@ -284,5 +335,11 @@ public class ControllableDevice
 		sb.append("\n------------------------");
 
 		return sb.toString();
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 }

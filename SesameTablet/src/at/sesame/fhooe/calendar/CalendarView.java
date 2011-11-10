@@ -9,27 +9,21 @@ package at.sesame.fhooe.calendar;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ListActivity;
-import android.app.ListFragment;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 import at.sesame.fhooe.R;
-import at.sesame.fhooe.SesameTabletActivity;
-import at.sesame.fhooe.lib.calendar.CalendarAccessHC;
+import at.sesame.fhooe.lib.SesameFactory;
 import at.sesame.fhooe.lib.calendar.CalendarEvent;
+import at.sesame.fhooe.lib.calendar.ICalendarAccess;
 
 /**
  * this class implements the view for a list of CalendarEvents
@@ -42,7 +36,7 @@ implements OnClickListener
 {
 	private static final String TAG = "CalendarView";
 	private static final int CALENDAR_SELECTION_DIALOG = 0;
-	private CalendarAccessHC mCalAccess= null;
+	private ICalendarAccess mCalAccess= null;
 	
 	private ArrayList<CalendarEvent> mEvents = new ArrayList<CalendarEvent>();
 	private CalendarEventAdapter mCalendarEventAdapter;
@@ -53,7 +47,7 @@ implements OnClickListener
 		super.onCreate(_savedInstance);
 		setContentView(R.layout.calendar);
 		Log.e(TAG, "on Create");
-		mCalAccess = new CalendarAccessHC(this);
+		mCalAccess = SesameFactory.getCalendarAccess(this);
 		mCalendarEventAdapter = new CalendarEventAdapter(this, R.layout.calendarevent, mEvents);
 		setListAdapter(mCalendarEventAdapter);
 		Log.e(TAG, "onActivityCreated");
@@ -129,7 +123,7 @@ implements OnClickListener
         mCalendarEventAdapter.notifyDataSetChanged();
 	}
 	
-	public CalendarAccessHC getCalendarAccess()
+	public ICalendarAccess getCalendarAccess()
 	{
 		return mCalAccess;
 	}

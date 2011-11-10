@@ -527,7 +527,7 @@ public class ARFFGenerator
 	 * @param _f the file specifying the location for the arff file
 	 * @param _content the content of the arff file
 	 */
-	private static boolean writeArffFile(String _path, String _content)
+	public static boolean writeArffFile(String _path, String _content)
 	{
 		File f = new File(_path);
 		if(!f.exists())

@@ -15,8 +15,9 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
 import at.sesame.fhooe.R;
+import at.sesame.fhooe.lib.SesameFactory;
 import at.sesame.fhooe.lib.exceptions.VpnException;
-import at.sesame.fhooe.lib.vpn.VpnAccess;
+import at.sesame.fhooe.lib.vpn.IVpnAccess;
 
 public class SesameVPNWidgetProvider 
 extends AppWidgetProvider 
@@ -25,11 +26,14 @@ extends AppWidgetProvider
 	private static final String CONNECT_ACTION = "CONNECT_ACTION";
 	private static final String DISCONNECT_ACTION = "DISCONNECT_ACTION";
 	
+	private IVpnAccess mVpnAccess;
+	
 	public void onEnabled(Context c)
 	{
+		mVpnAccess = SesameFactory.getVpnAccess();
 		Log.e(TAG, "onEnabled() called");
 		try {
-			VpnAccess.initialize(c);
+			mVpnAccess.initialize(c);
 		} catch (VpnException e) 
 		{
 			e.printStackTrace();
@@ -60,7 +64,7 @@ extends AppWidgetProvider
 		 {
 			 Log.e(TAG, "connect in onReceive");
 			 //TODO replace null with meaningful mode
-			 if(VpnAccess.connect(null))
+			 if(mVpnAccess.connect(null))
 			 {
 				 Log.e(TAG, "connected successful");
 			 }
@@ -72,7 +76,7 @@ extends AppWidgetProvider
 		 else if(intent.getAction().equals(DISCONNECT_ACTION))
 		 {
 			 Log.e(TAG, "disconnect in onReceive");
-			 VpnAccess.disconnect();
+			 mVpnAccess.disconnect();
 		 }
 	}
 }

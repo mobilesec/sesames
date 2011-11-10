@@ -10,11 +10,13 @@ package at.sesame.fhooe.lib.pms.proxy;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.Principal;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -25,7 +27,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ClientConnectionRequest;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.ManagedClientConnection;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -33,6 +39,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultProxyAuthenticationHandler;
+import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
@@ -40,12 +47,15 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
+import android.net.http.AndroidHttpClient;
+
 /**
  * this class creates a proxied http client
  *
  */
 public class ProxyHelper 
 {
+	private static ThreadSafeClientConnManager mCCM;
 	/**
 	 * creates an http client that uses a proxy server with authentication 
 	 * and accepts all SSL certificates
@@ -70,11 +80,22 @@ public class ProxyHelper
 			registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
 			registry.register(new Scheme("https", sf, 443));
 
-			ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
+			mCCM = new ThreadSafeClientConnManager(params, registry);
 
-			DefaultHttpClient defClient = new DefaultHttpClient(ccm, params);
+//			ClientConnectionManager ccm = new SingleClientConnManager(params, registry);
+
+			DefaultHttpClient defClient = new DefaultHttpClient(mCCM, params);
+//			HttpClient defClient = AndroidHttpClient.
 			defClient.getParams().setParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
 			defClient.getParams().setParameter(AuthPNames.CREDENTIAL_CHARSET, "UTF-8");
+			defClient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
+				
+				@Override
+				public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+					// TODO Auto-generated method stub
+					return 1;
+				}
+			});
 	
 			HttpHost proxy = new HttpHost("80.120.3.4", 80);
 
@@ -129,5 +150,10 @@ public class ProxyHelper
 				return "testme!#";
 			}
 		};
+	}
+	
+	public static void releaseConnections()
+	{
+		mCCM.closeExpiredConnections();
 	}
 }

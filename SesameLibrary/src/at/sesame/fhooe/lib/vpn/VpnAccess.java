@@ -31,8 +31,10 @@ import at.sesame.fhooe.lib.vpn.VpnSetting.Type;
  * @author Peter Riedl
  *
  */
-public class VpnAccess 
+public class VpnAccess
+implements IVpnAccess
 {
+	private static final String TAG = "VpnAccess";
 	/**
 	 * Enum containing the two supported modes of connection
 	 */
@@ -45,34 +47,34 @@ public class VpnAccess
 	/**
 	 * the AuthenticationActor for certificate based VPN connections
 	 */
-	private static AuthenticationActor mCertActor;
+	private  AuthenticationActor mCertActor;
 	
 	/**
 	 * the VpnActor for PSK based VPN Connections
 	 */
-	private static VpnActor mPskActor;
+	private  VpnActor mPskActor;
 	
 	/**
 	 * the settings of the VPN connection
 	 */
-	private static VpnSetting mSetting;
+	private  VpnSetting mSetting;
 	
 	/**
 	 * the context of the VpnAccess
 	 */
-	private static Context mContext;
+	private  Context mContext;
 	
 	/**
 	 * the actual used vpn mode
 	 */
-	private static ConnectionMode mMode;
+	private  ConnectionMode mMode;
 	
 	/**
 	 * creates a profile for PSK based VPN access
 	 * @return a profile for PSK based VPN access
 	 * @throws VpnException when the settings are invalid
 	 */
-	private static L2tpIpsecPskProfile createPskProfile() throws VpnException
+	private  L2tpIpsecPskProfile createPskProfile() throws VpnException
 	{
   		if(!mSetting.isValid())
   		{
@@ -99,7 +101,7 @@ public class VpnAccess
 	 * @return a profile for certificate based VPN access
 	 * @throws VpnException when the settings are invalid
 	 */
-	private static L2tpIpsecProfile createCertProfile() throws VpnException
+	private L2tpIpsecProfile createCertProfile() throws VpnException
 	{
 		if(!mSetting.isValid())
   		{
@@ -118,21 +120,16 @@ public class VpnAccess
 		return profile;
 	}
   
-	/**
-	 * first checks for mode conflicts, then initializes the AuthenticationActor
-	 * according to the actual ConnectionMode
-	 * @param c the Context for the AuthenticationActor
-	 * @throws VpnException when the modes conflict
-	 */
-	public static void initialize(Context _c) throws VpnException
+	@Override
+	public void initialize(Context _c) throws VpnException
 	{
 		checkModeConflict();
 		mContext = _c;
-		if(mMode == ConnectionMode.CRT)
+//		if(mMode == ConnectionMode.CRT)
 		{
 			mCertActor = new AuthenticationActor(mContext,createCertProfile());
 		}
-		else if(mMode == ConnectionMode.PSK)
+//		else if(mMode == ConnectionMode.PSK)
 		{
 			mPskActor = new VpnActor(mContext);
 		}
@@ -143,7 +140,7 @@ public class VpnAccess
 	 * are in conflict
 	 * @throws VpnException when a conflict was found
 	 */
-	private static void checkModeConflict() throws VpnException
+	private void checkModeConflict() throws VpnException
 	{
 		if(mMode == ConnectionMode.CRT)
 		{
@@ -161,22 +158,17 @@ public class VpnAccess
 		}
 	}
   
-	/**
-	 * creates a new VpnBroadcastReceiver for user notification
-	 * @param _c the context to be used
-	 */
-	public static void enableNotifications(Context _c)
+
+	@Override
+	public void enableNotifications(Context _c)
 	{
 		new VpnBroadcastReceiver(_c);
 	}
 
-	/**
-	 * actually connects to the VPN
-	 * @return true if connection is attempted, false if any preconditions
-	 * for connection are not satisfied
-	 */
-	public static boolean connect(ConnectionMode _mode)
+	
+	public boolean connect(ConnectionMode _mode)
 	{
+		Log.e(TAG, "connecting");
 		if(_mode ==ConnectionMode.PSK)
 		{
 			if(null!=mPskActor)
@@ -195,22 +187,30 @@ public class VpnAccess
 					return false;
 				}
 			}
+			else
+			{
+				Log.e(TAG, "psk actor was null");
+			}
 		}
 		else if(_mode==ConnectionMode.CRT)
 		{
 			if(null!=mCertActor)
 			{
+				Log.e(TAG, "connecting certificate mode");
 				mCertActor.connect(mSetting.getUser(), mSetting.getUserPass());
 				return true;
+			}
+			else
+			{
+				Log.e(TAG, "certActor was null");
 			}
 		}
 		return false;
 	}
 	
-	/**
-	 * closes the VPN connection
-	 */
-	public static void disconnect()
+
+	@Override
+	public void disconnect()
 	{
 		if(null!=mPskActor)
 		{
@@ -227,22 +227,19 @@ public class VpnAccess
 		}
 	}
 
-	/**
-	 * sets the VpnSettings
-	 * @param _setting the VpnSettings to set
-	 */
-	public static void setVpnSetting(VpnSetting _setting)
+	@Override
+	public void setVpnSetting(VpnSetting _setting)
 	{
 		Log.e("VPNACCESS", _setting.toString());
 		mSetting = _setting;
 	}
 
-	/**
-	 * sets the ConnectionMode
-	 * @param _mode the ConnectionMode to set
-	 */
-	public static void setConnectionMode(ConnectionMode _mode)
-	{
-		mMode = _mode;
-	}
+//	/**
+//	 * sets the ConnectionMode
+//	 * @param _mode the ConnectionMode to set
+//	 */
+//	public static void setConnectionMode(ConnectionMode _mode)
+//	{
+//		mMode = _mode;
+//	}
 }

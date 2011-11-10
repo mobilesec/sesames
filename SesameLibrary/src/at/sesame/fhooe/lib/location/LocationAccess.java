@@ -8,6 +8,7 @@
 package at.sesame.fhooe.lib.location;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.location.Location;
@@ -29,20 +30,37 @@ implements LocationListener
 	 */
 	private ArrayList<ILocationUpdateReceiver> mRecvs = new ArrayList<ILocationUpdateReceiver>();
 	
+	
+	private LocationManager mLm;
+	
 	/**
 	 * creates a new LocationAccess with specified owner
 	 * @param _c the current context to get the location service from
 	 */
 	public LocationAccess(Context _c)
 	{	
-		LocationManager lm = (LocationManager) _c.getSystemService(Context.LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		mLm = (LocationManager) _c.getSystemService(Context.LOCATION_SERVICE);
+		mLm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+		mLm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 	}
 	
 	public void registerLocationUpdateReceiver(ILocationUpdateReceiver _recv)
 	{
 		mRecvs.add(_recv);
+	}
+	
+	public Location getLastLocation()
+	{
+		List<String> providers = mLm.getProviders(true);
+		if(providers.contains(LocationManager.GPS_PROVIDER))
+		{
+			return mLm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		}
+		else if(providers.contains(LocationManager.NETWORK_PROVIDER))
+		{
+			return mLm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		}
+		return null;
 	}
 
 	@Override

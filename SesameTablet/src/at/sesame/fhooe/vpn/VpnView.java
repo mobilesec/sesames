@@ -22,9 +22,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import at.sesame.fhooe.R;
+import at.sesame.fhooe.lib.SesameFactory;
 import at.sesame.fhooe.lib.exceptions.VpnException;
 import at.sesame.fhooe.lib.util.DeviceStateInfo;
-import at.sesame.fhooe.lib.vpn.VpnAccess;
+import at.sesame.fhooe.lib.vpn.IVpnAccess;
 import at.sesame.fhooe.lib.vpn.VpnAccess.ConnectionMode;
 import at.sesame.fhooe.lib.vpn.VpnSetting;
 import at.sesame.fhooe.lib.vpn.xml.VpnSettingsParser;
@@ -58,7 +59,7 @@ implements OnClickListener
 	 */
 	private static final String TAG = "VpnView";
 	
-	
+	private IVpnAccess mVpnAccess;
 	
 	/**
 	 * the VPN settings of this application
@@ -70,6 +71,8 @@ implements OnClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vpn);
+        
+        mVpnAccess = SesameFactory.getVpnAccess();
 //        View v = _inflater.inflate(R.layout.vpn, null);
         
         Button connectButt = (Button) findViewById(R.id.vpnConnectButton);
@@ -80,7 +83,8 @@ implements OnClickListener
         
         try {
         	mSet = new VpnSettingsParser().parseVpnSettings(getResources().getXml(R.xml.vpn_config));
-			VpnAccess.setVpnSetting(mSet);
+			mVpnAccess.setVpnSetting(mSet);
+			mVpnAccess.initialize(this);
         	Log.e(TAG, mSet.toString());
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
@@ -91,9 +95,12 @@ implements OnClickListener
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (VpnException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
         DeviceStateInfo.setContext(this);
-        VpnAccess.enableNotifications(this);
+        mVpnAccess.enableNotifications(this);
     }
     
 	@Override
@@ -127,7 +134,7 @@ implements OnClickListener
 		case R.id.vpnDisconnectButton:
 			try 
 			{
-				VpnAccess.disconnect();
+				mVpnAccess.disconnect();
 			} 
 			catch (Exception e) 
 			{
@@ -144,9 +151,10 @@ implements OnClickListener
 	 */
 	public void connectToVpn(ConnectionMode _cm) throws VpnException
 	{
-		VpnAccess.setConnectionMode(_cm);
-		VpnAccess.initialize(this);
-		VpnAccess.connect(_cm);
+		Log.e(TAG, "connecting: "+_cm.name());
+//		mVpnAccess.setConnectionMode(_cm);
+		mVpnAccess.initialize(this);
+		mVpnAccess.connect(_cm);
 	}
 	
 	public Dialog onCreateDialog(int _id)
