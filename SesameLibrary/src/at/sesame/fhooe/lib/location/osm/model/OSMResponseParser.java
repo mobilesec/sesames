@@ -25,6 +25,7 @@ public class OSMResponseParser
 	private static final String  UID_KEY = "uid";
 	private static final String  VISIBLE_KEY = "visible";
 	private static final String  TIMESTAMP_KEY = "timestamp";
+	
 	public OSMResponseParser()
 	{
 		init();

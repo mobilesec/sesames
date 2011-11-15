@@ -28,4 +28,5 @@
     <string name="PMSClientActivity_inactiveDeviceSeparatorText">Ausgeschaltet (</string>
     <string name="controllable_device_listitem_checkBox_text">Auswählen</string>
     <string name="ControllableDeviceAdapter_idleLabel_text">Ruhezeit:</string>
+    <string name="mainXML_separatorSelectionText">alle auswählen</string>
 </resources>

@@ -1,4 +1,4 @@
-package at.sesame.fhooe.pms.list;
+package at.sesame.fhooe.pms.list.controllabledevice;
 
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 

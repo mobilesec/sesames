@@ -11,13 +11,10 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources.NotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,24 +23,26 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import at.sesame.fhooe.lib.pms.PMSProvider;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
 import at.sesame.fhooe.lib.pms.proxy.ProxyHelper;
-import at.sesame.fhooe.pms.list.ControllableDeviceAdapter;
-import at.sesame.fhooe.pms.list.ControllableDeviceListEntry;
-import at.sesame.fhooe.pms.list.IListEntry;
-import at.sesame.fhooe.pms.list.SeparatorListEntry;
+import at.sesame.fhooe.pms.list.commands.CommandAdapter;
+import at.sesame.fhooe.pms.list.commands.CommandListEntry;
+import at.sesame.fhooe.pms.list.commands.CommandListEntry.CommandType;
+import at.sesame.fhooe.pms.list.controllabledevice.ControllableDeviceAdapter;
+import at.sesame.fhooe.pms.list.controllabledevice.ControllableDeviceListEntry;
+import at.sesame.fhooe.pms.list.controllabledevice.IListEntry;
+import at.sesame.fhooe.pms.list.controllabledevice.SeparatorListEntry;
+import at.sesame.fhooe.pms.list.controllabledevice.SeparatorListEntry.ListType;
 
 public class PMSClientActivity 
 extends Activity 
-implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
+implements OnClickListener, UncaughtExceptionHandler
 {
 	private static final String TAG = "FancyPMSClientActivity";
 
@@ -62,8 +61,8 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 
 	//	private Thread mDeviceStateRefreshThread = new Thread(this);
 	private DeviceStateUpdateThread mUpdateThread;
-//	private boolean mUpdating = true;
-//	private int mUpdatePeriod = 5000;
+	//	private boolean mUpdating = true;
+	//	private int mUpdatePeriod = 5000;
 
 	private ControllableDevice mSelectedDevice;
 
@@ -71,12 +70,12 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 	private ViewGroup mActiveDeviceControlContainer;
 	private ViewGroup mInactiveDeviceControlContainer;
 
-	private ToggleButton mActiveToggle;
-	private ToggleButton mInactiveToggle;
+	//	private ToggleButton mActiveToggle;
+	//	private ToggleButton mInactiveToggle;
 
-	private Button mSleepAllButt;
-	private Button mPowerOffAllButt;
-	private Button mWakeUpAllButt;
+	private ImageButton mSleepAllButt;
+	private ImageButton mPowerOffAllButt;
+	private ImageButton mWakeUpAllButt;
 
 	private boolean mActionPending = false;
 
@@ -89,14 +88,14 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 		none
 	};
 
-//	Handler hendl = new Handler()
-//	{
-//		public void handleMessage(android.os.Message msg) 
-//		{
-//			Log.e(TAG, "handling");
-//			mUpdateThread.resumeAfterPause();
-//		};
-//	};
+	//	Handler hendl = new Handler()
+	//	{
+	//		public void handleMessage(android.os.Message msg) 
+	//		{
+	//			Log.e(TAG, "handling");
+	//			mUpdateThread.resumeAfterPause();
+	//		};
+	//	};
 
 	/**
 	 * the ProgressDialog to indicate networking
@@ -126,19 +125,19 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 		mInactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
 		setControlContainerVisibility(View.GONE, View.GONE);
 
-		mActiveToggle = (ToggleButton)findViewById(R.id.activeDeviceSelection);
-		mActiveToggle.setOnCheckedChangeListener(this);
+		//		mActiveToggle = (ToggleButton)findViewById(R.id.activeDeviceSelection);
+		//		mActiveToggle.setOnCheckedChangeListener(this);
+		//
+		//		mInactiveToggle = (ToggleButton)findViewById(R.id.inactiveDeviceSelection);
+		//		mInactiveToggle.setOnCheckedChangeListener(this);
 
-		mInactiveToggle = (ToggleButton)findViewById(R.id.inactiveDeviceSelection);
-		mInactiveToggle.setOnCheckedChangeListener(this);
-
-		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
+		mSleepAllButt = (ImageButton)findViewById(R.id.sleepButton);
 		mSleepAllButt.setOnClickListener(this);
 
-		mPowerOffAllButt = (Button)findViewById(R.id.shutDownButton);
+		mPowerOffAllButt = (ImageButton)findViewById(R.id.shutDownButton);
 		mPowerOffAllButt.setOnClickListener(this);
 
-		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
+		mWakeUpAllButt = (ImageButton)findViewById(R.id.wakeUpButton);
 		mWakeUpAllButt.setOnClickListener(this);
 
 		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
@@ -166,7 +165,7 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 	public void onPause()
 	{
 		super.onPause();
-//		mUpdating = false;
+		//		mUpdating = false;
 		mUpdateThread.pause();
 	}
 
@@ -178,7 +177,7 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 		if(checkConnectivity())
 		{
 			mUpdateThread.start();
-//			mUpdateThread.resumeAfterPause();
+			//			mUpdateThread.resumeAfterPause();
 			//			mDeviceStateRefreshThread.start();
 
 		}
@@ -191,9 +190,9 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 
 		d.setContentView(R.layout.custom_action_dialog);
 		d.setTitle(mSelectedDevice.getHostname());
-		final ArrayList<String> strings = new ArrayList<String>();
+		final ArrayList<CommandListEntry> cles = new ArrayList<CommandListEntry>();
 		ListView commands = (ListView)d.findViewById(R.id.cusomtActionDialogCommandList);
-		commands.setAdapter(new ArrayAdapter<String>(getApplicationContext(),R.layout.simple_pms_listitem, strings));
+		commands.setAdapter(new CommandAdapter(getApplicationContext(), cles));
 		TextView message = (TextView)d.findViewById(R.id.messageLabel);
 
 		commands.setBackgroundColor(android.R.color.white);
@@ -205,10 +204,13 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 
 				message.setText(getString(R.string.PMSClientActivity_activeDeviceActionDialogBaseMessage)+mSelectedDevice.getIdleSinceMinutes()+")");
 			}
-			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogShutDownCommand));
-			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogSleepCommand));
-			strings.add(getString(android.R.string.cancel));
-			
+//			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogShutDownCommand));
+//			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogSleepCommand));
+//			strings.add(getString(android.R.string.cancel));
+			cles.add(new CommandListEntry(getApplicationContext(), CommandType.shutDown));
+			cles.add(new CommandListEntry(getApplicationContext(), CommandType.sleep));
+			cles.add(new CommandListEntry(getApplicationContext(), CommandType.cancel));
+
 			commands.setOnItemClickListener(new OnItemClickListener() 
 			{
 				@Override
@@ -235,8 +237,10 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 			break;
 
 		case INACTIVE_DEVICE_ACTION_DIALOG:
-			strings.add(getString(R.string.PMSClientActivity_inactiveDeviceDialogWakeUpCommand));
-			strings.add(getString(android.R.string.cancel));
+//			strings.add(getString(R.string.PMSClientActivity_inactiveDeviceDialogWakeUpCommand));
+//			strings.add(getString(android.R.string.cancel));
+			cles.add(new CommandListEntry(getApplicationContext(), CommandType.wakeUp));
+			cles.add(new CommandListEntry(getApplicationContext(), CommandType.cancel));
 			commands.setOnItemClickListener(new OnItemClickListener() 
 			{
 				@Override
@@ -340,14 +344,14 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 			Collections.sort(activeDevs, new ControllableDeviceComparator());
 			Collections.sort(inactiveDevs, new ControllableDeviceComparator());
 			mEntries.clear();
-			mEntries.add(new SeparatorListEntry(getString(R.string.PMSClientActivity_activeDeviceSeparatorText)+activeDevs.size()+")"));
+			mEntries.add(new SeparatorListEntry(getApplicationContext(), ListType.active, activeDevs.size()));
 			for(ControllableDevice cd:activeDevs)
 			{
 				ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
 				cdle.setSelection(mSelection.get(cd.getHostname()));
 				mEntries.add(cdle);
 			}
-			mEntries.add(new SeparatorListEntry(getString(R.string.PMSClientActivity_inactiveDeviceSeparatorText)+inactiveDevs.size()+")"));
+			mEntries.add(new SeparatorListEntry(getApplicationContext(), ListType.inactive, inactiveDevs.size()));
 			for(ControllableDevice cd:inactiveDevs)
 			{
 				ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
@@ -440,7 +444,7 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 	 * @param _cd the device to select
 	 * @return true if the device was selected, false otherwise
 	 */
-	public boolean handleSelectionAttempt(ControllableDevice _cd, boolean _checked)
+	public boolean handleSingleSelectionAttempt(ControllableDevice _cd, boolean _checked)
 	{
 		boolean res = false;
 		ControllableDeviceListEntry cdle = getListEntryFromDevice(_cd);
@@ -452,14 +456,14 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 		case none:
 			if(_checked)
 			{
-				selectDevice(cdle);
+				selectDevice(cdle, true);
 				res = true;
 			}
 			break;
 		case active:
 			if(cdle.getControllableDevice().isAlive())
 			{
-				selectDevice(cdle);
+				selectDevice(cdle,_checked);
 				res = true;
 			}
 			else
@@ -476,7 +480,7 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 			}
 			else
 			{
-				selectDevice(cdle);
+				selectDevice(cdle,_checked);
 				res = true;
 			}
 			break;
@@ -486,14 +490,117 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 		{
 			setControlContainerVisibility(View.GONE, View.GONE);
 		}
+		notifyAdapter();
 		return res;
 	}
 
-	private void selectDevice(ControllableDeviceListEntry _cdle)
+	public boolean handleMultipleSelectionAttempt(ListType _type, boolean _isChecked)
 	{
-		_cdle.setSelection(!_cdle.isSelected());
-		mSelection.put(_cdle.getControllableDevice().getHostname(), _cdle.isSelected());
+		Log.e(TAG, "handling multiple selection attempt...");
+		switch(_type)
+		{
+		case active:
+			switch(getSelectedType())
+			{
+			case active:
+			case none:
+
+				return selectDevices(SelectedType.active, _isChecked);
+//				return true;
+			case inactive:
+				toastSelectionFail();
+				return false;
+			}
+			break;
+		case inactive:
+			switch(getSelectedType())
+			{
+			case inactive:
+			case none:
+				return selectDevices(SelectedType.inactive, _isChecked);
+//				return true;
+			case active:
+				toastSelectionFail();
+				return false;
+			}
+			break;
+		}
+		return false;
+		//		if(buttonView.equals(mActiveToggle))
+		//		{
+		//			mInactiveToggle.setOnCheckedChangeListener(null);
+		//			mInactiveToggle.setChecked(false);
+		//			mInactiveToggle.setOnCheckedChangeListener(this);
+		//			for(IListEntry entry:mEntries)
+		//			{
+		//				if(entry instanceof ControllableDeviceListEntry)
+		//				{
+		//					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+		//					if(cdle.getControllableDevice().isAlive())
+		//					{
+		//						selectDevice(cdle);
+		//					}
+		//				}
+		//			}
+		//		}
+		//		else if(buttonView.equals(mInactiveToggle))
+		//		{
+		//			mActiveToggle.setOnCheckedChangeListener(null);
+		//			mActiveToggle.setChecked(false);
+		//			mActiveToggle.setOnCheckedChangeListener(this);
+		//			for(IListEntry entry:mEntries)
+		//			{
+		//				if(entry instanceof ControllableDeviceListEntry)
+		//				{
+		//					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+		//					if(!cdle.getControllableDevice().isAlive())
+		//					{
+		//						selectDevice(cdle);
+		//					}
+		//				}
+		//			}
+		//		}	
+	}
+
+	private boolean selectDevices(SelectedType _type, boolean _select)
+	{
+		boolean selectionFlag;
+		boolean result = false;
+		switch (_type) 
+		{
+		case active:
+			selectionFlag = true;
+			break;
+		case inactive:
+			selectionFlag = false;
+			break;
+		case none:
+			deselectAll();
+			return false;
+		default:
+			return false;
+		}
+		
+		for(IListEntry entry:mEntries)
+		{
+			if(entry instanceof ControllableDeviceListEntry)
+			{
+				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+				if(cdle.getControllableDevice().isAlive()==selectionFlag)
+				{
+					result = selectDevice(cdle, _select);
+				}
+			}
+		}
 		notifyAdapter();
+		return result;
+	}
+	
+
+	private boolean selectDevice(ControllableDeviceListEntry _cdle, boolean _select)
+	{
+		_cdle.setSelection(_select);
+		mSelection.put(_cdle.getControllableDevice().getHostname(), _select);
 		if(_cdle.getControllableDevice().isAlive())
 		{
 			setControlContainerVisibility(View.VISIBLE, View.GONE);
@@ -502,6 +609,11 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 		{
 			setControlContainerVisibility(View.GONE, View.VISIBLE);
 		}
+		if(!_select)
+		{
+			setControlContainerVisibility(View.GONE, View.GONE);
+		}
+		return _cdle.isSelected();
 	}
 
 	private void toastSelectionFail()
@@ -559,49 +671,49 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 		}
 	}
 
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
-	{
-		deselectAll();
-		if(!isChecked)
-		{
-			return;
-		}
-		if(buttonView.equals(mActiveToggle))
-		{
-			mInactiveToggle.setOnCheckedChangeListener(null);
-			mInactiveToggle.setChecked(false);
-			mInactiveToggle.setOnCheckedChangeListener(this);
-			for(IListEntry entry:mEntries)
-			{
-				if(entry instanceof ControllableDeviceListEntry)
-				{
-					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
-					if(cdle.getControllableDevice().isAlive())
-					{
-						selectDevice(cdle);
-					}
-				}
-			}
-		}
-		else if(buttonView.equals(mInactiveToggle))
-		{
-			mActiveToggle.setOnCheckedChangeListener(null);
-			mActiveToggle.setChecked(false);
-			mActiveToggle.setOnCheckedChangeListener(this);
-			for(IListEntry entry:mEntries)
-			{
-				if(entry instanceof ControllableDeviceListEntry)
-				{
-					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
-					if(!cdle.getControllableDevice().isAlive())
-					{
-						selectDevice(cdle);
-					}
-				}
-			}
-		}	
-	}
+	//	@Override
+	//	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+	//	{
+	//		deselectAll();
+	//		if(!isChecked)
+	//		{
+	//			return;
+	//		}
+	////		if(buttonView.equals(mActiveToggle))
+	////		{
+	////			mInactiveToggle.setOnCheckedChangeListener(null);
+	////			mInactiveToggle.setChecked(false);
+	////			mInactiveToggle.setOnCheckedChangeListener(this);
+	////			for(IListEntry entry:mEntries)
+	////			{
+	////				if(entry instanceof ControllableDeviceListEntry)
+	////				{
+	////					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+	////					if(cdle.getControllableDevice().isAlive())
+	////					{
+	////						selectDevice(cdle);
+	////					}
+	////				}
+	////			}
+	////		}
+	////		else if(buttonView.equals(mInactiveToggle))
+	////		{
+	////			mActiveToggle.setOnCheckedChangeListener(null);
+	////			mActiveToggle.setChecked(false);
+	////			mActiveToggle.setOnCheckedChangeListener(this);
+	////			for(IListEntry entry:mEntries)
+	////			{
+	////				if(entry instanceof ControllableDeviceListEntry)
+	////				{
+	////					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+	////					if(!cdle.getControllableDevice().isAlive())
+	////					{
+	////						selectDevice(cdle);
+	////					}
+	////				}
+	////			}
+	////		}	
+	//	}
 
 	private void deselectAll()
 	{
@@ -701,35 +813,35 @@ implements OnCheckedChangeListener, OnClickListener, UncaughtExceptionHandler
 			@Override
 			public void run() 
 			{
-//				try{
-					ArrayList<ControllableDevice> selDevs = getSelectedDevices();
-					//				ArrayList<ControllableDevice> selDevs = new ArrayList<ControllableDevice>();
-					//				selDevs.add(getSelectedDevices().get(0));
-					//				selDevs.add(getSelectedDevices().get(1));
-					for(ControllableDevice cd:selDevs)
-					{
-						markDirty(cd);
-					}
-					for(int i = 0;i<selDevs.size();i++)
-					{
-						ControllableDevice cd = selDevs.get(i);
-						//					cd.wakeUp();
-						Log.e(TAG, "woke up:"+cd.getHostname());
-						//					Thread.yield();
-						//					try {
-						//						Thread.sleep(10);
-						//					} catch (InterruptedException e) {
-						//						// TODO Auto-generated catch block
-						//						e.printStackTrace();
-						//					}
-						Log.e(TAG, "finished device "+(i+1)+" of "+selDevs.size());
-					}
-					mUpdateThread.resumeAfterPause();
-//				}catch(Exception e)
-//				{
-//					Log.e(TAG, "exception in the difficult thread...");
-//					e.printStackTrace();
-//				}
+				//				try{
+				ArrayList<ControllableDevice> selDevs = getSelectedDevices();
+				//				ArrayList<ControllableDevice> selDevs = new ArrayList<ControllableDevice>();
+				//				selDevs.add(getSelectedDevices().get(0));
+				//				selDevs.add(getSelectedDevices().get(1));
+				for(ControllableDevice cd:selDevs)
+				{
+					markDirty(cd);
+				}
+				for(int i = 0;i<selDevs.size();i++)
+				{
+					ControllableDevice cd = selDevs.get(i);
+					//					cd.wakeUp();
+					Log.e(TAG, "woke up:"+cd.getHostname());
+					//					Thread.yield();
+					//					try {
+					//						Thread.sleep(10);
+					//					} catch (InterruptedException e) {
+					//						// TODO Auto-generated catch block
+					//						e.printStackTrace();
+					//					}
+					Log.e(TAG, "finished device "+(i+1)+" of "+selDevs.size());
+				}
+				mUpdateThread.resumeAfterPause();
+				//				}catch(Exception e)
+				//				{
+				//					Log.e(TAG, "exception in the difficult thread...");
+				//					e.printStackTrace();
+				//				}
 				//				hendl.sendMessage(new Message());
 				//				setActionPending(false);
 

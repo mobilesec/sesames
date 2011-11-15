@@ -5,58 +5,37 @@
     android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <ToggleButton
-            android:id="@+id/activeDeviceSelection"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textOff="@string/mainXML_activeDeviceSelection_off_text"
-            android:textOn="@string/mainXML_activeDeviceSelection_on_text" />
-
-        <ToggleButton
-            android:id="@+id/inactiveDeviceSelection"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textOff="@string/mainXML_inactiveDeviceSelection_off_text"
-            android:textOn="@string/mainXML_inactiveDeviceSelection_on_text" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/activeDeviceControllContainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
-
-        <Button
+
+        <ImageButton
             android:id="@+id/sleepButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/mainXML_sleepAllButton_text" />
-
-        <Button
+            android:src="@drawable/ic_dialog_sleep" />
+
+        <ImageButton
             android:id="@+id/shutDownButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/mainXML_shutdownAllButton_text" />
+            android:src="@drawable/ic_dialog_power" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/inactiveDeviceControllContainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
-
-        <Button
+
+        <ImageButton
             android:id="@+id/wakeUpButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/mainXML_wakeUpAllButton_text" />
+            android:src="@drawable/ic_dialog_sleep" />
 
     </LinearLayout>
 

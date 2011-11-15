@@ -28,4 +28,5 @@
     <string name="PMSClientActivity_inactiveDeviceSeparatorText">Inactive (</string>
     <string name="controllable_device_listitem_checkBox_text">select</string>
     <string name="ControllableDeviceAdapter_idleLabel_text">Idle since:</string>
+    <string name="mainXML_separatorSelectionText">select all</string>
 </resources>

@@ -4,6 +4,21 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import weka.core.Instances;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -23,6 +38,7 @@ import at.sesame.fhooe.localizationservice.ILocalizationService;
 public class SesameIndoorLocalizationServiceClientActivity 
 extends Activity
 {
+	private static final String TAG = "SesameIndoorLocalizationServiceClientActivity";
 	private ILocalizationService mLocalizationService;
 	private boolean mUpdateRunning = true;
 	private ProgressDialog mProgressDialog;
@@ -92,7 +108,7 @@ extends Activity
 			while(null==mLocalizationService)
 			{
 				try {
-					Log.e("SesameIndoorLocalizerServiceActivity","waiting for service");
+//					Log.e("SesameIndoorLocalizerServiceActivity","waiting for service");
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -119,7 +135,19 @@ extends Activity
 			try 
 			{
 				mLocalizationService.setClassifier("K* (b=20)");
-				mLocalizationService.setTrainingSetPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/allDataForWekaTrainig.arff");
+//				mLocalizationService.setTrainingSetPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/allDataForWekaTrainig.arff");
+				boolean res = mLocalizationService.queryAvailableLocalizationDataSources();
+				
+				if(res)
+				{
+					Log.e(TAG, "query was successful");
+				}
+				else
+				{
+					Log.e(TAG, "query was not successful");
+				}
+				
+				testDocTo();
 			} catch (RemoteException e) {
 				Log.e("slica","##########################ERROR IN ON SERVICE CONNECTED");
 				e.printStackTrace();
@@ -201,6 +229,54 @@ extends Activity
 		}
 		
 		
+	}
+	
+	public static void testDocTo()
+	{
+//		HttpHost proxy = new HttpHost("80.120.3.4", 3128, "http");
+
+//        DefaultHttpClient httpclient = new DefaultHttpClient();
+		HttpClient httpclient = ProxyHelper.getProxiedAllAcceptingHttpsClient();
+        try {
+//            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+
+        	
+            HttpHost target = new HttpHost("doc.to", 443, "https");
+            HttpGet req = new HttpGet("/~sesamedata/all/allDataForWekaTraining.arff");
+
+//            System.out.println("ההההה  executing request to " + target + " via " + proxy);
+//            HttpResponse rsp = httpclient.execute(target, req);
+            HttpUriRequest request = new HttpGet("https://doc.to/~sesamedata/all/allDataForWekaTraining.arff");
+            HttpResponse rsp = httpclient.execute(request);
+            Log.e(TAG, "request executed");
+            HttpEntity entity = rsp.getEntity();
+            InputStream entityStream = entity.getContent();
+            Instances inst = InstanceHelper.getInstancesFromInputStream(entityStream);
+            Log.e(TAG, "number of instances ="+inst.numInstances());
+//            System.out.println("----------------------------------------");
+//            System.out.println(rsp.getStatusLine());
+//            Header[] headers = rsp.getAllHeaders();
+//            for (int i = 0; i<headers.length; i++) {
+//                System.out.println(headers[i]);
+//            }
+//            System.out.println("----------------------------------------");
+//
+//            if (entity != null) {
+//                System.out.println(EntityUtils.toString(entity));
+//            }
+
+        } catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+            // When HttpClient instance is no longer needed,
+            // shut down the connection manager to ensure
+            // immediate deallocation of all system resources
+            httpclient.getConnectionManager().shutdown();
+        }
 	}
 	
 	private void showProgressDialog(final String _title, boolean _onUiThread)

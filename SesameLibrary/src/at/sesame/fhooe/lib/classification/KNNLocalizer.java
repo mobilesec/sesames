@@ -1,5 +1,6 @@
 package at.sesame.fhooe.lib.classification;
 
+import android.util.Log;
 import at.sesame.fhooe.lib.classification.IClassifier;
 import weka.classifiers.lazy.IBk;
 import weka.core.Instance;
@@ -45,8 +46,16 @@ implements IClassifier
 	@Override
 	public void setTrainingData(Instances _inst) 
 	{
+		if(null==_inst)
+		{
+			Log.e("KNN", "passed instances were null");
+		}
 		try 
 		{
+			if(null==mKNN)
+			{
+				Log.e("KNN", "KNN was null");
+			}
 			mKNN.buildClassifier(_inst);
 		} 
 		catch (Exception e) 

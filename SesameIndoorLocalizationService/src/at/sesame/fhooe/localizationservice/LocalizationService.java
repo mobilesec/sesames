@@ -1,6 +1,10 @@
 package at.sesame.fhooe.localizationservice;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +16,8 @@ import android.os.RemoteException;
 import android.util.Log;
 import at.sesame.fhooe.lib.classification.Classificator;
 import at.sesame.fhooe.lib.classification.ClassificatorException;
+import at.sesame.fhooe.lib.location.osm.OSMAccess;
+import at.sesame.fhooe.lib.util.DownloadHelper;
 import at.sesame.fhooe.lib.wifi.WifiAccess;
 
 public class LocalizationService 
@@ -91,10 +97,52 @@ extends Service
 
 		@Override
 		public boolean queryAvailableLocalizationDataSources()throws RemoteException {
-			// TODO Auto-generated method stub
-			return false;
+			String url =  OSMAccess.getClosestIndoorLocationDataUrl();
+			Log.e(TAG, "queryAvailableLocalizationDataSources() called");
+			if(null!=url)
+			{
+				InputStream is = DownloadHelper.getStreamFromUrl(url+"Meta.xml");
+				if(null!=is)
+				{
+					Log.e(TAG, convertStreamToString(is));
+//					Instances inst = InstanceHelper.getInstancesFromInputStream(is);
+//					if(null!=inst)
+//					{
+//						mClassificator.setTrainingData(inst);
+//						return true;
+//					}
+//					Log.e(TAG, "Instances were null");
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+			
+//			return false;
 		}
 	};
+	
+	private static String convertStreamToString(InputStream _is)
+	{
+		BufferedReader r = new BufferedReader(new InputStreamReader(_is));
+		StringBuilder total = new StringBuilder();
+		String line;
+		try {
+			while ((line = r.readLine()) != null) {
+			    total.append(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return total.toString();
+	}
 	
 	@Override
 	public IBinder onBind(Intent arg0) 

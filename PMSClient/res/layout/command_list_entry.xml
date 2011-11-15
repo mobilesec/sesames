@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayout2"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/list_entry_bg"
-    android:padding="10dp"
-    android:textSize="16sp"
-    android:gravity="center"
-    android:textColor="#ffffffff">
-</TextView>
+    android:layout_height="fill_parent" 
+    android:background="@drawable/list_entry_bg">
+
+    <ImageView
+        android:id="@+id/command_list_entry_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_dialog_cancel" />
+    
+    <TextView
+        android:id="@+id/command_list_entry_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/command_list_entry_imageView"
+        android:layout_centerVertical="true"
+        android:textColor="#ffffffff"
+        android:textSize="16sp" >
+
+    </TextView>
+
+
+</RelativeLayout>

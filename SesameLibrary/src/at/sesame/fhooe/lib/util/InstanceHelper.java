@@ -53,6 +53,7 @@ public class InstanceHelper
     {
     	if(null==_is)
     	{
+    		Log.e(TAG, "passed inputstream was null");
     		return null;
     	}
     	Instances training = null;

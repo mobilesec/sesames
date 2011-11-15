@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
-
+
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
-
+
         <ImageView
             android:id="@+id/osIconView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
             android:layout_weight="0.2"
             android:src="@drawable/icon" />
@@ -21,8 +22,8 @@
             android:id="@+id/nameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/osIconView"
-            android:layout_toRightOf="@+id/osIconView"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/ipLabel"
             android:ellipsize="end"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -31,8 +32,8 @@
             android:id="@+id/ipLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/nameLabel"
-            android:layout_below="@+id/nameLabel"
+            android:layout_toRightOf="@+id/osIconView"
+            android:layout_centerVertical="true"
             android:ellipsize="end"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -41,9 +42,9 @@
         <TextView
             android:id="@+id/idleLabel"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignLeft="@+id/nameLabel"
-            android:layout_below="@+id/ipLabel"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/ipLabel"
+            android:layout_alignParentBottom="true"
             android:ellipsize="end"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -56,28 +57,27 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:paddingBottom="10dip"
-            />
+            />
         -->
-
+
         <FrameLayout
             android:id="@+id/controllable_device_list_item_placeholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/controllable_device_list_item_selection_box"
+            android:layout_centerVertical="true"
             android:paddingRight="5dip"
-            android:paddingTop="5dip" />
+            android:paddingTop="5dip" >
+
+        </FrameLayout>
 
         <CheckBox
             android:id="@+id/controllable_device_list_item_selection_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/controllable_device_list_item_placeholder"
-            android:paddingRight="5dip"
-            android:text="@string/controllable_device_listitem_checkBox_text" />
-
+            android:layout_centerVertical="true"
+            android:paddingRight="5dip"/>
     </RelativeLayout>
-
 
 </merge>

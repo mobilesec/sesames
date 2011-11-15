@@ -1,4 +1,4 @@
-package at.sesame.fhooe.pms.list;
+package at.sesame.fhooe.pms.list.controllabledevice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -34,6 +33,10 @@ implements OnClickListener, OnCheckedChangeListener
 	private LayoutInflater mLi;
 	private PMSClientActivity mOwner;
 
+
+	private static final int SINGLE_SELECTION = 0;
+	private static final int GROUP_SELECTION = 1;
+
 	public ControllableDeviceAdapter(PMSClientActivity _owner, List<IListEntry> objects) 
 	{
 		super(_owner, 0, objects);
@@ -54,11 +57,40 @@ implements OnClickListener, OnCheckedChangeListener
 			{
 				SeparatorListEntry sep = (SeparatorListEntry)item;
 				v = mLi.inflate(R.layout.controllable_device_listseparator, null);
+
+
 				TextView tv = (TextView)v.findViewById(R.id.separatorNameLabel);
 				tv.setText(sep.getTitle());
-				v.setOnClickListener(null);
-				v.setOnLongClickListener(null);
-				v.setOnTouchListener(null);
+
+				CheckBox separatorCb = (CheckBox)v.findViewById(R.id.separatorCheckBox);
+				separatorCb.setChecked(sep.isSelected());
+				separatorCb.setOnCheckedChangeListener(this);
+				separatorCb.setTag(sep);
+				
+				//				switch(sep.getType())
+				//				{
+				//				case active:
+				//					Log.e(TAG, "processing active separator");
+				////					if(null==mActiveCheckBox)
+				//					{
+				//						Log.e(TAG, "active checkbox was null");
+				//						mActiveCheckBox = separatorCb;
+				////						mActiveCheckBox.setOnCheckedChangeListener(this);
+				//					}
+				//					break;
+				//				case inactive:
+				//					Log.e(TAG, "processing inactive separator");
+				////					if(null==mInactiveCheckBox)
+				//					{
+				//						Log.e(TAG, "inactive checkbox was null");
+				//						mInactiveCheckBox = separatorCb;
+				////						mInactiveCheckBox.setOnCheckedChangeListener(this);
+				//					}
+				//					break;
+				//				}
+				//				v.setOnClickListener(null);
+				//				v.setOnLongClickListener(null);
+				//				v.setOnTouchListener(null);
 			}
 			else
 			{
@@ -96,36 +128,30 @@ implements OnClickListener, OnCheckedChangeListener
 					FrameLayout container = (FrameLayout)v.findViewById(R.id.controllable_device_list_item_placeholder);
 					if(cdle.isDirty())
 					{
-//						LayoutInflater inflater = mLi.in
+						//						LayoutInflater inflater = mLi.in
 						ProgressBar pg = (ProgressBar ) mLi.inflate(R.layout.dirty_progressbar, null);
-//						pg.setIndeterminate(true);
-						
+						//						pg.setIndeterminate(true);
+
 						container.addView(pg);
 					}
 					else
 					{
-//						ImageButton powerView = (ImageButton)v.findViewById(R.id.controllable_device_list_item_powerIconView);
+						//						ImageButton powerView = (ImageButton)v.findViewById(R.id.controllable_device_list_item_powerIconView);
 						ImageButton powerView = new ImageButton(mContext);
-						
-						
-						if(null!=powerView)
+
+						powerView.setOnClickListener(this);
+						powerView.setTag(cd);
+						powerView.setBackgroundColor(Color.TRANSPARENT);
+
+						if(cd.isAlive())
 						{
-							powerView.setOnClickListener(this);
-							powerView.setTag(cd);
-							powerView.setBackgroundColor(Color.TRANSPARENT);
-							if(cd.isAlive())
-							{
-								powerView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_power_on));
-							}
-							else
-							{
-								powerView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_power_off));
-							}
+							powerView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_power_on));
 						}
 						else
 						{
-							Log.e(TAG, "powerView was null");
+							powerView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_power_off));
 						}
+
 						container.addView(powerView);
 					}
 
@@ -175,33 +201,90 @@ implements OnClickListener, OnCheckedChangeListener
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
 	{
+		Log.e(TAG, "checkedChanged");
 		buttonView.setOnCheckedChangeListener(null);
+		int type = identifyCheckSource(buttonView);
+		switch(type)
+		{
+		case SINGLE_SELECTION:
+			handleSingleSelection(buttonView, isChecked);
+			break;
+		case GROUP_SELECTION:
+			SeparatorListEntry sle = extractSeparatorFromTag(buttonView);
+			
+			boolean selected = mOwner.handleMultipleSelectionAttempt(sle.getType(), isChecked);
+			sle.setSelected(selected);
+			buttonView.setChecked(selected);
+			Log.e(TAG, "result of handleMultipleSelection="+selected);
+			break;
+		}
+		//		if(buttonView.equals(mActiveCheckBox))
+		//		{
+		//			boolean selected = mOwner.handleMultipleSelectionAttempt(ListType.active, isChecked);
+		//			buttonView.setChecked(selected);
+		//			Log.e(TAG, "result of handleMultipleSelection="+selected);
+		//		}
+		//		else if(buttonView.equals(mInactiveCheckBox))
+		//		{
+		//			boolean selected = mOwner.handleMultipleSelectionAttempt(ListType.inactive, isChecked);
+		//			buttonView.setChecked(selected);
+		//			Log.e(TAG, "result of handleMultipleSelection="+selected);
+		//		}
+		//		else
+		//		{
+		//			handleSingleSelection(buttonView, isChecked);
+		//		}
+
+		buttonView.setOnCheckedChangeListener(this);
+	}
+
+	private void handleSingleSelection(CompoundButton buttonView, boolean isChecked)
+	{
 		ControllableDevice cd = extractDeviceFromTag(buttonView);
 		if(null!=cd)
 		{
-			boolean selected = mOwner.handleSelectionAttempt(cd, isChecked);
-			if(selected)
-			{
-				buttonView.setChecked(true);
-			}
-			else
-			{
-				buttonView.setChecked(false);
-			}
+			boolean selected = mOwner.handleSingleSelectionAttempt(cd, isChecked);
+			buttonView.setChecked(selected);
 		}
+	}
 
-		buttonView.setOnCheckedChangeListener(this);
+	private void handleMultipleSelection(CompoundButton buttonView, boolean isChecked)
+	{
+		SeparatorListEntry sle = extractSeparatorFromTag(buttonView);
+		boolean selected = mOwner.handleMultipleSelectionAttempt(sle.getType(), isChecked);
+		//		buttonView.setChecked(selected);
+		//		Log.e(TAG, "result of handleMultipleSelection="+selected);
 
 	}
 
 	private ControllableDevice extractDeviceFromTag(View _v)
 	{
 		Object o = _v.getTag();
+		return (ControllableDevice)o;
+	}
+
+	private SeparatorListEntry extractSeparatorFromTag(View _v)
+	{
+		Object o = _v.getTag();
+		return (SeparatorListEntry)o;
+	}
+
+	private int identifyCheckSource(CompoundButton _cb)
+	{
+		Object o = _cb.getTag();
+
 		if(o instanceof ControllableDevice)
 		{
-			return (ControllableDevice)o;
+			return SINGLE_SELECTION;
 		}
-		return null;
+		else if (o instanceof SeparatorListEntry)
+		{
+			return GROUP_SELECTION;
+		}
+		else
+		{
+			return -1;
+		}
 	}
 
 }
