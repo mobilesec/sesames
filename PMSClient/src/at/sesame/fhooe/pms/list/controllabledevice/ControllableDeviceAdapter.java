@@ -179,7 +179,8 @@ implements OnClickListener, OnCheckedChangeListener
 					ipLabel.setText(cd.getIp());
 
 					TextView idleLabel = (TextView)v.findViewById(R.id.idleLabel);
-					idleLabel.setText(mContext.getString(R.string.ControllableDeviceAdapter_idleLabel_text)+cd.getIdleSince());
+//					idleLabel.setText(mContext.getString(R.string.ControllableDeviceAdapter_idleLabel_text)+cd.getIdleSince());
+					idleLabel.setText(cd.getIdleString());
 				}
 			}
 		}

@@ -28,7 +28,7 @@ public class CommandListEntry
 			break;
 		case wakeUp:
 			mTitle = _c.getString(at.sesame.fhooe.pms.R.string.PMSClientActivity_inactiveDeviceDialogWakeUpCommand);
-			mIcon = _c.getResources().getDrawable(at.sesame.fhooe.pms.R.drawable.ic_dialog_sleep);
+			mIcon = _c.getResources().getDrawable(at.sesame.fhooe.pms.R.drawable.ic_dialog_power);
 			break;
 		case sleep:
 			mTitle = _c.getString(at.sesame.fhooe.pms.R.string.PMSClientActivity_activeDeviceDialogSleepCommand);

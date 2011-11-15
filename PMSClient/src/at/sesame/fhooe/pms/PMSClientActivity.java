@@ -21,16 +21,15 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import at.sesame.fhooe.lib.pms.PMSProvider;
+import at.sesame.fhooe.lib.pms.errorhandling.ErrorForwarder;
+import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
-import at.sesame.fhooe.lib.pms.proxy.ProxyHelper;
 import at.sesame.fhooe.pms.list.commands.CommandAdapter;
 import at.sesame.fhooe.pms.list.commands.CommandListEntry;
 import at.sesame.fhooe.pms.list.commands.CommandListEntry.CommandType;
@@ -42,13 +41,17 @@ import at.sesame.fhooe.pms.list.controllabledevice.SeparatorListEntry.ListType;
 
 public class PMSClientActivity 
 extends Activity 
-implements OnClickListener, UncaughtExceptionHandler
+implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 {
 	private static final String TAG = "FancyPMSClientActivity";
 
 	private static final int ACTIVE_DEVICE_ACTION_DIALOG = 0;
 	private static final int INACTIVE_DEVICE_ACTION_DIALOG = 1;
 	private static final int NO_NETWORK_DIALOG = 2;
+	private static final int CANT_SHUTDOWN_DIALOG = 3;
+	private static final int CANT_WAKEUP_DIALOG = 4;
+	
+	private static final String BUNDLE_HOSTNAME_KEY = "hostname";
 
 	private static final int IDLE_MINUTES_WARNING_THRESHOLD = 30;
 
@@ -76,8 +79,6 @@ implements OnClickListener, UncaughtExceptionHandler
 	private ImageButton mSleepAllButt;
 	private ImageButton mPowerOffAllButt;
 	private ImageButton mWakeUpAllButt;
-
-	private boolean mActionPending = false;
 
 	//	private final Object mLock = new Object();
 
@@ -114,6 +115,7 @@ implements OnClickListener, UncaughtExceptionHandler
 
 			return;
 		}
+		ErrorForwarder.getInstance().register(this);
 		queryControllableDevices();
 
 		refreshListEntries();
@@ -204,9 +206,9 @@ implements OnClickListener, UncaughtExceptionHandler
 
 				message.setText(getString(R.string.PMSClientActivity_activeDeviceActionDialogBaseMessage)+mSelectedDevice.getIdleSinceMinutes()+")");
 			}
-//			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogShutDownCommand));
-//			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogSleepCommand));
-//			strings.add(getString(android.R.string.cancel));
+			//			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogShutDownCommand));
+			//			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogSleepCommand));
+			//			strings.add(getString(android.R.string.cancel));
 			cles.add(new CommandListEntry(getApplicationContext(), CommandType.shutDown));
 			cles.add(new CommandListEntry(getApplicationContext(), CommandType.sleep));
 			cles.add(new CommandListEntry(getApplicationContext(), CommandType.cancel));
@@ -237,8 +239,8 @@ implements OnClickListener, UncaughtExceptionHandler
 			break;
 
 		case INACTIVE_DEVICE_ACTION_DIALOG:
-//			strings.add(getString(R.string.PMSClientActivity_inactiveDeviceDialogWakeUpCommand));
-//			strings.add(getString(android.R.string.cancel));
+			//			strings.add(getString(R.string.PMSClientActivity_inactiveDeviceDialogWakeUpCommand));
+			//			strings.add(getString(android.R.string.cancel));
 			cles.add(new CommandListEntry(getApplicationContext(), CommandType.wakeUp));
 			cles.add(new CommandListEntry(getApplicationContext(), CommandType.cancel));
 			commands.setOnItemClickListener(new OnItemClickListener() 
@@ -275,8 +277,55 @@ implements OnClickListener, UncaughtExceptionHandler
 				}
 			});
 			return builder.create();
+		case CANT_SHUTDOWN_DIALOG:
+			AlertDialog.Builder shutDownBuilder = new AlertDialog.Builder(this);
+			shutDownBuilder.setCancelable(true);
+			shutDownBuilder.setTitle("");
+			shutDownBuilder.setMessage(R.string.PMSClientActivity_cantShutDownDialogMessage);
+
+			shutDownBuilder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					finish();
+				}
+			});
+			return shutDownBuilder.create();
+		case CANT_WAKEUP_DIALOG:
+			AlertDialog.Builder wakeUpBuilder = new AlertDialog.Builder(this);
+			wakeUpBuilder.setCancelable(true);
+			wakeUpBuilder.setTitle("");
+			wakeUpBuilder.setMessage(R.string.PMSClientActivity_cantWakeUpDialogMessage);
+
+			wakeUpBuilder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					finish();
+				}
+			});
+			return wakeUpBuilder.create();
 		}
 		return d;
+	}
+	
+	
+
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog, Bundle args) 
+	{
+		// TODO Auto-generated method stub
+		super.onPrepareDialog(id, dialog, args);
+		switch(id)
+		{
+		case CANT_SHUTDOWN_DIALOG:
+		case CANT_WAKEUP_DIALOG:
+			AlertDialog ad = (AlertDialog)dialog;
+			ad.setTitle(args.getCharSequence(BUNDLE_HOSTNAME_KEY));
+			break;
+		}
 	}
 
 	/**
@@ -341,8 +390,15 @@ implements OnClickListener, UncaughtExceptionHandler
 					inactiveDevs.add(cd);
 				}
 			}
-			Collections.sort(activeDevs, new ControllableDeviceComparator());
-			Collections.sort(inactiveDevs, new ControllableDeviceComparator());
+			if(!activeDevs.isEmpty())
+			{
+				Collections.sort(activeDevs, new ControllableDeviceComparator());
+			}
+
+			if(!inactiveDevs.isEmpty())
+			{
+				Collections.sort(inactiveDevs, new ControllableDeviceComparator());
+			}
 			mEntries.clear();
 			mEntries.add(new SeparatorListEntry(getApplicationContext(), ListType.active, activeDevs.size()));
 			for(ControllableDevice cd:activeDevs)
@@ -371,9 +427,12 @@ implements OnClickListener, UncaughtExceptionHandler
 			mAllDevices = new ArrayList<ControllableDevice>();
 			for(int i = 0;i<macs.size();i++)
 			{
-				ControllableDevice cd = new ControllableDevice(macs.get(i), "admin", "pwd", true);
-				mAllDevices.add(cd);
-				mSelection.put(cd.getHostname(), false);
+				ControllableDevice cd = new ControllableDevice(getApplicationContext(), macs.get(i), "admin1", "pwd", true);
+				if(cd.isValid())
+				{
+					mAllDevices.add(cd);
+					mSelection.put(cd.getHostname(), false);
+				}
 				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 			}
 		}
@@ -506,7 +565,7 @@ implements OnClickListener, UncaughtExceptionHandler
 			case none:
 
 				return selectDevices(SelectedType.active, _isChecked);
-//				return true;
+				//				return true;
 			case inactive:
 				toastSelectionFail();
 				return false;
@@ -518,7 +577,7 @@ implements OnClickListener, UncaughtExceptionHandler
 			case inactive:
 			case none:
 				return selectDevices(SelectedType.inactive, _isChecked);
-//				return true;
+				//				return true;
 			case active:
 				toastSelectionFail();
 				return false;
@@ -580,7 +639,7 @@ implements OnClickListener, UncaughtExceptionHandler
 		default:
 			return false;
 		}
-		
+
 		for(IListEntry entry:mEntries)
 		{
 			if(entry instanceof ControllableDeviceListEntry)
@@ -595,7 +654,7 @@ implements OnClickListener, UncaughtExceptionHandler
 		notifyAdapter();
 		return result;
 	}
-	
+
 
 	private boolean selectDevice(ControllableDeviceListEntry _cdle, boolean _select)
 	{
@@ -767,7 +826,7 @@ implements OnClickListener, UncaughtExceptionHandler
 			break;
 		case R.id.wakeUpButton:
 			Log.e(TAG, "wake up all");
-			wakeupSelectedDevices2();
+			wakeupSelectedDevices();
 			break;
 		}
 		//		mDeviceStateRefreshThread.run();
@@ -796,7 +855,7 @@ implements OnClickListener, UncaughtExceptionHandler
 			}).start();
 		}
 	}
-	private void wakeupSelectedDevices2()
+	private void wakeupSelectedDevices()
 	{
 		//		ProxyHelper.releaseConnections();
 		mUpdateThread.pause();
@@ -852,69 +911,65 @@ implements OnClickListener, UncaughtExceptionHandler
 		wakeupThread.start();
 	}
 
-	private synchronized void setActionPending(boolean _val)
-	{
-		mActionPending = _val;
-	}
 
-	private void wakeupSelectedDevices() 
-	{
-		ProxyHelper.releaseConnections();
-		Log.e(TAG, "waking up all......");
-		//		mUpdateThread.pause();
-		//		synchronized (mLock) 
-		{
-			//			new Thread(new Runnable() 
-			//			{		
-			//				@Override
-			//				public void run() 
-			//				{
-			Log.e(TAG, "waking up selected devices");
-
-			//			new Thread(new Runnable() {
-			//
-			//				@Override
-			//				public void run() {
-			Log.e(TAG, "Thread for wakeup created");
-			final ArrayList<ControllableDevice> selDevs = getSelectedDevices();
-			for(ControllableDevice cd:selDevs)
-			{
-				markDirty(cd);
-			}
-			notifyAdapter();
-
-			new Thread(new Runnable() 
-			{	
-				@Override
-				public void run() 
-				{
-					for(final ControllableDevice cd:selDevs)
-					{
-						//						new Thread(new Runnable() {
-						//							
-						//							@Override
-						//							public void run() {
-						//								// TODO Auto-generated method stub
-						//								markDirty(cd);
-						//								notifyAdapter();
-						//							}
-						//						}).start();
-
-
-						cd.wakeUp();
-						try {
-							Thread.sleep(10);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}	
-				}
-			}).start();
-
-
-		}
-	}
+//	private void wakeupSelectedDevices() 
+//	{
+//		ProxyHelper.releaseConnections();
+//		Log.e(TAG, "waking up all......");
+//		//		mUpdateThread.pause();
+//		//		synchronized (mLock) 
+//		{
+//			//			new Thread(new Runnable() 
+//			//			{		
+//			//				@Override
+//			//				public void run() 
+//			//				{
+//			Log.e(TAG, "waking up selected devices");
+//
+//			//			new Thread(new Runnable() {
+//			//
+//			//				@Override
+//			//				public void run() {
+//			Log.e(TAG, "Thread for wakeup created");
+//			final ArrayList<ControllableDevice> selDevs = getSelectedDevices();
+//			for(ControllableDevice cd:selDevs)
+//			{
+//				markDirty(cd);
+//			}
+//			notifyAdapter();
+//
+//			new Thread(new Runnable() 
+//			{	
+//				@Override
+//				public void run() 
+//				{
+//					for(final ControllableDevice cd:selDevs)
+//					{
+//						//						new Thread(new Runnable() {
+//						//							
+//						//							@Override
+//						//							public void run() {
+//						//								// TODO Auto-generated method stub
+//						//								markDirty(cd);
+//						//								notifyAdapter();
+//						//							}
+//						//						}).start();
+//
+//
+//						cd.wakeUp();
+//						try {
+//							Thread.sleep(10);
+//						} catch (InterruptedException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}	
+//				}
+//			}).start();
+//
+//
+//		}
+//	}
 
 	public void notifyDataUpdated()
 	{
@@ -946,5 +1001,170 @@ implements OnClickListener, UncaughtExceptionHandler
 	public void uncaughtException(Thread arg0, Throwable arg1) {
 		Log.e(TAG, "uncaught exception:"+arg1.getMessage());
 
+	}
+
+	@Override
+	public void notifyError(RequestType _type, String _mac, int _code, String _msg) {
+		switch(_type)
+		{
+		case extendedStatus:
+			handleExtendedStatusError(_mac, _code, _msg);
+			break;
+		case getStatus:
+			handleStatusError(_mac, _code, _msg);
+			break;
+		case poweroff:
+			handlePowerOffError(_mac, _code, _msg);
+			break;
+		case wakeup:
+			handleWakeUpError(_mac, _code, _msg);
+			break;
+		case unknown:
+
+			break;
+		}
+
+	}
+
+	private void handleStatusError(String _mac, int _code, String _msg)
+	{
+		Log.e(TAG, "notified about status error. code = "+_code+", mac="+_mac);
+		switch(_code)
+		{
+		case 404:
+			removeFromList(_mac);
+			toastComputerNotAvailable(_mac);
+			break;
+		case 500:
+			addToNotAvailableList(_mac);
+			toastNoInformationAvailable(_mac);
+			break;
+		}
+	}
+
+	private void handleExtendedStatusError(String _mac, int _code, String _msg)
+	{
+		Log.e(TAG, "notified about extended status error. code = "+_code+", mac="+_mac);
+		switch (_code) 
+		{
+		case 401:
+			showLoginDialog(_mac);
+			break;
+		case 404:
+			removeFromList(_mac);
+			toastComputerNotAvailable(_mac);
+			break;
+		case 500:
+			addToNotAvailableList(_mac);
+			toastNoInformationAvailable(_mac);
+			break;
+		default:
+			break;
+		}
+		
+	}
+
+	private void handlePowerOffError(String _mac, int _code, String _msg)
+	{
+		Log.e(TAG, "notified about power off error. code = "+_code+", mac="+_mac);
+		switch (_code) {
+		case 401:
+			showLoginDialog(_mac);
+			break;
+		case 404:
+			removeFromList(_mac);
+			toastComputerNotAvailable(_mac);
+			break;
+		case 410:
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					Toast.makeText(getApplicationContext(), "410 gone", Toast.LENGTH_LONG).show();
+					
+				}
+			});
+			break;
+			
+		case 400:
+		case 406:
+		case 500:
+		case 501:
+			showCantShutDownDialog(_mac);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void handleWakeUpError(String _mac, int _code, String _msg)
+	{
+		Log.e(TAG, "notified about wake up error. code = "+_code+", mac="+_mac);
+		switch(_code)
+		{
+		case 500:
+			showCantWakeUpDialog(_mac);
+			break;
+		}
+	}
+	
+	private void removeFromList(String _mac)
+	{
+		ControllableDevice cd = getDeviceFromMac(_mac);
+		Log.e(TAG, "removed "+cd.toString()+", actual remove has to be implemented yet.");
+	}
+	
+	private void addToNotAvailableList(String _mac)
+	{
+		ControllableDevice cd = getDeviceFromMac(_mac);
+		Log.e(TAG, "added "+cd.toString()+" to the not available list, actual add has to be implemented yet.");
+	}
+	
+	private void toastComputerNotAvailable(String _mac)
+	{
+		ControllableDevice cd = getDeviceFromMac(_mac);
+		Toast.makeText(getApplicationContext(), cd.getHostname()+" is currently not available", Toast.LENGTH_LONG).show();
+	}
+	
+	private void toastNoInformationAvailable(String _mac)
+	{
+		ControllableDevice cd = getDeviceFromMac(_mac);
+		Toast.makeText(getApplicationContext(), "no information about "+cd.getHostname()+" available", Toast.LENGTH_LONG).show();
+	}
+	
+	private void showLoginDialog(String _mac)
+	{
+		ControllableDevice cd = getDeviceFromMac(_mac);
+		Log.e(TAG, "showing login dialog for "+cd.getHostname());
+	}
+	
+	private void showCantShutDownDialog(String _mac)
+	{
+		showDialog(CANT_SHUTDOWN_DIALOG, getBundledHostname(_mac));
+	}
+	
+	private void showCantWakeUpDialog(String _mac)
+	{
+		showDialog(CANT_WAKEUP_DIALOG, getBundledHostname(_mac));
+	}
+	
+	private Bundle getBundledHostname(String _mac)
+	{
+		ControllableDevice cd = getDeviceFromMac(_mac);
+		Bundle res = new Bundle();
+		res.putCharSequence(BUNDLE_HOSTNAME_KEY, cd.getHostname());
+		return res;
+	}
+	
+	private ControllableDevice getDeviceFromMac(String _mac)
+	{
+		for(ControllableDevice cd:mAllDevices)
+		{
+			if(cd.getMac().equals(_mac))
+			{
+				return cd;
+			}
+		}
+		return null;
 	}
 }

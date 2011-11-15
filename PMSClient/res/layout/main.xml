@@ -29,13 +29,13 @@
         android:id="@+id/inactiveDeviceControllContainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
-
+
         <ImageButton
             android:id="@+id/wakeUpButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/ic_dialog_sleep" />
+            android:src="@drawable/ic_dialog_power" />
 
     </LinearLayout>
 

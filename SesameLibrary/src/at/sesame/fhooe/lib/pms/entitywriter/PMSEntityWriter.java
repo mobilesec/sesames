@@ -52,6 +52,8 @@ implements EntityWriter
 				e.printStackTrace();
 			}
 		}
+		//TODO remove!!
+//		json.remove(paramList.get(0).getParamConfig().getName());
 		mData = json.toString().getBytes();
 	}
 

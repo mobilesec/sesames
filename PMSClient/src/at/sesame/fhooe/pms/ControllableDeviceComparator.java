@@ -2,14 +2,21 @@ package at.sesame.fhooe.pms;
 
 import java.util.Comparator;
 
+import android.util.Log;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 
-public class ControllableDeviceComparator implements
-		Comparator<ControllableDevice> {
+public class ControllableDeviceComparator 
+implements Comparator<ControllableDevice> 
+{
+	private static final String TAG = "ControllableDeviceComparator";
 
 	@Override
 	public int compare(ControllableDevice _lhs, ControllableDevice _rhs) 
-	{
+	{	
+		if(null==_lhs||null==_rhs)
+		{
+			return -1;
+		}
 		if(_lhs.equals(_rhs))
 		{
 			return 0;

@@ -154,7 +154,7 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 				macs = PMSProvider.getDeviceList();
 				for(int i = 0;i<macs.size();i++)
 				{
-					ControllableDevice dev = new ControllableDevice(macs.get(i), "admin", "pwd", true);
+					ControllableDevice dev = new ControllableDevice(getApplicationContext(), macs.get(i), "admin", "pwd", true);
 					mDevices.add(dev);
 					Log.e(TAG, dev.toString());
 				}
@@ -361,7 +361,7 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 	}
 
 	@Override
-	public void notifyError(final String _msg) 
+	public void notifyError(RequestType _type, String _mac, int _code, final String _msg) 
 	{
 		toastOnUiThread(_msg);
 	}

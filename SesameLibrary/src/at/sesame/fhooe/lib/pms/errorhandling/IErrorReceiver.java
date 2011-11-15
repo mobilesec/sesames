@@ -9,10 +9,18 @@ package at.sesame.fhooe.lib.pms.errorhandling;
 
 public interface IErrorReceiver 
 {
+	public enum RequestType
+	{
+		getStatus,
+		extendedStatus, 
+		poweroff, 
+		wakeup,
+		unknown
+	}
 	/**
 	 * called by ErrorForwarder when it is informed about an error. 
 	 * @param _msg the message describing the error
 	 */
-	public void notifyError(String _msg);
+	public void notifyError(RequestType _reqType, String _mac, int _code, String _msg);
 
 }

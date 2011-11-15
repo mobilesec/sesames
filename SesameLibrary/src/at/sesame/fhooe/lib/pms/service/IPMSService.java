@@ -54,7 +54,7 @@ public interface IPMSService
 	@Consumes("application/json")
 	@ErrorHandler(PowerOffErrorHandler.class)
 	@ResponseHandler(PMSBooleanResponseHandler.class)
-	public boolean poweroff(@PathParam("mac") String _mac,
+	public Object poweroff(@PathParam("mac") String _mac,
 							@FormParam("target-state") String _targetState,
 							@FormParam("os") String _os,
 							@FormParam("username") String _user,
@@ -64,7 +64,7 @@ public interface IPMSService
 	@Path("/{mac}/wakeup")
 	@ErrorHandler(PMSBooleanErrorHandler.class)
 	@ResponseHandler(PMSBooleanResponseHandler.class)
-	public boolean wakeup(@PathParam("mac") String _mac);
+	public Boolean wakeup(@PathParam("mac") String _mac);
 	
 	@GET
 	@Path("/known-os")

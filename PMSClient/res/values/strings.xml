@@ -29,4 +29,6 @@
     <string name="controllable_device_listitem_checkBox_text">select</string>
     <string name="ControllableDeviceAdapter_idleLabel_text">Idle since:</string>
     <string name="mainXML_separatorSelectionText">select all</string>
+    <string name="PMSClientActivity_cantShutDownDialogMessage">shut down of the computer is currently not possible</string>
+    <string name="PMSClientActivity_cantWakeUpDialogMessage">the computer can currently not be turned on.</string>
 </resources>

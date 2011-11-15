@@ -8,6 +8,8 @@
 package at.sesame.fhooe.lib.pms.errorhandling;
 
 import java.util.ArrayList;
+
+import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver.RequestType;
 /**
  * this class is notified about any errors resulting from http calls and informs
  * all registered listeners about those errors
@@ -61,11 +63,11 @@ public class ErrorForwarder
 	 * receivers are notified about the error
 	 * @param _msg the message to be passed to all error receivers
 	 */
-	public void notifyError(String _msg)
+	public void notifyError(RequestType _reqType, String _mac, int _code, String _msg)
 	{
 		for(IErrorReceiver recv:mRecvs)
 		{
-			recv.notifyError(_msg);
+			recv.notifyError(_reqType, _mac, _code, _msg);
 		}
 	}
 

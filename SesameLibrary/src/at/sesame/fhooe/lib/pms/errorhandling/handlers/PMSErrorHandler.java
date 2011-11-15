@@ -7,12 +7,19 @@
  ******************************************************************************/
 package at.sesame.fhooe.lib.pms.errorhandling.handlers;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.codegist.crest.config.ParamType;
 import org.codegist.crest.handler.ErrorHandler;
 import org.codegist.crest.io.Request;
 import org.codegist.crest.io.RequestException;
+import org.codegist.crest.io.Response;
+import org.codegist.crest.param.Param;
 
 import android.util.Log;
 import at.sesame.fhooe.lib.pms.errorhandling.ErrorForwarder;
+import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver.RequestType;
 
 /**
  * abstract base class for ErrorHandlers. functionality common to all ErrorHandlers is
@@ -71,16 +78,39 @@ implements ErrorHandler
 	 * message for unrecognized HTTP status codes
 	 */
 	protected static final String PMSErrorMessageCodeNotRecognized = "HTTP status code not recognized";
+	
+	private static final String MAC_PARAM_NAME = "mac";
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T handle(Request arg0, Exception arg1) throws Exception 
 	{
+//		Log.e(TAG, "return type:"+this.);
+		String methodName = arg0.getMethodConfig().getMethod().getName();
+		Log.e(TAG, methodName);
+		List<Param> params = arg0.getParams(ParamType.PATH);
+		Log.e(TAG, "params:\n");
+		String mac = "";
+		for(Param p:params)
+		{
+			if(p.getParamConfig().getName().equals(MAC_PARAM_NAME))
+			{
+				mac = (String)p.getValue().toArray()[0];
+			}
+		}
+		RequestType type = RequestType.unknown;
+		try
+		{
+			type = RequestType.valueOf(methodName);
+		}
+		catch(Exception _e)
+		{
+			
+		}
 		if(null==arg1)
 		{
 			Log.e(TAG, "passed exception was null");
-			return (T) new Boolean(false);
+			return null;
 		}
 		if(null==arg1.getMessage())
 		{
@@ -95,7 +125,11 @@ implements ErrorHandler
 		{
 			try
 			{
-				int code = ((RequestException)arg1).getResponse().getStatusCode();
+				RequestException reqEx = (RequestException)arg1;
+				Response resp = reqEx.getResponse();
+//				Type t = resp.getExpectedGenericType();
+//				Log.e(TAG, "expectedGenericType="+t.toString());
+				int code = resp.getStatusCode();
 				Log.e(TAG, "HTTP ERROR code: "+code);
 				StringBuilder sb = new StringBuilder();
 				sb.append(code);
@@ -103,18 +137,18 @@ implements ErrorHandler
 
 				handleHttpError(sb, code);
 
-				mErrorForwarder.notifyError(sb.toString());
+				mErrorForwarder.notifyError(type, mac,code, sb.toString());
 			}
 			catch(NullPointerException _npe)
 			{
-				return (T) new Boolean(false);
+				return null;
 			}
 		}
 		else
 		{
-			mErrorForwarder.notifyError(arg1.getMessage());
+			mErrorForwarder.notifyError(type, mac,-1,arg1.getMessage());
 		}
-		return (T) new Boolean(false);
+		return null;
 	}
 	
 	/**

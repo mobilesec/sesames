@@ -7,9 +7,12 @@
  ******************************************************************************/
 package at.sesame.fhooe.lib.pms.model;
 
+import java.text.DecimalFormat;
 import java.util.concurrent.ExecutionException;
 
+import android.content.Context;
 import android.util.Log;
+import at.sesame.fhooe.lib.R;
 import at.sesame.fhooe.lib.pms.PMSProvider;
 import at.sesame.fhooe.lib.pms.asynctasks.ExtendedStatusTask;
 import at.sesame.fhooe.lib.pms.asynctasks.PowerOffTask;
@@ -24,17 +27,14 @@ import at.sesame.fhooe.lib.pms.service.IPMSService;
  */
 public class ControllableDevice
 implements Runnable
-{
-//	private enum PMSCalls
-//	{
-//		sleep,
-//		shutDown,
-//		status,
-//		extendedStatus
-//	}
-//	private LinkedBlockingQueue mQueue;
-	
+{	
 	private static final String TAG = "ControllableDevice";
+	
+	private static final int NOTIFICATION_THRESHOLD = 90;
+	private static final int HOUR_FORMAT_THRESHOLD = 180;
+	private static final int SHORT_INACTIVITY_INTERVAL = 10;
+	private static final int LONG_INACTIVITY_INTERVAL = 30;
+	
 	/**
 	 * enumeration of possible power-off commands
 	 *
@@ -96,9 +96,13 @@ implements Runnable
 	
 	private int mIdleSince;
 	
+	private Context mCtx;
+	
 //	private boolean mConsumerThreadRunning = true;
 //	
 //	private Thread mConsumerThread;
+	
+	private boolean mValid = false;
 
 	/**
 	 * instance of the PMS
@@ -107,13 +111,15 @@ implements Runnable
 
 	/**
 	 * creates a new ControllableDevice
+	 * @param _c the current execution context (only used for localized strings)
 	 * @param _mac the MAC address of the device
 	 * @param _user the username of the device
 	 * @param _password the password of the device
 	 * @param _useCredentials if true, credentials are used otherwise not
 	 */
-	public ControllableDevice(String _mac, String _user, String _password, boolean _useCredentials)
+	public ControllableDevice(Context _c, String _mac, String _user, String _password, boolean _useCredentials)
 	{
+		mCtx = _c;
 		mMac = _mac;
 		mUser = _user;
 		mPassword = _password;
@@ -130,20 +136,20 @@ implements Runnable
 	 */
 	public boolean wakeUp()
 	{
-//		try
+		try
 		{
-			return mPms.wakeup(mMac);
-//			return new WakeupTask().execute(mMac).get();
+//			return mPms.wakeup(mMac);
+			return new WakeupTask().execute(mMac).get();
 		} 
-//		catch (InterruptedException e) 
-//		{
-//			e.printStackTrace();
-//		}
-//		catch (ExecutionException e) 
-//		{
-//			e.printStackTrace();
-//		}
-//		return false;
+		catch (InterruptedException e) 
+		{
+			e.printStackTrace();
+		}
+		catch (ExecutionException e) 
+		{
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	/**
@@ -183,6 +189,7 @@ implements Runnable
 		ExtendedPMSStatus extStat = getExtendedStatus();
 		if(null==extStat)
 		{
+			mValid = false;
 			return;
 		}
 		mHostname = extStat.getHostname();
@@ -190,6 +197,7 @@ implements Runnable
 		mOs = translateOsToEnum(extStat.getOs());
 		mAlive = extStat.getAlive().equals("1")?true:false;
 		mIdleSince = extStat.getIdleSince();
+		mValid = true;
 	}
 
 	private OS translateOsToEnum(String os) 
@@ -244,9 +252,9 @@ implements Runnable
 			Object res;
 			try 
 			{
-//				res = new ExtendedStatusTask().execute(mMac, mUser, mPassword).get();
-				res = mPms.extendedStatus(mMac, mUser, mPassword);
-				if(res instanceof Boolean)
+				res = new ExtendedStatusTask().execute(mMac, mUser, mPassword).get();
+//				res = mPms.extendedStatus(mMac, mUser, mPassword);
+				if(null==res)
 				{
 					return null;
 				}
@@ -315,7 +323,69 @@ implements Runnable
 	
 	public int getIdleSinceMinutes()
 	{
-		return getIdleSince()/60;
+//		return getIdleSince()/60;
+		return 185;
+	}
+	
+	public boolean isValid()
+	{
+		return mValid;
+	}
+	
+	public String getIdleString()
+	{
+		int idleMins = getIdleSinceMinutes(); 
+		if(idleMins<NOTIFICATION_THRESHOLD)
+		{
+			return "";
+		}
+		else if(idleMins<HOUR_FORMAT_THRESHOLD)
+		{
+			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+roundShortInterval(idleMins)+mCtx.getString(R.string.ControllableDevice_minuteString);
+		}
+		else
+		{
+			DecimalFormat df = new DecimalFormat("#.#");
+			String idleString = df.format(roundLongInterval(idleMins));
+			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+idleString+mCtx.getString(R.string.controllableDevice_hourString);
+		}
+	}
+	
+	private int roundShortInterval(int _val)
+	{
+
+		return round(_val, SHORT_INACTIVITY_INTERVAL);
+	}
+	
+	
+	private double roundLongInterval(int _val)
+	{
+		int hours = 0;
+		while(_val-60>0)
+		{
+			hours++;
+			_val-=60;
+		}
+		return hours+(double)((double)_val/60);
+	}
+	private int round(int _val, int _interval)
+	{
+		int intervalCount = 0;
+		while(_val-_interval>=0)
+		{
+			_val-=_interval;
+			intervalCount++;
+		}
+		
+		return intervalCount*_interval;
+	}
+
+	private int getIdleHours() {
+		int idleMins = getIdleSinceMinutes();
+		int mins = idleMins%60;
+		idleMins-=mins;
+		int hours = idleMins/60;
+		return 0;
 	}
 
 	@Override

@@ -21,7 +21,8 @@ extends AsyncTask<String, Void, Boolean>
 	@Override
 	protected Boolean doInBackground(String... params) {
 		String mac = params[0];
-		return PMSProvider.getPMS().wakeup(mac);
+		Object res = PMSProvider.getPMS().wakeup(mac);
+		return res==null;
 	}
 
 }

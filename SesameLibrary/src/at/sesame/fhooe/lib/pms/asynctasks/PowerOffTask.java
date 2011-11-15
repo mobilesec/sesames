@@ -26,8 +26,8 @@ extends AsyncTask<String, Void, Boolean>
 		String os = params[2];
 		String user = params[3];
 		String pwd = params[4];
-		boolean res = PMSProvider.getPMS().poweroff(mac, state, os, user, pwd);
-		return new Boolean(res);
+		Object res = PMSProvider.getPMS().poweroff(mac, state, os, user, pwd);
+		return res==null;
 	}
 
 }
