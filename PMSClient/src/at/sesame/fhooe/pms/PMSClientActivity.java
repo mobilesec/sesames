@@ -21,7 +21,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,9 +76,9 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 	//	private ToggleButton mActiveToggle;
 	//	private ToggleButton mInactiveToggle;
 
-	private ImageButton mSleepAllButt;
-	private ImageButton mPowerOffAllButt;
-	private ImageButton mWakeUpAllButt;
+	private Button mSleepAllButt;
+	private Button mPowerOffAllButt;
+	private Button mWakeUpAllButt;
 
 	//	private final Object mLock = new Object();
 
@@ -133,13 +133,13 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		//		mInactiveToggle = (ToggleButton)findViewById(R.id.inactiveDeviceSelection);
 		//		mInactiveToggle.setOnCheckedChangeListener(this);
 
-		mSleepAllButt = (ImageButton)findViewById(R.id.sleepButton);
+		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
 		mSleepAllButt.setOnClickListener(this);
 
-		mPowerOffAllButt = (ImageButton)findViewById(R.id.shutDownButton);
+		mPowerOffAllButt = (Button)findViewById(R.id.shutDownButton);
 		mPowerOffAllButt.setOnClickListener(this);
 
-		mWakeUpAllButt = (ImageButton)findViewById(R.id.wakeUpButton);
+		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
 		mWakeUpAllButt.setOnClickListener(this);
 
 		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);

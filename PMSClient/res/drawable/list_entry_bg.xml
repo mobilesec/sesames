@@ -1,24 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"> 
-    <solid android:color="#ff000000"/>    
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <stroke android:width="3dp"
-            android:color="#ff808080"
-            />
+    <solid android:color="#ffffffff" />
 
-    <padding android:left="1dp"
-             android:top="1dp"
-             android:right="1dp"
-             android:bottom="1dp"
-             />
-    <gradient
-        android:angle="45"
-        android:centerX="0.5"
-        android:endColor="#ff000000"
-        android:startColor="#ff808080"
-        android:type="linear"/>
-    
+<!--     <stroke -->
+<!--         android:width="3dp" -->
+<!--         android:color="#ff808080" /> -->
 
-    <corners android:bottomRightRadius="7dp" android:bottomLeftRadius="7dp" 
-     android:topLeftRadius="7dp" android:topRightRadius="7dp"/> 
+
 </shape>

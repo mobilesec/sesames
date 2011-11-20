@@ -3,8 +3,12 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_entry_bg">
+    android:background="@drawable/list_item_background"
+    android:padding="10dp" >
 
-    <include layout="@layout/controllable_device_listitem_include"  android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <include
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/controllable_device_listitem_include" />
 
 </RelativeLayout>
