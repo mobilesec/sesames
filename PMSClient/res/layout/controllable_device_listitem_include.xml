@@ -1,92 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<merge xmlns:android="http://schemas.android.com/apk/res/android" >-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
 
-    <TableLayout
+    <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:stretchColumns="0" >
+        android:layout_weight="1"
+        android:background="@drawable/list_item_textarea"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp" >
 
-        <TableRow >
+        <ImageView
+            android:id="@+id/osIconView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_weight="0.2"
+            android:paddingRight="5dp"
+            android:src="@drawable/icon" />
 
-            <RelativeLayout
-                android:id="@+id/relativeLayout1"
-                android:layout_width="170dp"
-                android:layout_height="fill_parent"
-                android:background="@drawable/list_item_textarea"
-                android:padding="5dp" >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/osIconView"
+            android:orientation="vertical" >
 
-                <ImageView
-                    android:id="@+id/osIconView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_weight="0.2"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/icon" />
+            <TextView
+                android:id="@+id/nameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:text="Small Text"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#ffffffff" />
 
-                <TextView
-                    android:id="@+id/nameLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/osIconView"
-                    android:ellipsize="end"
-                    android:text="Small Text"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="#ffffffff" />
+            <TextView
+                android:id="@+id/ipLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:text="Small Text"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#ff666666" />
 
-                <TextView
-                    android:id="@+id/ipLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/nameLabel"
-                    android:layout_below="@+id/nameLabel"
-                    android:ellipsize="end"
-                    android:text="Small Text"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            <TextView
+                android:id="@+id/idleLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:text="Small Text"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#ff666666" />
+        </LinearLayout>
+    </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/idleLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/nameLabel"
-                    android:layout_below="@+id/ipLabel"
-                    android:ellipsize="end"
-                    android:text="Small Text"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" >
 
-                <!--
-                     <android.view.ViewStub android:id="@+id/controllable_device_list_item_placeholder" 
-					android:layout_width="wrap_content" android:layout_height="wrap_content" 
-					android:layout_alignParentRight="true" android:layout_alignParentTop="true" 
-					android:paddingBottom="10dip" />
-                -->
+        <FrameLayout
+            android:id="@+id/controllable_device_list_item_placeholder"
+            android:layout_width="72px"
+            android:layout_height="72px"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="3dp"
+            android:background="@drawable/list_item_notch"
+            android:paddingTop="1px" >
+        </FrameLayout>
 
-            </RelativeLayout>
+        <CheckBox
+            android:id="@+id/controllable_device_list_item_selection_box"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/controllable_device_list_item_placeholder" />
+    </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_height="fill_parent"
-                android:orientation="horizontal" > 
-
-                <FrameLayout
-                    android:id="@+id/controllable_device_list_item_placeholder"
-                    android:layout_width="64px"
-                    android:layout_height="64px"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="3dp"
-                    android:background="@drawable/list_item_notch"
-                    android:paddingTop="1px" >
-                </FrameLayout>
-
-                <CheckBox
-                    android:id="@+id/controllable_device_list_item_selection_box"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/controllable_device_list_item_placeholder" />
-            </RelativeLayout>
-        </TableRow>
-    </TableLayout>
-
-<!--  </merge>-->
+</LinearLayout>
