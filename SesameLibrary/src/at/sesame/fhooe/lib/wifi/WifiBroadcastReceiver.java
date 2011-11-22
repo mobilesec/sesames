@@ -70,7 +70,7 @@ extends BroadcastReceiver
 	@Override
 	public void onReceive(Context arg0, Intent arg1) 
 	{
-		Log.e("WifiBroadcastReceiver", "received wifi data");
+//		Log.e("WifiBroadcastReceiver", "received wifi data");
 //		new Thread(new Runnable() {
 //			
 //			@Override

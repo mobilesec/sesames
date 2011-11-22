@@ -80,12 +80,18 @@ public class OSMResponseParser
 						long id = Long.parseLong(mParser.getAttributeValue("", ID_KEY));
 						double lat = Double.parseDouble(mParser.getAttributeValue("",LATITUDE_KEY));
 						double lon = Double.parseDouble(mParser.getAttributeValue("", LONGITUDE_KEY));
-						int version = Integer.parseInt(mParser.getAttributeValue("", VERSION_KEY));
-						long changeSet = Long.parseLong(mParser.getAttributeValue("", CHANGESET_KEY));
-						String user = mParser.getAttributeValue("", USER_KEY);
-						long uid = Long.parseLong(mParser.getAttributeValue("", UID_KEY));
-						boolean visible = Boolean.parseBoolean(mParser.getAttributeValue("", VISIBLE_KEY));
-						String timeStamp = mParser.getAttributeValue("", TIMESTAMP_KEY);
+//						int version = Integer.parseInt(mParser.getAttributeValue("", VERSION_KEY));
+						int version = 0;
+//						long changeSet = Long.parseLong(mParser.getAttributeValue("", CHANGESET_KEY));
+						long changeSet = 0;
+//						String user = mParser.getAttributeValue("", USER_KEY);
+						String user = "";
+//						long uid = Long.parseLong(mParser.getAttributeValue("", UID_KEY));
+						long uid = 0;
+//						boolean visible = Boolean.parseBoolean(mParser.getAttributeValue("", VISIBLE_KEY));
+						boolean visible = false;
+//						String timeStamp = mParser.getAttributeValue("", TIMESTAMP_KEY);
+						String timeStamp = "";
 						
 						mCurrentnode = new OSMNode(id, lat, lon, version, changeSet, user, uid, visible, timeStamp);		
 					}

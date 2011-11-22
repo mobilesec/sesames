@@ -12,7 +12,7 @@ import org.codegist.crest.annotate.ResponseHandler;
 
 import at.sesame.fhooe.lib.location.osm.model.IndoorLocOSMNode;
 
-@EndPoint("http://api.openstreetmap.org/")
+@EndPoint("http://www.overpass-api.de/")
 @ResponseHandler(OSMResponseHandler.class)
 @ErrorHandler(OSMErrorHandler.class)
 public interface IOsmApi 
@@ -26,8 +26,8 @@ public interface IOsmApi
 	public String getNode(@PathParam("id")int _id);
 	
 	@GET
-	@Path("/api/0.6/map")
+	@Path("/api/xapi{node}")
 //	@Consumes("gzip")
-	public ArrayList<IndoorLocOSMNode> getMap(	@QueryParam("bbox")String _bbox);
+	public ArrayList<IndoorLocOSMNode> getIndoorLocalizationNodes(	@PathParam("node")String _node);
 
 }

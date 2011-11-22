@@ -100,25 +100,25 @@ extends Activity
 		}
 	});
 	
-	private Thread mConnectionWaitingThread = new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			showProgressDialog("waiting for service to attach...",true);
-			while(null==mLocalizationService)
-			{
-				try {
-//					Log.e("SesameIndoorLocalizerServiceActivity","waiting for service");
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			dismissProgressDialog();
-			mLocationUpdateThread.start();
-		}
-	});
+//	private Thread mConnectionWaitingThread = new Thread(new Runnable() {
+//		
+//		@Override
+//		public void run() {
+//			showProgressDialog("waiting for service to attach...",true);
+//			while(null==mLocalizationService)
+//			{
+//				try {
+////					Log.e("SesameIndoorLocalizerServiceActivity","waiting for service");
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//			dismissProgressDialog();
+//			mLocationUpdateThread.start();
+//		}
+//	});
 	
 	private void dismissProgressDialog()
 	{
@@ -134,9 +134,23 @@ extends Activity
 			mLocalizationService = ILocalizationService.Stub.asInterface(arg1);
 			try 
 			{
-				mLocalizationService.setClassifier("K* (b=20)");
+				
+				if(null==mLocalizationService)
+				{
+					Log.e(TAG, "error connecting to service (null)");
+					return;
+				}
+				boolean res = false;
 //				mLocalizationService.setTrainingSetPath(Environment.getExternalStorageDirectory().getAbsolutePath()+"/allDataForWekaTrainig.arff");
-				boolean res = mLocalizationService.queryAvailableLocalizationDataSources();
+				if(null!=mLocalizationService)
+				{
+					mLocalizationService.setClassifier("K* (b=20)");
+					res = mLocalizationService.queryAvailableLocalizationDataSources();
+				}
+				else
+				{
+					Log.e(TAG, "service cant be null, impossible. :-(");
+				}
 				
 				if(res)
 				{
@@ -147,15 +161,19 @@ extends Activity
 					Log.e(TAG, "query was not successful");
 				}
 				
-				testDocTo();
+//				testDocTo();
 			} catch (RemoteException e) {
 				Log.e("slica","##########################ERROR IN ON SERVICE CONNECTED");
 				e.printStackTrace();
 			}
+			dismissProgressDialog();
+			mLocationUpdateThread.start();
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
+		public void onServiceDisconnected(ComponentName arg0) 
+		{
+			Log.e(TAG, "service disconnected");
 		}
 	};
     /** Called when the activity is first created. */
@@ -169,24 +187,36 @@ extends Activity
         mTrainingBSSIDsField.setText(mTrainingBSSIDS);
         mUpdateReceivedBssidButt = (ToggleButton)findViewById(R.id.toggleButton1);
 //        copyArffToSD();
-        Log.e("silca","activity created");
         mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		
 		mProgressDialog.setCancelable(false);
-        Intent i = new Intent("at.sesame.fhooe.localizationservice.LocalizationService");
-        bindService(i, mSvc, BIND_AUTO_CREATE);
-        mConnectionWaitingThread.start();
+        
         
     }
     
-    public void onDestroy()
-	{
-		super.onDestroy();
-		unbindService(mSvc);
+    @Override
+    public void onStart()
+    {
+    	super.onStart();
+    	Intent i = new Intent("at.sesame.fhooe.localizationservice.LocalizationService");
+        bindService(i, mSvc, BIND_AUTO_CREATE);
+//        mConnectionWaitingThread.start();
+    }
+    
+    public void onStop()
+    {
+    	super.onStop();
+    	unbindService(mSvc);
 		mSvc = null;
 		mUpdateRunning = false;
-	}
+    }
+    
+//    public void onDestroy()
+//	{
+//		super.onDestroy();
+//		
+//	}
     
 
 	public void setLocationString(String _location) throws RemoteException 

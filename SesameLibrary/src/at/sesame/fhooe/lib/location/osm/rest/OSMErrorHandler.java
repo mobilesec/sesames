@@ -19,7 +19,14 @@ implements ErrorHandler
 		if(arg1 instanceof RequestException)
 		{
 			RequestException re = (RequestException)arg1;
+			if(null!=re.getResponse())
+			{
 			Log.e(TAG, re.getResponse().getStatusCode()+" "+re.getMessage());
+			}
+			else
+			{
+				Log.e(TAG, re.getMessage());
+			}
 		}
 		return (T) "error";
 	}

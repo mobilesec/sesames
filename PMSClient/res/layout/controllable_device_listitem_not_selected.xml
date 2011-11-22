@@ -9,6 +9,7 @@
     <include
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/controllable_device_listitem_include" />
+        layout="@layout/controllable_device_listitem_include" 
+        android:id="@+id/include1"/>
 
 </RelativeLayout>

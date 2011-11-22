@@ -48,6 +48,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
 import android.net.http.AndroidHttpClient;
+import android.util.Log;
 
 /**
  * this class creates a proxied http client
@@ -55,6 +56,8 @@ import android.net.http.AndroidHttpClient;
  */
 public class ProxyHelper 
 {
+	private static final String TAG = "ProxyHelper";
+	
 	private static ThreadSafeClientConnManager mCCM;
 	/**
 	 * creates an http client that uses a proxy server with authentication 
@@ -108,6 +111,7 @@ public class ProxyHelper
 				@Override
 				public void process(HttpRequest request, HttpContext context)throws HttpException, IOException 
 				{
+					Log.e(TAG, request.getRequestLine().toString());
 					request.addHeader(BasicScheme.authenticate(getCredentials(),"UTF-8",true));
 				}    
 			};

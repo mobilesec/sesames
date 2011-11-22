@@ -24,7 +24,7 @@ import android.util.Log;
 public class WifiAccess
 implements Runnable
 {
-	private static final String TAG = "WifiAccess";
+//	private static final String TAG = "WifiAccess";
 	
 	/**
 	 * the WifiManager to retrieve information from
@@ -59,9 +59,9 @@ implements Runnable
 
 //		mRecv = new WifiBroadcastReceiver(mContext, this);
 		mWifiReceiver = new WifiBroadcastReceiver(mContext, this);
-		WifiInfo info = mManager.getConnectionInfo();
+//		WifiInfo info = mManager.getConnectionInfo();
 		
-		Log.e(TAG, "Wifi Status:"+info.toString());
+//		Log.e(TAG, "Wifi Status:"+info.toString());
 		if(_startAutoScan)
 		{
 			startContinuousScanning();
@@ -113,12 +113,12 @@ implements Runnable
 	{
 		synchronized(mCachedResults)
 		{
-			Log.e("WifiAccess","printing received results");
+//			Log.e("WifiAccess","printing received results");
 			mCachedResults = getWifiScanResults();
-			for(ScanResult sr:mCachedResults)
-			{
-				Log.e("WifiAcces", sr.toString());
-			}
+//			for(ScanResult sr:mCachedResults)
+//			{
+//				Log.e("WifiAcces", sr.toString());
+//			}
 		}
 		for(IWifiScanReceiver recv:mReceiver)
 		{
@@ -140,7 +140,7 @@ implements Runnable
 		{
 			return false;
 		}
-		Log.e(TAG, "initiating scan");
+//		Log.e(TAG, "initiating scan");
 		mManager.startScan();
 		return true;
 	}

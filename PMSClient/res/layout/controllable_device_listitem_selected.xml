@@ -7,10 +7,13 @@
     android:background="@drawable/list_item_background_selected"
     android:padding="10dp" >
 
+    
+    
     <include
         android:id="@+id/include1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         layout="@layout/controllable_device_listitem_include" />
+   
 
 </RelativeLayout>

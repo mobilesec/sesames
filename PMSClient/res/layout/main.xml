@@ -62,6 +62,7 @@
         android:id="@+id/deviceList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+        <!-- Preview: listitem=@layout/controllable_device_listitem_selected -->
     </ListView>
 
 </LinearLayout>
