@@ -1,14 +1,24 @@
+/***************************************************************************** 	
+ *  Project: Sesame-S Client
+ *  Description: mobile client for interaction with the sesame-s system
+ *  Author: Peter Riedl
+ *  Copyright: Peter Riedl, 11/2011
+ *
+ ******************************************************************************/
 package at.sesame.fhooe.pms;
 
 import java.util.Comparator;
 
-import android.util.Log;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 
+/**
+ * this class implements the Comparator Interface to be able to compare ControllableDevices
+ * @author Peter Riedl
+ *
+ */
 public class ControllableDeviceComparator 
 implements Comparator<ControllableDevice> 
 {
-	private static final String TAG = "ControllableDeviceComparator";
 
 	@Override
 	public int compare(ControllableDevice _lhs, ControllableDevice _rhs) 

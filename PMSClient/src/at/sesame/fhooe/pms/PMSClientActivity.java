@@ -1,6 +1,12 @@
+/***************************************************************************** 	
+ *  Project: Sesame-S Client
+ *  Description: mobile client for interaction with the sesame-s system
+ *  Author: Peter Riedl
+ *  Copyright: Peter Riedl, 11/2011
+ *
+ ******************************************************************************/
 package at.sesame.fhooe.pms;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,49 +45,124 @@ import at.sesame.fhooe.pms.list.controllabledevice.IListEntry;
 import at.sesame.fhooe.pms.list.controllabledevice.SeparatorListEntry;
 import at.sesame.fhooe.pms.list.controllabledevice.SeparatorListEntry.ListType;
 
+/**
+ * this class represents the activity that accesses the PMS and displays all
+ * information provided by the PMS
+ * @author Peter Riedl
+ *
+ */
 public class PMSClientActivity 
 extends Activity 
-implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
+implements OnClickListener, IErrorReceiver
 {
+	/**
+	 * the tag to identify the logger output of this class
+	 */
 	private static final String TAG = "FancyPMSClientActivity";
 
+	/**
+	 * integer constant for displaying the dialog for actions on active devices
+	 */
 	private static final int ACTIVE_DEVICE_ACTION_DIALOG = 0;
-	private static final int INACTIVE_DEVICE_ACTION_DIALOG = 1;
-	private static final int NO_NETWORK_DIALOG = 2;
-	private static final int CANT_SHUTDOWN_DIALOG = 3;
-	private static final int CANT_WAKEUP_DIALOG = 4;
 	
+	/**
+	 * integer constant for displaying the dialog for actions on inactive devices
+	 */
+	private static final int INACTIVE_DEVICE_ACTION_DIALOG = 1;
+	
+	/**
+	 * integer constant for displaying the dialog when no internet connection is detected
+	 */
+	private static final int NO_NETWORK_DIALOG = 2;
+	
+	/**
+	 * integer constant for displaying the dialog when the shutdown of a computer failed
+	 */
+	private static final int CANT_SHUTDOWN_DIALOG = 3;
+	
+	/**
+	 * integer constant for displaying the dialog when the wake up of a computer failed
+	 */
+	private static final int CANT_WAKEUP_DIALOG = 4;
+
+	/**
+	 * the key under which the hostname information is stored in the bundle for onPrepareDialog
+	 */
 	private static final String BUNDLE_HOSTNAME_KEY = "hostname";
 
+	/**
+	 * threshold after which an idle time warning is displayed
+	 */
 	private static final int IDLE_MINUTES_WARNING_THRESHOLD = 30;
 
+	/**
+	 * a list of all controllable devices available
+	 */
 	private ArrayList<ControllableDevice> mAllDevices = new ArrayList<ControllableDevice>();
+	
+	/**
+	 * mapping of hostname and selection status
+	 */
 	private HashMap<String, Boolean> mSelection = new HashMap<String, Boolean>();
+	
+	/**
+	 * list of all displayed list entries
+	 */
 	private ArrayList<IListEntry> mEntries = new ArrayList<IListEntry>();
 
-
+	/**
+	 * the adapter used for displaying the list entries
+	 */
 	private ControllableDeviceAdapter mAdapter;
 
-	//	private Thread mDeviceStateRefreshThread = new Thread(this);
+	/**
+	 * the thread that queries the status of all devies in the background
+	 */
 	private DeviceStateUpdateThread mUpdateThread;
-	//	private boolean mUpdating = true;
-	//	private int mUpdatePeriod = 5000;
 
+	/**
+	 * the currently selected device
+	 */
 	private ControllableDevice mSelectedDevice;
 
+	/**
+	 * the listview for all ControllableDevices
+	 */
 	private ListView mDevList;
+	
+	/**
+	 * container for the buttons that are associated with multiple selected
+	 * active devices
+	 */
 	private ViewGroup mActiveDeviceControlContainer;
+	
+	/**
+	 * container for the buttons that are associated with multiple selected
+	 * inactive devices
+	 */
 	private ViewGroup mInactiveDeviceControlContainer;
 
-	//	private ToggleButton mActiveToggle;
-	//	private ToggleButton mInactiveToggle;
-
+	/**
+	 * the button that puts all selected devices to sleep
+	 */
 	private Button mSleepAllButt;
+	
+	/**
+	 * the button that shuts all selected devices down
+	 */
 	private Button mPowerOffAllButt;
+	
+	/**
+	 * the button that wakes all selected devices up
+	 */
 	private Button mWakeUpAllButt;
 
-	//	private final Object mLock = new Object();
 
+	/**
+	 * this enumeration is used to determine which kind of device was selected
+	 * @author admin
+	 *
+	 */
 	private enum SelectedType
 	{
 		active,
@@ -89,20 +170,12 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		none
 	};
 
-	//	Handler hendl = new Handler()
-	//	{
-	//		public void handleMessage(android.os.Message msg) 
-	//		{
-	//			Log.e(TAG, "handling");
-	//			mUpdateThread.resumeAfterPause();
-	//		};
-	//	};
-
 	/**
 	 * the ProgressDialog to indicate networking
 	 */
 	private ProgressDialog mNetworkingDialog;
 
+	@Override
 	public void onCreate(Bundle _savedInstance)
 	{
 		super.onCreate(_savedInstance);
@@ -127,12 +200,6 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		mInactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
 		setControlContainerVisibility(View.GONE, View.GONE);
 
-		//		mActiveToggle = (ToggleButton)findViewById(R.id.activeDeviceSelection);
-		//		mActiveToggle.setOnCheckedChangeListener(this);
-		//
-		//		mInactiveToggle = (ToggleButton)findViewById(R.id.inactiveDeviceSelection);
-		//		mInactiveToggle.setOnCheckedChangeListener(this);
-
 		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
 		mSleepAllButt.setOnClickListener(this);
 
@@ -145,6 +212,10 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
 	}
 
+	/**
+	 * checks if the device currently is connected to the internet
+	 * @return true if the device is connected, false otherwise
+	 */
 	private boolean checkConnectivity() 
 	{
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -159,7 +230,6 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 	public void onDestroy()
 	{
 		super.onDestroy();
-		//		mUpdating = false;
 		mUpdateThread.pause();
 	}
 
@@ -167,7 +237,6 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 	public void onPause()
 	{
 		super.onPause();
-		//		mUpdating = false;
 		mUpdateThread.pause();
 	}
 
@@ -179,9 +248,6 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		if(checkConnectivity())
 		{
 			mUpdateThread.start();
-			//			mUpdateThread.resumeAfterPause();
-			//			mDeviceStateRefreshThread.start();
-
 		}
 	}
 
@@ -310,8 +376,8 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		}
 		return d;
 	}
-	
-	
+
+
 
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog, Bundle args) 
@@ -374,7 +440,7 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 	 */
 	private void refreshListEntries() 
 	{
-		//		synchronized(mLock)
+
 		{
 			ArrayList<ControllableDevice> activeDevs = new ArrayList<ControllableDevice>();
 			ArrayList<ControllableDevice> inactiveDevs = new ArrayList<ControllableDevice>();
@@ -404,25 +470,28 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			for(ControllableDevice cd:activeDevs)
 			{
 				ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
-				cdle.setSelection(mSelection.get(cd.getHostname()));
+				cdle.setSelection(mSelection.get(cd.getMac()));
 				mEntries.add(cdle);
 			}
 			mEntries.add(new SeparatorListEntry(getApplicationContext(), ListType.inactive, inactiveDevs.size()));
 			for(ControllableDevice cd:inactiveDevs)
 			{
 				ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
-				cdle.setSelection(mSelection.get(cd.getHostname()));
+				cdle.setSelection(mSelection.get(cd.getMac()));
 				mEntries.add(cdle);
 			}
 		}
 	}
 
+	/**
+	 * queries which computers can be controlled via PMS and adds their ControllableDevice representations to the list
+	 * of all devices
+	 */
 	private void queryControllableDevices() 
 	{
 		ArrayList<String> macs = PMSProvider.getDeviceList();
 		mNetworkingDialog.setMax(macs.size());
 		showNetworkingDialog();
-		//		synchronized(mLock)
 		{
 			mAllDevices = new ArrayList<ControllableDevice>();
 			for(int i = 0;i<macs.size();i++)
@@ -431,7 +500,7 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 				if(cd.isValid())
 				{
 					mAllDevices.add(cd);
-					mSelection.put(cd.getHostname(), false);
+					mSelection.put(cd.getMac(), false);
 				}
 				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 			}
@@ -439,44 +508,10 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		dismissNetworkingDialog();
 	}
 
-	//	@Override
-	//	public void run() 
-	//	{
-	//		while(mUpdating)
-	//		{
-	//			synchronized (mAllDevices) 
-	//			{
-	//				Log.e(TAG, "update started");
-	//				for(ControllableDevice cd:mAllDevices)
-	//				{
-	//					cd.updateStatus();
-	//					try {
-	//						Thread.sleep(10);
-	//					} catch (InterruptedException e) {
-	//						// TODO Auto-generated catch block
-	//						e.printStackTrace();
-	//					}
-	//					Log.e(TAG, cd.getHostname()+"updated...");
-	//				}
-	//
-	//				refreshListEntries();
-	//				Log.e(TAG, "list entries refreshed");
-	//				notifyAdapter();
-	//				Log.e(TAG, "updated");
-	//
-	//				try 
-	//				{
-	//					Thread.sleep(mUpdatePeriod);
-	//				} 
-	//				catch (InterruptedException e) 
-	//				{
-	//					e.printStackTrace();
-	//				}
-	//			}
-	//
-	//		}
-	//	}
-
+	/**
+	 * this method is called whenever the power icon of a list entry was pressed
+	 * @param _cd the ControllableDevice associated with the list entry
+	 */
 	public void handlePowerClick(ControllableDevice _cd)
 	{
 		ControllableDeviceListEntry cdle = getListEntryFromDevice(_cd);
@@ -516,6 +551,7 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			if(_checked)
 			{
 				selectDevice(cdle, true);
+				updateMultipleSelectionWidgets();
 				res = true;
 			}
 			break;
@@ -523,6 +559,7 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			if(cdle.getControllableDevice().isAlive())
 			{
 				selectDevice(cdle,_checked);
+				updateMultipleSelectionWidgets();
 				res = true;
 			}
 			else
@@ -540,6 +577,7 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			else
 			{
 				selectDevice(cdle,_checked);
+				updateMultipleSelectionWidgets();
 				res = true;
 			}
 			break;
@@ -547,15 +585,21 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 
 		if(getSelectedType()==SelectedType.none)
 		{
+			Log.e(TAG, "handling single selection attempt with no devices selected");
 			setControlContainerVisibility(View.GONE, View.GONE);
 		}
 		notifyAdapter();
 		return res;
 	}
 
+	/**
+	 * this method is called when multiple selection of a category is requested (checkbox in separator)
+	 * @param _type specifies which kind of ControllableDevice was selected
+	 * @param _isChecked determines whether the device was selected or deselected
+	 * @return true if the device could be selected, false otherwise
+	 */
 	public boolean handleMultipleSelectionAttempt(ListType _type, boolean _isChecked)
 	{
-		Log.e(TAG, "handling multiple selection attempt...");
 		switch(_type)
 		{
 		case active:
@@ -585,42 +629,15 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			break;
 		}
 		return false;
-		//		if(buttonView.equals(mActiveToggle))
-		//		{
-		//			mInactiveToggle.setOnCheckedChangeListener(null);
-		//			mInactiveToggle.setChecked(false);
-		//			mInactiveToggle.setOnCheckedChangeListener(this);
-		//			for(IListEntry entry:mEntries)
-		//			{
-		//				if(entry instanceof ControllableDeviceListEntry)
-		//				{
-		//					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
-		//					if(cdle.getControllableDevice().isAlive())
-		//					{
-		//						selectDevice(cdle);
-		//					}
-		//				}
-		//			}
-		//		}
-		//		else if(buttonView.equals(mInactiveToggle))
-		//		{
-		//			mActiveToggle.setOnCheckedChangeListener(null);
-		//			mActiveToggle.setChecked(false);
-		//			mActiveToggle.setOnCheckedChangeListener(this);
-		//			for(IListEntry entry:mEntries)
-		//			{
-		//				if(entry instanceof ControllableDeviceListEntry)
-		//				{
-		//					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
-		//					if(!cdle.getControllableDevice().isAlive())
-		//					{
-		//						selectDevice(cdle);
-		//					}
-		//				}
-		//			}
-		//		}	
+
 	}
 
+	/**
+	 * sets the selection state of all devices of a certain category
+	 * @param _type the type of ControllableDevices to be selected
+	 * @param _select determines whether the devices should selected or deselected
+	 * @return true if the group of devices was selected, false otherwise
+	 */
 	private boolean selectDevices(SelectedType _type, boolean _select)
 	{
 		boolean selectionFlag;
@@ -651,35 +668,58 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 				}
 			}
 		}
+		updateMultipleSelectionWidgets();
 		notifyAdapter();
 		return result;
 	}
 
 
+	/**
+	 * changes the selection state of one device
+	 * @param _cdle the list entry associated with the device
+	 * @param _select determines whether the device should selected or deselected
+	 * @return true if the device was selected, false otherwise
+	 */
 	private boolean selectDevice(ControllableDeviceListEntry _cdle, boolean _select)
 	{
 		_cdle.setSelection(_select);
-		mSelection.put(_cdle.getControllableDevice().getHostname(), _select);
-		if(_cdle.getControllableDevice().isAlive())
-		{
-			setControlContainerVisibility(View.VISIBLE, View.GONE);
-		}
-		else
-		{
-			setControlContainerVisibility(View.GONE, View.VISIBLE);
-		}
-		if(!_select)
-		{
-			setControlContainerVisibility(View.GONE, View.GONE);
-		}
+		mSelection.put(_cdle.getControllableDevice().getMac(), _select);
 		return _cdle.isSelected();
 	}
+	
+	/**
+	 * hides or shows the containers for actions on multiple selected ControllableDevices
+	 */
+	private void updateMultipleSelectionWidgets()
+	{
+		switch(getSelectedType())
+		{
+		case none:
+			
+			setControlContainerVisibility(View.GONE, View.GONE);
+			break;
+		case active:
+			setControlContainerVisibility(View.VISIBLE, View.GONE);
+			break;
+		case inactive:
+			setControlContainerVisibility(View.GONE, View.VISIBLE);
+			break;
+		}
+	}
 
+	/**
+	 * toasts a message when a device could not be selected
+	 */
 	private void toastSelectionFail()
 	{
 		Toast.makeText(this, "only devices from the same category (active/inactive) can be selected at the same time.", Toast.LENGTH_LONG).show();
 	}
 
+	/**
+	 * finds the listentry associated with the passed ControllableDevice
+	 * @param _cd the ControllableDevice to get the list entry for
+	 * @return the listentry associated with the passed ControllableDevice
+	 */
 	private ControllableDeviceListEntry getListEntryFromDevice(ControllableDevice _cd)
 	{
 		for(IListEntry entry:mEntries)
@@ -696,13 +736,18 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		return null;
 	}
 
+	/**
+	 * returns a list of all selected devices
+	 * @return a list of all selected devices
+	 */
 	private ArrayList<ControllableDevice> getSelectedDevices()
 	{
 		ArrayList<ControllableDevice> res = new ArrayList<ControllableDevice>();
-		synchronized (mAllDevices) {
+//		synchronized (mAllDevices) 
+		{
 			for(ControllableDevice cd:mAllDevices)
 			{
-				if(mSelection.get(cd.getHostname()))
+				if(mSelection.get(cd.getMac()))
 				{
 					res.add(cd);
 				}
@@ -712,6 +757,10 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		return res;
 	}
 
+	/**
+	 * determines which type of ControllableDevice is currently selected
+	 * @return the type of selected devices
+	 */
 	private SelectedType getSelectedType()
 	{
 		ArrayList<ControllableDevice>selectedDevs = getSelectedDevices();
@@ -730,50 +779,10 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		}
 	}
 
-	//	@Override
-	//	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
-	//	{
-	//		deselectAll();
-	//		if(!isChecked)
-	//		{
-	//			return;
-	//		}
-	////		if(buttonView.equals(mActiveToggle))
-	////		{
-	////			mInactiveToggle.setOnCheckedChangeListener(null);
-	////			mInactiveToggle.setChecked(false);
-	////			mInactiveToggle.setOnCheckedChangeListener(this);
-	////			for(IListEntry entry:mEntries)
-	////			{
-	////				if(entry instanceof ControllableDeviceListEntry)
-	////				{
-	////					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
-	////					if(cdle.getControllableDevice().isAlive())
-	////					{
-	////						selectDevice(cdle);
-	////					}
-	////				}
-	////			}
-	////		}
-	////		else if(buttonView.equals(mInactiveToggle))
-	////		{
-	////			mActiveToggle.setOnCheckedChangeListener(null);
-	////			mActiveToggle.setChecked(false);
-	////			mActiveToggle.setOnCheckedChangeListener(this);
-	////			for(IListEntry entry:mEntries)
-	////			{
-	////				if(entry instanceof ControllableDeviceListEntry)
-	////				{
-	////					ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
-	////					if(!cdle.getControllableDevice().isAlive())
-	////					{
-	////						selectDevice(cdle);
-	////					}
-	////				}
-	////			}
-	////		}	
-	//	}
 
+	/**
+	 * deselects all devices
+	 */
 	private void deselectAll()
 	{
 		for(IListEntry entry:mEntries)
@@ -787,34 +796,38 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 
 		for(ControllableDevice cd:mAllDevices)
 		{
-			mSelection.put(cd.getHostname(), false);
+			mSelection.put(cd.getMac(), false);
 		}
 		notifyAdapter();
 
 		setControlContainerVisibility(View.GONE, View.GONE);
 	}
 
+	/**
+	 * shows/hides the containers for actions on multiple selected ControllableDevices
+	 */
 	private void setControlContainerVisibility(int _v1, int _v2)
 	{
 		mActiveDeviceControlContainer.setVisibility(_v1);
+		
 		mInactiveDeviceControlContainer.setVisibility(_v2);
 	}
 
+	/**
+	 * marks the passed device as dirty (information currently not consistent ==> progress bar is shown)
+	 * @param _cd the ControllableDevice to mark as dirty
+	 */
 	private void markDirty(final ControllableDevice _cd)
 	{
-
 		ControllableDeviceListEntry entry = getListEntryFromDevice(_cd);
 		entry.setDirty(true);
 		notifyAdapter();
 		Log.e(TAG, "marked dirty:"+_cd.getHostname());
-
 	}
 
 	@Override
 	public void onClick(View arg0) 
 	{
-
-		//		mDeviceStateRefreshThread.interrupt();
 		switch(arg0.getId())
 		{
 		case R.id.sleepButton:
@@ -829,12 +842,14 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			wakeupSelectedDevices();
 			break;
 		}
-		//		mDeviceStateRefreshThread.run();
 	}
 
+	/**
+	 * powers off or puts to sleep all currently selected devices based on the passed PowerOffState
+	 * @param _state determines whether to shut down or put to sleep all selected devices 
+	 */
 	private void powerOffSelectedDevices(final PowerOffState _state)
 	{
-		//		synchronized(mLock)
 		{
 			new Thread(new Runnable() 
 			{		
@@ -855,28 +870,21 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			}).start();
 		}
 	}
+	
+	/**
+	 * wakes up all selected devices
+	 */
 	private void wakeupSelectedDevices()
 	{
-		//		ProxyHelper.releaseConnections();
 		mUpdateThread.pause();
-		//		setActionPending(true);
-		//		try {
-		//			Thread.sleep(100);
-		//		} catch (InterruptedException e1) {
-		//			// TODO Auto-generated catch block
-		//			e1.printStackTrace();
-		//			Log.e(TAG, "sleep after updatepause interrupted");
-		//		}
+
 		Runnable r = new Runnable() 
 		{		
 			@Override
 			public void run() 
 			{
-				//				try{
 				ArrayList<ControllableDevice> selDevs = getSelectedDevices();
-				//				ArrayList<ControllableDevice> selDevs = new ArrayList<ControllableDevice>();
-				//				selDevs.add(getSelectedDevices().get(0));
-				//				selDevs.add(getSelectedDevices().get(1));
+
 				for(ControllableDevice cd:selDevs)
 				{
 					markDirty(cd);
@@ -884,105 +892,32 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 				for(int i = 0;i<selDevs.size();i++)
 				{
 					ControllableDevice cd = selDevs.get(i);
-					//					cd.wakeUp();
 					Log.e(TAG, "woke up:"+cd.getHostname());
-					//					Thread.yield();
-					//					try {
-					//						Thread.sleep(10);
-					//					} catch (InterruptedException e) {
-					//						// TODO Auto-generated catch block
-					//						e.printStackTrace();
-					//					}
 					Log.e(TAG, "finished device "+(i+1)+" of "+selDevs.size());
 				}
 				mUpdateThread.resumeAfterPause();
-				//				}catch(Exception e)
-				//				{
-				//					Log.e(TAG, "exception in the difficult thread...");
-				//					e.printStackTrace();
-				//				}
-				//				hendl.sendMessage(new Message());
-				//				setActionPending(false);
+
 
 			}
 		};
 		Thread wakeupThread = new Thread(r);
-		//		wakeupThread.setUncaughtExceptionHandler(this);
 		wakeupThread.start();
 	}
 
 
-//	private void wakeupSelectedDevices() 
-//	{
-//		ProxyHelper.releaseConnections();
-//		Log.e(TAG, "waking up all......");
-//		//		mUpdateThread.pause();
-//		//		synchronized (mLock) 
-//		{
-//			//			new Thread(new Runnable() 
-//			//			{		
-//			//				@Override
-//			//				public void run() 
-//			//				{
-//			Log.e(TAG, "waking up selected devices");
-//
-//			//			new Thread(new Runnable() {
-//			//
-//			//				@Override
-//			//				public void run() {
-//			Log.e(TAG, "Thread for wakeup created");
-//			final ArrayList<ControllableDevice> selDevs = getSelectedDevices();
-//			for(ControllableDevice cd:selDevs)
-//			{
-//				markDirty(cd);
-//			}
-//			notifyAdapter();
-//
-//			new Thread(new Runnable() 
-//			{	
-//				@Override
-//				public void run() 
-//				{
-//					for(final ControllableDevice cd:selDevs)
-//					{
-//						//						new Thread(new Runnable() {
-//						//							
-//						//							@Override
-//						//							public void run() {
-//						//								// TODO Auto-generated method stub
-//						//								markDirty(cd);
-//						//								notifyAdapter();
-//						//							}
-//						//						}).start();
-//
-//
-//						cd.wakeUp();
-//						try {
-//							Thread.sleep(10);
-//						} catch (InterruptedException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//					}	
-//				}
-//			}).start();
-//
-//
-//		}
-//	}
-
+	/**
+	 * callback for the DeviceStateUpdateThread. called when new information on the devices is available
+	 */
 	public void notifyDataUpdated()
 	{
-		//		if(mActionPending)
-		//		{
-		//			Log.e(TAG, "notify data cancled cause action is pending");
-		//			return;
-		//		}
 		Log.e(TAG, "notified by update thread");
 		refreshListEntries();
 		notifyAdapter();
 	}
 
+	/**
+	 * notifies the listadapter that the dataset has changed
+	 */
 	private void notifyAdapter()
 	{
 		runOnUiThread(new Runnable() 
@@ -994,12 +929,6 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 
 			}
 		});
-
-	}
-
-	@Override
-	public void uncaughtException(Thread arg0, Throwable arg1) {
-		Log.e(TAG, "uncaught exception:"+arg1.getMessage());
 
 	}
 
@@ -1026,6 +955,12 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 
 	}
 
+	/**
+	 * handles errors originating from a status call
+	 * @param _mac the MAC address in the request that failed
+	 * @param _code the return code of the response
+	 * @param _msg the message associated with the return code
+	 */
 	private void handleStatusError(String _mac, int _code, String _msg)
 	{
 		Log.e(TAG, "notified about status error. code = "+_code+", mac="+_mac);
@@ -1042,6 +977,12 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		}
 	}
 
+	/**
+	 * handles errors originating from an extended status call
+	 * @param _mac the MAC address in the request that failed
+	 * @param _code the return code of the response
+	 * @param _msg the message associated with the return code
+	 */
 	private void handleExtendedStatusError(String _mac, int _code, String _msg)
 	{
 		Log.e(TAG, "notified about extended status error. code = "+_code+", mac="+_mac);
@@ -1061,9 +1002,15 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		default:
 			break;
 		}
-		
+
 	}
 
+	/**
+	 * handles errors originating from an powerOff call
+	 * @param _mac the MAC address in the request that failed
+	 * @param _code the return code of the response
+	 * @param _msg the message associated with the return code
+	 */
 	private void handlePowerOffError(String _mac, int _code, String _msg)
 	{
 		Log.e(TAG, "notified about power off error. code = "+_code+", mac="+_mac);
@@ -1077,15 +1024,15 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			break;
 		case 410:
 			runOnUiThread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					Toast.makeText(getApplicationContext(), "410 gone", Toast.LENGTH_LONG).show();
-					
+
 				}
 			});
 			break;
-			
+
 		case 400:
 		case 406:
 		case 500:
@@ -1097,6 +1044,12 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		}
 	}
 
+	/**
+	 * handles errors originating from an wakeUp call
+	 * @param _mac the MAC address in the request that failed
+	 * @param _code the return code of the response
+	 * @param _msg the message associated with the return code
+	 */
 	private void handleWakeUpError(String _mac, int _code, String _msg)
 	{
 		Log.e(TAG, "notified about wake up error. code = "+_code+", mac="+_mac);
@@ -1107,47 +1060,80 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 			break;
 		}
 	}
-	
+
+	/**
+	 * removes a device from the list
+	 * @param _mac the mac address of the device to remove
+	 */
 	private void removeFromList(String _mac)
 	{
 		ControllableDevice cd = getDeviceFromMac(_mac);
 		Log.e(TAG, "removed "+cd.toString()+", actual remove has to be implemented yet.");
 	}
-	
+
+	/**
+	 * adds a device to the list of unavailable devices
+	 * @param _mac the mac address of the device to add to the list
+	 */
 	private void addToNotAvailableList(String _mac)
 	{
 		ControllableDevice cd = getDeviceFromMac(_mac);
 		Log.e(TAG, "added "+cd.toString()+" to the not available list, actual add has to be implemented yet.");
 	}
-	
+
+	/**
+	 * displays a toast message saying that a computer is currently not available
+	 * @param _mac the mac address of the device that is not available
+	 */
 	private void toastComputerNotAvailable(String _mac)
 	{
 		ControllableDevice cd = getDeviceFromMac(_mac);
 		Toast.makeText(getApplicationContext(), cd.getHostname()+" is currently not available", Toast.LENGTH_LONG).show();
 	}
-	
+
+	/**
+	 * displays a toast message saying that currently there is no information available about a device
+	 * @param _mac the mac address of the device on which no information is available
+	 */
 	private void toastNoInformationAvailable(String _mac)
 	{
 		ControllableDevice cd = getDeviceFromMac(_mac);
 		Toast.makeText(getApplicationContext(), "no information about "+cd.getHostname()+" available", Toast.LENGTH_LONG).show();
 	}
-	
+
+	/**
+	 * displays the login dialog when credentials for a certain operation are necessary
+	 * @param _mac the mac address of the device where credentails are needed
+	 */
 	private void showLoginDialog(String _mac)
 	{
 		ControllableDevice cd = getDeviceFromMac(_mac);
 		Log.e(TAG, "showing login dialog for "+cd.getHostname());
 	}
-	
+
+	/**
+	 * displays a dialog saying that a certain computer could not be shut down
+	 * @param _mac the mac address of the device that could not be shut down
+	 */
 	private void showCantShutDownDialog(String _mac)
 	{
 		showDialog(CANT_SHUTDOWN_DIALOG, getBundledHostname(_mac));
 	}
-	
+
+	/**
+	 * displays a dialog saying that a certain computer could not be woke up
+	 * @param _mac the mac address of the device that could not be woke up
+	 */
 	private void showCantWakeUpDialog(String _mac)
 	{
 		showDialog(CANT_WAKEUP_DIALOG, getBundledHostname(_mac));
 	}
-	
+
+	/**
+	 * stores the hostname of a device in a new bundle. the entry is made for the key BUNDLE_HOSTNAME_KEY
+	 * @param _mac the mac address of the device which's hostname should be bundled 
+	 * @return a bundle containing the hostname
+	 */
 	private Bundle getBundledHostname(String _mac)
 	{
 		ControllableDevice cd = getDeviceFromMac(_mac);
@@ -1155,7 +1141,12 @@ implements OnClickListener, UncaughtExceptionHandler, IErrorReceiver
 		res.putCharSequence(BUNDLE_HOSTNAME_KEY, cd.getHostname());
 		return res;
 	}
-	
+
+	/**
+	 * searches the list of ControllableDevices for the first occurrence of the passed mac address 
+	 * @param _mac the mac address of the device that should be retrieved
+	 * @return the ControllableDevice associated with the passed mac address
+	 */
 	private ControllableDevice getDeviceFromMac(String _mac)
 	{
 		for(ControllableDevice cd:mAllDevices)

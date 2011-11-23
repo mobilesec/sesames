@@ -1,3 +1,10 @@
+/***************************************************************************** 	
+ *  Project: Sesame-S Client
+ *  Description: mobile client for interaction with the sesame-s system
+ *  Author: Peter Riedl
+ *  Copyright: Peter Riedl, 11/2011
+ *
+ ******************************************************************************/
 package at.sesame.fhooe.pms.list.controllabledevice;
 
 import java.util.ArrayList;
@@ -27,16 +34,47 @@ public class ControllableDeviceAdapter
 extends ArrayAdapter<IListEntry>
 implements OnClickListener, OnCheckedChangeListener
 {
+	/**
+	 * the tag to identify the logger output of this class
+	 */
 	private static final String TAG = "ControllableDeviceAdapter";
+	
+	/**
+	 * the owning activity's context
+	 */
 	private Context mContext = null;
+	
+	/**
+	 * the model to be displayed in the list
+	 */
 	private ArrayList<IListEntry> mDevs = null;
+	
+	/**
+	 * the owning activity's layout inflater
+	 */
 	private LayoutInflater mLi;
+	
+	/**
+	 * the activity that owns this adapter
+	 */
 	private PMSClientActivity mOwner;
 
 
+	/**
+	 * integer constant for single selection
+	 */
 	private static final int SINGLE_SELECTION = 0;
+	
+	/**
+	 * integer constant for group selection
+	 */
 	private static final int GROUP_SELECTION = 1;
 
+	/**
+	 * creates a new ControllableDeviceAdapter
+	 * @param _owner the owner of the adapter
+	 * @param objects the model to be shown via the adapter
+	 */
 	public ControllableDeviceAdapter(PMSClientActivity _owner, List<IListEntry> objects) 
 	{
 		super(_owner, 0, objects);
@@ -65,32 +103,9 @@ implements OnClickListener, OnCheckedChangeListener
 				CheckBox separatorCb = (CheckBox)v.findViewById(R.id.separatorCheckBox);
 				separatorCb.setChecked(sep.isSelected());
 				separatorCb.setOnCheckedChangeListener(this);
+				//the separator associated with the checkbox is set as tag for the checkbox to 
+				//be able to determine which separator was selected in onCheckedChanged
 				separatorCb.setTag(sep);
-				
-				//				switch(sep.getType())
-				//				{
-				//				case active:
-				//					Log.e(TAG, "processing active separator");
-				////					if(null==mActiveCheckBox)
-				//					{
-				//						Log.e(TAG, "active checkbox was null");
-				//						mActiveCheckBox = separatorCb;
-				////						mActiveCheckBox.setOnCheckedChangeListener(this);
-				//					}
-				//					break;
-				//				case inactive:
-				//					Log.e(TAG, "processing inactive separator");
-				////					if(null==mInactiveCheckBox)
-				//					{
-				//						Log.e(TAG, "inactive checkbox was null");
-				//						mInactiveCheckBox = separatorCb;
-				////						mInactiveCheckBox.setOnCheckedChangeListener(this);
-				//					}
-				//					break;
-				//				}
-				//				v.setOnClickListener(null);
-				//				v.setOnLongClickListener(null);
-				//				v.setOnTouchListener(null);
 			}
 			else
 			{
@@ -165,6 +180,8 @@ implements OnClickListener, OnCheckedChangeListener
 						}
 
 						cb.setOnCheckedChangeListener(this);
+						//the ControllableDevice associated with the checkbox is set as tag for the checkbox to 
+						//be able to determine which device was selected in onCheckedChanged
 						cb.setTag(cd);
 					}
 					else
@@ -196,13 +213,11 @@ implements OnClickListener, OnCheckedChangeListener
 		{
 			mOwner.handlePowerClick(cd);
 		}
-
 	}
 
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
 	{
-		Log.e(TAG, "checkedChanged");
 		buttonView.setOnCheckedChangeListener(null);
 		int type = identifyCheckSource(buttonView);
 		switch(type)
@@ -216,29 +231,17 @@ implements OnClickListener, OnCheckedChangeListener
 			boolean selected = mOwner.handleMultipleSelectionAttempt(sle.getType(), isChecked);
 			sle.setSelected(selected);
 			buttonView.setChecked(selected);
-			Log.e(TAG, "result of handleMultipleSelection="+selected);
 			break;
 		}
-		//		if(buttonView.equals(mActiveCheckBox))
-		//		{
-		//			boolean selected = mOwner.handleMultipleSelectionAttempt(ListType.active, isChecked);
-		//			buttonView.setChecked(selected);
-		//			Log.e(TAG, "result of handleMultipleSelection="+selected);
-		//		}
-		//		else if(buttonView.equals(mInactiveCheckBox))
-		//		{
-		//			boolean selected = mOwner.handleMultipleSelectionAttempt(ListType.inactive, isChecked);
-		//			buttonView.setChecked(selected);
-		//			Log.e(TAG, "result of handleMultipleSelection="+selected);
-		//		}
-		//		else
-		//		{
-		//			handleSingleSelection(buttonView, isChecked);
-		//		}
-
 		buttonView.setOnCheckedChangeListener(this);
 	}
 
+	/**
+	 * determines which ControllableDevice was selected, and sets the checked state of the passed
+	 * CompoundButton according to the result of handleSingleSelectionAttempt method in PMSClientActivity
+	 * @param buttonView the CompoundButton that changed it's checked state
+	 * @param isChecked boolean flag indicating whether the CompoundButton is checked or not
+	 */
 	private void handleSingleSelection(CompoundButton buttonView, boolean isChecked)
 	{
 		ControllableDevice cd = extractDeviceFromTag(buttonView);
@@ -249,27 +252,34 @@ implements OnClickListener, OnCheckedChangeListener
 		}
 	}
 
-	private void handleMultipleSelection(CompoundButton buttonView, boolean isChecked)
-	{
-		SeparatorListEntry sle = extractSeparatorFromTag(buttonView);
-		boolean selected = mOwner.handleMultipleSelectionAttempt(sle.getType(), isChecked);
-		//		buttonView.setChecked(selected);
-		//		Log.e(TAG, "result of handleMultipleSelection="+selected);
-
-	}
-
+	/**
+	 * extracts a ControllableDevice from the tag of a passed view
+	 * @param _v the view to get the ControllableDevice from
+	 * @return the ControllableDevice contained in the view's tag
+	 */
 	private ControllableDevice extractDeviceFromTag(View _v)
 	{
 		Object o = _v.getTag();
 		return (ControllableDevice)o;
 	}
 
+	/**
+	 * extracts a SeparatorListEntry from the tag of a passed view
+	 * @param _v the view to get the SeparatorListEntry from
+	 * @return the SeparatorListEntry contained in the view's tag
+	 */
 	private SeparatorListEntry extractSeparatorFromTag(View _v)
 	{
 		Object o = _v.getTag();
 		return (SeparatorListEntry)o;
 	}
 
+	/**
+	 * determines whether a checkbox in a separator or a in a list entry was passed
+	 * @param _cb the checkbox to be checked
+	 * @return SINGLE_SELECTION if a list entry was contained in the tag, 
+	 * GROUP_SELECTION if a separator was contained in the tag, -1 otherwise
+	 */
 	private int identifyCheckSource(CompoundButton _cb)
 	{
 		Object o = _cb.getTag();

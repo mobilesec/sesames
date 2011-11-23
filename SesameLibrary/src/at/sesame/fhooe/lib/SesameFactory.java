@@ -1,3 +1,10 @@
+/***************************************************************************** 	
+ *  Project: Sesame-S Client
+ *  Description: mobile client for interaction with the sesame-s system
+ *  Author: Peter Riedl
+ *  Copyright: Peter Riedl, 11/2011
+ *
+ ******************************************************************************/
 package at.sesame.fhooe.lib;
 
 import android.content.Context;
