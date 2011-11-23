@@ -1,3 +1,10 @@
+/***************************************************************************** 	
+ *  Project: Sesame-S Client
+ *  Description: mobile client for interaction with the sesame-s system
+ *  Author: Peter Riedl
+ *  Copyright: Peter Riedl, 11/2011
+ *
+ ******************************************************************************/
 package at.sesame.fhooe.pms.list.commands;
 
 import java.util.List;
@@ -14,13 +21,20 @@ import at.sesame.fhooe.pms.R;
 public class CommandAdapter 
 extends ArrayAdapter<CommandListEntry> 
 {
+	/**
+	 * the owning activity's layout inflater
+	 */
 	private LayoutInflater mLi;
 
+	/**
+	 * creates a new CommandAdapter
+	 * @param context the context of the owning activity
+	 * @param objects the model of the list
+	 */
 	public CommandAdapter(Context context,List<CommandListEntry> objects) 
 	{
 		super(context, 0, objects);
 		mLi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

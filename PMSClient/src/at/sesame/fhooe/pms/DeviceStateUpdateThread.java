@@ -1,3 +1,10 @@
+/***************************************************************************** 	
+ *  Project: Sesame-S Client
+ *  Description: mobile client for interaction with the sesame-s system
+ *  Author: Peter Riedl
+ *  Copyright: Peter Riedl, 11/2011
+ *
+ ******************************************************************************/
 package at.sesame.fhooe.pms;
 
 import java.util.ArrayList;
@@ -13,7 +20,6 @@ extends Thread
 	private PMSClientActivity mOwner;
 	private ArrayList<ControllableDevice> mDevs;
 	private boolean mUpdating = true;
-	private final Object mPauseLock = new Object();
 
 	private long mUpdatePeriod = 5000;
 
@@ -26,8 +32,6 @@ extends Thread
 	@Override
 	public void run() 
 	{
-		//		super.run();
-		//		synchronized (mPauseLock) 
 		{
 			while(mUpdating)
 			{
@@ -42,8 +46,7 @@ extends Thread
 				}
 				if(!mUpdating)
 				{
-					Log.e(TAG, "paused...continue");
-					continue;
+					break;
 				}
 				Log.e(TAG, "updating");
 				for(ControllableDevice cd:mDevs)
@@ -89,28 +92,4 @@ extends Thread
 		}
 		//		notify();
 	}
-
-//	public void onResume()
-//	{
-//		if(thread == null){
-//			thread = new Thread()
-//			{
-//				@Override
-//				public void run() 
-//				{
-//					try {
-//
-//					}
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		};
-//
-//		thread.start();
-//	}
-//}
-
-
-
 }
