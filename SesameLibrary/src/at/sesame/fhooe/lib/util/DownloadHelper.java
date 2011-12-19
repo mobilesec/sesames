@@ -53,7 +53,7 @@ public class DownloadHelper
 	}
 	
 	@SuppressWarnings("unused")
-	private static String convertStreamToString(InputStream _is)
+	public static String convertStreamToString(InputStream _is)
 	{
 		BufferedReader r = new BufferedReader(new InputStreamReader(_is));
 		StringBuilder total = new StringBuilder();

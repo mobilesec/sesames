@@ -7,7 +7,13 @@
  ******************************************************************************/
 package at.sesame.fhooe.lib.charts;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.achartengine.chart.PointStyle;
@@ -21,6 +27,9 @@ import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import android.graphics.Color;
+import android.util.Log;
+
 /**
  * this class is used to specify data series and renderers to be used with aChartEngine 
  * @author Peter Riedl
@@ -28,6 +37,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
  */
 public class SesameChartHelper
 {
+	private static final String TAG = "SesameChartHelper";
 	public XYMultipleSeriesDataset buildDataset(String[] titles, List<double[]> xValues,List<double[]> yValues) 
 	{
 		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
@@ -214,6 +224,7 @@ public class SesameChartHelper
 		renderer.setChartTitleTextSize(20);
 		renderer.setLabelsTextSize(15);
 		renderer.setLegendTextSize(15);
+		renderer.setShowGrid(true);
 		int length = colors.length;
 		for (int i = 0; i < length; i++) {
 			SimpleSeriesRenderer r = new SimpleSeriesRenderer();
@@ -221,5 +232,134 @@ public class SesameChartHelper
 			renderer.addSeriesRenderer(r);
 		}
 		return renderer;
+	}
+	
+	/**
+	 * creates a renderer for the energy data graph
+	 * @param _data the data to be rendered (needed for correct x-labels)
+	 * @param _xSpacingInHours the spacing in hours between two x-labels
+	 * @return a renderer for energy data graphs
+	 */
+	public XYMultipleSeriesRenderer buildEnergyDataRenderer(GregorianCalendar _startDate, double[] _data, int _xSpacingInHours)
+	{
+		Log.e(TAG, "------SESAME------");
+		XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+		//-----------------------------------------------------------------------------------------------------
+		//general setup
+		//-----------------------------------------------------------------------------------------------------
+		performGeneralEnergyDataRendererSetup(renderer);
+		//-----------------------------------------------------------------------------------------------------
+		//x-labels
+		//-----------------------------------------------------------------------------------------------------
+		if(_data.length<100)//1 measurement every 15 minutes --> 4 measurements per hour --> 92 measurements per day
+		{
+			layoutEnergyDataRendererXLabelsHour(renderer, _data, _xSpacingInHours);
+		}
+		else
+		{
+			layoutEnergyDataRendererXLabelsDay(renderer, _startDate, _data, _xSpacingInHours);
+		}
+		//-----------------------------------------------------------------------------------------------------
+		//y-labels
+		//-----------------------------------------------------------------------------------------------------
+		layoutEnergyDataRendererYLabels(renderer, _data);
+		//-----------------------------------------------------------------------------------------------------
+		//finish
+		//-----------------------------------------------------------------------------------------------------
+		XYSeriesRenderer r = new XYSeriesRenderer();
+		renderer.addSeriesRenderer(r);
+		return renderer;
+	}
+	
+	private XYMultipleSeriesRenderer performGeneralEnergyDataRendererSetup(XYMultipleSeriesRenderer _renderer)
+	{
+		_renderer.setAxisTitleTextSize(16);
+		_renderer.setChartTitleTextSize(20);
+		_renderer.setLabelsTextSize(15);
+		_renderer.setLegendTextSize(15);
+		_renderer.setPointSize(5f);
+		_renderer.setGridColor(Color.WHITE);
+		_renderer.setShowGrid(true);
+		return _renderer;
+	}
+	
+	private XYMultipleSeriesRenderer layoutEnergyDataRendererXLabelsHour(XYMultipleSeriesRenderer _renderer, double[] _data, int _xSpacingInHours)
+	{
+		_renderer.setXLabels(0);
+		
+		int len = _data.length;
+		int interval = 4*_xSpacingInHours; //a data value is present every 15 minutes --> four times per hour.
+		for(int i = 0;i<len;i+=interval)
+		{
+			_renderer.addXTextLabel(i+1, getXLabelForEnergyDataHour(i));//i+1 because x-indexing starts with 1 in achartengine
+		}
+		return _renderer;
+	}
+	
+	private String getXLabelForEnergyDataHour(int _idx)
+	{
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.set(Calendar.HOUR_OF_DAY, 0);
+		gc.set(Calendar.MINUTE,0);
+		for(int i = 0;i<_idx;i++)
+		{
+			gc.add(Calendar.MINUTE, 15);
+		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+//		String res = ;
+		return sdf.format(gc.getTime());
+	}
+	
+	private XYMultipleSeriesRenderer layoutEnergyDataRendererXLabelsDay(XYMultipleSeriesRenderer _renderer, GregorianCalendar _startDate, double[] _data, int _xSpacingInHours)
+	{
+		_renderer.setXLabels(0);
+		
+		int len = _data.length;
+//		int interval = 4*_xSpacingInHours; //a data value is present every 15 minutes --> four times per hour.
+		for(int i = 0;i<len;i+=92)//1 measurement every 15 minutes --> 4 measurements per hour --> 92 measurements per day
+		{
+			_renderer.addXTextLabel(i+1, getXLabelForEnergyDataDay(_startDate, i));//i+1 because x-indexing starts with 1 in achartengine
+		}
+		return _renderer;
+	}
+	
+	private String getXLabelForEnergyDataDay(GregorianCalendar _startDate, int _idx) 
+	{
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.set(Calendar.YEAR, _startDate.get(Calendar.YEAR));
+		gc.set(Calendar.MONTH, _startDate.get(Calendar.MONTH));
+		gc.set(Calendar.DAY_OF_MONTH, _startDate.get(Calendar.DAY_OF_MONTH));
+//		Log.e(TAG, gc.toString());
+		for(int i = 0;i<_idx;i++)
+		{
+//			if(i>0)
+			{
+				if(i%92==0)
+				{
+					gc.add(Calendar.DAY_OF_YEAR, 1);
+				}
+			}
+			
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+		return sdf.format(gc.getTime());
+	}
+
+	private XYMultipleSeriesRenderer layoutEnergyDataRendererYLabels(XYMultipleSeriesRenderer _renderer, double[] _data)
+	{
+		_renderer.setYLabels(0);
+		ArrayList<Double> dataArrList = new ArrayList<Double>();
+		for(int i = 0;i<_data.length;i++)
+		{
+			dataArrList.add(new Double(_data[i]));
+		}
+		double maxY =  Collections.max(dataArrList);
+		Log.e(TAG, "max of data="+maxY);
+		for(int i = 100;i<maxY;i+=100)
+		{
+			_renderer.addYTextLabel(i, ""+i);
+		}
+		return _renderer;
 	}
 }
