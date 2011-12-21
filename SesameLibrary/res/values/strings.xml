@@ -37,6 +37,6 @@
     <string name="PMSErrorMessage501">the command is not supported by the target operating system</string>
     <string name="PMSErrorMessageCodeNotRecognized">HTTP status code not recognized</string>
     <string name="ControllableDevice_idleString_prefix">"inactive since "</string>
-    <string name="ControllableDevice_minuteString">" minutes"</string>
-    <string name="controllableDevice_hourString">" hours"</string>
+    <string name="ControllableDevice_minuteString">" min"</string>
+    <string name="controllableDevice_hourString">" hrs"</string>
 </resources>
