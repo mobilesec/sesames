@@ -4,7 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="10" />
+    <uses-sdk android:minSdkVersion="11" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
@@ -12,7 +12,7 @@
         android:label="@string/app_name" >
         <activity
             android:label="@string/app_name"
-            android:name=".EnergyDataActivity" >
+            android:name=".testing.FragmentTestActivity" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 

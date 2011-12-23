@@ -3,5 +3,6 @@
 
     <string name="hello">Hello World, EnergyDataRestAccssActivity!</string>
     <string name="app_name">SesameEnergyDataApp</string>
+    <string name="energy_display_separator">,</string>
 
 </resources>

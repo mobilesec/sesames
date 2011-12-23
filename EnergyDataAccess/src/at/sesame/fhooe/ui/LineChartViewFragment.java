@@ -67,15 +67,16 @@ extends Fragment
 		
 	}
 	
-	public void onCreateOptionsMenu(Menu _menu, MenuInflater _inflater)
-	{
-		Log.e("ChartViewFragment","onCreateOptionsMenu");
-		super.onCreateOptionsMenu(_menu, _inflater);
-	}
+//	public void onCreateOptionsMenu(Menu _menu, MenuInflater _inflater)
+//	{
+//		Log.e("ChartViewFragment","onCreateOptionsMenu");
+//		super.onCreateOptionsMenu(_menu, _inflater);
+//	}
 	
 	public View onCreateView(LayoutInflater _inflater, ViewGroup _container, Bundle _savedInstance)
 	{
 		super.onCreateView(_inflater, _container, _savedInstance);
+		
 		if(null==mData)
 		{
 			return null;
