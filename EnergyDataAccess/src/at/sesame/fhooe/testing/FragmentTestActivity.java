@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TabHost;
+import at.sesame.fhooe.EnergyDataActivity;
 import at.sesame.fhooe.R;
 import at.sesame.fhooe.ui.DialChartFragment;
 import at.sesame.fhooe.ui.LineChartViewFragment;
 import at.sesame.fhooe.ui.WheelFragment;
+import at.sesame.fhooe.ui.energy.EnergyMeterFragment;
 
 public class FragmentTestActivity
 extends Activity
@@ -71,6 +73,8 @@ extends Activity
 //    	  separators.add(new Integer(2));
     	  addTab("wheel", new WheelFragment(this,mHandler, 4, separators));
     	  addTab("dial", new DialChartFragment(this, "dial example"));
+    	  addTab("energy meter", new EnergyMeterFragment(this));
+    	  addTab("load profile", new EnergyDataActivity());
 //    	  ArrayList<Fragment> fragList = new ArrayList<Fragment>();
 //    	  fragList.add(new LineChartViewFragment("1", new double[]{1,2,3,4,5,6,7,8}));
 //    	  fragList.add(new LineChartViewFragment("2", new double[]{1,4,4,4,4,4,4,8}));

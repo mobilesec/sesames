@@ -43,7 +43,7 @@ extends ListFragment
 		{
 			Log.e(TAG, "places are not null");
 		}
-		mAdapter = new MeasurementPlaceListAdapter(mOwner,  mPlaces);
+		mAdapter = new MeasurementPlaceListAdapter(mOwner.getActivity(),  mPlaces);
 		setListAdapter(mAdapter);
 	}
 	

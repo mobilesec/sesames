@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 
@@ -26,7 +27,7 @@ import at.sesame.fhooe.ui.MeasurementPlaceListAdapter;
 
 
 public class EnergyDataActivity 
-extends Activity implements OnItemClickListener
+extends Fragment implements OnItemClickListener
 {
 	private static final String TAG = "EnergyDataRestAccessActivity";
 	
@@ -40,7 +41,7 @@ extends Activity implements OnItemClickListener
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+//        setContentView(R.layout.main);
 //        EnergyDataAccess eda = new EnergyDataAccess();
         
 //        mPlaces = EnergyDataAccess.getMeasurementPlaces();
@@ -98,7 +99,7 @@ extends Activity implements OnItemClickListener
     	if(null==dataRows)
     	{
     		Log.e(TAG, "data could not be queried");
-    		Toast.makeText(this, "data could not be queried", Toast.LENGTH_LONG).show();
+//    		Toast.makeText(this, "data could not be queried", Toast.LENGTH_LONG).show();
     		return;
     	}
     	double[] data = new double[dataRows.size()];
@@ -117,7 +118,7 @@ extends Activity implements OnItemClickListener
 		MeasurementPlace mp = mPlaces.get(arg2);
 		Log.e(TAG, mp.toString());
 		Intent i = new Intent();
-		i.setClass(this, EnergyDataFragment.class);
+		i.setClass(getActivity(), EnergyDataFragment.class);
 		Bundle b = new Bundle();
 		b.putInt(EnergyDataFragment.MP_ID_KEY, mp.getId());
 		i.putExtras(b);
