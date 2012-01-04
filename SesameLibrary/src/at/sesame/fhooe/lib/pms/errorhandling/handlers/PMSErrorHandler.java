@@ -85,6 +85,13 @@ implements ErrorHandler
 	@Override
 	public <T> T handle(Request arg0, Exception arg1) throws Exception 
 	{
+		Log.e(TAG, arg1.toString());
+//		Log.e(TAG, a)
+		for(StackTraceElement ste:arg1.getStackTrace())
+		{
+			Log.e(TAG, ""+ste.getLineNumber()+ste.getClassName());
+			
+		}
 //		Log.e(TAG, "return type:"+this.);
 		String methodName = arg0.getMethodConfig().getMethod().getName();
 		Log.e(TAG, methodName);

@@ -10,6 +10,11 @@ package at.sesame.fhooe.pms;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,6 +40,7 @@ import at.sesame.fhooe.lib.pms.PMSProvider;
 import at.sesame.fhooe.lib.pms.errorhandling.ErrorForwarder;
 import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
+import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
 import at.sesame.fhooe.pms.list.commands.CommandAdapter;
 import at.sesame.fhooe.pms.list.commands.CommandListEntry;
@@ -64,22 +70,22 @@ implements OnClickListener, IErrorReceiver
 	 * integer constant for displaying the dialog for actions on active devices
 	 */
 	private static final int ACTIVE_DEVICE_ACTION_DIALOG = 0;
-	
+
 	/**
 	 * integer constant for displaying the dialog for actions on inactive devices
 	 */
 	private static final int INACTIVE_DEVICE_ACTION_DIALOG = 1;
-	
+
 	/**
 	 * integer constant for displaying the dialog when no internet connection is detected
 	 */
 	private static final int NO_NETWORK_DIALOG = 2;
-	
+
 	/**
 	 * integer constant for displaying the dialog when the shutdown of a computer failed
 	 */
 	private static final int CANT_SHUTDOWN_DIALOG = 3;
-	
+
 	/**
 	 * integer constant for displaying the dialog when the wake up of a computer failed
 	 */
@@ -99,12 +105,12 @@ implements OnClickListener, IErrorReceiver
 	 * a list of all controllable devices available
 	 */
 	private ArrayList<ControllableDevice> mAllDevices = new ArrayList<ControllableDevice>();
-	
+
 	/**
 	 * mapping of hostname and selection status
 	 */
 	private HashMap<String, Boolean> mSelection = new HashMap<String, Boolean>();
-	
+
 	/**
 	 * list of all displayed list entries
 	 */
@@ -129,13 +135,13 @@ implements OnClickListener, IErrorReceiver
 	 * the listview for all ControllableDevices
 	 */
 	private ListView mDevList;
-	
+
 	/**
 	 * container for the buttons that are associated with multiple selected
 	 * active devices
 	 */
 	private ViewGroup mActiveDeviceControlContainer;
-	
+
 	/**
 	 * container for the buttons that are associated with multiple selected
 	 * inactive devices
@@ -146,12 +152,12 @@ implements OnClickListener, IErrorReceiver
 	 * the button that puts all selected devices to sleep
 	 */
 	private Button mSleepAllButt;
-	
+
 	/**
 	 * the button that shuts all selected devices down
 	 */
 	private Button mPowerOffAllButt;
-	
+
 	/**
 	 * the button that wakes all selected devices up
 	 */
@@ -189,27 +195,144 @@ implements OnClickListener, IErrorReceiver
 			return;
 		}
 		ErrorForwarder.getInstance().register(this);
-		queryControllableDevices();
+		//		queryControllableDevices();
+		//
+		//		refreshListEntries();
+		//		mAdapter = new ControllableDeviceAdapter(this, mEntries);
+		//		mDevList = (ListView)findViewById(R.id.deviceList);
+		//		mDevList.setAdapter(mAdapter);
+		//
+		//		mActiveDeviceControlContainer = (ViewGroup)findViewById(R.id.activeDeviceControllContainer);
+		//		mInactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
+		//		setControlContainerVisibility(View.GONE, View.GONE);
+		//
+		//		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
+		//		mSleepAllButt.setOnClickListener(this);
+		//
+		//		mPowerOffAllButt = (Button)findViewById(R.id.shutDownButton);
+		//		mPowerOffAllButt.setOnClickListener(this);
+		//
+		//		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
+		//		mWakeUpAllButt.setOnClickListener(this);
+		//
+		//		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
+		testExtendedStatusList();
+	}
 
-		refreshListEntries();
-		mAdapter = new ControllableDeviceAdapter(this, mEntries);
-		mDevList = (ListView)findViewById(R.id.deviceList);
-		mDevList.setAdapter(mAdapter);
+	private void testExtendedStatusList()
+	{
 
-		mActiveDeviceControlContainer = (ViewGroup)findViewById(R.id.activeDeviceControllContainer);
-		mInactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
-		setControlContainerVisibility(View.GONE, View.GONE);
+		ArrayList<String>hosts = new ArrayList<String>();
+		//		hosts.
+		hosts.add("00:25:b3:16:ad:14");
+		hosts.add("00:25:b3:17:df:1d");
+		hosts.add("00:25:b3:16:ac:1a");
+		hosts.add("00:25:b3:17:e2:93");
+		hosts.add("00:25:b3:16:ac:ad");
+		hosts.add("00:25:b3:16:ab:f0");
+		hosts.add("00:25:b3:16:ad:17");
+		hosts.add("00:25:b3:16:ac:17");
+		hosts.add("00:25:b3:16:ac:40");
+		hosts.add("00:25:b3:17:e2:61");
+		hosts.add("00:25:b3:17:e2:94");
+		hosts.add("00:25:b3:16:ab:9e");
+		hosts.add("00:25:b3:17:e2:62");
+		hosts.add("00:25:b3:17:e1:e8");
+		hosts.add("00:25:b3:16:ac:65");
+		hosts.add("00:25:b3:17:df:24");
+		hosts.add("00:25:b3:17:e2:31");
+		hosts.add("00:25:b3:17:e2:f6");
 
-		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
-		mSleepAllButt.setOnClickListener(this);
+		hosts.add("00:22:64:16:9d:84");
+		hosts.add("00:22:64:15:e9:be");
+		hosts.add("00:22:64:15:2a:46");
+		hosts.add("00:22:64:17:13:90");
+		hosts.add("00:22:64:15:2a:38");
+		hosts.add("00:22:64:16:9d:80");
+		hosts.add("00:22:64:15:e6:6e");
+		hosts.add("00:22:64:15:66:14");
+		hosts.add("00:22:64:15:2a:30");
+		hosts.add("00:22:64:15:a6:c2");
+		hosts.add("00:22:64:14:f2:34");
+		hosts.add("00:22:64:15:a6:b2");
+		hosts.add("00:22:64:15:29:ca");
+		hosts.add("00:22:64:16:9d:12");
+		hosts.add("00:22:64:16:20:ac");
+		hosts.add("00:22:64:16:9d:7e");
+		hosts.add("00:22:64:17:15:ca");
+		hosts.add("00:22:64:15:a6:56");
+		hosts.add("00:22:64:15:a6:5a");
 
-		mPowerOffAllButt = (Button)findViewById(R.id.shutDownButton);
-		mPowerOffAllButt.setOnClickListener(this);
+		hosts.add("00:22:64:16:20:9c");
+		hosts.add("00:22:64:16:9d:fa");
+		hosts.add("00:22:64:15:a9:04");
+		hosts.add("00:22:64:17:13:9e");
+		hosts.add("00:22:64:15:63:76");
+		hosts.add("00:22:64:15:e9:d0");
+		hosts.add("00:22:64:15:e8:08");
+		hosts.add("00:22:64:15:a6:ba");
+		hosts.add("00:22:64:15:67:86");
+		hosts.add("00:22:64:14:b3:bf");
+		hosts.add("00:22:64:17:13:a4");
+		hosts.add("00:22:64:16:a3:3a");
+		hosts.add("00:22:64:15:e7:28");
+		hosts.add("00:22:64:15:e8:d8");
+		hosts.add("00:22:64:14:b0:ed");
+		hosts.add("00:22:64:14:f5:96");
+		hosts.add("00:22:64:14:b3:bd");
+		hosts.add("00:22:64:16:9d:2c");
+		hosts.add("00:22:64:15:23:d4");
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(hosts);
+		for(ExtendedPMSStatus epmss:statuses)
+		{
+			Log.e(TAG, epmss.toString());
+		}
+		//		
+		//		JSONArray arr = new JSONArray(hosts);
+		////		arr.
+		//		JSONArray names = new JSONArray();
+		////		JSONObject
+		//		StringBuilder sb = new StringBuilder();
+		//		sb.append("[");
+		//		for(int i =0 ;i<hosts.size()-1;i++)
+		//		{
+		//			JSONObject json = new JSONObject();
+		//			try {
+		//				json.put("mac", hosts.get(i));
+		//				sb.append(json.toString());
+		//				sb.append(",");
+		//			} catch (JSONException e) {
+		//				// TODO Auto-generated catch block
+		//				e.printStackTrace();
+		//			}
+		////			arr.put(json);
+		//		}
+		//		JSONObject lastObject = new JSONObject();
+		//		try {
+		//			lastObject.put("mac", hosts.get(hosts.size()-1));
+		//		} catch (JSONException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
+		//		sb.append(lastObject.toString());
+		//		sb.append("]");
+		//		Log.e(TAG, sb.toString());
+		////		JSONArray arr2  = new JSONArray();
+		////		for(int i =0;i<arr.length();i++)
+		////		{
+		////			arr2.put("mac");
+		////		}
+		////		
+		//////		arr.toJSONObject(names)
+		////		try {
+		////			Log.e(TAG, arr.toJSONObject(arr2).toString());
+		////		} catch (JSONException e) {
+		////			// TODO Auto-generated catch block
+		////			e.printStackTrace();
+		////		}
+		//		
+		////		 [{ "mac" : "1" }, { "mac" : "2" }, { "mac" : "3" } ]
 
-		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
-		mWakeUpAllButt.setOnClickListener(this);
-
-		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
 	}
 
 	/**
@@ -230,14 +353,20 @@ implements OnClickListener, IErrorReceiver
 	public void onDestroy()
 	{
 		super.onDestroy();
-		mUpdateThread.pause();
+		if(null!=mUpdateThread)
+		{
+			mUpdateThread.pause();
+		}
 	}
 
 	@Override
 	public void onPause()
 	{
 		super.onPause();
-		mUpdateThread.pause();
+		if(null!=mUpdateThread)
+		{
+			mUpdateThread.pause();
+		}
 	}
 
 	@Override
@@ -247,7 +376,10 @@ implements OnClickListener, IErrorReceiver
 		Log.e(TAG, "onResume");
 		if(checkConnectivity())
 		{
-			mUpdateThread.start();
+			if(null!=mUpdateThread)
+			{
+				mUpdateThread.start();
+			}
 		}
 	}
 
@@ -489,22 +621,94 @@ implements OnClickListener, IErrorReceiver
 	 */
 	private void queryControllableDevices() 
 	{
-		ArrayList<String> macs = PMSProvider.getDeviceList();
-		mNetworkingDialog.setMax(macs.size());
+		//		ArrayList<String> macs = PMSProvider.getDeviceList();
+		HashMap<String,String>hosts = new HashMap<String, String>();
+		hosts.put("DV101", "00:25:b3:16:ad:14");
+		hosts.put("DV102", "00:25:b3:17:df:1d");
+		hosts.put("DV103", "00:25:b3:16:ac:1a");
+		hosts.put("DV104", "00:25:b3:17:e2:93");
+		hosts.put("DV105", "00:25:b3:16:ac:ad");
+		hosts.put("DV106", "00:25:b3:16:ab:f0");
+		hosts.put("DV107", "00:25:b3:16:ad:17");
+		hosts.put("DV108", "00:25:b3:16:ac:17");
+		hosts.put("DV109", "00:25:b3:16:ac:40");
+		hosts.put("DV110", "00:25:b3:17:e2:61");
+		hosts.put("DV111", "00:25:b3:17:e2:94");
+		hosts.put("DV112", "00:25:b3:16:ab:9e");
+		hosts.put("DV113", "00:25:b3:17:e2:62");
+		hosts.put("DV114", "00:25:b3:17:e1:e8");
+		hosts.put("DV115", "00:25:b3:16:ac:65");
+		hosts.put("DV116", "00:25:b3:17:df:24");
+		hosts.put("DV118", "00:25:b3:17:e2:31");
+		hosts.put("DV119", "00:25:b3:17:e2:f6");
+
+		hosts.put("DV301", "00:22:64:16:9d:84");
+		hosts.put("DV302", "00:22:64:15:e9:be");
+		hosts.put("DV303", "00:22:64:15:2a:46");
+		hosts.put("DV304", "00:22:64:17:13:90");
+		hosts.put("DV305", "00:22:64:15:2a:38");
+		hosts.put("DV306", "00:22:64:16:9d:80");
+		hosts.put("DV307", "00:22:64:15:e6:6e");
+		hosts.put("DV308", "00:22:64:15:66:14");
+		hosts.put("DV309", "00:22:64:15:2a:30");
+		hosts.put("DV310", "00:22:64:15:a6:c2");
+		hosts.put("DV311", "00:22:64:14:f2:34");
+		hosts.put("DV312", "00:22:64:15:a6:b2");
+		hosts.put("DV313", "00:22:64:15:29:ca");
+		hosts.put("DV314", "00:22:64:16:9d:12");
+		hosts.put("DV315", "00:22:64:16:20:ac");
+		hosts.put("DV316", "00:22:64:16:9d:7e");
+		hosts.put("DV317", "00:22:64:17:15:ca");
+		hosts.put("DV318", "00:22:64:15:a6:56");
+		hosts.put("DV319", "00:22:64:15:a6:5a");
+
+		hosts.put("DV601", "00:22:64:16:20:9c");
+		hosts.put("DV602", "00:22:64:16:9d:fa");
+		hosts.put("DV603", "00:22:64:15:a9:04");
+		hosts.put("DV604", "00:22:64:17:13:9e");
+		hosts.put("DV605", "00:22:64:15:63:76");
+		hosts.put("DV606", "00:22:64:15:e9:d0");
+		hosts.put("DV607", "00:22:64:15:e8:08");
+		hosts.put("DV608", "00:22:64:15:a6:ba");
+		hosts.put("DV609", "00:22:64:15:67:86");
+		hosts.put("DV610", "00:22:64:14:b3:bf");
+		hosts.put("DV611", "00:22:64:17:13:a4");
+		hosts.put("DV612", "00:22:64:16:a3:3a");
+		hosts.put("DV613", "00:22:64:15:e7:28");
+		hosts.put("DV614", "00:22:64:15:e8:d8");
+		hosts.put("DV615", "00:22:64:14:b0:ed");
+		hosts.put("DV616", "00:22:64:14:f5:96");
+		hosts.put("DV617", "00:22:64:14:b3:bd");
+		hosts.put("DV618", "00:22:64:16:9d:2c");
+		hosts.put("DV619", "00:22:64:15:23:d4");
+
+
+		mNetworkingDialog.setMax(hosts.size());
 		showNetworkingDialog();
+
+		mAllDevices = new ArrayList<ControllableDevice>();
+		for(Map.Entry<String, String> host:hosts.entrySet())
 		{
-			mAllDevices = new ArrayList<ControllableDevice>();
-			for(int i = 0;i<macs.size();i++)
+			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "admin", "pwd", true);
+			if(cd.isValid())
 			{
-				ControllableDevice cd = new ControllableDevice(getApplicationContext(), macs.get(i), "admin1", "pwd", true);
-				if(cd.isValid())
-				{
-					mAllDevices.add(cd);
-					mSelection.put(cd.getMac(), false);
-				}
-				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+				mAllDevices.add(cd);
+				mSelection.put(cd.getMac(), false);
 			}
+			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		}
+
+		//			for(int i = 0;i<macs.size();i++)
+		//			{
+		//				ControllableDevice cd = new ControllableDevice(getApplicationContext(), macs.get(i), "admin1", "pwd", true);
+		//				if(cd.isValid())
+		//				{
+		//					mAllDevices.add(cd);
+		//					mSelection.put(cd.getMac(), false);
+		//				}
+		//				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+		//			}
+
 		dismissNetworkingDialog();
 	}
 
@@ -686,7 +890,7 @@ implements OnClickListener, IErrorReceiver
 		mSelection.put(_cdle.getControllableDevice().getMac(), _select);
 		return _cdle.isSelected();
 	}
-	
+
 	/**
 	 * hides or shows the containers for actions on multiple selected ControllableDevices
 	 */
@@ -695,7 +899,7 @@ implements OnClickListener, IErrorReceiver
 		switch(getSelectedType())
 		{
 		case none:
-			
+
 			setControlContainerVisibility(View.GONE, View.GONE);
 			break;
 		case active:
@@ -743,7 +947,7 @@ implements OnClickListener, IErrorReceiver
 	private ArrayList<ControllableDevice> getSelectedDevices()
 	{
 		ArrayList<ControllableDevice> res = new ArrayList<ControllableDevice>();
-//		synchronized (mAllDevices) 
+		//		synchronized (mAllDevices) 
 		{
 			for(ControllableDevice cd:mAllDevices)
 			{
@@ -809,7 +1013,7 @@ implements OnClickListener, IErrorReceiver
 	private void setControlContainerVisibility(int _v1, int _v2)
 	{
 		mActiveDeviceControlContainer.setVisibility(_v1);
-		
+
 		mInactiveDeviceControlContainer.setVisibility(_v2);
 	}
 
@@ -870,7 +1074,7 @@ implements OnClickListener, IErrorReceiver
 			}).start();
 		}
 	}
-	
+
 	/**
 	 * wakes up all selected devices
 	 */

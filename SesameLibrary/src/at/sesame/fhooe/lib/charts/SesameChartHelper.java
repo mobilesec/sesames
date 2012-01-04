@@ -9,7 +9,6 @@ package at.sesame.fhooe.lib.charts;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -242,7 +241,6 @@ public class SesameChartHelper
 	 */
 	public XYMultipleSeriesRenderer buildEnergyDataRenderer(GregorianCalendar _startDate, double[] _data, int _xSpacingInHours)
 	{
-		Log.e(TAG, "------SESAME------");
 		XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
 		//-----------------------------------------------------------------------------------------------------
 		//general setup
@@ -355,7 +353,7 @@ public class SesameChartHelper
 			dataArrList.add(new Double(_data[i]));
 		}
 		double maxY =  Collections.max(dataArrList);
-		Log.e(TAG, "max of data="+maxY);
+//		Log.e(TAG, "max of data="+maxY);
 		for(int i = 100;i<maxY;i+=100)
 		{
 			_renderer.addYTextLabel(i, ""+i);

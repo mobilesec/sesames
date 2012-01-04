@@ -103,6 +103,8 @@ implements Runnable
 //	private Thread mConsumerThread;
 	
 	private boolean mValid = false;
+	
+	private boolean mUseHostnameFromStatus = false;
 
 	/**
 	 * instance of the PMS
@@ -117,8 +119,16 @@ implements Runnable
 	 * @param _password the password of the device
 	 * @param _useCredentials if true, credentials are used otherwise not
 	 */
-	public ControllableDevice(Context _c, String _mac, String _user, String _password, boolean _useCredentials)
+	public ControllableDevice(Context _c, String _mac, String _hostName, String _user, String _password, boolean _useCredentials)
 	{
+		if(null==_hostName || _hostName.isEmpty())
+		{
+			mUseHostnameFromStatus = true;
+		}
+		else
+		{
+			mHostname = _hostName;
+		}
 		mCtx = _c;
 		mMac = _mac;
 		mUser = _user;
@@ -192,7 +202,10 @@ implements Runnable
 			mValid = false;
 			return;
 		}
-		mHostname = extStat.getHostname();
+		if(mUseHostnameFromStatus)
+		{
+			mHostname = extStat.getHostname();
+		}
 		mIp = extStat.getIp();
 		mOs = translateOsToEnum(extStat.getOs());
 		mAlive = extStat.getAlive().equals("1")?true:false;
@@ -323,8 +336,8 @@ implements Runnable
 	
 	public int getIdleSinceMinutes()
 	{
-//		return getIdleSince()/60;
-		return 185;
+		return getIdleSince()/60;
+//		return 185;
 	}
 	
 	public boolean isValid()

@@ -30,12 +30,28 @@ extends PMSStatus
 	public void setIdleSince(int idle_since) {
 		this.idleSince = idle_since;
 	}
+	
+	@JsonProperty("mac")
+	private String mac;
+	
+	
+	public String getMac()
+	{
+		return mac;
+	}
+	
+	public void setMac(String _mac)
+	{
+		mac = _mac;
+	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder(super.toString());
 		builder.append("\nExtendedPMSStatus [idleSince=");
 		builder.append(idleSince);
+		builder.append(", mac=");
+		builder.append(mac);
 		builder.append("]");
 		return builder.toString();
 	}

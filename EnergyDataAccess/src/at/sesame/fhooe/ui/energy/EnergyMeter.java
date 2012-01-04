@@ -39,7 +39,7 @@ extends View
 	private int mMajorTickSpacing = 10;
 	private float mMajorTickLength = 30;
 	
-	private double mValue;
+	private double mDisplayedValue;
 	
 	private int mPointerBaseWidth = 20;
 
@@ -66,9 +66,10 @@ extends View
 	
 	public void setValue(double _val) throws Exception
 	{
+		mDisplayedValue = _val;
+		
 		double angle = convertValueToAngle(_val);
-		mValue = _val;
-
+	
 		mPointerMatrix.reset();
 		mPointerMatrix.setRotate((float)angle, mPointerAnchor.x, mPointerAnchor.y);
 		mPointerMatrix.postTranslate(mDx, mDy);
@@ -113,7 +114,7 @@ extends View
 			float right = left+mPointerBaseWidth;
 			float top = height-mPointerBaseWidth;
 			float bottom = height;
-			PointF[] pos = getTickPositionFromValue(mValue, 0);
+			PointF[] pos = getTickPositionFromValue(mDisplayedValue, 0);
 			_c.drawArc(new RectF(left, top, right, bottom), 0, 360, true, p);
 			_c.drawLine(width/2-mPointerBaseWidth/2, height-mPointerBaseWidth/2, pos[1].x, pos[1].y, p);
 			_c.drawLine(width/2, height, pos[1].x, pos[1].y, p);

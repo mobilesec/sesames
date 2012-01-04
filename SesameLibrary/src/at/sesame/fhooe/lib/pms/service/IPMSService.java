@@ -7,6 +7,9 @@
  ******************************************************************************/
 package at.sesame.fhooe.lib.pms.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codegist.crest.annotate.*;
 
 import at.sesame.fhooe.lib.pms.entitywriter.PMSEntityWriter;
@@ -38,7 +41,9 @@ import at.sesame.fhooe.lib.pms.responsehandling.PMSBooleanResponseHandler;
  * @author admin
  *
  */
-@EndPoint("http://80.120.3.4:8080/pms")
+//http://192.168.2.7:8080/pms/
+//@EndPoint("http://80.120.3.4:8080/pms")
+@EndPoint("http://192.168.2.7:8080/pms")
 public interface IPMSService 
 {
 	
@@ -85,5 +90,14 @@ public interface IPMSService
 	public ExtendedPMSStatus extendedStatus(@PathParam("mac")String _mac,
 											@FormParam("username")String _user, 
 											@FormParam("password") String password);
+	
+	@POST
+	@Path("/extended-status-list")
+	@EntityWriter(PMSEntityWriter.class)
+	@Produces("application/json")
+	@ErrorHandler(ExtendedStatusErrorHandler.class)
+//	@ResponseHandler(PMSStatusListResponseHandler.class)
+	@Consumes("application/json")
+	public ArrayList<ExtendedPMSStatus> extendedStatusList(@FormParam("maclist")ArrayList<String> _mac);
 	
 }

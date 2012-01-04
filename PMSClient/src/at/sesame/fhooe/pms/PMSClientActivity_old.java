@@ -154,9 +154,10 @@ implements OnItemSelectedListener, OnClickListener, IErrorReceiver
 				macs = PMSProvider.getDeviceList();
 				for(int i = 0;i<macs.size();i++)
 				{
-					ControllableDevice dev = new ControllableDevice(getApplicationContext(), macs.get(i), "admin", "pwd", true);
-					mDevices.add(dev);
-					Log.e(TAG, dev.toString());
+					//TODO comment in 
+//					ControllableDevice dev = new ControllableDevice(getApplicationContext(), macs.get(i), "admin", "pwd", true);
+//					mDevices.add(dev);
+//					Log.e(TAG, dev.toString());
 				}
 				dismissNetworkingDialog();
 				initSpinner();
