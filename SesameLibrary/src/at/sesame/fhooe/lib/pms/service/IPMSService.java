@@ -56,10 +56,10 @@ public interface IPMSService
 	@Path("/{mac}/poweroff")
 	@EntityWriter(PMSEntityWriter.class)
 	@Produces("application/json")
-	@Consumes("application/json")
+//	@Consumes("application/json")
 	@ErrorHandler(PowerOffErrorHandler.class)
 	@ResponseHandler(PMSBooleanResponseHandler.class)
-	public Object poweroff(@PathParam("mac") String _mac,
+	public Boolean poweroff(@PathParam("mac") String _mac,
 							@FormParam("target-state") String _targetState,
 							@FormParam("os") String _os,
 							@FormParam("username") String _user,

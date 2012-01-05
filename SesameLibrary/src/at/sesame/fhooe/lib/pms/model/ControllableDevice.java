@@ -29,12 +29,12 @@ public class ControllableDevice
 implements Runnable
 {	
 	private static final String TAG = "ControllableDevice";
-	
+
 	private static final int NOTIFICATION_THRESHOLD = 90;
 	private static final int HOUR_FORMAT_THRESHOLD = 180;
 	private static final int SHORT_INACTIVITY_INTERVAL = 10;
 	private static final int LONG_INACTIVITY_INTERVAL = 30;
-	
+
 	/**
 	 * enumeration of possible power-off commands
 	 *
@@ -44,7 +44,7 @@ implements Runnable
 		shutdown,
 		sleep
 	}
-	
+
 	public enum OS
 	{
 		windows,
@@ -52,58 +52,58 @@ implements Runnable
 		mac,
 		unknown
 	}
-	
+
 	/**
 	 * the MAC address of the device
 	 */
 	private String mMac;
-	
+
 	/**
 	 * the hostname of the device
 	 */
 	private String mHostname;
-	
+
 	/**
 	 * the ip of the device
 	 */
 	private String mIp;
-	
+
 	/**
 	 * the operating system of the device
 	 */
 	private OS mOs;
-	
+
 	/**
 	 * the username of the device
 	 */
 	private String mUser;
-	
+
 	/**
 	 * the password of the device
 	 */
 	private String mPassword;
-	
+
 	/**
 	 * flag indicating whether the device is turned on or off
 	 */
 	private boolean mAlive;
-	
+
 	/**
 	 * flag indicating whether to use the specified credentials
 	 * or rely on the auto-detect mode of the PMS
 	 */
 	private boolean mUseCredentials;
-	
+
 	private int mIdleSince;
-	
+
 	private Context mCtx;
-	
-//	private boolean mConsumerThreadRunning = true;
-//	
-//	private Thread mConsumerThread;
-	
+
+	//	private boolean mConsumerThreadRunning = true;
+	//	
+	//	private Thread mConsumerThread;
+
 	private boolean mValid = false;
-	
+
 	private boolean mUseHostnameFromStatus = false;
 
 	/**
@@ -136,8 +136,61 @@ implements Runnable
 		mUseCredentials = _useCredentials;
 
 		mPms= PMSProvider.getPMS();
-//		mQueue = new LinkedBlockingQueue();
-		updateStatus();
+		//		mQueue = new LinkedBlockingQueue();
+		//		updateStatus();
+	}
+
+	public ControllableDevice(Context _ctx, ExtendedPMSStatus _status, String _hostName, String _user, String _pwd, boolean _useCred)
+	{
+		mCtx = _ctx;
+		mUseCredentials = _useCred;
+		mUser = _user;
+		mPassword = _pwd;
+		mMac = _status.getMac();
+
+		if(null==_hostName || _hostName.isEmpty())
+		{
+			mUseHostnameFromStatus = true;
+		}
+		else
+		{
+			mHostname = _hostName;
+		}
+
+		setExtendedPMSStatus(_status);
+	}
+
+	public void setExtendedPMSStatus(ExtendedPMSStatus _status)
+	{
+		if(null==mMac||mMac.isEmpty())
+		{
+			mMac = _status.getMac();
+		}
+		else
+		{
+			if(!_status.getMac().equals(mMac))
+			{
+				Log.e(TAG, "wrong status passed -> not set");
+				return;
+			}
+		}
+		
+		if(mUseHostnameFromStatus)
+		{
+			mHostname = _status.getHostname();
+			Log.e(TAG, "hostname="+getHostname());
+		}
+		else
+		{
+			Log.e(TAG, "hostname not set");
+			Log.e(TAG, "hostname="+getHostname());
+		}
+		mIp = _status.getIp();
+		mIdleSince = _status.getIdleSince();
+		mOs = OS.valueOf(_status.getOs());
+		mAlive = _status.getAlive().equals("1")?true:false;
+		mValid = true;
+		Log.e(TAG, toString());
 	}
 
 	/**
@@ -146,22 +199,23 @@ implements Runnable
 	 */
 	public boolean wakeUp()
 	{
-		try
-		{
-//			return mPms.wakeup(mMac);
-			return new WakeupTask().execute(mMac).get();
-		} 
-		catch (InterruptedException e) 
-		{
-			e.printStackTrace();
-		}
-		catch (ExecutionException e) 
-		{
-			e.printStackTrace();
-		}
+//		try
+//		{
+			//			return mPms.wakeup(mMac);
+			PMSProvider.getPMS().wakeup(mMac);
+//			return new WakeupTask().execute(mMac).get();
+//		} 
+//		catch (InterruptedException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		catch (ExecutionException e) 
+//		{
+//			e.printStackTrace();
+//		}
 		return false;
 	}
-	
+
 	/**
 	 * puts the device to sleep or shuts it down depending on the passed parameter
 	 * @param _state determines whether to shut down the device or put it to sleep
@@ -205,6 +259,7 @@ implements Runnable
 		if(mUseHostnameFromStatus)
 		{
 			mHostname = extStat.getHostname();
+			
 		}
 		mIp = extStat.getIp();
 		mOs = translateOsToEnum(extStat.getOs());
@@ -215,15 +270,15 @@ implements Runnable
 
 	private OS translateOsToEnum(String os) 
 	{
-//		if(os.toLowerCase().equals("windows"))
-//		{
-//			return OS.windows;
-//		}
-//		else if(os.toLowerCase().equals("linux"))
-//		{
-//			return OS.linux;
-//		}
-//		return null;
+		//		if(os.toLowerCase().equals("windows"))
+		//		{
+		//			return OS.windows;
+		//		}
+		//		else if(os.toLowerCase().equals("linux"))
+		//		{
+		//			return OS.linux;
+		//		}
+		//		return null;
 		return OS.valueOf(os);
 	}
 
@@ -266,7 +321,7 @@ implements Runnable
 			try 
 			{
 				res = new ExtendedStatusTask().execute(mMac, mUser, mPassword).get();
-//				res = mPms.extendedStatus(mMac, mUser, mPassword);
+				//				res = mPms.extendedStatus(mMac, mUser, mPassword);
 				if(null==res)
 				{
 					return null;
@@ -276,18 +331,18 @@ implements Runnable
 					return (ExtendedPMSStatus) res;
 				}
 			} 
-//			catch (InterruptedException e) 
-//			{
-//				
-////				e.printStackTrace();
-//				Log.e(TAG, "extendedStatus was interrupted. "+e.getMessage());
-//				return null;
-//			} 
-//			catch (ExecutionException e) 
-//			{
-//				e.printStackTrace();
-//				return null;
-//			}
+			//			catch (InterruptedException e) 
+			//			{
+			//				
+			////				e.printStackTrace();
+			//				Log.e(TAG, "extendedStatus was interrupted. "+e.getMessage());
+			//				return null;
+			//			} 
+			//			catch (ExecutionException e) 
+			//			{
+			//				e.printStackTrace();
+			//				return null;
+			//			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
@@ -328,23 +383,23 @@ implements Runnable
 	{
 		return mAlive;
 	}
-	
+
 	public int getIdleSince()
 	{
 		return mIdleSince;
 	}
-	
+
 	public int getIdleSinceMinutes()
 	{
 		return getIdleSince()/60;
-//		return 185;
+		//		return 185;
 	}
-	
+
 	public boolean isValid()
 	{
 		return mValid;
 	}
-	
+
 	public String getIdleString()
 	{
 		int idleMins = getIdleSinceMinutes(); 
@@ -363,14 +418,14 @@ implements Runnable
 			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+idleString+mCtx.getString(R.string.controllableDevice_hourString);
 		}
 	}
-	
+
 	private int roundShortInterval(int _val)
 	{
 
 		return round(_val, SHORT_INACTIVITY_INTERVAL);
 	}
-	
-	
+
+
 	private double roundLongInterval(int _val)
 	{
 		int hours = 0;
@@ -389,7 +444,7 @@ implements Runnable
 			_val-=_interval;
 			intervalCount++;
 		}
-		
+
 		return intervalCount*_interval;
 	}
 
@@ -423,6 +478,6 @@ implements Runnable
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

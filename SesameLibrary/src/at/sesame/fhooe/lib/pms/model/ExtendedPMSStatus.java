@@ -37,7 +37,7 @@ extends PMSStatus
 	
 	public String getMac()
 	{
-		return mac;
+		return mac.toLowerCase();
 	}
 	
 	public void setMac(String _mac)

@@ -11,10 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -40,8 +37,8 @@ import at.sesame.fhooe.lib.pms.PMSProvider;
 import at.sesame.fhooe.lib.pms.errorhandling.ErrorForwarder;
 import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
-import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
+import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
 import at.sesame.fhooe.pms.list.commands.CommandAdapter;
 import at.sesame.fhooe.pms.list.commands.CommandListEntry;
 import at.sesame.fhooe.pms.list.commands.CommandListEntry.CommandType;
@@ -195,28 +192,28 @@ implements OnClickListener, IErrorReceiver
 			return;
 		}
 		ErrorForwarder.getInstance().register(this);
-		//		queryControllableDevices();
-		//
-		//		refreshListEntries();
-		//		mAdapter = new ControllableDeviceAdapter(this, mEntries);
-		//		mDevList = (ListView)findViewById(R.id.deviceList);
-		//		mDevList.setAdapter(mAdapter);
-		//
-		//		mActiveDeviceControlContainer = (ViewGroup)findViewById(R.id.activeDeviceControllContainer);
-		//		mInactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
-		//		setControlContainerVisibility(View.GONE, View.GONE);
-		//
-		//		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
-		//		mSleepAllButt.setOnClickListener(this);
-		//
-		//		mPowerOffAllButt = (Button)findViewById(R.id.shutDownButton);
-		//		mPowerOffAllButt.setOnClickListener(this);
-		//
-		//		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
-		//		mWakeUpAllButt.setOnClickListener(this);
-		//
-		//		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
-		testExtendedStatusList();
+		queryControllableDevices();
+
+		refreshListEntries();
+		mAdapter = new ControllableDeviceAdapter(this, mEntries);
+		mDevList = (ListView)findViewById(R.id.deviceList);
+		mDevList.setAdapter(mAdapter);
+
+		mActiveDeviceControlContainer = (ViewGroup)findViewById(R.id.activeDeviceControllContainer);
+		mInactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
+		setControlContainerVisibility(View.GONE, View.GONE);
+
+		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
+		mSleepAllButt.setOnClickListener(this);
+
+		mPowerOffAllButt = (Button)findViewById(R.id.shutDownButton);
+		mPowerOffAllButt.setOnClickListener(this);
+
+		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
+		mWakeUpAllButt.setOnClickListener(this);
+
+		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
+//		testExtendedStatusList();
 	}
 
 	private void testExtendedStatusList()
@@ -535,7 +532,8 @@ implements OnClickListener, IErrorReceiver
 		mNetworkingDialog.setMessage(getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
 		mNetworkingDialog.setCancelable(false);
 		mNetworkingDialog.setCanceledOnTouchOutside(false);
-		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		mNetworkingDialog.setIndeterminate(true);
 	}
 
 	/**
@@ -623,79 +621,85 @@ implements OnClickListener, IErrorReceiver
 	{
 		//		ArrayList<String> macs = PMSProvider.getDeviceList();
 		HashMap<String,String>hosts = new HashMap<String, String>();
-		hosts.put("DV101", "00:25:b3:16:ad:14");
-		hosts.put("DV102", "00:25:b3:17:df:1d");
-		hosts.put("DV103", "00:25:b3:16:ac:1a");
-		hosts.put("DV104", "00:25:b3:17:e2:93");
-		hosts.put("DV105", "00:25:b3:16:ac:ad");
-		hosts.put("DV106", "00:25:b3:16:ab:f0");
-		hosts.put("DV107", "00:25:b3:16:ad:17");
-		hosts.put("DV108", "00:25:b3:16:ac:17");
-		hosts.put("DV109", "00:25:b3:16:ac:40");
-		hosts.put("DV110", "00:25:b3:17:e2:61");
-		hosts.put("DV111", "00:25:b3:17:e2:94");
-		hosts.put("DV112", "00:25:b3:16:ab:9e");
-		hosts.put("DV113", "00:25:b3:17:e2:62");
-		hosts.put("DV114", "00:25:b3:17:e1:e8");
-		hosts.put("DV115", "00:25:b3:16:ac:65");
-		hosts.put("DV116", "00:25:b3:17:df:24");
-		hosts.put("DV118", "00:25:b3:17:e2:31");
-		hosts.put("DV119", "00:25:b3:17:e2:f6");
+		hosts.put("00:25:b3:16:ad:14", "DV101");
+		hosts.put("00:25:b3:17:df:1d", "DV102");
+		hosts.put("00:25:b3:16:ac:1a", "DV103");
+		hosts.put("00:25:b3:17:e2:93", "DV104");
+		hosts.put("00:25:b3:16:ac:ad", "DV105");
+		hosts.put("00:25:b3:16:ab:f0", "DV106");
+		hosts.put("00:25:b3:16:ad:17", "DV107");
+		hosts.put("00:25:b3:16:ac:17", "DV108");
+		hosts.put("00:25:b3:16:ac:40", "DV109");
+		hosts.put("00:25:b3:17:e2:61", "DV110");
+		hosts.put("00:25:b3:17:e2:94", "DV111");
+		hosts.put("00:25:b3:16:ab:9e", "DV112");
+		hosts.put("00:25:b3:17:e2:62", "DV113");
+		hosts.put("00:25:b3:17:e1:e8", "DV114");
+		hosts.put("00:25:b3:16:ac:65", "DV115");
+		hosts.put("00:25:b3:17:df:24", "DV116");
+		hosts.put("00:25:b3:17:e2:31", "DV118");
+		hosts.put("00:25:b3:17:e2:f6", "DV119");
 
-		hosts.put("DV301", "00:22:64:16:9d:84");
-		hosts.put("DV302", "00:22:64:15:e9:be");
-		hosts.put("DV303", "00:22:64:15:2a:46");
-		hosts.put("DV304", "00:22:64:17:13:90");
-		hosts.put("DV305", "00:22:64:15:2a:38");
-		hosts.put("DV306", "00:22:64:16:9d:80");
-		hosts.put("DV307", "00:22:64:15:e6:6e");
-		hosts.put("DV308", "00:22:64:15:66:14");
-		hosts.put("DV309", "00:22:64:15:2a:30");
-		hosts.put("DV310", "00:22:64:15:a6:c2");
-		hosts.put("DV311", "00:22:64:14:f2:34");
-		hosts.put("DV312", "00:22:64:15:a6:b2");
-		hosts.put("DV313", "00:22:64:15:29:ca");
-		hosts.put("DV314", "00:22:64:16:9d:12");
-		hosts.put("DV315", "00:22:64:16:20:ac");
-		hosts.put("DV316", "00:22:64:16:9d:7e");
-		hosts.put("DV317", "00:22:64:17:15:ca");
-		hosts.put("DV318", "00:22:64:15:a6:56");
-		hosts.put("DV319", "00:22:64:15:a6:5a");
-
-		hosts.put("DV601", "00:22:64:16:20:9c");
-		hosts.put("DV602", "00:22:64:16:9d:fa");
-		hosts.put("DV603", "00:22:64:15:a9:04");
-		hosts.put("DV604", "00:22:64:17:13:9e");
-		hosts.put("DV605", "00:22:64:15:63:76");
-		hosts.put("DV606", "00:22:64:15:e9:d0");
-		hosts.put("DV607", "00:22:64:15:e8:08");
-		hosts.put("DV608", "00:22:64:15:a6:ba");
-		hosts.put("DV609", "00:22:64:15:67:86");
-		hosts.put("DV610", "00:22:64:14:b3:bf");
-		hosts.put("DV611", "00:22:64:17:13:a4");
-		hosts.put("DV612", "00:22:64:16:a3:3a");
-		hosts.put("DV613", "00:22:64:15:e7:28");
-		hosts.put("DV614", "00:22:64:15:e8:d8");
-		hosts.put("DV615", "00:22:64:14:b0:ed");
-		hosts.put("DV616", "00:22:64:14:f5:96");
-		hosts.put("DV617", "00:22:64:14:b3:bd");
-		hosts.put("DV618", "00:22:64:16:9d:2c");
-		hosts.put("DV619", "00:22:64:15:23:d4");
+		hosts.put("00:22:64:16:9d:84", "DV301");
+		hosts.put("00:22:64:15:e9:be", "DV302");
+		hosts.put("00:22:64:15:2a:46", "DV303");
+		hosts.put("00:22:64:17:13:90", "DV304");
+		hosts.put("00:22:64:15:2a:38", "DV305");
+		hosts.put("00:22:64:16:9d:80", "DV306");
+		hosts.put("00:22:64:15:e6:6e", "DV307");
+		hosts.put("00:22:64:15:66:14", "DV308");
+		hosts.put("00:22:64:15:2a:30", "DV309");
+		hosts.put("00:22:64:15:a6:c2", "DV310");
+		hosts.put("00:22:64:14:f2:34", "DV311");
+		hosts.put("00:22:64:15:a6:b2", "DV312");
+		hosts.put("00:22:64:15:29:ca", "DV313");
+		hosts.put("00:22:64:16:9d:12", "DV314");
+		hosts.put("00:22:64:16:20:ac", "DV315");
+		hosts.put("00:22:64:16:9d:7e", "DV316");
+		hosts.put("00:22:64:17:15:ca", "DV317");
+		hosts.put("00:22:64:15:a6:56", "DV318");
+		hosts.put("00:22:64:15:a6:5a", "DV319");
+		
+		hosts.put("00:22:64:16:20:9c", "DV601");
+		hosts.put("00:22:64:16:9d:fa", "DV602");
+		hosts.put("00:22:64:15:a9:04", "DV603");
+		hosts.put("00:22:64:17:13:9e", "DV604");
+		hosts.put("00:22:64:15:63:76", "DV605");
+		hosts.put("00:22:64:15:e9:d0", "DV606");
+		hosts.put("00:22:64:15:e8:08", "DV607");
+		hosts.put("00:22:64:15:a6:ba", "DV608");
+		hosts.put("00:22:64:15:67:86", "DV609");
+		hosts.put("00:22:64:14:b3:bf", "DV610");
+		hosts.put("00:22:64:17:13:a4", "DV611");
+		hosts.put("00:22:64:16:a3:3a", "DV612");
+		hosts.put("00:22:64:15:e7:28", "DV613");
+		hosts.put("00:22:64:15:e8:d8", "DV614");
+		hosts.put("00:22:64:14:b0:ed", "DV615");
+		hosts.put("00:22:64:14:f5:96", "DV616");
+		hosts.put("00:22:64:14:b3:bd", "DV617");
+		hosts.put("00:22:64:16:9d:2c", "DV618");
+		hosts.put("00:22:64:15:23:d4", "DV619");
 
 
 		mNetworkingDialog.setMax(hosts.size());
 		showNetworkingDialog();
-
+//		String[] macStrings = new String[hosts.size()];
+		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
 		mAllDevices = new ArrayList<ControllableDevice>();
-		for(Map.Entry<String, String> host:hosts.entrySet())
+		for(ExtendedPMSStatus exStat:statuses)
 		{
-			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "admin", "pwd", true);
+			Log.e(TAG, "passed mac="+exStat.getMac());
+			String passedHost = hosts.get(exStat.getMac());
+			Log.e(TAG, "HOST in LIST="+passedHost);
+			ControllableDevice cd = new ControllableDevice(getApplicationContext(), exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
+//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
 			if(cd.isValid())
 			{
 				mAllDevices.add(cd);
 				mSelection.put(cd.getMac(), false);
 			}
-			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		}
 
 		//			for(int i = 0;i<macs.size();i++)
@@ -1064,11 +1068,12 @@ implements OnClickListener, IErrorReceiver
 					for(ControllableDevice cd:selDevs)
 					{
 						markDirty(cd);
-					}
-					for(ControllableDevice cd:selDevs)
-					{
 						cd.powerOff(_state);
 					}
+//					for(ControllableDevice cd:selDevs)
+//					{
+//						
+//					}
 
 				}
 			}).start();
@@ -1096,6 +1101,9 @@ implements OnClickListener, IErrorReceiver
 				for(int i = 0;i<selDevs.size();i++)
 				{
 					ControllableDevice cd = selDevs.get(i);
+//					Looper.prepare();
+					cd.wakeUp();
+//					Looper.loop();
 					Log.e(TAG, "woke up:"+cd.getHostname());
 					Log.e(TAG, "finished device "+(i+1)+" of "+selDevs.size());
 				}
