@@ -161,6 +161,8 @@ implements OnClickListener, OnCheckedChangeListener
 		parser.parse();
 		ArrayList<Room> parsedRooms = parser.getRooms();
 		
+		Log.e(TAG, "number of rooms read = "+parsedRooms.size());
+		
 		for(Room r:parsedRooms)
 		{
 			if(!mRooms.contains(r))
@@ -170,6 +172,7 @@ implements OnClickListener, OnCheckedChangeListener
 		}
 		
 		ArrayList<FingerPrintItem> items = parser.getFingerPrintItems();
+		Log.e(TAG, "number of fpi read = "+parsedRooms.size());
 		for(FingerPrintItem fpi:items)
 		{
 			if(fpi.getType().equals(Type.MEASUREMENT_POINT))
@@ -478,14 +481,23 @@ implements OnClickListener, OnCheckedChangeListener
 
 			String relation = data.getStringExtra(SaveInformationView.RESULT_BUNDLE_RELATION_KEY);
 			String fileName = data.getStringExtra(SaveInformationView.RESULT_BUNDLE_FILENAME_KEY);
-			boolean res = ARFFGenerator.writeSurveyResultsToArff(mMPs, fileName, relation, ARFFType.ROOM, NO_BSSID_RSSI);
-			if(res)
+			boolean res1 = ARFFGenerator.writeSurveyResultsToArff(mMPs, fileName+"_room", relation, ARFFType.ROOM, NO_BSSID_RSSI);
+			boolean res2 = ARFFGenerator.writeSurveyResultsToArff(mMPs, fileName+"_mp", relation, ARFFType.MP, NO_BSSID_RSSI);
+			if(res1)
 			{
-				Toast.makeText(getApplicationContext(), "Export successful", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "Export room arff file successful", Toast.LENGTH_SHORT).show();
 			}
 			else
 			{
-				Toast.makeText(getApplicationContext(), "Export failed", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "Export room arff file failed", Toast.LENGTH_SHORT).show();
+			}
+			if(res2)
+			{
+				Toast.makeText(getApplicationContext(), "Export mp arff file successful", Toast.LENGTH_SHORT).show();
+			}
+			else
+			{
+				Toast.makeText(getApplicationContext(), "Export mp arff file failed", Toast.LENGTH_SHORT).show();
 			}
 			break;
 		case CREATE_ROOM_REQUEST_CODE:

@@ -87,10 +87,10 @@ implements EntityWriter
 			}
 			else
 			{
-				Log.e(TAG, p.toString());
+//				Log.e(TAG, p.toString());
 				String name = p.getParamConfig().getName();
 				String val = p.getValue().toArray()[0].toString();
-				Log.e(TAG, "name = "+name+", val = "+val);
+//				Log.e(TAG, "name = "+name+", val = "+val);
 				JSONArray arr = new JSONArray();
 
 				try 

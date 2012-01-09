@@ -61,7 +61,7 @@ implements OnClickListener, IErrorReceiver
 	/**
 	 * the tag to identify the logger output of this class
 	 */
-	private static final String TAG = "FancyPMSClientActivity";
+	private static final String TAG = "PMSClientActivity";
 
 	/**
 	 * integer constant for displaying the dialog for actions on active devices
@@ -192,7 +192,8 @@ implements OnClickListener, IErrorReceiver
 			return;
 		}
 		ErrorForwarder.getInstance().register(this);
-		queryControllableDevices();
+//		queryControllableDevicesKDF();
+		queryControllableDevicesTest();
 
 		refreshListEntries();
 		mAdapter = new ControllableDeviceAdapter(this, mEntries);
@@ -212,8 +213,23 @@ implements OnClickListener, IErrorReceiver
 		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
 		mWakeUpAllButt.setOnClickListener(this);
 
+		
+		//		testExtendedStatusList();
+	}
+	
+	private void startAutoUpdate()
+	{
 		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
-//		testExtendedStatusList();
+		mUpdateThread.start();
+	}
+	
+	private void stopAutoUpdate()
+	{
+		if(null!=mUpdateThread)
+		{
+			mUpdateThread.stopUpdating();
+		}
+		
 	}
 
 	private void testExtendedStatusList()
@@ -350,20 +366,14 @@ implements OnClickListener, IErrorReceiver
 	public void onDestroy()
 	{
 		super.onDestroy();
-		if(null!=mUpdateThread)
-		{
-			mUpdateThread.pause();
-		}
+		stopAutoUpdate();
 	}
 
 	@Override
 	public void onPause()
 	{
 		super.onPause();
-		if(null!=mUpdateThread)
-		{
-			mUpdateThread.pause();
-		}
+		stopAutoUpdate();
 	}
 
 	@Override
@@ -373,10 +383,7 @@ implements OnClickListener, IErrorReceiver
 		Log.e(TAG, "onResume");
 		if(checkConnectivity())
 		{
-			if(null!=mUpdateThread)
-			{
-				mUpdateThread.start();
-			}
+			startAutoUpdate();
 		}
 	}
 
@@ -532,7 +539,7 @@ implements OnClickListener, IErrorReceiver
 		mNetworkingDialog.setMessage(getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
 		mNetworkingDialog.setCancelable(false);
 		mNetworkingDialog.setCanceledOnTouchOutside(false);
-//		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		//		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mNetworkingDialog.setIndeterminate(true);
 	}
 
@@ -617,7 +624,7 @@ implements OnClickListener, IErrorReceiver
 	 * queries which computers can be controlled via PMS and adds their ControllableDevice representations to the list
 	 * of all devices
 	 */
-	private void queryControllableDevices() 
+	private void queryControllableDevicesKDF() 
 	{
 		//		ArrayList<String> macs = PMSProvider.getDeviceList();
 		HashMap<String,String>hosts = new HashMap<String, String>();
@@ -659,7 +666,7 @@ implements OnClickListener, IErrorReceiver
 		hosts.put("00:22:64:17:15:ca", "DV317");
 		hosts.put("00:22:64:15:a6:56", "DV318");
 		hosts.put("00:22:64:15:a6:5a", "DV319");
-		
+
 		hosts.put("00:22:64:16:20:9c", "DV601");
 		hosts.put("00:22:64:16:9d:fa", "DV602");
 		hosts.put("00:22:64:15:a9:04", "DV603");
@@ -680,12 +687,20 @@ implements OnClickListener, IErrorReceiver
 		hosts.put("00:22:64:16:9d:2c", "DV618");
 		hosts.put("00:22:64:15:23:d4", "DV619");
 
+		String clients = PMSProvider.getPMS().getClients();
+		Log.e(TAG, clients);
 
 		mNetworkingDialog.setMax(hosts.size());
 		showNetworkingDialog();
-//		String[] macStrings = new String[hosts.size()];
+		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
 		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
+		if(null==statuses)
+		{
+			Log.e(TAG, "could not query statuses");
+			dismissNetworkingDialog();
+			return;
+		}
 		mAllDevices = new ArrayList<ControllableDevice>();
 		for(ExtendedPMSStatus exStat:statuses)
 		{
@@ -693,13 +708,13 @@ implements OnClickListener, IErrorReceiver
 			String passedHost = hosts.get(exStat.getMac());
 			Log.e(TAG, "HOST in LIST="+passedHost);
 			ControllableDevice cd = new ControllableDevice(getApplicationContext(), exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
-//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
+			//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
 			if(cd.isValid())
 			{
 				mAllDevices.add(cd);
 				mSelection.put(cd.getMac(), false);
 			}
-//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		}
 
 		//			for(int i = 0;i<macs.size();i++)
@@ -713,6 +728,25 @@ implements OnClickListener, IErrorReceiver
 		//				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		//			}
 
+		dismissNetworkingDialog();
+	}
+
+	private void queryControllableDevicesTest()
+	{
+		showNetworkingDialog();
+		ArrayList<String> macs = PMSProvider.getDeviceList();
+
+		for(int i = 0;i<macs.size();i++)
+		{
+			ControllableDevice cd = new ControllableDevice(getApplication(), macs.get(i), null/*"host "+i*/, "schule\\\\sesame_pms", " my_sesame_pms", true);
+//			if(cd.isValid())
+			{
+				mAllDevices.add(cd);
+				Log.e(TAG, "controllable device added..."+mAllDevices.size());
+				mSelection.put(cd.getMac(), false);
+			}
+//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+		}
 		dismissNetworkingDialog();
 	}
 
@@ -1064,16 +1098,33 @@ implements OnClickListener, IErrorReceiver
 				@Override
 				public void run() 
 				{
+//					mUpdateThread.pause();
+//					stopAutoUpdate();
+//					try {
+//						Thread.sleep(16000);
+//					} catch (InterruptedException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
 					ArrayList<ControllableDevice> selDevs = getSelectedDevices();
 					for(ControllableDevice cd:selDevs)
 					{
 						markDirty(cd);
 						cd.powerOff(_state);
+						Log.e(TAG, "should not come too often ");
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-//					for(ControllableDevice cd:selDevs)
-//					{
-//						
-//					}
+//					startAutoUpdate();
+//					mUpdateThread.resumeAfterPause();
+					//					for(ControllableDevice cd:selDevs)
+					//					{
+					//						
+					//					}
 
 				}
 			}).start();
@@ -1085,35 +1136,84 @@ implements OnClickListener, IErrorReceiver
 	 */
 	private void wakeupSelectedDevices()
 	{
-		mUpdateThread.pause();
+		//		mUpdateThread.pause();
+		//
+		//		Runnable r = new Runnable() 
+		//		{		
+		//			@Override
+		//			public void run() 
+		//			{
+		//				ArrayList<ControllableDevice> selDevs = getSelectedDevices();
+		//
+		//				for(ControllableDevice cd:selDevs)
+		//				{
+		//					markDirty(cd);
+		//				}
+		//				for(int i = 0;i<selDevs.size();i++)
+		//				{
+		//					ControllableDevice cd = selDevs.get(i);
+		////					Looper.prepare();
+		//					cd.wakeUp();
+		////					Looper.loop();
+		//					Log.e(TAG, "woke up:"+cd.getHostname());
+		//					Log.e(TAG, "finished device "+(i+1)+" of "+selDevs.size());
+		//				}
+		//				mUpdateThread.resumeAfterPause();
+		//
+		//
+		//			}
+		//		};
+		//		Thread wakeupThread = new Thread(r);
+		//		wakeupThread.start();
 
-		Runnable r = new Runnable() 
-		{		
+		//		final ArrayList<ControllableDevice> selDevs = getSelectedDevices();
+		//		for(int i = 0 ;i<selDevs.size();i++)
+		//		{
+		//			final int idx = i;
+		//			Runnable wakeUpRunnable = new Runnable() 
+		//			{	
+		//				@Override
+		//				public void run() {
+		//					markDirty(selDevs.get(idx));
+		//					boolean res = selDevs.get(idx).wakeUp();
+		//					Log.e(TAG, "wakeup of "+selDevs.get(idx).getHostname()+":"+res);
+		//				}
+		//			};
+		//			
+		//			new Thread(wakeUpRunnable).start();
+		//			try {
+		//				Thread.sleep(10);
+		//			} catch (InterruptedException e) {
+		//				// TODO Auto-generated catch block
+		//				e.printStackTrace();
+		//			}
+		//			
+		//		}
+
+		Runnable wakeupRunnable = new Runnable() {
+
 			@Override
-			public void run() 
-			{
+			public void run() {
+//				mUpdateThread.pause();
+//				stopAutoUpdate();
 				ArrayList<ControllableDevice> selDevs = getSelectedDevices();
-
-				for(ControllableDevice cd:selDevs)
-				{
-					markDirty(cd);
-				}
 				for(int i = 0;i<selDevs.size();i++)
 				{
 					ControllableDevice cd = selDevs.get(i);
-//					Looper.prepare();
+					markDirty(cd);
 					cd.wakeUp();
-//					Looper.loop();
-					Log.e(TAG, "woke up:"+cd.getHostname());
-					Log.e(TAG, "finished device "+(i+1)+" of "+selDevs.size());
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-				mUpdateThread.resumeAfterPause();
-
-
+//				startAutoUpdate();
+//				mUpdateThread.resumeAfterPause();
 			}
 		};
-		Thread wakeupThread = new Thread(r);
-		wakeupThread.start();
+		new Thread(wakeupRunnable).start();
 	}
 
 

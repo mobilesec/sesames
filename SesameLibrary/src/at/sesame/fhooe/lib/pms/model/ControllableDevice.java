@@ -30,7 +30,7 @@ implements Runnable
 {	
 	private static final String TAG = "ControllableDevice";
 
-	private static final int NOTIFICATION_THRESHOLD = 90;
+	private static final int NOTIFICATION_THRESHOLD = 1;
 	private static final int HOUR_FORMAT_THRESHOLD = 180;
 	private static final int SHORT_INACTIVITY_INTERVAL = 10;
 	private static final int LONG_INACTIVITY_INTERVAL = 30;
@@ -137,7 +137,7 @@ implements Runnable
 
 		mPms= PMSProvider.getPMS();
 		//		mQueue = new LinkedBlockingQueue();
-		//		updateStatus();
+		updateStatus();
 	}
 
 	public ControllableDevice(Context _ctx, ExtendedPMSStatus _status, String _hostName, String _user, String _pwd, boolean _useCred)
@@ -182,15 +182,15 @@ implements Runnable
 		}
 		else
 		{
-			Log.e(TAG, "hostname not set");
-			Log.e(TAG, "hostname="+getHostname());
+//			Log.e(TAG, "hostname not set");
+//			Log.e(TAG, "hostname="+getHostname());
 		}
 		mIp = _status.getIp();
 		mIdleSince = _status.getIdleSince();
 		mOs = OS.valueOf(_status.getOs());
 		mAlive = _status.getAlive().equals("1")?true:false;
 		mValid = true;
-		Log.e(TAG, toString());
+//		Log.e(TAG, toString());
 	}
 
 	/**
@@ -199,10 +199,11 @@ implements Runnable
 	 */
 	public boolean wakeUp()
 	{
+		Log.e(TAG, "waking up "+getHostname());
 //		try
 //		{
 			//			return mPms.wakeup(mMac);
-			PMSProvider.getPMS().wakeup(mMac);
+			boolean res = PMSProvider.getPMS().wakeup(mMac);
 //			return new WakeupTask().execute(mMac).get();
 //		} 
 //		catch (InterruptedException e) 
@@ -213,7 +214,7 @@ implements Runnable
 //		{
 //			e.printStackTrace();
 //		}
-		return false;
+		return res;
 	}
 
 	/**
@@ -223,26 +224,28 @@ implements Runnable
 	 */
 	public boolean powerOff(PowerOffState _state)
 	{
-		try 
-		{
+//		try 
+//		{
 			if(mUseCredentials)
 			{
-				return new PowerOffTask().execute(mMac, _state.name(), "", mUser, mPassword).get();
+				return PMSProvider.getPMS().poweroff(mMac, _state.name(), "", mUser, mPassword);
+//				return new PowerOffTask().execute(mMac, _state.name(), "", mUser, mPassword).get();
 			}
 			else
 			{
-				return new PowerOffTask().execute(mMac, _state.name(), "", "", "").get();
+				return PMSProvider.getPMS().poweroff(mMac, _state.name(), "", "", "");
+//				return new PowerOffTask().execute(mMac, _state.name(), "", "", "").get();
 			}
-		} 
-		catch (InterruptedException e) 
-		{
-			e.printStackTrace();
-		}
-		catch (ExecutionException e) 
-		{
-			e.printStackTrace();
-		}
-		return false;
+//		} 
+//		catch (InterruptedException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		catch (ExecutionException e) 
+//		{
+//			e.printStackTrace();
+//		}
+//		return false;
 	}
 
 	/**

@@ -10,6 +10,9 @@ package at.sesame.fhooe.lib.pms.responsehandling;
 import org.codegist.crest.handler.ResponseHandler;
 import org.codegist.crest.io.Response;
 
+import android.util.Log;
+import at.sesame.fhooe.lib.util.DownloadHelper;
+
 /**
  * whenever the response of a GET-call results in an status code <400
  * this class returns true to indicate that the call was successful
@@ -18,9 +21,12 @@ import org.codegist.crest.io.Response;
 public class PMSBooleanResponseHandler 
 implements ResponseHandler 
 {	
+	private static final String TAG = "PMSBooleanResponseHandler";
 	@Override
 	public Object handle(Response arg0) throws Exception 
 	{
+		String response = DownloadHelper.convertStreamToString(arg0.asStream());
+		Log.e(TAG, response);
 		return new Boolean(true);
 	}
 

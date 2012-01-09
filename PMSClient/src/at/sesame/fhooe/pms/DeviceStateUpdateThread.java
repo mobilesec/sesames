@@ -10,6 +10,8 @@ package at.sesame.fhooe.pms;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.codehaus.jackson.mrbean.MrBeanModule;
+
 import android.util.Log;
 import at.sesame.fhooe.lib.pms.PMSProvider;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
@@ -44,6 +46,7 @@ extends Thread
 		{
 			while(mUpdating)
 			{
+				Log.e(TAG, "updating");
 				try 
 				{
 					Thread.sleep(mUpdatePeriod );
@@ -53,10 +56,7 @@ extends Thread
 					//					e.printStackTrace();
 					Log.e(TAG, "interrupted");
 				}
-				if(!mUpdating)
-				{
-					break;
-				}
+				
 //				Log.e(TAG, "updating");
 				
 				ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(mMacs);
@@ -70,6 +70,10 @@ extends Thread
 				Log.e(TAG, "received statuses:"+statuses.size());
 				for(int i = 0;i<statuses.size();i++)
 				{
+					if(!mUpdating)
+					{
+						break;
+					}
 //					boolean valueSet = false;
 //					Log.e(TAG)
 //					if(mUpdating)
@@ -81,6 +85,10 @@ extends Thread
 //						mDevs.get(i).setExtendedPMSStatus(statuses.get(i));
 						for(ControllableDevice cd:mDevs)
 						{
+							if(!mUpdating)
+							{
+								break;
+							}
 							if(cd.getMac().equals(statuses.get(i).getMac().toLowerCase()))
 							{
 								cd.setExtendedPMSStatus(statuses.get(i));
@@ -101,35 +109,42 @@ extends Thread
 
 			}
 		}
+		Log.e(TAG, "update thread finished");
 	}
 
-	public void pause()
+//	public void pause()
+//	{
+//		//		synchronized (mPauseLock)
+//		{
+//			Log.e(TAG, "paused");
+//			//			mUpdating = false;
+//			//			interrupt();
+//
+//			//			synchronized(DeviceStateUpdateThread.this)
+//			{
+//				mUpdating = false;
+//			}
+//
+//
+//		}
+//	}
+	
+	public synchronized void stopUpdating()
 	{
-		//		synchronized (mPauseLock)
-		{
-			Log.e(TAG, "paused");
-			//			mUpdating = false;
-			//			interrupt();
-
-			//			synchronized(DeviceStateUpdateThread.this)
-			{
-				mUpdating = false;
-			}
-
-
-		}
+		mUpdating = false;
 	}
 
-	public void resumeAfterPause()
-	{
-		//		synchronized (this) 
-		{
-			Log.e(TAG, "resumedAfterPause");
-			mUpdating = true;
-			Log.e(TAG, "state:"+this.getState().name());
-//			start();
-			//						run();
-		}
-		//		notify();
-	}
+//	public void resumeAfterPause()
+//	{
+//		//		synchronized (this) 
+//		{
+//			Log.e(TAG, "resumedAfterPause");
+//			mUpdating = true;
+//			Log.e(TAG, "state:"+this.getState().name());
+//			this.
+////			start();
+//			//						run();
+//		}
+//		//		notify();
+//	}
 }

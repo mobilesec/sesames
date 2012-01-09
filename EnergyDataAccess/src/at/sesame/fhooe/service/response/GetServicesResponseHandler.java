@@ -7,7 +7,6 @@ import com.thoughtworks.xstream.XStream;
 
 import at.sesame.fhooe.model.Service;
 import at.sesame.fhooe.model.Services;
-import at.sesame.fhooe.xml.ServicesResponseParser;
 
 public class GetServicesResponseHandler implements ResponseHandler {
 
