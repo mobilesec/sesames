@@ -1,4 +1,4 @@
-package at.sesame.fhooe.service;
+package at.sesame.fhooe.energy.service;
 
 import java.util.ArrayList;
 
@@ -9,16 +9,16 @@ import org.codegist.crest.annotate.Path;
 import org.codegist.crest.annotate.QueryParam;
 import org.codegist.crest.annotate.ResponseHandler;
 
-import at.sesame.fhooe.model.Data;
-import at.sesame.fhooe.model.DataRow;
-import at.sesame.fhooe.model.MeasurementPlace;
-import at.sesame.fhooe.model.MeasurementPlaces;
-import at.sesame.fhooe.model.Service;
-import at.sesame.fhooe.model.Services;
-import at.sesame.fhooe.service.error.EnergyDataErrorHandler;
-import at.sesame.fhooe.service.response.DataResponseHandler;
-import at.sesame.fhooe.service.response.GetServicesResponseHandler;
-import at.sesame.fhooe.service.response.MeasurementPlaceResponseHandler;
+import at.sesame.fhooe.energy.model.Data;
+import at.sesame.fhooe.energy.model.DataRow;
+import at.sesame.fhooe.energy.model.MeasurementPlace;
+import at.sesame.fhooe.energy.model.MeasurementPlaces;
+import at.sesame.fhooe.energy.model.Service;
+import at.sesame.fhooe.energy.model.Services;
+import at.sesame.fhooe.energy.service.error.EnergyDataErrorHandler;
+import at.sesame.fhooe.energy.service.response.DataResponseHandler;
+import at.sesame.fhooe.energy.service.response.GetServicesResponseHandler;
+import at.sesame.fhooe.energy.service.response.MeasurementPlaceResponseHandler;
 @EndPoint("http://684d21e6181c406f84c3ab968880f960.cloudapp.net/ServicesProxy.svc/")
 public interface IEnergyDataAccess 
 {

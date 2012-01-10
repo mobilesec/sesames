@@ -1,4 +1,4 @@
-package at.sesame.fhooe.ui;
+package at.sesame.fhooe.ui.energy;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -12,9 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import at.sesame.fhooe.EnergyDataActivity;
-import at.sesame.fhooe.model.DataRow;
-import at.sesame.fhooe.model.MeasurementPlace;
-import at.sesame.fhooe.service.EnergyDataAccess;
+import at.sesame.fhooe.energy.model.DataRow;
+import at.sesame.fhooe.energy.model.MeasurementPlace;
+import at.sesame.fhooe.energy.service.EnergyDataAccess;
 
 public class MeasurementPlaceFragment 
 extends ListFragment 

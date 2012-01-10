@@ -1,4 +1,4 @@
-package at.sesame.fhooe.ui;
+package at.sesame.fhooe.ui.energy;
 
 import java.util.ArrayList;
 import java.util.Arrays;

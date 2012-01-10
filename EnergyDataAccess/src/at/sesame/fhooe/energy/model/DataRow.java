@@ -1,4 +1,4 @@
-package at.sesame.fhooe.model;
+package at.sesame.fhooe.energy.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

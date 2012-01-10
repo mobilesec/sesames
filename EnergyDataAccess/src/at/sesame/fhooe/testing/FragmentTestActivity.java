@@ -15,8 +15,10 @@ import at.sesame.fhooe.EnergyDataActivity;
 import at.sesame.fhooe.R;
 import at.sesame.fhooe.ui.DialChartFragment;
 import at.sesame.fhooe.ui.LineChartViewFragment;
-import at.sesame.fhooe.ui.WheelFragment;
 import at.sesame.fhooe.ui.energy.EnergyMeterFragment;
+import at.sesame.fhooe.ui.energy.WheelFragment;
+import at.sesame.fhooe.ui.ezan.EzanFragment;
+import at.sesame.fhooe.ui.ezan.EzanPlaceListFragment;
 
 public class FragmentTestActivity
 extends Activity
@@ -75,6 +77,7 @@ extends Activity
     	  addTab("dial", new DialChartFragment(this, "dial example"));
     	  addTab("energy meter", new EnergyMeterFragment(this));
     	  addTab("load profile", new EnergyDataActivity());
+    	  addTab("EZAN", new EzanFragment());
 //    	  ArrayList<Fragment> fragList = new ArrayList<Fragment>();
 //    	  fragList.add(new LineChartViewFragment("1", new double[]{1,2,3,4,5,6,7,8}));
 //    	  fragList.add(new LineChartViewFragment("2", new double[]{1,4,4,4,4,4,4,8}));

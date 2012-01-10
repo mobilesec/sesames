@@ -11,5 +11,6 @@
 			<attribute name="javadoc_location" value="jar:file:/C:/Sesame/achartengine-0.7.0-javadocs.zip!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/jackson-all-1.8.5.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

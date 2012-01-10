@@ -1,4 +1,4 @@
-package at.sesame.fhooe.model;
+package at.sesame.fhooe.energy.model;
 
 public class Service 
 {

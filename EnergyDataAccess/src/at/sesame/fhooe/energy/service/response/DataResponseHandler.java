@@ -1,4 +1,4 @@
-package at.sesame.fhooe.service.response;
+package at.sesame.fhooe.energy.service.response;
 
 
 import org.codegist.crest.handler.ResponseHandler;
@@ -6,8 +6,8 @@ import org.codegist.crest.io.Response;
 
 import com.thoughtworks.xstream.XStream;
 
-import at.sesame.fhooe.model.Data;
-import at.sesame.fhooe.model.DataRow;
+import at.sesame.fhooe.energy.model.Data;
+import at.sesame.fhooe.energy.model.DataRow;
 
 public class DataResponseHandler implements ResponseHandler {
 

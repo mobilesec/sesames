@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -89,9 +92,24 @@ implements OnClickListener, IErrorReceiver
 	private static final int CANT_WAKEUP_DIALOG = 4;
 
 	/**
+	 * integer constant for displaying the dialog when a list of devices is shut down or woken up
+	 */
+	private static final int ACTION_IN_PROGRESS_DIALOG = 5;
+
+	/**
 	 * the key under which the hostname information is stored in the bundle for onPrepareDialog
 	 */
 	private static final String BUNDLE_HOSTNAME_KEY = "hostname";
+
+	/**
+	 * the key under which the message information is stored in the bundle for onPrepareDialog
+	 */
+	private static final String BUNDLE_MESSAGE_KEY = "message";
+
+	/**
+	 * the key under which the selected number of hosts information is stored in the bundle for onPrepareDialog
+	 */
+	private static final String BUNDLE_SELECTED_NUMBER_KEY = "numHosts";
 
 	/**
 	 * threshold after which an idle time warning is displayed
@@ -178,6 +196,11 @@ implements OnClickListener, IErrorReceiver
 	 */
 	private ProgressDialog mNetworkingDialog;
 
+	/**
+	 * dialog to be shown when a list of devices is shut down or woken up
+	 */
+	private ProgressDialog mActionInProgressDialog;
+
 	@Override
 	public void onCreate(Bundle _savedInstance)
 	{
@@ -185,6 +208,8 @@ implements OnClickListener, IErrorReceiver
 		setContentView(R.layout.main);
 
 		setupNetworkingDialog();
+		setupActionInProgressDialog();
+
 		if(!checkConnectivity())
 		{
 			showDialog(NO_NETWORK_DIALOG);
@@ -192,7 +217,7 @@ implements OnClickListener, IErrorReceiver
 			return;
 		}
 		ErrorForwarder.getInstance().register(this);
-//		queryControllableDevicesKDF();
+		//		queryControllableDevicesKDF();
 		queryControllableDevicesTest();
 
 		refreshListEntries();
@@ -213,23 +238,21 @@ implements OnClickListener, IErrorReceiver
 		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
 		mWakeUpAllButt.setOnClickListener(this);
 
-		
-		//		testExtendedStatusList();
 	}
-	
+
 	private void startAutoUpdate()
 	{
 		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
 		mUpdateThread.start();
 	}
-	
+
 	private void stopAutoUpdate()
 	{
 		if(null!=mUpdateThread)
 		{
 			mUpdateThread.stopUpdating();
 		}
-		
+
 	}
 
 	private void testExtendedStatusList()
@@ -527,6 +550,11 @@ implements OnClickListener, IErrorReceiver
 			AlertDialog ad = (AlertDialog)dialog;
 			ad.setTitle(args.getCharSequence(BUNDLE_HOSTNAME_KEY));
 			break;
+		case ACTION_IN_PROGRESS_DIALOG:
+			ProgressDialog pd = (ProgressDialog) dialog;
+			pd.setMessage(args.getString(BUNDLE_MESSAGE_KEY));
+			pd.setMax(args.getInt(BUNDLE_SELECTED_NUMBER_KEY));
+			break;
 		}
 	}
 
@@ -541,6 +569,15 @@ implements OnClickListener, IErrorReceiver
 		mNetworkingDialog.setCanceledOnTouchOutside(false);
 		//		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mNetworkingDialog.setIndeterminate(true);
+	}
+
+	private void setupActionInProgressDialog()
+	{
+		mActionInProgressDialog = new ProgressDialog(PMSClientActivity.this);
+		//		mActionInProgressDialog.setMessage(getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
+		mActionInProgressDialog.setCancelable(false);
+		mActionInProgressDialog.setCanceledOnTouchOutside(false);
+		mActionInProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	}
 
 	/**
@@ -735,17 +772,36 @@ implements OnClickListener, IErrorReceiver
 	{
 		showNetworkingDialog();
 		ArrayList<String> macs = PMSProvider.getDeviceList();
-
-		for(int i = 0;i<macs.size();i++)
+//		
+//		JSONObject buffer = new JSONObject();
+//		for(int i = 0;i<macs.size();i++)
+//		{
+//			try {
+//				buffer.put("mac", macs.get(i));
+//			} catch (JSONException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			ControllableDevice cd = new ControllableDevice(getApplication(), macs.get(i), null/*"host "+i*/, "schule\\\\sesame_pms", " my_sesame_pms", true);
+//			//			if(cd.isValid())
+//			{
+//				mAllDevices.add(cd);
+//				Log.e(TAG, "controllable device added..."+mAllDevices.size());
+//				mSelection.put(cd.getMac(), false);
+//			}
+//			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+//		}
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
+		if(null==statuses)
 		{
-			ControllableDevice cd = new ControllableDevice(getApplication(), macs.get(i), null/*"host "+i*/, "schule\\\\sesame_pms", " my_sesame_pms", true);
-//			if(cd.isValid())
-			{
-				mAllDevices.add(cd);
-				Log.e(TAG, "controllable device added..."+mAllDevices.size());
-				mSelection.put(cd.getMac(), false);
-			}
-//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+			Log.e(TAG, "retrieving device information failed...");
+			return;
+		}
+		for(int i = 0;i<statuses.size();i++)
+		{
+			ControllableDevice cd = new ControllableDevice(getApplicationContext(), statuses.get(i), null, "schule\\\\sesame_pms", " my_sesame_pms", true);
+			mAllDevices.add(cd);
+			mSelection.put(cd.getMac(), false);
 		}
 		dismissNetworkingDialog();
 	}
@@ -1027,22 +1083,31 @@ implements OnClickListener, IErrorReceiver
 	 */
 	private void deselectAll()
 	{
-		for(IListEntry entry:mEntries)
-		{
-			if(entry instanceof ControllableDeviceListEntry)
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() 
 			{
-				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
-				cdle.setSelection(false);
+				for(IListEntry entry:mEntries)
+				{
+					if(entry instanceof ControllableDeviceListEntry)
+					{
+						ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)entry;
+						cdle.setSelection(false);
+					}
+				}
+
+				for(ControllableDevice cd:mAllDevices)
+				{
+					mSelection.put(cd.getMac(), false);
+				}
+				notifyAdapter();
+
+				setControlContainerVisibility(View.GONE, View.GONE);
+
 			}
-		}
+		});
 
-		for(ControllableDevice cd:mAllDevices)
-		{
-			mSelection.put(cd.getMac(), false);
-		}
-		notifyAdapter();
-
-		setControlContainerVisibility(View.GONE, View.GONE);
 	}
 
 	/**
@@ -1074,6 +1139,7 @@ implements OnClickListener, IErrorReceiver
 		{
 		case R.id.sleepButton:
 			powerOffSelectedDevices(PowerOffState.sleep);
+
 			break;
 		case R.id.shutDownButton:
 			Log.e(TAG, "shut down all");
@@ -1098,14 +1164,14 @@ implements OnClickListener, IErrorReceiver
 				@Override
 				public void run() 
 				{
-//					mUpdateThread.pause();
-//					stopAutoUpdate();
-//					try {
-//						Thread.sleep(16000);
-//					} catch (InterruptedException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
+					//					mUpdateThread.pause();
+					//					stopAutoUpdate();
+					//					try {
+					//						Thread.sleep(16000);
+					//					} catch (InterruptedException e1) {
+					//						// TODO Auto-generated catch block
+					//						e1.printStackTrace();
+					//					}
 					ArrayList<ControllableDevice> selDevs = getSelectedDevices();
 					for(ControllableDevice cd:selDevs)
 					{
@@ -1113,14 +1179,15 @@ implements OnClickListener, IErrorReceiver
 						cd.powerOff(_state);
 						Log.e(TAG, "should not come too often ");
 						try {
-							Thread.sleep(100);
+							Thread.sleep(10);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-//					startAutoUpdate();
-//					mUpdateThread.resumeAfterPause();
+					deselectAll();
+					//					startAutoUpdate();
+					//					mUpdateThread.resumeAfterPause();
 					//					for(ControllableDevice cd:selDevs)
 					//					{
 					//						
@@ -1193,27 +1260,71 @@ implements OnClickListener, IErrorReceiver
 		Runnable wakeupRunnable = new Runnable() {
 
 			@Override
-			public void run() {
-//				mUpdateThread.pause();
-//				stopAutoUpdate();
+			public void run() 
+			{
+				showActionInProgressDialog("wake up");
+				
+				stopAutoUpdate();
 				ArrayList<ControllableDevice> selDevs = getSelectedDevices();
 				for(int i = 0;i<selDevs.size();i++)
 				{
 					ControllableDevice cd = selDevs.get(i);
 					markDirty(cd);
 					cd.wakeUp();
+					mActionInProgressDialog.incrementProgressBy(1);
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-//				startAutoUpdate();
-//				mUpdateThread.resumeAfterPause();
+				deselectAll();
+				startAutoUpdate();
+				dismissActionInProgressDialog();
+//				runOnUiThread(new Runnable() {
+//					
+//					@Override
+//					public void run() {
+////						dismissDialog(ACTION_IN_PROGRESS_DIALOG);
+//						mActionInProgressDialog.setProgress(0);
+//						mActionInProgressDialog.dismiss();
+//						
+//					}
+//				});
+				
+				//				mUpdateThread.resumeAfterPause();
 			}
 		};
 		new Thread(wakeupRunnable).start();
+	}
+	
+	private void showActionInProgressDialog(final String _msg)
+	{
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() 
+			{
+				setupActionInProgressDialog();
+				mActionInProgressDialog.setTitle(_msg);
+				mActionInProgressDialog.setMax(getSelectedDevices().size());
+				mActionInProgressDialog.show();
+				
+			}
+		});
+	}
+	
+	private void dismissActionInProgressDialog()
+	{
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				mActionInProgressDialog.dismiss();
+				
+			}
+		});
 	}
 
 
@@ -1451,6 +1562,14 @@ implements OnClickListener, IErrorReceiver
 		ControllableDevice cd = getDeviceFromMac(_mac);
 		Bundle res = new Bundle();
 		res.putCharSequence(BUNDLE_HOSTNAME_KEY, cd.getHostname());
+		return res;
+	}
+
+	private Bundle createMessageAndMaxBundle(String _msg, int _max)
+	{
+		Bundle res = new Bundle();
+		res.putString(BUNDLE_MESSAGE_KEY, _msg);
+		res.putInt(BUNDLE_SELECTED_NUMBER_KEY, _max);
 		return res;
 	}
 

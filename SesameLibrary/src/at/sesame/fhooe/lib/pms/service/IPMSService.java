@@ -98,6 +98,8 @@ public interface IPMSService
 	@ErrorHandler(ExtendedStatusErrorHandler.class)
 //	@ResponseHandler(PMSStatusListResponseHandler.class)
 	@Consumes("application/json")
+//	@ConnectionTimeout(25000)
+	@SocketTimeout(30000)
 	public ArrayList<ExtendedPMSStatus> extendedStatusList(@FormParam("maclist")ArrayList<String> _mac);
 	
 }

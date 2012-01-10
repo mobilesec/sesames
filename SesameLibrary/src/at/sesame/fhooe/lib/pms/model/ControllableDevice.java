@@ -178,7 +178,7 @@ implements Runnable
 		if(mUseHostnameFromStatus)
 		{
 			mHostname = _status.getHostname();
-			Log.e(TAG, "hostname="+getHostname());
+//			Log.e(TAG, "hostname="+getHostname());
 		}
 		else
 		{

@@ -1,4 +1,4 @@
-package at.sesame.fhooe.ui;
+package at.sesame.fhooe.ui.energy;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import at.sesame.fhooe.R;
 import at.sesame.fhooe.R.id;
 import at.sesame.fhooe.R.layout;
-import at.sesame.fhooe.model.DataRow;
+import at.sesame.fhooe.energy.model.DataRow;
 
 public class EnergyDataListAdapter 
 extends ArrayAdapter<DataRow>

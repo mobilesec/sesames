@@ -1,4 +1,4 @@
-package at.sesame.fhooe.service;
+package at.sesame.fhooe.energy.service;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -9,13 +9,13 @@ import org.codegist.crest.io.http.HttpClientHttpChannelFactory;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import at.sesame.fhooe.energy.model.Data;
+import at.sesame.fhooe.energy.model.DataRow;
+import at.sesame.fhooe.energy.model.MeasurementPlace;
+import at.sesame.fhooe.energy.model.MeasurementPlaces;
+import at.sesame.fhooe.energy.model.Service;
+import at.sesame.fhooe.energy.model.Services;
 import at.sesame.fhooe.lib.pms.proxy.ProxyHelper;
-import at.sesame.fhooe.model.Data;
-import at.sesame.fhooe.model.DataRow;
-import at.sesame.fhooe.model.MeasurementPlace;
-import at.sesame.fhooe.model.MeasurementPlaces;
-import at.sesame.fhooe.model.Service;
-import at.sesame.fhooe.model.Services;
 
 public class EnergyDataAccess 
 {

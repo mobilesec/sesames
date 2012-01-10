@@ -16,14 +16,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import at.sesame.fhooe.model.DataRow;
-import at.sesame.fhooe.model.MeasurementPlace;
+import at.sesame.fhooe.energy.model.DataRow;
+import at.sesame.fhooe.energy.model.MeasurementPlace;
+import at.sesame.fhooe.energy.service.EnergyDataAccess;
 
-import at.sesame.fhooe.service.EnergyDataAccess;
-import at.sesame.fhooe.ui.EnergyDataFragment;
 import at.sesame.fhooe.ui.LineChartViewFragment;
-import at.sesame.fhooe.ui.MeasurementPlaceFragment;
-import at.sesame.fhooe.ui.MeasurementPlaceListAdapter;
+import at.sesame.fhooe.ui.energy.EnergyDataFragment;
+import at.sesame.fhooe.ui.energy.MeasurementPlaceFragment;
+import at.sesame.fhooe.ui.energy.MeasurementPlaceListAdapter;
 
 
 public class EnergyDataActivity 

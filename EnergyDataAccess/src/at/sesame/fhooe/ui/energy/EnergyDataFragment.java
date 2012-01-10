@@ -1,4 +1,4 @@
-package at.sesame.fhooe.ui;
+package at.sesame.fhooe.ui.energy;
 
 import java.util.ArrayList;
 
@@ -13,8 +13,8 @@ import android.widget.ListView;
 import at.sesame.fhooe.R;
 import at.sesame.fhooe.R.id;
 import at.sesame.fhooe.R.layout;
-import at.sesame.fhooe.model.DataRow;
-import at.sesame.fhooe.service.EnergyDataAccess;
+import at.sesame.fhooe.energy.model.DataRow;
+import at.sesame.fhooe.energy.service.EnergyDataAccess;
 
 public class EnergyDataFragment 
 extends Activity
