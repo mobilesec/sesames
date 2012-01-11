@@ -34,7 +34,7 @@ public class EzanMeasurement
 	@JsonProperty("voltage")
 	private double mVoltage;
 
-	public String getmId() {
+	public String getID() {
 		return mId;
 	}
 

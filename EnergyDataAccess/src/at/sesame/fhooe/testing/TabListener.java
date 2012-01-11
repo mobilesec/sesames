@@ -34,7 +34,7 @@ public class TabListener implements ActionBar.TabListener {
 //            ft.attach(mFragment);
 //        }
 //    	ft.attach(mFragment);
-    	ft.add(android.R.id.content, mFragment);
+    	ft.replace(android.R.id.content, mFragment);
     }
 
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {
