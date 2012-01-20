@@ -15,7 +15,7 @@ extends Activity
 	public void onCreate(Bundle _savedInstance)
 	{
 		super.onCreate(_savedInstance);
-//		setContentView(R.layout.main);
+		setContentView(R.layout.main);
 		mAb = getActionBar();
 		if(null!=mAb)
 		{
