@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, SesameLibraryActivity!</string>
-    <string name="app_name">SesameLibrary</string>
+   <!--   <string name="app_name">SesameLibrary</string>-->
     <string name="VpnException_userNotSet">user not set</string>
     <string name="VpnException_passwordNotSet">password not set</string>
     <string name="VpnException_serverNotSet">server not set</string>
@@ -14,7 +14,7 @@
     <string name="calendarevent_xml_beginTag">Begin:</string>
     <string name="calendarevent_xml_endTag">End:</string>
     <string name="calendarevent_xml_allDayTag">All Day:</string>
-    <string name="calendarevent_xml_descritpionTag">Descritpion:</string>
+    <string name="calendarevent_xml_descritpionTag">Description:</string>
     <string name="calendarevent_xml_locationTag">Location:</string>
     <string name="vpnBroadcastReceiver_connectionText">connecting, please wait...</string>
     <string name="vpnBroadcastReceiver_disconnectedSuccessfullyMsg">disconnected successfully</string>

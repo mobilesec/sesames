@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, SesameLibraryActivity!</string>
-    <string name="app_name">SesameLibrary</string>
+    <!--  <string name="app_name">SesameLibrary</string>-->
     <string name="VpnException_userNotSet">user not set</string>
     <string name="VpnException_passwordNotSet">password not set</string>
     <string name="VpnException_serverNotSet">server not set</string>

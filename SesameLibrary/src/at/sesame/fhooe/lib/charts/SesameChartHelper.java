@@ -239,7 +239,7 @@ public class SesameChartHelper
 	 * @param _xSpacingInHours the spacing in hours between two x-labels
 	 * @return a renderer for energy data graphs
 	 */
-	public XYMultipleSeriesRenderer buildEnergyDataRenderer(GregorianCalendar _startDate, double[] _data, int _xSpacingInHours)
+	public XYMultipleSeriesRenderer buildEnergyDataRenderer(GregorianCalendar _startDate, int _length, int _xSpacingInHours)
 	{
 		XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
 		//-----------------------------------------------------------------------------------------------------
@@ -249,18 +249,18 @@ public class SesameChartHelper
 		//-----------------------------------------------------------------------------------------------------
 		//x-labels
 		//-----------------------------------------------------------------------------------------------------
-		if(_data.length<100)//1 measurement every 15 minutes --> 4 measurements per hour --> 92 measurements per day
+		if(_length<100)//1 measurement every 15 minutes --> 4 measurements per hour --> 92 measurements per day
 		{
-			layoutEnergyDataRendererXLabelsHour(renderer, _data, _xSpacingInHours);
+			layoutEnergyDataRendererXLabelsHour(renderer, _length, _xSpacingInHours);
 		}
 		else
 		{
-			layoutEnergyDataRendererXLabelsDay(renderer, _startDate, _data, _xSpacingInHours);
+			layoutEnergyDataRendererXLabelsDay(renderer, _startDate, _length, _xSpacingInHours);
 		}
 		//-----------------------------------------------------------------------------------------------------
 		//y-labels
 		//-----------------------------------------------------------------------------------------------------
-		layoutEnergyDataRendererYLabels(renderer, _data);
+//		layoutEnergyDataRendererYLabels(renderer, _data);
 		//-----------------------------------------------------------------------------------------------------
 		//finish
 		//-----------------------------------------------------------------------------------------------------
@@ -281,13 +281,13 @@ public class SesameChartHelper
 		return _renderer;
 	}
 	
-	private XYMultipleSeriesRenderer layoutEnergyDataRendererXLabelsHour(XYMultipleSeriesRenderer _renderer, double[] _data, int _xSpacingInHours)
+	private XYMultipleSeriesRenderer layoutEnergyDataRendererXLabelsHour(XYMultipleSeriesRenderer _renderer, int _length, int _xSpacingInHours)
 	{
 		_renderer.setXLabels(0);
 		
-		int len = _data.length;
+//		int len = _data.length;
 		int interval = 4*_xSpacingInHours; //a data value is present every 15 minutes --> four times per hour.
-		for(int i = 0;i<len;i+=interval)
+		for(int i = 0;i<_length;i+=interval)
 		{
 			_renderer.addXTextLabel(i+1, getXLabelForEnergyDataHour(i));//i+1 because x-indexing starts with 1 in achartengine
 		}
@@ -309,13 +309,13 @@ public class SesameChartHelper
 		return sdf.format(gc.getTime());
 	}
 	
-	private XYMultipleSeriesRenderer layoutEnergyDataRendererXLabelsDay(XYMultipleSeriesRenderer _renderer, GregorianCalendar _startDate, double[] _data, int _xSpacingInHours)
+	private XYMultipleSeriesRenderer layoutEnergyDataRendererXLabelsDay(XYMultipleSeriesRenderer _renderer, GregorianCalendar _startDate, int _lenght, int _xSpacingInHours)
 	{
 		_renderer.setXLabels(0);
 		
-		int len = _data.length;
+//		int len = _data.length;
 //		int interval = 4*_xSpacingInHours; //a data value is present every 15 minutes --> four times per hour.
-		for(int i = 0;i<len;i+=92)//1 measurement every 15 minutes --> 4 measurements per hour --> 92 measurements per day
+		for(int i = 0;i<_lenght;i+=92)//1 measurement every 15 minutes --> 4 measurements per hour --> 92 measurements per day
 		{
 			_renderer.addXTextLabel(i+1, getXLabelForEnergyDataDay(_startDate, i));//i+1 because x-indexing starts with 1 in achartengine
 		}
