@@ -7,6 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
+import android.graphics.Paint.Cap;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -14,201 +18,340 @@ import android.util.Log;
 import android.view.View;
 import at.sesame.fhooe.lib.R;
 
-
-public class EnergyMeter 
-extends View 
-{
+public class EnergyMeter extends View {
 	private static final String TAG = "EnergyMeter";
 	private Bitmap mBackground;
 	private Bitmap mPointer;
+	private Bitmap mCase;
 	private Matrix mPointerMatrix = new Matrix();
 
+	// translate background (in pixels, will be converted into dp for Android)
+	private float mOffsetBackgroundX = 25.0f;
+	private float mOffsetBackgroundY = 25.0f;
+
 	private PointF mPointerAnchor;
-	
+
 	private float mDx = 0;
 	private float mDy = 0;
-	
-	
-	private float mMinValue =0;
+
+	private float mMinValue = 0;
 	private float mMaxValue = 100;
-	
-	private float mFullAngle = 90;
-	
+
+	private float mFullAngle = 84;
+
+	private int mTickColor = Color.BLACK;
+
 	private int mMinorTickSpacing = 5;
 	private float mMinorTickLength = 20;
-	
-	private int mMajorTickSpacing = 10;
+
+	private int mMajorTickSpacing = 25;
 	private float mMajorTickLength = 30;
-	
+
 	private double mDisplayedValue;
-	
-	private int mPointerBaseWidth = 20;
+
+	private int mPointerBaseWidth = 15;
+	private Path mPointerPath = null;
+
+	private int mMaxRadius;
+
+	// Displaying parameter relative to max radius
+	private float mRelativePointerLength = 1.2f;
+	private float mRelativeTickRadius = 1.3f;
+
+	// TODO: check if obsolete
+	float centerX = 0.0f;
+	float centerY = 0.0f;
+
+	// Parameters for drawing color labels
+	boolean mDrawColorLabes = true;
+	float[] mColorLabelRange = { 0.6f, 0.8f, 1.0f };
+	int[] mColorLabels = { 0xff40c200, 0xffffae00, 0xff9e0e0e };
+	float mColorLabelWidth = 10.0f;
 
 	public EnergyMeter(Context context, AttributeSet attrs, int _id) {
 		super(context, attrs, _id);
 		loadGraphics();
 	}
-	
+
 	public EnergyMeter(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		loadGraphics();
 	}
-	
+
 	public EnergyMeter(Context context) {
 		super(context);
 		loadGraphics();
 	}
-	
-	private void initMatrix()
-	{
-		mPointerMatrix.reset();
-		mPointerMatrix.postTranslate(mDx, mDy);//move the pointer to the lower center of the background;
+
+	private boolean checkColorLabelRange() {
+		boolean ret = true;
+
+		if (mColorLabelRange == null || mColorLabels == null
+				|| mColorLabelRange.length != mColorLabels.length)
+			ret = false;
+
+		for (int i = 0; i < mColorLabelRange.length; i++) {
+			if (mColorLabelRange[i] < 0.0f || mColorLabelRange[i] > 1.0f) {
+				ret = false;
+				break;
+			}
+
+			if (i < mColorLabelRange.length - 1) {
+				if (mColorLabelRange[i] >= mColorLabelRange[i + 1]) {
+					ret = false;
+					break;
+				}
+			}
+		}
+
+		if (!ret)
+			Log.e(TAG,
+					"Cannot draw color labels, because parameters are set invalid.");
+
+		return ret;
 	}
-	
-	public void setValue(double _val) throws Exception
-	{
+
+	public void setValue(double _val) throws Exception {
 		mDisplayedValue = _val;
-		
+
 		double angle = convertValueToAngle(_val);
-	
+
 		mPointerMatrix.reset();
-		mPointerMatrix.setRotate((float)angle, mPointerAnchor.x, mPointerAnchor.y);
+		mPointerMatrix.setRotate((float) angle, mPointerAnchor.x,
+				mPointerAnchor.y);
 		mPointerMatrix.postTranslate(mDx, mDy);
 
 		postInvalidate();
 	}
-	
-	private void loadGraphics()
-	{
-		mBackground = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.meter_background);		
-		mPointer = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.meter_pointer);
-			
-		mDx = mBackground.getWidth()/2-mPointer.getWidth()/2;
-		mDy = mBackground.getHeight()-mPointer.getHeight();
 
-		mPointerAnchor = new PointF(mPointer.getWidth()/2, mPointer.getHeight());
+	private void loadGraphics() {
+		mBackground = BitmapFactory.decodeResource(getContext().getResources(),
+				R.drawable.meter_background);
+		mPointer = BitmapFactory.decodeResource(getContext().getResources(),
+				R.drawable.meter_pointer);
+		mCase = BitmapFactory.decodeResource(getContext().getResources(),
+				R.drawable.meter_case);
+
+		mDx = mBackground.getWidth() / 2 - mPointer.getWidth() / 2;
+		mDy = mBackground.getHeight() - mPointer.getHeight();
+
+		mPointerAnchor = new PointF(mPointer.getWidth() / 2,
+				mPointer.getHeight());
+
+		centerX = mBackground.getWidth() / 2
+				+ convertPxToDp(mOffsetBackgroundX);
+		centerY = mBackground.getHeight() + convertPxToDp(mOffsetBackgroundY);
+
+		// calculate max radius
+		// mMaxRadius = (mBackground.getWidth() < mBackground.getHeight()) ?
+		// mBackground
+		// .getWidth() : mBackground.getHeight();
+		mMaxRadius = mBackground.getWidth();
+		mMaxRadius /= 2;
+
+		// set pointer path
+		mPointerPath = new Path();
+		float pointerTop = centerY - (mMaxRadius * mRelativePointerLength);
+
+		mPointerPath.moveTo(centerX - mPointerBaseWidth / 2, centerY);
+		mPointerPath.lineTo(centerX, pointerTop);
+		mPointerPath.lineTo(centerX + mPointerBaseWidth / 2, centerY);
+		mPointerPath.lineTo(centerX - mPointerBaseWidth / 2, centerY);
+
+		if (mDrawColorLabes)
+			mDrawColorLabes = checkColorLabelRange();
+	}
+
+	private float convertPxToDp(float px) {
+		// DisplayMetrics metrics = new DisplayMetrics();
+		// Display display = ((WindowManager)
+		// getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		// display.getMetrics(metrics);
+
+		// TODO: check how to convert, metrics.density always returns 1.0
+		// float logicalDensity = metrics.density;
+		float logicalDensity = 1.5f;
+		return px / logicalDensity;
+
+		// final float scale = getResources().getDisplayMetrics().density;
+		// return px * scale + 0.5f;
 	}
 
 	@Override
-	protected void onDraw(Canvas _c) 
-	{
+	protected void onDraw(Canvas _c) {
 		super.onDraw(_c);
-		_c.drawBitmap(mBackground,0,0, null);
-		_c.drawBitmap(mPointer, mPointerMatrix, null);
-		
-		drawTicks(_c);
-		drawLowFiPointer(_c);
+
+		double radius = mMaxRadius * mRelativeTickRadius;
+
+		// draw dial
+		_c.drawBitmap(mBackground, convertPxToDp(mOffsetBackgroundX),
+				convertPxToDp(mOffsetBackgroundY), null);
+
+		// draw color labels
+		if (mDrawColorLabes)
+			drawColorLabels(_c, (float) radius);
+
+		// draw ticks
+
+		drawTicks(_c, radius, radius - mMinorTickLength, mMinorTickSpacing,
+				false);
+		drawTicks(_c, radius, radius - mMajorTickLength, mMajorTickSpacing,
+				true);
+
+		// draw pointer
+		drawPointer(_c);
+
+		// draw case
+		_c.drawBitmap(mCase, 0, 0, null);
 	}
-	
-	private void drawLowFiPointer(Canvas _c) 
-	{
 
-		float width = mBackground.getWidth();
-		float height = mBackground.getHeight();
-
+	private void drawColorLabels(Canvas _c, float radius) {
 		Paint p = new Paint();
-		p.setColor(Color.RED);
+		p.setStyle(Style.STROKE);
+		p.setStrokeWidth(mColorLabelWidth);
+		p.setAntiAlias(true);
 
-		try 
-		{
-			float left = width/2-mPointerBaseWidth/2;
-			float right = left+mPointerBaseWidth;
-			float top = height-mPointerBaseWidth;
-			float bottom = height;
-			PointF[] pos = getTickPositionFromValue(mDisplayedValue, 0);
-			_c.drawArc(new RectF(left, top, right, bottom), 0, 360, true, p);
-			_c.drawLine(width/2-mPointerBaseWidth/2, height-mPointerBaseWidth/2, pos[1].x, pos[1].y, p);
-			_c.drawLine(width/2, height, pos[1].x, pos[1].y, p);
-			_c.drawLine(width/2+mPointerBaseWidth/2, height-mPointerBaseWidth/2, pos[1].x, pos[1].y, p);
-		} 
-		catch (Exception e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// compensate stroke width
+		radius -= mColorLabelWidth / 2;
+
+		float startValue = mMinValue;
+		float endValue;
+
+		for (int i = 0; i < mColorLabelRange.length; i++) {
+			p.setColor(mColorLabels[i]);
+
+			endValue = mMaxValue * mColorLabelRange[i];
+
+			double minAngle;
+			double maxAngle;
+
+			try {
+				minAngle = convertValueToAngle(startValue);
+				maxAngle = convertValueToAngle(endValue);
+			} catch (Exception e) {
+				Log.e(TAG, e.getMessage());
+				return;
+			}
+
+			_c.drawArc(new RectF((float) (centerX - radius),
+					(float) (centerY - radius), (float) (centerX + radius),
+					(float) (centerY + radius)), (float) minAngle - 90,
+					(float) (maxAngle - minAngle), false, p);
+
+			startValue = endValue;
 		}
 	}
-	
-	private void drawTicks(Canvas _c)
-	{
-		for(float i = mMinValue;i<=mMaxValue;i+=mMinorTickSpacing)
-		{
-			drawMinorTick(_c, i);
-			if(i%mMajorTickSpacing==0)
-			{
-				drawMajorTick(_c, i);
+
+	private void drawPointer(Canvas _c) {
+		try {
+			// give it a more natural look
+			Paint paint = new Paint();
+			paint.setAntiAlias(true);
+			paint.setStyle(Style.FILL);
+			paint.setShadowLayer(3.0f, 0, 0, 0x30000000);
+			paint.setShadowLayer(5, 0, 0, 0x7f000000);
+			paint.setColor(Color.BLACK);
+
+			// rotate pointer according to value
+			float angle = (float) (convertValueToAngle(mDisplayedValue));
+
+			_c.save(Canvas.MATRIX_SAVE_FLAG);
+			_c.rotate(angle, centerX, centerY);
+			_c.drawPath(mPointerPath, paint);
+			_c.restore();
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
+
+	}
+
+	private void drawTicks(Canvas canvas, double longRadius,
+			double shortRadius, int ticks, boolean labels) {
+		double minAngle;
+		double maxAngle;
+		try {
+			minAngle = convertValueToAngle(mMinValue);
+			maxAngle = convertValueToAngle(mMaxValue);
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+			return;
+		}
+
+		Paint p = new Paint();
+		p.setAntiAlias(true);
+		p.setColor(mTickColor);
+		p.setStyle(Style.STROKE);
+		p.setShadowLayer(3.0f, 0, 0, 0x30000000);
+
+		if (!labels) {
+			p.setStrokeWidth(3.0f);
+			canvas.drawArc(new RectF((float) (centerX - longRadius),
+					(float) (centerY - longRadius),
+					(float) (centerX + longRadius),
+					(float) (centerY + longRadius)), (float) minAngle - 90,
+					(float) (maxAngle - minAngle), false, p);
+		}
+
+		for (double i = mMinValue; i <= mMaxValue; i += ticks) {
+			double angle;
+			try {
+				angle = (convertValueToAngle(i)) + 90;
+				angle *= Math.PI;
+				angle /= 180;
+			} catch (Exception e) {
+				Log.e(TAG, e.getMessage());
+				continue;
+			}
+			double sinValue = Math.sin(angle);
+			double cosValue = Math.cos(angle);
+			int x1 = Math.round(centerX - (float) (shortRadius * cosValue));
+			int y1 = Math.round(centerY - (float) (shortRadius * sinValue));
+			int x2 = Math.round(centerX - (float) (longRadius * cosValue));
+			int y2 = Math.round(centerY - (float) (longRadius * sinValue));
+
+			try {
+				p.setStrokeWidth(labels ? 3.0f : 1.0f);
+				p.setStrokeCap(Cap.ROUND);
+
+				canvas.drawLine(x1, y1, x2, y2, p);
+
+				// draw labels
+				if (labels) {
+					p.setStrokeWidth(0.0f);
+					// p.setTextAlign(Align.LEFT);
+					// if (x1 <= x2) {
+					// p.setTextAlign(Align.RIGHT);
+					// }
+					String text = i + "";
+					if (Math.round(i) == (long) i) {
+						text = (long) i + "";
+					}
+					p.setTextAlign(Align.CENTER);
+					canvas.drawText(
+							text,
+							Math.round(centerX
+									- (float) ((shortRadius - 20) * cosValue)),
+							Math.round(centerY
+									- (float) ((shortRadius - 20) * sinValue)),
+							p);
+				}
+			} catch (Exception e) {
+				Log.e(TAG, e.getMessage());
+				continue;
 			}
 		}
 	}
-	
-	private void drawMinorTick(Canvas _c, float _val)
-	{
-		drawTick(_c, _val, mMinorTickLength);
-	}
-	
-	private void drawMajorTick(Canvas _c, float _val)
-	{
-		drawTick(_c, _val, mMajorTickLength);
-	}
-	
-	private void drawTick(Canvas _c, float _val, float _len)
-	{
-		try {
-			PointF[] pos = getTickPositionFromValue(_val, _len);
-//			Log.e(TAG, "pos1:"+PointToString(pos[0])+", pos2:"+PointToString(pos[1]));
-			Paint p = new Paint();
-			p.setColor(Color.GREEN);
-			_c.drawLine(pos[0].x, pos[0].y,pos[1].x, pos[1].y, p);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+	private double convertValueToAngle(double _val) throws Exception {
+		if (_val > mMaxValue) {
+			throw new Exception("can not convert value greater than max ("
+					+ mMaxValue + ")");
 		}
+		return _val / (mMaxValue - mMinValue)// normalization of value to
+												// correct range
+				* mFullAngle // using the full available angle
+				- (mFullAngle / 2) + mMinValue; // producing correct values
+												// around the center
 	}
-	
-	private String PointToString(PointF _p)
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("x:");
-		sb.append(_p.x);
-		sb.append(", ");
-		sb.append("y:");
-		sb.append(_p.y);
-		return sb.toString();
-		
-	}
-	
-	private Bitmap multiplyBitmapWithMatrix(Bitmap _bm, Matrix _mat)
-	{
-		return Bitmap.createBitmap(_bm, 0, 0, _bm.getWidth(), _bm.getHeight(), _mat, true);
-	}
-	
-	private PointF[] getTickPositionFromValue(double _val, float _len) throws Exception
-	{
-//		double angle = (convertValueToAngle(_val))+90;
-		double angle = (convertValueToAngle(_val))+90;
-		angle*=Math.PI;
-		angle/=180;
-//		Log.e(TAG, "angle="+angle);
-		float width = mBackground.getWidth();
-		float height = mBackground.getHeight();
-		float lengthTop = mPointer.getHeight();
-		float lengthBottom = lengthTop-_len;
-		double xTop = width/2-Math.cos(angle)*lengthTop;
-		double yTop = height-Math.sin(angle)*lengthTop;
-		double xBottom = width/2-Math.cos(angle)*lengthBottom;
-		double yBottom = height-Math.sin(angle)*lengthBottom;
-		
-		return new PointF[]{new PointF((float)xBottom, (float)yBottom), new PointF((float)xTop,(float)yTop)};
-	}
-	
-	private double convertValueToAngle(double _val) throws Exception
-	{
-		if(_val>mMaxValue)
-		{
-			throw new Exception("can not convert value greater than max ("+mMaxValue+")");
-		}
-		return _val/(mMaxValue-mMinValue)//normalization of value to correct range
-				*mFullAngle //using the full available angle
-				-(mFullAngle/2)+mMinValue; //producing correct values around the center
-	}
-	
+
 }

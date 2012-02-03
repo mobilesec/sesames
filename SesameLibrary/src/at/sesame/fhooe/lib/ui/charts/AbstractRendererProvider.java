@@ -18,13 +18,9 @@ implements IRendererProvider
 		mRenderer.setZoomButtonsVisible(true);
 		mRenderer.setZoomEnabled(true, false);
 		mRenderer.setZoomRate(10);
-		
 		mRenderer.setFitLegend(true);
-		
 		mRenderer.setPanEnabled(true, false);
-		
 		mRenderer.setAntialiasing(true);
-		
 		mRenderer.setShowGrid(true);
 	}
 
