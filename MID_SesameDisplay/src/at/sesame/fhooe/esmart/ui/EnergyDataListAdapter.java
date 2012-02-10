@@ -1,4 +1,4 @@
-package at.sesame.fhooe.ui.energy;
+package at.sesame.fhooe.esmart.ui;
 
 import java.util.List;
 
@@ -8,17 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import at.sesame.fhooe.R;
-import at.sesame.fhooe.R.id;
-import at.sesame.fhooe.R.layout;
-import at.sesame.fhooe.energy.model.DataRow;
+import at.sesame.fhooe.esmart.model.EsmartDataRow;
+import at.sesame.fhooe.midsd.R;
 
 public class EnergyDataListAdapter 
-extends ArrayAdapter<DataRow>
+extends ArrayAdapter<EsmartDataRow>
 {
 	private LayoutInflater mLi;
-	private List<DataRow> mData;
-	public EnergyDataListAdapter(Context context, List<DataRow> objects) {
+	private List<EsmartDataRow> mData;
+	public EnergyDataListAdapter(Context context, List<EsmartDataRow> objects) {
 		super(context, 0, objects);
 		mData = objects;
 		mLi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -32,7 +30,7 @@ extends ArrayAdapter<DataRow>
 		TextView timeStampLabel = (TextView)v.findViewById(R.id.energyDataRowEntryTimeStampField);
 		TextView valueLabel = (TextView)v.findViewById(R.id.energyDataRowEntryValueField);
 		
-		DataRow item = mData.get(_pos);
+		EsmartDataRow item = mData.get(_pos);
 		
 		timeStampLabel.setText(item.getDate().toLocaleString());
 		valueLabel.setText(""+item.getDataValue());

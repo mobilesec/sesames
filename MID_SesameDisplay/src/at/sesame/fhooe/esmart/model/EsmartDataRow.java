@@ -1,4 +1,4 @@
-package at.sesame.fhooe.energy.model;
+package at.sesame.fhooe.esmart.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +10,7 @@ import java.util.TimeZone;
 
 import android.util.Log;
 
-public class DataRow 
+public class EsmartDataRow 
 {
 	private static final String TAG = "DataRow";
 	private static final String URL_TIME_STRING_SEPARATOR = "-";

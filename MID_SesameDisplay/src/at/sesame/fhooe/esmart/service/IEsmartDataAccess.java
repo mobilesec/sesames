@@ -1,4 +1,4 @@
-package at.sesame.fhooe.energy.service;
+package at.sesame.fhooe.esmart.service;
 
 import java.util.ArrayList;
 
@@ -9,18 +9,18 @@ import org.codegist.crest.annotate.Path;
 import org.codegist.crest.annotate.QueryParam;
 import org.codegist.crest.annotate.ResponseHandler;
 
-import at.sesame.fhooe.energy.model.Data;
-import at.sesame.fhooe.energy.model.DataRow;
-import at.sesame.fhooe.energy.model.MeasurementPlace;
-import at.sesame.fhooe.energy.model.MeasurementPlaces;
-import at.sesame.fhooe.energy.model.Service;
-import at.sesame.fhooe.energy.model.Services;
-import at.sesame.fhooe.energy.service.error.EnergyDataErrorHandler;
-import at.sesame.fhooe.energy.service.response.DataResponseHandler;
-import at.sesame.fhooe.energy.service.response.GetServicesResponseHandler;
-import at.sesame.fhooe.energy.service.response.MeasurementPlaceResponseHandler;
+import at.sesame.fhooe.esmart.model.EsmartData;
+import at.sesame.fhooe.esmart.model.EsmartDataRow;
+import at.sesame.fhooe.esmart.model.EsmartMeasurementPlace;
+import at.sesame.fhooe.esmart.model.EsmartMeasurementPlaces;
+import at.sesame.fhooe.esmart.model.EsmartService;
+import at.sesame.fhooe.esmart.model.EsmartServices;
+import at.sesame.fhooe.esmart.service.error.EnergyDataErrorHandler;
+import at.sesame.fhooe.esmart.service.response.DataResponseHandler;
+import at.sesame.fhooe.esmart.service.response.GetServicesResponseHandler;
+import at.sesame.fhooe.esmart.service.response.MeasurementPlaceResponseHandler;
 @EndPoint("http://684d21e6181c406f84c3ab968880f960.cloudapp.net/ServicesProxy.svc/")
-public interface IEnergyDataAccess 
+public interface IEsmartDataAccess 
 {
 	/**
 	 * Getting Services: http://684d21e6181c406f84c3ab968880f960.cloudapp.net/servicesproxy.svc/GetServices?Username=kirchdorf.administrator&Password=kirchdorf55
@@ -38,24 +38,24 @@ Getting DailyConsumption Data: http://684d21e6181c406f84c3ab968880f960.cloudapp.
 	@Path("/GetServices")
 	@ResponseHandler(GetServicesResponseHandler.class)
 	@ErrorHandler(EnergyDataErrorHandler.class)
-	public Services getServices(@QueryParam("Username")String _user, @QueryParam("Password") String _pass);
+	public EsmartServices getServices(@QueryParam("Username")String _user, @QueryParam("Password") String _pass);
 	
 	@GET
 	@Path("/GetMeasurementPlaces")
 	@ResponseHandler(MeasurementPlaceResponseHandler.class)
 	@ErrorHandler(EnergyDataErrorHandler.class)
-	public MeasurementPlaces getMeasurementPlaces(@QueryParam("Username")String _user);
+	public EsmartMeasurementPlaces getMeasurementPlaces(@QueryParam("Username")String _user);
 	
 	
 	@GET
 	@Path("/GetData_LoadProfile")
 	@ResponseHandler(DataResponseHandler.class)
 	@ErrorHandler(EnergyDataErrorHandler.class)
-	public Data getLoadProfile(@QueryParam("ID_MP")int _id, @QueryParam("From") String _from, @QueryParam("To")String _to);
+	public EsmartData getLoadProfile(@QueryParam("ID_MP")int _id, @QueryParam("From") String _from, @QueryParam("To")String _to);
 	
 	@GET
 	@Path("/GetData_DailyConsumption")
 	@ResponseHandler(DataResponseHandler.class)
 	@ErrorHandler(EnergyDataErrorHandler.class)
-	public Data getDailyConsumption(@QueryParam("ID_MP")int _id, @QueryParam("From") String _from, @QueryParam("To")String _to);
+	public EsmartData getDailyConsumption(@QueryParam("ID_MP")int _id, @QueryParam("From") String _from, @QueryParam("To")String _to);
 }

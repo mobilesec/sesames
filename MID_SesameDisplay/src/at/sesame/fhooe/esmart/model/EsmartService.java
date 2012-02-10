@@ -1,6 +1,6 @@
-package at.sesame.fhooe.energy.model;
+package at.sesame.fhooe.esmart.model;
 
-public class Service 
+public class EsmartService 
 {
 	private String mName;
 	private String mMethodName;

@@ -1,6 +1,6 @@
-package at.sesame.fhooe.energy.model;
+package at.sesame.fhooe.esmart.model;
 
-public class MeasurementPlace 
+public class EsmartMeasurementPlace 
 {
 	private int mId;
 	private String mName;

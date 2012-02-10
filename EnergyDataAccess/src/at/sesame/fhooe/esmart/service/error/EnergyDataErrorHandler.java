@@ -1,4 +1,4 @@
-package at.sesame.fhooe.energy.service.error;
+package at.sesame.fhooe.esmart.service.error;
 
 import org.codegist.crest.handler.ErrorHandler;
 import org.codegist.crest.io.Request;

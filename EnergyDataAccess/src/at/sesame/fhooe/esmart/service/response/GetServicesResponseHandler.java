@@ -1,12 +1,12 @@
-package at.sesame.fhooe.energy.service.response;
+package at.sesame.fhooe.esmart.service.response;
 
 import org.codegist.crest.handler.ResponseHandler;
 import org.codegist.crest.io.Response;
 
 import com.thoughtworks.xstream.XStream;
 
-import at.sesame.fhooe.energy.model.Service;
-import at.sesame.fhooe.energy.model.Services;
+import at.sesame.fhooe.esmart.model.Service;
+import at.sesame.fhooe.esmart.model.Services;
 
 public class GetServicesResponseHandler implements ResponseHandler {
 
