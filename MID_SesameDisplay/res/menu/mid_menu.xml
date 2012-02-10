@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+	<item android:id="@+id/low_density"
+          android:title="Low Density"/>
+	<item android:id="@+id/medium_density"
+          android:title="Medium Density"/>
+	<item android:id="@+id/high_density"
+          android:title="High Density"/>
+</menu>
