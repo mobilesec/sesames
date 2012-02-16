@@ -37,10 +37,10 @@ public class EzanDataAccess
 		return null;
 	}
 	
-	public static ArrayList<EzanMeasurement> getEzanMeasurements()
+	public static ArrayList<EzanMeasurement> getEzanMeasurements(String _id)
 	{
 		try {
-			return new EzanMeasurementTask().execute(new Void[]{}).get();
+			return new EzanMeasurementTask().execute(new String[]{_id}).get();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,11 +60,12 @@ public class EzanDataAccess
 		}
 	}
 	
-	private static class EzanMeasurementTask extends AsyncTask<Void, Void, ArrayList<EzanMeasurement>>
+	private static class EzanMeasurementTask extends AsyncTask<String, Void, ArrayList<EzanMeasurement>>
 	{
 		@Override
-		protected ArrayList<EzanMeasurement> doInBackground(Void... params) {
-			return mEzanAccess.getEzanMeasurements();
+		protected ArrayList<EzanMeasurement> doInBackground(String... params) {
+			
+			return mEzanAccess.getEzanMeasurements(params[0]);
 		}
 		
 	}

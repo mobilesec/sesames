@@ -89,8 +89,10 @@ extends AbstractDatasetProvider
 				throw new DatasetCreationException("length of titles and x values does not match...");
 			}
 		}
+		mDataset = new XYMultipleSeriesDataset();
 //		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		int length = titles.length;
+		Log.e(TAG, "length of titles="+length);
 		for (int i = 0; i < length; i++) {
 			TimeSeries series = new TimeSeries(titles[i]);
 			Log.e(TAG, "current index = "+i);

@@ -1,6 +1,7 @@
 package at.sesame.fhooe.midsd;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -8,14 +9,20 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import at.sesame.fhooe.lib.ui.ProgressFragmentDialog;
+import at.sesame.fhooe.midsd.data.ISesameDataListener;
+import at.sesame.fhooe.midsd.data.SesameDataCache;
 import at.sesame.fhooe.midsd.hd.HD_Fragment;
 import at.sesame.fhooe.midsd.ld.LD_Fragment;
 import at.sesame.fhooe.midsd.md.MD_Fragment;
 
 public class MID_SesameDisplayActivity 
-extends FragmentActivity 
+extends FragmentActivity
 {
 	private static final String TAG = "MID_SesameDisplay";
+	public static final int EDV_1_ID = 15;
+	public static final int EDV_3_ID = 18;
+	public static final int EDV_6_ID = 17;
 	
 	private Fragment mLdFrag;
 	private Fragment mMdFrag;
@@ -23,16 +30,51 @@ extends FragmentActivity
 	
 	private Fragment mCurFrag;
 	
+	private SesameDataCache mDataCache;
+	
+	private DialogFragment mLoadingDialog;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mLdFrag = new LD_Fragment(getApplicationContext());
-        mMdFrag = new MD_Fragment(getApplicationContext());
+        mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext());
         mHdFrag = new HD_Fragment(getApplicationContext());
+        mLoadingDialog = ProgressFragmentDialog.newInstance("Bitte warten...", "daten werden geladen");
+        mLoadingDialog.show(getSupportFragmentManager(), null);
+        new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				mDataCache = SesameDataCache.getInstance();
+				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_1_ID);
+				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_3_ID);
+				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_6_ID);
+				mDataCache.startDeepEsmartUpdates();
+				mLoadingDialog.dismiss();
+				
+			}
+		}).start();
+        
         setContentView(R.layout.main);
     }
+
     
+    
+	@Override
+	protected void onDestroy() 
+	{
+		if(null!=mDataCache)
+		{
+			mDataCache.stopDeepEsmartUpdates();
+		}
+		super.onDestroy();
+	}
+
+
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 
 	{
@@ -57,6 +99,14 @@ extends FragmentActivity
 		return true;
 	}
 	
+	public void registerEsmartListener(ISesameDataListener _listener, int _id)
+	{
+		if(null!=mDataCache)
+		{
+			mDataCache.addEsmartDataListener(_listener, _id);
+		}
+	}
+	
 	
     private void setShownFragment(Fragment _frag)
     {
@@ -71,6 +121,5 @@ extends FragmentActivity
     	ft.add(R.id.contentFrame, _frag);
     	ft.commit();
     	mCurFrag = _frag;
-    }
-    
+    }    
 }

@@ -3,11 +3,14 @@ package at.sesame.fhooe.esmart.service;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.codegist.crest.CRest;
 import org.codegist.crest.CRestBuilder;
 import org.codegist.crest.io.http.HttpClientHttpChannelFactory;
 
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.util.Log;
 import at.sesame.fhooe.esmart.model.EsmartData;
 import at.sesame.fhooe.esmart.model.EsmartDataRow;
@@ -19,14 +22,17 @@ import at.sesame.fhooe.lib.pms.proxy.ProxyHelper;
 
 public class EsmartDataAccess 
 {
-	private static final String TAG = "EnergyDataAccess";
+	private static final String TAG = "EsmartDataAccess";
 	private static final String mUser = "kirchdorf.administrator";
 	private static final String mPass = "kirchdorf55";
 	private static IEsmartDataAccess mEda;
 	static
 	{
-		CRest crest = new CRestBuilder().setHttpChannelFactory(new HttpClientHttpChannelFactory(ProxyHelper.getProxiedAllAcceptingHttpsClient())).build();
-        mEda= crest.build(IEsmartDataAccess.class);
+//		HttpClient client = new DefaultHttpClient();
+//		CRest crest = new CRestBuilder().setHttpChannelFactory(new HttpClientHttpChannelFactory(ProxyHelper.getProxiedAllAcceptingHttpsClient())).build();
+        CRest crest = new CRestBuilder().build();
+		mEda= crest.build(IEsmartDataAccess.class);
+        
 	}
 	
 	public static ArrayList<EsmartService>getServices()
@@ -58,6 +64,7 @@ public class EsmartDataAccess
 	public static ArrayList<EsmartMeasurementPlace> getMeasurementPlaces(String _user)
 	{
 		String[] params = new String[]{_user};
+		Looper.prepare();
 		GetMeasurementPlacesTask gmpt = new GetMeasurementPlacesTask();
 		gmpt.execute(params);
 		
@@ -75,7 +82,6 @@ public class EsmartDataAccess
 	
 	public static ArrayList<EsmartDataRow> getLoadProfile(int _mp, String _from, String _to)
 	{
-		Log.e(TAG, "getting load profile started");
 		Object[] params = new Object[]{new Integer(_mp), _from, _to};
 		GetLoadProfileTask glpt = new GetLoadProfileTask();
 		glpt.execute(params);
@@ -121,12 +127,10 @@ public class EsmartDataAccess
 		@Override
 		protected EsmartData doInBackground(Object... params) 
 		{
-			Log.e(TAG, "getLoadProfile, do in background");
 			int id = ((Integer)params[0]).intValue();
 			String from = (String)params[1];
 			String to = (String)params[2];
 			EsmartData d = mEda.getLoadProfile(id, from, to);
-			Log.e(TAG, "query sent");
 			return d;
 		}
 	}

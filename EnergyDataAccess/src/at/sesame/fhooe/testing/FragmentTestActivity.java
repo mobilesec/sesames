@@ -13,19 +13,19 @@ import android.util.Log;
 import android.widget.TabHost;
 import at.sesame.fhooe.EnergyDataActivity;
 import at.sesame.fhooe.R;
+import at.sesame.fhooe.esmart.ui.WheelFragment;
+import at.sesame.fhooe.lib.ui.EnergyMeterFragment;
+import at.sesame.fhooe.lib.ui.FragmentTabListener;
 import at.sesame.fhooe.ui.DialChartFragment;
 import at.sesame.fhooe.ui.LineChartViewFragment;
-import at.sesame.fhooe.ui.energy.EnergyMeterFragment;
-import at.sesame.fhooe.ui.energy.WheelFragment;
 import at.sesame.fhooe.ui.ezan.EzanFragment;
-import at.sesame.fhooe.ui.ezan.EzanPlaceListFragment;
 
 public class FragmentTestActivity
 extends Activity
 {
 	private static final String TAG = "FragmentTestActivity";
 	private TabHost mTabHost;
-    private TabManager mTabManager;
+//    private TabManager mTabManager;
     private ActionBar mActionBar;
     private Handler mHandler = new Handler();
 
@@ -102,7 +102,7 @@ extends Activity
     {
     	Tab tab = mActionBar.newTab()
 	            .setText(_title)
-	            .setTabListener(new TabListener(_frag));
+	            .setTabListener(new FragmentTabListener(_frag));
     	mActionBar.addTab(tab);
     }
 

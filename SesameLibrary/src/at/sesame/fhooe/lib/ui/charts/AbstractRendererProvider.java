@@ -27,6 +27,8 @@ implements IRendererProvider
 	@Override
 	public void createMultipleSeriesRenderer(Object... _data) throws RendererInitializationException
 	{
+		mRenderer = new XYMultipleSeriesRenderer();
+		setupRenderer();
 		XYMultipleSeriesDataset data = null;
 		try
 		{

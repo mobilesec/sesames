@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.codegist.crest.annotate.EndPoint;
 import org.codegist.crest.annotate.GET;
 import org.codegist.crest.annotate.Path;
+import org.codegist.crest.annotate.PathParam;
 
 import at.sesame.fhooe.ezan.model.EzanMeasurement;
 import at.sesame.fhooe.ezan.model.EzanMeasurementPlace;
@@ -17,7 +18,7 @@ public interface IEzanDataAccess
 	public ArrayList<EzanMeasurementPlace> getEzanPlaces();
 	
 	@GET
-	@Path("/places/4ee9e611e5f0014652000005/measures.json")
-	public ArrayList<EzanMeasurement> getEzanMeasurements();
+	@Path("/places/{id}/measures.json")
+	public ArrayList<EzanMeasurement> getEzanMeasurements(@PathParam("id") String _id);
 
 }

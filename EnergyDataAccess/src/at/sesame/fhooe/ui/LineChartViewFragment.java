@@ -120,7 +120,7 @@ extends Fragment
 		PointStyle[] styles = new PointStyle[]{PointStyle.POINT};
 		mDataSet = sch.buildDataset(titles, xValues, yValues);
 	
-		mRenderer = sch.buildEnergyDataRenderer(new GregorianCalendar(2011, 10, 25),mData,2);
+		mRenderer = sch.buildEnergyDataRenderer(new GregorianCalendar(2011, 10, 25),mData.length,2);
 //		if(null==mRenderer)
 //		{
 //			Log.e(TAG, "renderer was null");

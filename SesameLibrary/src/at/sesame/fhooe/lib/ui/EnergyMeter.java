@@ -125,6 +125,7 @@ public class EnergyMeter extends View {
 	}
 
 	private void loadGraphics() {
+		System.gc();
 		mBackground = BitmapFactory.decodeResource(getContext().getResources(),
 				R.drawable.meter_background);
 		mPointer = BitmapFactory.decodeResource(getContext().getResources(),

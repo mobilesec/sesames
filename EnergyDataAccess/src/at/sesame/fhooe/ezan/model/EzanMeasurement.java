@@ -1,9 +1,29 @@
 package at.sesame.fhooe.ezan.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import android.util.Log;
 
 public class EzanMeasurement 
 {
+	private static final String TAG = "EzanMeasurement";
+	//2012-01-11T14:02:55+00:00
+	private SimpleDateFormat mFormat = 
+			new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+	public enum MeasurementType
+	{
+		humidity,
+		light,
+		temperature,
+		temperature2,
+		voltage,
+		nA
+	}
+	
 	@JsonProperty("_id")
 	private String mId;
 	
@@ -33,6 +53,8 @@ public class EzanMeasurement
 	
 	@JsonProperty("voltage")
 	private double mVoltage;
+	
+	
 
 	public String getID() {
 		return mId;
@@ -70,6 +92,19 @@ public class EzanMeasurement
 
 	public double getVoltage() {
 		return mVoltage;
+	}
+	
+	public Date getTimeStampDate()
+	{
+		String shortTimeString = getTimeStamp();//.substring(0, getTimeStamp().indexOf('+'));
+//		Log.e(TAG, "short time string="+shortTimeString);
+		try {
+			return mFormat.parse(shortTimeString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override

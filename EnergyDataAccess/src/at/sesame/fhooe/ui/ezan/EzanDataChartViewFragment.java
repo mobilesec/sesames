@@ -53,9 +53,9 @@ extends Fragment
 		mRenderer = new XYMultipleSeriesRenderer();
 	}
 	
-	public EzanDataChartViewFragment(ArrayList<String> _titles, ArrayList<Double[]> _data)
+	public EzanDataChartViewFragment(GregorianCalendar _start, ArrayList<String> _titles, ArrayList<Double[]> _data)
 	{
-		setData(_titles, _data);
+		setData(_start, _titles, _data);
 	}
 	
 	public void onCreate(Bundle _savedInstance)
@@ -154,7 +154,7 @@ extends Fragment
 		return mView;
 	}
 	
-	public void setData(ArrayList<String> _titles, ArrayList<Double[]> _data)
+	public void setData(GregorianCalendar _start, ArrayList<String> _titles, ArrayList<Double[]> _data)
 	{
 		Log.e(TAG, "data set");
 		mDataSet = new XYMultipleSeriesDataset();
@@ -169,7 +169,7 @@ extends Fragment
 			}
 			mDataSet.addSeries(series);
 		}
-		buildRenderer();
+		buildRenderer(_start);
 		if(null==mView)
 		{
 			Log.e(TAG, "mView was null");
@@ -193,9 +193,14 @@ extends Fragment
 	}
 	
 	
-	private void buildRenderer()
+	private void buildRenderer(GregorianCalendar _start)
 	{
-		mRenderer = new XYMultipleSeriesRenderer();
+		if(mDataSet.getSeriesCount()<=0)
+		{
+			return;
+		}
+		mRenderer = new SesameChartHelper().buildEnergyDataRenderer(_start, mDataSet.getSeriesAt(0).getItemCount(), 1);
+		mRenderer.removeSeriesRenderer(mRenderer.getSeriesRendererAt(0));
 		for(int i = 0;i<mDataSet.getSeriesCount();i++)
 		{
 			XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();

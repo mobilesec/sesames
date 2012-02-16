@@ -30,8 +30,8 @@ implements IEzanMeasurementPlaceSelectionListener, IEzanMeasuementPlaceCheckedLi
 {
 	private static final String TAG = "EzanFragment";
 	
-	private static final int INITIAL_DATA_LOAD_AMOUNT = 30;
-	private static final TimePeriod INITIAL_DATA_LOAD_PERIOD = TimePeriod.all;
+	private static final int INITIAL_DATA_LOAD_AMOUNT = 2;
+	private static final TimePeriod INITIAL_DATA_LOAD_PERIOD = TimePeriod.days;
 	
 	private static final int UPDATE_DATA_LOAD_AMOUNT = 2;
 	private static final TimePeriod UPDATE_DATA_LOAD_PERIOD = TimePeriod.days; 
@@ -108,7 +108,7 @@ implements IEzanMeasurementPlaceSelectionListener, IEzanMeasuementPlaceCheckedLi
 		ft.add(R.id.ezanPlaceListContainer, mPlaceList);
 //		ft.add(R.id.ezanChartContainer, mDataView);
 		ft.commit();
-		dismissDataLoadingDialog();
+//		dismissDataLoadingDialog();
 	}
 
 

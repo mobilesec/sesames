@@ -1,30 +1,28 @@
-package at.sesame.fhooe.ui.energy;
+package at.sesame.fhooe.midsd.md;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.AnticipateOvershootInterpolator;
+
 import android.view.animation.BounceInterpolator;
-import android.view.animation.CycleInterpolator;
+
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import at.sesame.fhooe.R;
+import at.sesame.fhooe.midsd.R;
 
 public class WheelFragment 
 extends Fragment
@@ -40,7 +38,7 @@ implements OnCheckedChangeListener
 	private double mValue = 0;
 	private ToggleButton mAutoIncrementButt;
 	private View mView;
-//	private View mSeparatorView;
+	//	private View mSeparatorView;
 	private Handler mUiThreadhandler;
 
 	private Thread mAutoIncrementThread;
@@ -77,10 +75,10 @@ implements OnCheckedChangeListener
 		mUiThreadhandler = _handler;
 		mSeparatorPositions = _separatorPositions;
 		mAdapter =new ArrayWheelAdapter<String>(mCtx, mDigits);
-		setTextSize(200);
+		setTextSize(175);
 		LayoutInflater li = (LayoutInflater)mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mView = li.inflate(R.layout.wheel_layout, null);
-//		mSeparatorView = li.inflate(R.layout.separator_layout, null);
+		//		mSeparatorView = li.inflate(R.layout.separator_layout, null);
 
 		mLinLayout = (LinearLayout) mView.findViewById(R.id.wheel_lin_layout);
 
@@ -89,6 +87,45 @@ implements OnCheckedChangeListener
 
 		setupWheels();
 	}
+
+//	public WheelFragment()
+//	{
+//		Log.e(TAG, "empty wheelfragment constructor");
+//		//		mNumDigits = 5;
+//		//		mAdapter = new ArrayWheelAdapter<String>(getActivity(), mDigits);
+//		//		setTextSize(100);
+//		//		LayoutInflater li = (LayoutInflater)mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		//		mView = li.inflate(R.layout.wheel_layout, null);
+//		////		mSeparatorView = li.inflate(R.layout.separator_layout, null);
+//		//
+//		//		mLinLayout = (LinearLayout) mView.findViewById(R.id.wheel_lin_layout);
+//		//
+//		//		mAutoIncrementButt = (ToggleButton)mView.findViewById(R.id.toggleButton1);
+//		//		mAutoIncrementButt.setOnCheckedChangeListener(this);
+//		//
+//		//		setupWheels();
+//	}
+//
+//	public void init(Context _ctx, Handler _handler, int _numDigits, ArrayList<Integer> _separatorPositions)
+//	{
+//		Log.e(TAG, "init");
+//		mCtx = _ctx;
+//		mNumDigits = _numDigits;
+//		mUiThreadhandler = _handler;
+//		mSeparatorPositions = _separatorPositions;
+//		mAdapter =new ArrayWheelAdapter<String>(mCtx, mDigits);
+//		setTextSize(175);
+//		//		LayoutInflater li = (LayoutInflater)mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		//		mView = li.inflate(R.layout.wheel_layout, null);
+//		////		mSeparatorView = li.inflate(R.layout.separator_layout, null);
+//		//
+//		//		mLinLayout = (LinearLayout) mView.findViewById(R.id.wheel_lin_layout);
+//		//
+//		//		mAutoIncrementButt = (ToggleButton)mView.findViewById(R.id.toggleButton1);
+//		//		mAutoIncrementButt.setOnCheckedChangeListener(this);
+//
+//		setupWheels();
+//	}
 
 	private void setupWheels()
 	{
@@ -121,15 +158,31 @@ implements OnCheckedChangeListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
 	{
-		mLinLayout.removeAllViews();
-		for(int i = 0;i<mWheels.size();i++)
+		Log.e(TAG, "onCreateView");
+		if(null==mView)
 		{
-			mLinLayout.addView(mWheels.get(i));
-//			if(mSeparatorPositions.contains(new Integer(i)))
-//			{
-//				mLinLayout.addView(ml(R.layout.separator_layout, null));
-//			}
+			mView = inflater.inflate(R.layout.wheel_layout, null);
+
 		}
+		if(null==mLinLayout)
+		{
+			mLinLayout = (LinearLayout) mView.findViewById(R.id.wheel_lin_layout);
+		}
+
+		mLinLayout.removeAllViews();
+		if(null!=mWheels)
+		{
+			for(int i = 0;i<mWheels.size();i++)
+			{
+				mLinLayout.addView(mWheels.get(i));
+				//			if(mSeparatorPositions.contains(new Integer(i)))
+				//			{
+				//				mLinLayout.addView(ml(R.layout.separator_layout, null));
+				//			}
+			}
+		}
+		mAutoIncrementButt = (ToggleButton)mView.findViewById(R.id.toggleButton1);
+		mAutoIncrementButt.setOnCheckedChangeListener(this);
 		return mView;
 	}
 
@@ -139,17 +192,17 @@ implements OnCheckedChangeListener
 
 		if(digits.length>mNumDigits)
 		{	
-//			mHandler.post(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					// TODO Auto-generated method stub
-//					addDigit();
-//					mNumDigits++;
-//					mView.invalidate();
-//					mView.buildLayer();
-//				}
-//			});
+			//			mHandler.post(new Runnable() {
+			//
+			//				@Override
+			//				public void run() {
+			//					// TODO Auto-generated method stub
+			//					addDigit();
+			//					mNumDigits++;
+			//					mView.invalidate();
+			//					mView.buildLayer();
+			//				}
+			//			});
 
 			mUiThreadhandler.post(new Runnable() 
 			{	
@@ -187,7 +240,7 @@ implements OnCheckedChangeListener
 	{
 		Log.e(TAG, "thread stopped");
 		mRunning = false;
-		
+
 		mHandler.post(new Runnable() 
 		{	
 			@Override

@@ -86,7 +86,7 @@ implements OnCheckedChangeListener, OnTouchListener
 	public boolean onTouch(View v, MotionEvent event) 
 	{
 		Log.e(TAG, ((EzanMeasurementPlace)v.getTag()).getTitle()+" ---touched");
-		v.animate();
+//		v.animate();
 		mSelectionListener.notifyEzanMeasurementPlaceSelected((EzanMeasurementPlace)v.getTag());
 		
 		return true;
