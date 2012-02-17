@@ -1,4 +1,4 @@
-package at.sesame.fhooe.midsd.md;
+package at.sesame.fhooe.midsd.ui;
 
 import java.util.Random;
 import java.util.Timer;
@@ -16,8 +16,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import at.sesame.fhooe.lib.ui.EnergyMeter;
 import at.sesame.fhooe.midsd.R;
+import at.sesame.fhooe.midsd.md.EnergyWheelView;
+import at.sesame.fhooe.midsd.md.WheelFragment;
 
-public class MD_meterFragment
+public class MeterWheelFragment
 extends Fragment
 {
 	private static final String TAG = "MD_meterFragment";
@@ -38,7 +40,7 @@ extends Fragment
 
 	private boolean mWheelAdded = false;
 
-	public MD_meterFragment(FragmentManager _fm, Context _ctx)
+	public MeterWheelFragment(FragmentManager _fm, Context _ctx)
 	{
 		mCtx = _ctx;
 		mLi = LayoutInflater.from(mCtx);

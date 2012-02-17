@@ -1,6 +1,7 @@
 package at.sesame.fhooe.midsd;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +14,7 @@ import at.sesame.fhooe.lib.ui.ProgressFragmentDialog;
 import at.sesame.fhooe.midsd.data.ISesameDataListener;
 import at.sesame.fhooe.midsd.data.SesameDataCache;
 import at.sesame.fhooe.midsd.hd.HD_Fragment;
+import at.sesame.fhooe.midsd.ld.INotificationListener;
 import at.sesame.fhooe.midsd.ld.LD_Fragment;
 import at.sesame.fhooe.midsd.md.MD_Fragment;
 
@@ -34,24 +36,31 @@ extends FragmentActivity
 	
 	private DialogFragment mLoadingDialog;
 	
+	private Handler mUiHandler = new Handler();
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mLdFrag = new LD_Fragment(getApplicationContext());
-        mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext());
+        mLdFrag = new LD_Fragment(getApplicationContext(), mUiHandler);
+        mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext(), mUiHandler);
         mHdFrag = new HD_Fragment(getApplicationContext());
         mLoadingDialog = ProgressFragmentDialog.newInstance("Bitte warten...", "daten werden geladen");
         mLoadingDialog.show(getSupportFragmentManager(), null);
-        new Thread(new Runnable() {
-			
+        
+        new Thread(new Runnable() 
+        {	
 			@Override
-			public void run() {
+			public void run() 
+			{	   
 				mDataCache = SesameDataCache.getInstance();
+				
+				mDataCache.addNotificationListener((INotificationListener)mLdFrag);
 				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_1_ID);
 				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_3_ID);
 				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_6_ID);
+				mDataCache.addNotificationListener((INotificationListener)mMdFrag);
 				mDataCache.startDeepEsmartUpdates();
 				mLoadingDialog.dismiss();
 				
@@ -68,7 +77,7 @@ extends FragmentActivity
 	{
 		if(null!=mDataCache)
 		{
-			mDataCache.stopDeepEsmartUpdates();
+			mDataCache.cleanUp();
 		}
 		super.onDestroy();
 	}

@@ -52,7 +52,7 @@ public final class R {
         public static final int ezanPlaceDetailContainer=0x7f070012;
         public static final int ezanPlaceListContainer=0x7f070011;
         public static final int frameLayout1=0x7f07002f;
-        public static final int high_density=0x7f070039;
+        public static final int high_density=0x7f07003a;
         public static final int humidityRadioButt=0x7f070014;
         public static final int idField=0x7f07001b;
         public static final int idLabel=0x7f07001a;
@@ -61,33 +61,34 @@ public final class R {
         public static final int linLayHorz=0x7f070028;
         public static final int linLayout_1=0x7f070010;
         public static final int linearLayout1=0x7f070002;
-        public static final int ll=0x7f070034;
-        public static final int low_density=0x7f070037;
+        public static final int ll=0x7f070035;
+        public static final int low_density=0x7f070038;
         public static final int md_chart_layout_chart_container=0x7f07002b;
         public static final int md_chart_layout_header_imageview=0x7f070029;
         public static final int md_chart_layout_header_textview=0x7f07002a;
         public static final int md_layout_container=0x7f07002c;
-        public static final int measurementPlaceListEntryIdField=0x7f070030;
-        public static final int measurementPlaceListEntryNameField=0x7f070032;
-        public static final int medium_density=0x7f070038;
+        public static final int md_notification_textview=0x7f070030;
+        public static final int measurementPlaceListEntryIdField=0x7f070031;
+        public static final int measurementPlaceListEntryNameField=0x7f070033;
+        public static final int medium_density=0x7f070039;
         public static final int meter=0x7f07000e;
         public static final int notificationText=0x7f070025;
         public static final int quitDialogCancelButt=0x7f070004;
         public static final int quitDialogOkButt=0x7f070003;
         public static final int radioGroup1=0x7f070013;
-        public static final int relLayout2=0x7f070033;
+        public static final int relLayout2=0x7f070034;
         public static final int tableRow1=0x7f070007;
         public static final int tableRow2=0x7f070009;
         public static final int temperatureRadioButt=0x7f070015;
         public static final int textView1=0x7f070000;
-        public static final int textView2=0x7f070031;
+        public static final int textView2=0x7f070032;
         public static final int textView4=0x7f07000a;
         public static final int titleField=0x7f07001e;
         public static final int titleLabel=0x7f07001d;
-        public static final int toggleButton1=0x7f070036;
+        public static final int toggleButton1=0x7f070037;
         public static final int viewPager=0x7f07002d;
         public static final int voltageRadioButt=0x7f070017;
-        public static final int wheel_lin_layout=0x7f070035;
+        public static final int wheel_lin_layout=0x7f070036;
     }
     public static final class layout {
         public static final int app_quit_dialog_layout=0x7f030000;
@@ -105,9 +106,10 @@ public final class R {
         public static final int md_layout=0x7f03000c;
         public static final int md_layout_old=0x7f03000d;
         public static final int md_meter_layout=0x7f03000e;
-        public static final int measurement_place_list_entry=0x7f03000f;
-        public static final int separator_layout=0x7f030010;
-        public static final int wheel_layout=0x7f030011;
+        public static final int md_notification_layout=0x7f03000f;
+        public static final int measurement_place_list_entry=0x7f030010;
+        public static final int separator_layout=0x7f030011;
+        public static final int wheel_layout=0x7f030012;
     }
     public static final class menu {
         public static final int mid_menu=0x7f060000;

@@ -14,6 +14,8 @@ import at.sesame.fhooe.esmart.service.EsmartDataAccess;
 import at.sesame.fhooe.ezan.EzanDataAccess;
 import at.sesame.fhooe.ezan.model.EzanMeasurement;
 import at.sesame.fhooe.ezan.model.EzanMeasurementPlace;
+import at.sesame.fhooe.midsd.demo.EventSimulator;
+import at.sesame.fhooe.midsd.ld.INotificationListener;
 
 public class SesameDataCache
 implements ISesameDataProvider
@@ -31,6 +33,7 @@ implements ISesameDataProvider
 	private static Hashtable<EzanMeasurementPlace, ArrayList<EzanMeasurement>> mRawEzanData = new Hashtable<EzanMeasurementPlace, ArrayList<EzanMeasurement>>();
 	//	private static HashTabley<EzanM>
 
+	private static ArrayList<INotificationListener> mNotificationListeners = new ArrayList<INotificationListener>();
 
 	private static SesameDataCache mInstance;
 
@@ -44,6 +47,10 @@ implements ISesameDataProvider
 
 	private static final int mNoEzanMeasurements = 100;
 
+	private Timer mNotificationUpdateTimer;
+	private static final long NOTIFICATION_UPDATE_INTERVAL = 1000;//every 5 seconds
+	private EventSimulator mEventSim;
+
 	private SesameDataCache()
 	{
 		init();
@@ -51,21 +58,46 @@ implements ISesameDataProvider
 
 	public void startDeepEsmartUpdates()
 	{
+		stopDeepEsmartUpdates();
 		mEsmartUpdateTimer = new Timer();
 		mEsmartUpdateTimer.schedule(new EsmartUpdateTask(), 0, ESMART_UPDATE_INTERVAL);
 	}
 
-	public void stopDeepEsmartUpdates()
+	private void stopDeepEsmartUpdates()
 	{
-		mEsmartUpdateTimer.cancel();
-		mEsmartUpdateTimer.purge();
-		Log.e(TAG, "deep esmart updates stopped");
+		if(null!=mEsmartUpdateTimer)
+		{
+			mEsmartUpdateTimer.cancel();
+			mEsmartUpdateTimer.purge();
+			Log.e(TAG, "deep esmart updates stopped");
+		}
+	}
+
+	private void startNotificationUpdates()
+	{
+		mNotificationUpdateTimer = new Timer();
+		mNotificationUpdateTimer.schedule(new NotificationUpdateTask(), 0, NOTIFICATION_UPDATE_INTERVAL);
+	}
+	
+	private void stopNotificationUpdates()
+	{
+		if(null!=mNotificationUpdateTimer)
+		{
+			mNotificationUpdateTimer.cancel();
+			mNotificationUpdateTimer.purge();
+		}
+	}
+	
+	public void cleanUp()
+	{
+		stopDeepEsmartUpdates();
+		stopNotificationUpdates();
 	}
 
 	public void init()
 	{
 		long start = System.currentTimeMillis();
-//		Log.e(TAG, "init");
+		//		Log.e(TAG, "init");
 		loadEsmartMeasurementPlaces();
 
 		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
@@ -83,6 +115,9 @@ implements ISesameDataProvider
 			mRawEzanData.put(emp, data);
 		}
 		long duration = System.currentTimeMillis()-start;
+
+		mEventSim = new EventSimulator();
+		startNotificationUpdates();
 		Log.e(TAG, "init done ("+convertMStoReadableString(duration)+")");
 	}
 
@@ -96,8 +131,8 @@ implements ISesameDataProvider
 	{
 		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
 		{
-//			Log.e(TAG, "id="+emp.getId());
-//			Log.e(TAG, "name="+emp.getName());
+			//			Log.e(TAG, "id="+emp.getId());
+			//			Log.e(TAG, "name="+emp.getName());
 			mEsmartUpdateTable.put(emp, false);
 		}
 	}
@@ -188,9 +223,9 @@ implements ISesameDataProvider
 			listeners.remove(_listener);
 		}
 		mEsmartListener.put(_id, listeners);
-		
+
 	}
-	
+
 	private EsmartMeasurementPlace getEsmartMeasurementPlaceById(int _id)
 	{
 		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
@@ -210,10 +245,10 @@ implements ISesameDataProvider
 		while(listenerIt.hasMoreElements())
 		{
 			EsmartMeasurementPlace emp = getEsmartMeasurementPlaceById(listenerIt.nextElement());
-			
+
 			if(mEsmartUpdateTable.get(emp)==true)
 			{
-//				Log.e(TAG, "updating esmart data for "+emp.getName());
+				//				Log.e(TAG, "updating esmart data for "+emp.getName());
 				ArrayList<ISesameDataListener> listeners = mEsmartListener.get(emp.getId());
 				ArrayList<EsmartDataRow> results = mRawEsmartData.get(emp.getId());
 				//				ArrayList<SesameDataContainer> data = new ArrayList<SesameDataContainer>();
@@ -306,6 +341,30 @@ implements ISesameDataProvider
 
 	}
 
+	@Override
+	public void addNotificationListener(INotificationListener _listener) 
+	{
+		mNotificationListeners.add(_listener);
+
+	}
+
+	@Override
+	public void removeNotificationListener(INotificationListener _listener) 
+	{
+		mNotificationListeners.remove(_listener);
+
+	}
+
+	@Override
+	public void updateNotificationListener(String _msg) 
+	{
+		for(INotificationListener listener:mNotificationListeners)
+		{
+			listener.notifyAboutNotification(_msg);
+		}
+
+	}
+
 
 	private class EsmartUpdateTask extends TimerTask
 	{
@@ -316,16 +375,22 @@ implements ISesameDataProvider
 		@Override
 		public void run() 
 		{
-//			Log.e(TAG, "EsmartUpdateTask");
+			//			Log.e(TAG, "EsmartUpdateTask");
 			for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
 			{
 				loadEsmartData(	emp, 
 						EsmartDataRow.getUrlTimeString(mUpdateYear, mUpdateMonth, mUpdateDay), 
 						EsmartDataRow.getUrlTimeString(2011,11,28));
 			}
-
 		}
-
 	}
 
+	private class NotificationUpdateTask extends TimerTask
+	{
+		@Override
+		public void run() 
+		{
+			updateNotificationListener(mEventSim.getNotification());		
+		}
+	}
 }

@@ -11,6 +11,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -18,7 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import at.sesame.fhooe.lib.ui.EnergyMeterFragment;
 import at.sesame.fhooe.lib.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib.ui.charts.IRendererProvider;
 import at.sesame.fhooe.lib.ui.charts.exceptions.DatasetCreationException;
@@ -27,10 +27,12 @@ import at.sesame.fhooe.midsd.MID_SesameDisplayActivity;
 import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.data.ISesameDataListener;
 import at.sesame.fhooe.midsd.data.SesameDataContainer;
+import at.sesame.fhooe.midsd.ld.INotificationListener;
+import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
 
 public class MD_Fragment 
 extends Fragment
-implements ISesameDataListener
+implements ISesameDataListener, INotificationListener
 {
 	private static final String TAG = "MD_Fragment";
 
@@ -48,21 +50,28 @@ implements ISesameDataListener
 	private MD_chartFragment mEsmartRoom3Frag;
 	private MD_chartFragment mEsmartRoom6Frag;
 	
-	private MD_meterFragment mEnergyMeterRoom1Frag;
-	private MD_meterFragment mEnergyMeterRoom3Frag;
-	private MD_meterFragment mEnergyMeterRoom6Frag;
+	private MeterWheelFragment mEnergyMeterRoom1Frag;
+	private MeterWheelFragment mEnergyMeterRoom3Frag;
+	private MeterWheelFragment mEnergyMeterRoom6Frag;
 
+	private MD_NotificationFragment mNotificationFrag;
+	
 	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
 	private IRendererProvider mRendererProvider = new MD_chart_RendererProvider();
 	
 	private Context mCtx;
+	
+
 
 //	private boolean mAttached = false;
+	
+	private Handler mUiHandler;
 
-	public MD_Fragment(FragmentManager _fm, Context _ctx)
+	public MD_Fragment(FragmentManager _fm, Context _ctx, Handler _uiHandler)
 	{
 //		mAttached = false;
 		mCtx = _ctx;
+		mUiHandler = _uiHandler;
 		createFragments(_fm);
 	}
 	
@@ -152,18 +161,23 @@ implements ISesameDataListener
 		mEsmartRoom3Frag = new MD_chartFragment("EDV 3");
 		mEsmartRoom6Frag = new MD_chartFragment("EDV 6");
 		
-		mEnergyMeterRoom1Frag = new MD_meterFragment(_fm,mCtx);
-		mEnergyMeterRoom3Frag = new MD_meterFragment(_fm,mCtx);
-		mEnergyMeterRoom6Frag = new MD_meterFragment(_fm,mCtx);
+		mEnergyMeterRoom1Frag = new MeterWheelFragment(_fm,mCtx);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(_fm,mCtx);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(_fm,mCtx);
+		
+		mNotificationFrag = new MD_NotificationFragment(mUiHandler);
 
 		mFragments.add(mEsmartRoom1Frag);
 		mFragments.add(mEnergyMeterRoom1Frag);
+		mFragments.add(mNotificationFrag);
 		
 		mFragments.add(mEsmartRoom3Frag);
 		mFragments.add(mEnergyMeterRoom3Frag);
+		mFragments.add(mNotificationFrag);
 		
 		mFragments.add(mEsmartRoom6Frag);
 		mFragments.add(mEnergyMeterRoom6Frag);
+		mFragments.add(mNotificationFrag);
 
 		return mFragments;
 	}
@@ -247,6 +261,14 @@ implements ISesameDataListener
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+
+
+	@Override
+	public void notifyAboutNotification(String _msg) {
+//		Log.e(TAG, "TODO...."+_msg);
+		mNotificationFrag.setNotification(_msg);
 	}
 
 }

@@ -2,9 +2,9 @@ package at.sesame.fhooe.midsd.ld;
 
 public interface INotificationProvider
 {
-	public void registerNotificationreceiver(INotificationReceiver _recv);
-	public void unregisterNotificationreceiver(INotificationReceiver _recv);
+	public void registerNotificationreceiver(INotificationListener _recv);
+	public void unregisterNotificationreceiver(INotificationListener _recv);
 	
-	public void update(String _msg);
+	public void updateNotificationReceivers(String _notification);
 
 }

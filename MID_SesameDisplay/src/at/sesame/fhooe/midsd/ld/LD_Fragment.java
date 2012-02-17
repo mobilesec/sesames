@@ -18,7 +18,7 @@ import at.sesame.fhooe.midsd.demo.EventSimulator;
 
 public class LD_Fragment 
 extends Fragment
-implements INotificationReceiver
+implements INotificationListener
 {
 
 	@SuppressWarnings("unused")
@@ -41,11 +41,9 @@ implements INotificationReceiver
 
 	private InterpolationThread mInterThread;
 
-	private Handler mUiHandler = new Handler();
+	private Handler mUiHandler;
 
 	private String mNotificationText;
-
-	private EventSimulator mSim;
 
 	public enum LdState
 	{
@@ -53,7 +51,7 @@ implements INotificationReceiver
 		foreground
 	}
 
-	public LD_Fragment(Context _ctx)
+	public LD_Fragment(Context _ctx, Handler _uiHandler)
 	{
 		mLi = LayoutInflater.from(_ctx);
 
@@ -62,6 +60,7 @@ implements INotificationReceiver
 
 		mBackgroundColMan = new ColorInterpolationManager(mBackgroundColors);
 		mForegroundColMan = new ColorInterpolationManager(mForegroundColors);
+		mUiHandler = _uiHandler;
 	}
 
 	@Override
@@ -72,10 +71,6 @@ implements INotificationReceiver
 		buildView();
 		
 		setState(LdState.background);
-
-		mSim = new EventSimulator();
-		mSim.registerNotificationreceiver(this);
-		mSim.startNotifying();
 
 		mInterThread = new InterpolationThread();
 		mInterThread.startInterpolating();
@@ -158,7 +153,7 @@ implements INotificationReceiver
 	}
 
 	@Override
-	public void notifyAboutEvent(String _msg) 
+	public void notifyAboutNotification(String _msg) 
 	{
 		mNotificationText = _msg;
 
@@ -179,10 +174,7 @@ implements INotificationReceiver
 		{
 			mInterThread.stopInterpolating();
 		}
-		if(null!=mSim)
-		{
-			mSim.stopNotifying();
-		}
+
 		super.onDestroyView();
 	}
 
