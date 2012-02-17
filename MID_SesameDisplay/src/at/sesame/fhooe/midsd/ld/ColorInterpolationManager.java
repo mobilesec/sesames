@@ -18,6 +18,12 @@ public class ColorInterpolationManager
 		mColors = _colors;
 	}
 	
+	public ColorInterpolationManager(ArrayList<Integer> _colors, float _fractionStep)
+	{
+		mColors = _colors;
+		mFractionStep = _fractionStep;
+	}
+	
 	public int getNextColor()
 	{
 		int res = getColor(mFraction, mColIdx);

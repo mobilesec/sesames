@@ -58,8 +58,8 @@ implements INotificationListener
 		fillBackgroundColors();
 		fillForegroundColors();
 
-		mBackgroundColMan = new ColorInterpolationManager(mBackgroundColors);
-		mForegroundColMan = new ColorInterpolationManager(mForegroundColors);
+		mBackgroundColMan = new ColorInterpolationManager(mBackgroundColors, 0.01f);
+		mForegroundColMan = new ColorInterpolationManager(mForegroundColors, 0.1f);
 		mUiHandler = _uiHandler;
 	}
 
@@ -140,16 +140,14 @@ implements INotificationListener
 
 	private void fillBackgroundColors()
 	{
-		mBackgroundColors.add(Color.BLUE);
-		mBackgroundColors.add(Color.CYAN);
-		mBackgroundColors.add(Color.GREEN);
+		mBackgroundColors.add(0xff415469);
+		mBackgroundColors.add(0xffe7f5f8);
 	}
 
 	private void fillForegroundColors()
 	{
-		mForegroundColors.add(Color.RED);
-		mForegroundColors.add(Color.argb(255, 255, 165, 0));//orange
-		mForegroundColors.add(Color.YELLOW);
+		mForegroundColors.add(0xffffe400);
+		mForegroundColors.add(0xffff4800);
 	}
 
 	@Override
