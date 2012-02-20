@@ -5,13 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
-import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,21 +19,10 @@ import at.sesame.fhooe.lib.R;
 public class EnergyMeter extends View {
 	private static final String TAG = "EnergyMeter";
 	private Bitmap mBackground;
-	private Bitmap mPointer;
-//	private Bitmap mCase;
-	private Matrix mPointerMatrix = new Matrix();
-
-	// translate background (in pixels, will be converted into dp for Android)
-	private float mOffsetBackgroundX = 25.0f;
-	private float mOffsetBackgroundY = 25.0f;
-
-	private PointF mPointerAnchor;
-
-	private float mDx = 0;
-	private float mDy = 0;
+	private Bitmap mCase;
 
 	private float mMinValue = 0;
-	private float mMaxValue = 1000;
+	private float mMaxValue = 100;
 
 	private float mFullAngle = 84;
 
@@ -55,10 +42,10 @@ public class EnergyMeter extends View {
 	private int mMaxRadius;
 
 	// Displaying parameter relative to max radius
-	private float mRelativePointerLength = 1.2f;
-	private float mRelativeTickRadius = 1.3f;
+	private float mRelativePointerLength = 1.1f;
+	private float mRelativeTickRadius = 1.2f;
+	private float mRelativePointerBaseY = 0.38f;
 
-	// TODO: check if obsolete
 	float centerX = 0.0f;
 	float centerY = 0.0f;
 
@@ -70,20 +57,18 @@ public class EnergyMeter extends View {
 
 	public EnergyMeter(Context context, AttributeSet attrs, int _id) {
 		super(context, attrs, _id);
-//		loadGraphics();
+		loadGraphics();
 	}
 
 	public EnergyMeter(Context context, AttributeSet attrs) {
 		super(context, attrs);
-//		loadGraphics();
+		loadGraphics();
 	}
 
 	public EnergyMeter(Context context) {
 		super(context);
-//		loadGraphics();
+		loadGraphics();
 	}
-	
-	
 
 	private boolean checkColorLabelRange() {
 		boolean ret = true;
@@ -115,44 +100,47 @@ public class EnergyMeter extends View {
 
 	public void setValue(double _val) throws Exception {
 		mDisplayedValue = _val;
-
-		double angle = convertValueToAngle(_val);
-
-		mPointerMatrix.reset();
-		mPointerMatrix.setRotate((float) angle, mPointerAnchor.x,
-				mPointerAnchor.y);
-		mPointerMatrix.postTranslate(mDx, mDy);
-
 		postInvalidate();
 	}
 
+	// @Override
+	// protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	// // scale view port, so it fits into width
+	// //View parent = (View) getParent();
+	// int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
+	// int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
+	// if (mBackground != null && parentWidth != 0 && parentHeight != 0/*parent
+	// != null*/) {
+	//
+	// //int parentWidth = parent.getWidth();
+	// //int parentHeight = parent.getHeight();
+	// int meterHeight = mBackground.getWidth() * parentHeight / parentWidth;
+	// this.setMeasuredDimension(parentWidth, meterHeight/2);
+	// this.setLayoutParams(new LinearLayout.LayoutParams(parentWidth,
+	// meterHeight));
+	// }
+	// super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+	// }
+
 	private void loadGraphics() {
 		System.gc();
-		
+
 		mBackground = BitmapFactory.decodeResource(getContext().getResources(),
 				R.drawable.meter_background);
-		mPointer = BitmapFactory.decodeResource(getContext().getResources(),
-				R.drawable.meter_pointer);
-//		mCase = BitmapFactory.decodeResource(getContext().getResources(),
-//				R.drawable.meter_case);
-		View parent = (View)getParent();
-		if(null!=parent)
-		{
-			mBackground = Bitmap.createScaledBitmap(mBackground, parent.getWidth(), parent.getHeight(), true);
-//			mCase = Bitmap.createScaledBitmap(mCase, parent.getWidth(), parent.getHeight(), true);
+		mCase = BitmapFactory.decodeResource(getContext().getResources(),
+				R.drawable.meter_case);
+		View parent = (View) getParent();
+		if (null != parent) {
+			int meterHeight = mBackground.getHeight() * parent.getWidth()
+					/ mBackground.getWidth();
+			mBackground = Bitmap.createScaledBitmap(mBackground,
+					parent.getWidth(), meterHeight, true);
+			mCase = Bitmap.createScaledBitmap(mCase, parent.getWidth(),
+					meterHeight, true);
 		}
-		
-		
 
-		mDx = mBackground.getWidth() / 2 - mPointer.getWidth() / 2;
-		mDy = mBackground.getHeight() - mPointer.getHeight();
-
-		mPointerAnchor = new PointF(mPointer.getWidth() / 2,
-				mPointer.getHeight());
-
-		centerX = mBackground.getWidth() / 2
-				+ convertPxToDp(mOffsetBackgroundX);
-		centerY = mBackground.getHeight() + convertPxToDp(mOffsetBackgroundY);
+		centerX = mBackground.getWidth() / 2;
+		centerY = mBackground.getHeight() + mBackground.getHeight() * mRelativePointerBaseY;
 
 		// calculate max radius
 		// mMaxRadius = (mBackground.getWidth() < mBackground.getHeight()) ?
@@ -173,42 +161,37 @@ public class EnergyMeter extends View {
 		if (mDrawColorLabes)
 			mDrawColorLabes = checkColorLabelRange();
 	}
-	
-	
-	
+
 	@Override
 	protected void onAttachedToWindow() {
 		checkParent();
 		super.onAttachedToWindow();
 	}
 
-	private void checkParent()
-	{
-		View parent = (View)getParent();
-		if(null!=parent)
-		{
-			Log.e(TAG, "parentwidth="+parent.getWidth()+", parentheight="+parent.getHeight());
-		}
-		else
-		{
+	private void checkParent() {
+		View parent = (View) getParent();
+		if (null != parent) {
+			Log.e(TAG, "parentwidth=" + parent.getWidth() + ", parentheight="
+					+ parent.getHeight());
+		} else {
 			Log.e(TAG, "parent was null");
 		}
 	}
 
-	private float convertPxToDp(float px) {
-		// DisplayMetrics metrics = new DisplayMetrics();
-		// Display display = ((WindowManager)
-		// getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		// display.getMetrics(metrics);
-
-		// TODO: check how to convert, metrics.density always returns 1.0
-		// float logicalDensity = metrics.density;
-		float logicalDensity = 1.5f;
-		return px / logicalDensity;
-
-		// final float scale = getResources().getDisplayMetrics().density;
-		// return px * scale + 0.5f;
-	}
+//	private float convertPxToDp(float px) {
+//		// DisplayMetrics metrics = new DisplayMetrics();
+//		// Display display = ((WindowManager)
+//		// getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+//		// display.getMetrics(metrics);
+//
+//		// TODO: check how to convert, metrics.density always returns 1.0
+//		// float logicalDensity = metrics.density;
+//		float logicalDensity = 1.5f;
+//		return px / logicalDensity;
+//
+//		// final float scale = getResources().getDisplayMetrics().density;
+//		// return px * scale + 0.5f;
+//	}
 
 	@Override
 	protected void onDraw(Canvas _c) {
@@ -218,8 +201,7 @@ public class EnergyMeter extends View {
 		double radius = mMaxRadius * mRelativeTickRadius;
 
 		// draw dial
-		_c.drawBitmap(mBackground, convertPxToDp(mOffsetBackgroundX),
-				convertPxToDp(mOffsetBackgroundY), null);
+		_c.drawBitmap(mBackground, 0, 0, null);
 
 		// draw color labels
 		if (mDrawColorLabes)
@@ -236,7 +218,7 @@ public class EnergyMeter extends View {
 		drawPointer(_c);
 
 		// draw case
-//		_c.drawBitmap(mCase, 0, 0, null);
+		_c.drawBitmap(mCase, 0, 0, null);
 	}
 
 	private void drawColorLabels(Canvas _c, float radius) {
