@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.AsyncTask;
 import android.util.Log;
 import at.sesame.fhooe.lib.pms.asynctasks.DeviceListTask;
 import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
@@ -95,5 +96,31 @@ public class PMSProvider
 			e.printStackTrace();
 		}
 		return macs;
+	}
+	
+	public static ArrayList<ExtendedPMSStatus> getExtendedPMSStatusList(ArrayList<String> _macs)
+	{
+		try {
+			return new ExtendedStatusListTask().execute(_macs).get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static class ExtendedStatusListTask extends AsyncTask<ArrayList<String>, Void, ArrayList<ExtendedPMSStatus>>
+	{
+
+		@Override
+		protected ArrayList<ExtendedPMSStatus> doInBackground(
+				ArrayList<String>... params) {
+			// TODO Auto-generated method stub
+			return getPMS().extendedStatusList(params[0]);
+		}
+		
 	}
 }

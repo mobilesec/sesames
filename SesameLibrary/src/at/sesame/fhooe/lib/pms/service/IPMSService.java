@@ -99,7 +99,7 @@ public interface IPMSService
 //	@ResponseHandler(PMSStatusListResponseHandler.class)
 	@Consumes("application/json")
 //	@ConnectionTimeout(25000)
-	@SocketTimeout(30000)
+	@SocketTimeout(60000)
 	public ArrayList<ExtendedPMSStatus> extendedStatusList(@FormParam("maclist")ArrayList<String> _mac);
 	
 }
