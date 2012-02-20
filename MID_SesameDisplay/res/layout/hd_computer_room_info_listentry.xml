@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:orientation="vertical" >
+        android:orientation="vertical" 
+        android:background="@android:color/transparent">
 
         <TextView
             android:id="@+id/textView1"

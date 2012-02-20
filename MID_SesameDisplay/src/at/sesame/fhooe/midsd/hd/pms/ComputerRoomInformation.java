@@ -1,15 +1,23 @@
-package at.sesame.fhooe.midsd.hd;
+package at.sesame.fhooe.midsd.hd.pms;
 
 public class ComputerRoomInformation 
 {
-	
+	private RoomName mRoomName;
 	private String mName;
 	private int mNumIdleComputers;
 	private int mNumActiveComputers;
 	
-	public ComputerRoomInformation(String _name, int _numIdleComputers,int _numActiveComputers) 
+	public enum RoomName
 	{
-		this.mName = _name;
+		EDV_1,
+		EDV_3,
+		EDV_6
+	}
+	
+	public ComputerRoomInformation(RoomName _name, int _numIdleComputers,int _numActiveComputers) 
+	{
+		this.mRoomName = _name;
+		this.mName = _name.name();
 		this.mNumIdleComputers = _numIdleComputers;
 		this.mNumActiveComputers = _numActiveComputers;
 	}
@@ -37,6 +45,10 @@ public class ComputerRoomInformation
 
 	public void setNumActiveComputers(int _numActiveComputers) {
 		this.mNumActiveComputers = _numActiveComputers;
+	}
+	
+	public RoomName getRoomName() {
+		return mRoomName;
 	}
 
 	@Override

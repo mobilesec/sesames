@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import at.sesame.fhooe.lib.ui.FragmentTabListener;
 import at.sesame.fhooe.midsd.R;
+import at.sesame.fhooe.midsd.hd.pms.PMSFragment;
 import at.sesame.fhooe.midsd.md.WheelFragment;
 import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
 
