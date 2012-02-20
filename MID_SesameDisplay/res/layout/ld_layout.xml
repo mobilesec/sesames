@@ -15,7 +15,6 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="Demo"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="100dp" />
 
@@ -23,12 +22,14 @@
             android:id="@+id/interactionButt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/notificationText"
+            android:layout_below="@+id/notificationText"
             android:layout_centerHorizontal="true"
             android:background="@drawable/button_blue_bg"
             android:text="OK"
             android:textColor="#ffffffff"
-            android:textSize="75dp" />
+            android:textSize="75dp"
+            android:visibility="visible" />
+
     </RelativeLayout>
 
 </FrameLayout>

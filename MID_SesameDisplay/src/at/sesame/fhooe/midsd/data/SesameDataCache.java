@@ -48,7 +48,7 @@ implements ISesameDataProvider
 	private static final int mNoEzanMeasurements = 100;
 
 	private Timer mNotificationUpdateTimer;
-	private static final long NOTIFICATION_UPDATE_INTERVAL = 1000;//every 5 seconds
+	private static final long NOTIFICATION_UPDATE_INTERVAL = 20000;//every 20 seconds
 	private EventSimulator mEventSim;
 
 	private SesameDataCache()

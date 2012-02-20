@@ -61,6 +61,7 @@ implements ISesameDataListener, INotificationListener
 	
 	private Context mCtx;
 	
+	private static final int WHEEL_TEXT_SIZE = 180;
 
 
 //	private boolean mAttached = false;
@@ -161,9 +162,9 @@ implements ISesameDataListener, INotificationListener
 		mEsmartRoom3Frag = new MD_chartFragment("EDV 3");
 		mEsmartRoom6Frag = new MD_chartFragment("EDV 6");
 		
-		mEnergyMeterRoom1Frag = new MeterWheelFragment(_fm,mCtx);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(_fm,mCtx);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(_fm,mCtx);
+		mEnergyMeterRoom1Frag = new MeterWheelFragment(_fm,mCtx, WHEEL_TEXT_SIZE);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(_fm,mCtx, WHEEL_TEXT_SIZE);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(_fm,mCtx, WHEEL_TEXT_SIZE);
 		
 		mNotificationFrag = new MD_NotificationFragment(mUiHandler);
 
@@ -197,6 +198,16 @@ implements ISesameDataListener, INotificationListener
 		stopFlipping();
 		super.onDestroyView();
 	}
+	
+	
+
+	@Override
+	public void onDetach() {
+		stopFlipping();
+		super.onDetach();
+	}
+
+
 
 	private class ViewFlipperTask extends TimerTask
 	{
@@ -225,10 +236,10 @@ implements ISesameDataListener, INotificationListener
 			updateChartFragment(mEsmartRoom6Frag, data);
 			break;
 		}
-		if(null==mFlipTimer)
-		{
-			startFlipping();
-		}
+//		if(null==mFlipTimer)
+//		{
+//			startFlipping();
+//		}
 	}
 
 	private void updateChartFragment(MD_chartFragment _frag, SesameDataContainer _data)

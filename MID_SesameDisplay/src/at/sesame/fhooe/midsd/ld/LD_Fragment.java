@@ -25,7 +25,7 @@ implements INotificationListener
 	private static final String TAG = "LD_Fragment";
 
 	private LayoutInflater mLi;
-	private LdState mState;
+	private LdState mState = LdState.background;
 
 	private View mView;
 
@@ -48,6 +48,7 @@ implements INotificationListener
 	public enum LdState
 	{
 		background,
+		notification_pending,
 		foreground
 	}
 
@@ -67,9 +68,9 @@ implements INotificationListener
 	public void onAttach(Activity activity) 
 	{
 		super.onAttach(activity);
-		
+
 		buildView();
-		
+
 		setState(LdState.background);
 
 		mInterThread = new InterpolationThread();
@@ -89,14 +90,21 @@ implements INotificationListener
 
 
 		mButt = (Button)mView.findViewById(R.id.interactionButt);
+
+
 		mButt.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				toggleState();
+				processInteraction();
 
 			}
 		});
+
+		//		if(mState.equals(LdState.background))
+		//		{
+		//			mButt.setVisibility(View.GONE);
+		//		}
 
 		mNotificationTextView = (TextView)mView.findViewById(R.id.notificationText);
 
@@ -110,29 +118,49 @@ implements INotificationListener
 		switch(mState)
 		{
 		case background:
-			if(null!=mNotificationTextView)
+			if(null!=mButt)
 			{
-				mNotificationTextView.setText("");
+				mButt.setVisibility(View.GONE);
 			}
+			setNotificationText("");
+			break;
+		case notification_pending:
+			if(null!=mButt)
+			{
+				mButt.setVisibility(View.VISIBLE);
+				mButt.setText(R.string.ld_fragment_button_text_info);
+			}
+			setNotificationText("");
 			break;
 		case foreground:
-			if(null!=mNotificationTextView)
+			if(null!=mButt)
 			{
-				mNotificationTextView.setText(mNotificationText);
+				mButt.setVisibility(View.VISIBLE);
+				mButt.setText(R.string.ld_fragment_button_text_ok);
 			}
+
+			setNotificationText(mNotificationText);
 			break;
 		}
 	}
 
+	private void setNotificationText(String _txt)
+	{
+		if(null!=mNotificationTextView)
+		{
+			mNotificationTextView.setText(_txt);
+		}
+	}
 
-	private void toggleState()
+
+	private void processInteraction()
 	{
 		switch(mState)
 		{
 		case foreground:
 			setState(LdState.background);
 			break;
-		case background:
+		case notification_pending:
 			setState(LdState.foreground);
 			break;
 		}
@@ -155,14 +183,17 @@ implements INotificationListener
 	{
 		mNotificationText = _msg;
 
-		mUiHandler.post(new Runnable() {
+		if(mState.equals(LdState.background))
+		{
+			mUiHandler.post(new Runnable() {
 
-			@Override
-			public void run() 
-			{
-				setState(LdState.foreground);
-			}
-		});
+				@Override
+				public void run() 
+				{
+					setState(LdState.notification_pending);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -194,6 +225,8 @@ implements INotificationListener
 		switch(mState)
 		{
 		case foreground:
+			return mBackgroundColMan;
+		case notification_pending:
 			return mForegroundColMan;
 		case background:
 			return mBackgroundColMan;

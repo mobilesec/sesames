@@ -25,27 +25,31 @@ extends Fragment
 	private static final String TAG = "MD_meterFragment";
 	private Context mCtx;
 	private static final int NO_WHEEL_DIGITS = 5;
+	
+	private int mWheelTextSize;
 
-	private FrameLayout mMeterContainer;
-	private FrameLayout mWheelContainer;
+//	private FrameLayout mMeterContainer;
+//	private FrameLayout mWheelContainer;
 	private EnergyMeter mMeter;
-	private WheelFragment mWheel;
+//	private WheelFragment mWheel;
 
-	private EnergyWheelView mEnergyWheel;
-
-	private View mView;
-	private LayoutInflater mLi;
+//	private EnergyWheelView mEnergyWheel;
+//
+//	private View mView;
+//	private LayoutInflater mLi;
 
 	private Timer mMeterSimulationTimer;
+	private FragmentManager mFragMan;
+//	private boolean mWheelAdded = false;
 
-	private boolean mWheelAdded = false;
-
-	public MeterWheelFragment(FragmentManager _fm, Context _ctx)
+	public MeterWheelFragment(FragmentManager _fm, Context _ctx, int _wheelTextSize)
 	{
 		mCtx = _ctx;
-		mLi = LayoutInflater.from(mCtx);
+		mWheelTextSize = _wheelTextSize;
+		mFragMan = _fm;
+//		mLi = LayoutInflater.from(mCtx);
 		//		mMeter = new EnergyMeter(_ctx);
-		mWheel = new WheelFragment(_ctx, null, NO_WHEEL_DIGITS, null);
+//		mWheel = new WheelFragment(_ctx, null, NO_WHEEL_DIGITS, null);
 		//		LayoutInflater li = LayoutInflater.from(mCtx);
 		//		mView = li.inflate(R.layout.md_meter_layout, null, false);
 		//		FrameLayout fl = (FrameLayout)mView.findViewById(R.id.frameLayout1);
@@ -100,8 +104,8 @@ extends Fragment
 		View v = inflater.inflate(R.layout.md_meter_layout, container, false);
 		mMeter = (EnergyMeter)v.findViewById(R.id.energyMeter);
 		startMeterSimulation();
-		FrameLayout fl = (FrameLayout)v.findViewById(R.id.frameLayout1);
-		fl.removeAllViews();
+//		FrameLayout fl = (FrameLayout)v.findViewById(R.id.frameLayout1);
+//		fl.removeAllViews();
 		
 //		if(!mWheelAdded)
 		{
@@ -189,12 +193,12 @@ extends Fragment
 
 	private void addWheel()
 	{
-		mWheelAdded = true;
+//		mWheelAdded = true;
 		Log.e(TAG, "adding wheel");
 		// TODO Auto-generated method stub
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		FragmentTransaction ft = mFragMan.beginTransaction();
 		//		ft.remove(mWheel);
-		WheelFragment wf = new WheelFragment(mCtx, null, NO_WHEEL_DIGITS, null);
+		WheelFragment wf = new WheelFragment(mCtx, null, NO_WHEEL_DIGITS, null, mWheelTextSize);
 		ft.replace(R.id.frameLayout1, wf);
 		ft.commit();
 		Log.e(TAG, "adding wheel commited");

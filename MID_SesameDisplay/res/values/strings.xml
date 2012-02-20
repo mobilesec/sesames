@@ -4,5 +4,7 @@
     <string name="hello">Hello World, MID_SesameDisplayActivity!</string>
     <string name="app_name">MID_SesameDisplay</string>
     <string name="energy_display_separator">,</string>
+    <string name="ld_fragment_button_text_info">info</string>
+    <string name="ld_fragment_button_text_ok">ok</string>
 
 </resources>

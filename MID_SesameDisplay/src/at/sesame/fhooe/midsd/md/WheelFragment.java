@@ -68,14 +68,14 @@ implements OnCheckedChangeListener
 		}	
 	};
 
-	public WheelFragment(Context _ctx, Handler _handler, int _numDigits, ArrayList<Integer> _separatorPositions)
+	public WheelFragment(Context _ctx, Handler _handler, int _numDigits, ArrayList<Integer> _separatorPositions, int _textSize)
 	{
 		mCtx = _ctx;
 		mNumDigits = _numDigits;
 		mUiThreadhandler = _handler;
 		mSeparatorPositions = _separatorPositions;
 		mAdapter =new ArrayWheelAdapter<String>(mCtx, mDigits);
-		setTextSize(175);
+		setTextSize(_textSize);
 		LayoutInflater li = (LayoutInflater)mCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mView = li.inflate(R.layout.wheel_layout, null);
 		//		mSeparatorView = li.inflate(R.layout.separator_layout, null);

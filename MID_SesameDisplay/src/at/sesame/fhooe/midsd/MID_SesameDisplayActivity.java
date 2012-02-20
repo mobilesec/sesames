@@ -45,7 +45,7 @@ extends FragmentActivity
 
         mLdFrag = new LD_Fragment(getApplicationContext(), mUiHandler);
         mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext(), mUiHandler);
-        mHdFrag = new HD_Fragment(getApplicationContext());
+        mHdFrag = new HD_Fragment(getApplicationContext(), getSupportFragmentManager());
         mLoadingDialog = ProgressFragmentDialog.newInstance("Bitte warten...", "daten werden geladen");
         mLoadingDialog.show(getSupportFragmentManager(), null);
         
