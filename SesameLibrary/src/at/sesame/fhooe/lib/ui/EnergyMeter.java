@@ -22,7 +22,7 @@ public class EnergyMeter extends View {
 	private static final String TAG = "EnergyMeter";
 	private Bitmap mBackground;
 	private Bitmap mPointer;
-	private Bitmap mCase;
+//	private Bitmap mCase;
 	private Matrix mPointerMatrix = new Matrix();
 
 	// translate background (in pixels, will be converted into dp for Android)
@@ -35,7 +35,7 @@ public class EnergyMeter extends View {
 	private float mDy = 0;
 
 	private float mMinValue = 0;
-	private float mMaxValue = 100;
+	private float mMaxValue = 1000;
 
 	private float mFullAngle = 84;
 
@@ -70,18 +70,20 @@ public class EnergyMeter extends View {
 
 	public EnergyMeter(Context context, AttributeSet attrs, int _id) {
 		super(context, attrs, _id);
-		loadGraphics();
+//		loadGraphics();
 	}
 
 	public EnergyMeter(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		loadGraphics();
+//		loadGraphics();
 	}
 
 	public EnergyMeter(Context context) {
 		super(context);
-		loadGraphics();
+//		loadGraphics();
 	}
+	
+	
 
 	private boolean checkColorLabelRange() {
 		boolean ret = true;
@@ -126,12 +128,21 @@ public class EnergyMeter extends View {
 
 	private void loadGraphics() {
 		System.gc();
+		
 		mBackground = BitmapFactory.decodeResource(getContext().getResources(),
 				R.drawable.meter_background);
 		mPointer = BitmapFactory.decodeResource(getContext().getResources(),
 				R.drawable.meter_pointer);
-		mCase = BitmapFactory.decodeResource(getContext().getResources(),
-				R.drawable.meter_case);
+//		mCase = BitmapFactory.decodeResource(getContext().getResources(),
+//				R.drawable.meter_case);
+		View parent = (View)getParent();
+		if(null!=parent)
+		{
+			mBackground = Bitmap.createScaledBitmap(mBackground, parent.getWidth(), parent.getHeight(), true);
+//			mCase = Bitmap.createScaledBitmap(mCase, parent.getWidth(), parent.getHeight(), true);
+		}
+		
+		
 
 		mDx = mBackground.getWidth() / 2 - mPointer.getWidth() / 2;
 		mDy = mBackground.getHeight() - mPointer.getHeight();
@@ -162,6 +173,27 @@ public class EnergyMeter extends View {
 		if (mDrawColorLabes)
 			mDrawColorLabes = checkColorLabelRange();
 	}
+	
+	
+	
+	@Override
+	protected void onAttachedToWindow() {
+		checkParent();
+		super.onAttachedToWindow();
+	}
+
+	private void checkParent()
+	{
+		View parent = (View)getParent();
+		if(null!=parent)
+		{
+			Log.e(TAG, "parentwidth="+parent.getWidth()+", parentheight="+parent.getHeight());
+		}
+		else
+		{
+			Log.e(TAG, "parent was null");
+		}
+	}
 
 	private float convertPxToDp(float px) {
 		// DisplayMetrics metrics = new DisplayMetrics();
@@ -181,7 +213,8 @@ public class EnergyMeter extends View {
 	@Override
 	protected void onDraw(Canvas _c) {
 		super.onDraw(_c);
-
+		checkParent();
+		loadGraphics();
 		double radius = mMaxRadius * mRelativeTickRadius;
 
 		// draw dial
@@ -203,7 +236,7 @@ public class EnergyMeter extends View {
 		drawPointer(_c);
 
 		// draw case
-		_c.drawBitmap(mCase, 0, 0, null);
+//		_c.drawBitmap(mCase, 0, 0, null);
 	}
 
 	private void drawColorLabels(Canvas _c, float radius) {
