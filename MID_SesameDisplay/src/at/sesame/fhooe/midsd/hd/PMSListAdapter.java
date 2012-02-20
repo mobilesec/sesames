@@ -40,11 +40,8 @@ extends ArrayAdapter<ComputerRoomInformation>
 		ComputerRoomInformation info = mInfos.get(position);
 		Log.e(TAG, info.toString());
 		TextView header = (TextView)v.findViewById(R.id.textView1);
-		header.setText("HEADER:"+info.getName());
-		if(position%2==0)
-		{
-			header.setTextColor(Color.GREEN);
-		}
+		header.setText(info.getName());
+
 		TextView idle = (TextView)v.findViewById(R.id.textView2);
 		idle.setText("IDLE:"+info.getNumIdleComputers());
 		
