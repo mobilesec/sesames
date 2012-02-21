@@ -3,6 +3,7 @@ package at.sesame.fhooe.midsd.hd;
 import java.util.Date;
 
 import org.achartengine.ChartFactory;
+import org.achartengine.chart.BarChart.Type;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
 import android.os.Bundle;
@@ -50,8 +51,8 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	private boolean[] mSelectedFilters = new boolean[]{false, false, false, false};
 	private ComparisonRoom mRoom = ComparisonRoom.edv1;
 	
-	private HD_Comparison_RendererProvider mRendererProvider = new HD_Comparison_RendererProvider();
-
+	private HD_Comparison_RendererProvider mChartRendererProvider = new HD_Comparison_RendererProvider();
+	private HD_Comparison_Bar_RendererProvider mBarRendererProvider = new HD_Comparison_Bar_RendererProvider();
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -127,8 +128,8 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 			data.addSeries(DataSimulator.createTimeSeries(title + DAY_CB4_TEXT, new Date(), 100));
 		}
 		try {
-			mRendererProvider.createMultipleSeriesRenderer(data);
-			setChartView(ChartFactory.getTimeChartView(getActivity(), data, mRendererProvider.getRenderer(), ""));
+			mChartRendererProvider.createMultipleSeriesRenderer(data);
+			setChartView(ChartFactory.getTimeChartView(getActivity(), data, mChartRendererProvider.getRenderer(), ""));
 		} catch (RendererInitializationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -138,7 +139,23 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	private void updateWeekChart()
 	{
 		Log.e(TAG, "update week chart");
-		setChartView(null);
+		int cnt = 1;
+		for(int i = 0;i<mSelectedFilters.length;i++)
+		{
+			if(mSelectedFilters[i])
+			{
+				cnt++;
+			}
+		}
+		XYMultipleSeriesDataset dataset = DataSimulator.createBarSeries(cnt);
+		try {
+			mBarRendererProvider.createMultipleSeriesRenderer(dataset);
+			setChartView(ChartFactory.getBarChartView(getActivity(), dataset, mBarRendererProvider.getRenderer(), Type.STACKED));
+		} catch (RendererInitializationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private void setChartView(View _v)
