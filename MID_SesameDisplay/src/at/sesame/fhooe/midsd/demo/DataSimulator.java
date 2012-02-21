@@ -27,15 +27,11 @@ public class DataSimulator
 //		new GregorianCalendar();
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(_from);
-		Log.e(TAG, "passed date:"+_from.toGMTString());
-		Log.e(TAG, "calendar:"+cal.getTime().toGMTString());
 		
 		for(int i = 0;i<_numEntries;i++)
 		{
 			Date d = cal.getTime();
 			double val = r.nextDouble()*1000;
-			Log.e(TAG, d.toGMTString());
-			Log.e(TAG, ""+val);
 			
 			res.add(d, val);
 			cal.add(_timeUnitToIncrement, _timeUnitIncrementationStep);

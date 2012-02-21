@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioGroup;
 import at.sesame.fhooe.midsd.R;
@@ -46,17 +47,24 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.hd_comparison_selection_layout, null);
 		
+		RadioGroup rg = (RadioGroup)v.findViewById(R.id.hd_comparison_selection_room_group);
+		rg.setOnCheckedChangeListener(this);
+		
 		CheckBox cb1 = (CheckBox)v.findViewById(R.id.hd_comparison_selection_box1);
 		cb1.setText(mCb1Text);
+		cb1.setOnCheckedChangeListener(this);
 		
 		CheckBox cb2 = (CheckBox)v.findViewById(R.id.hd_comparison_selection_box2);
 		cb2.setText(mCb2Text);
+		cb2.setOnCheckedChangeListener(this);
 		
 		CheckBox cb3 = (CheckBox)v.findViewById(R.id.hd_comparison_selection_box3);
 		cb3.setText(mCb3Text);
+		cb3.setOnCheckedChangeListener(this);
 		
 		CheckBox cb4 = (CheckBox)v.findViewById(R.id.hd_comparison_selection_box4);
 		cb4.setText(mCb4Text);
+		cb4.setOnCheckedChangeListener(this);
 		
 		return v;
 	}
