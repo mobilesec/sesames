@@ -14,7 +14,7 @@ public class EsmartDataRow
 {
 	private static final String TAG = "DataRow";
 	private static final String URL_TIME_STRING_SEPARATOR = "-";
-	private static final SimpleDateFormat mFormat= new SimpleDateFormat("yyyy-MM-dd");
+//	private static final SimpleDateFormat mFormat= new SimpleDateFormat("yyyy-MM-dd");
 	//<TimeStamp>11/25/2011 2:30:00 AM</TimeStamp><DataValue>44</DataValue>
 	private String mTimeStamp;
 	private double mDataValue;
@@ -61,61 +61,61 @@ public class EsmartDataRow
 		return null;
 	}
 	
-	/**
-	 * returns the string representation of the current date in the appropriate format for the URL
-	 * @return string representation of the current date
-	 */
-	public static String getUrlTimeString()
-	{
-		GregorianCalendar gc = new GregorianCalendar();
-//		gc.add(Calendar.MONTH, 1);
-//		return getUrlTimeString(gc);
-		return mFormat.format(gc.getTime());
-	}
+//	/**
+//	 * returns the string representation of the current date in the appropriate format for the URL
+//	 * @return string representation of the current date
+//	 */
+//	public static String getUrlTimeString()
+//	{
+//		GregorianCalendar gc = new GregorianCalendar();
+////		gc.add(Calendar.MONTH, 1);
+////		return getUrlTimeString(gc);
+//		return mFormat.format(gc.getTime());
+//	}
 	
-	/**
-	 * returns the string representation of the passed date in the appropriate format for the URL
-	 * @param _cal the calendar to use the date from
-	 * @return string representation of the passed date
-	 */
-	public static String getUrlTimeString(GregorianCalendar _gc)
-	{
-//		Log.e(TAG, _cal.toString());
-		
-//		int year = _cal.get(Calendar.YEAR);
-//		int month = _cal.get(Calendar.MONTH);
-////		Log.e(TAG, "month="+month);
-//		int day = _cal.get(Calendar.DAY_OF_MONTH);
-		_gc.add(Calendar.MONTH, -1);
-//		return getUrlTimeString(year, month, day);
-		String res =  mFormat.format(_gc.getTime());
-		Log.e(TAG, "++++++++++++"+res);
-		return res;
-	}
-	
-	public static String getUrlTimeString(int _year, int _month, int _day)
-	{
-//		Log.e(TAG, "year="+_year+", day ="+_day+", month="+_month);
-		StringBuilder sb = new StringBuilder();
-		sb.append(_year);
-		sb.append(URL_TIME_STRING_SEPARATOR);
-		if(_month<10)
-		{
-			sb.append(0);
-		}
-		sb.append(_month);
-		sb.append(URL_TIME_STRING_SEPARATOR);
-		if(_day<10)
-		{
-			sb.append(0);
-		}
-		sb.append(_day);
-		Log.e(TAG, "result="+sb.toString());
-		return sb.toString();
-//		String res = mFormat.format(new Date(new GregorianCalendar(_year, _month, _year).getTimeInMillis()));
-//		Log.e(TAG, "result from date conversion:"+res);
+//	/**
+//	 * returns the string representation of the passed date in the appropriate format for the URL
+//	 * @param _cal the calendar to use the date from
+//	 * @return string representation of the passed date
+//	 */
+//	public static String getUrlTimeString(GregorianCalendar _gc)
+//	{
+////		Log.e(TAG, _cal.toString());
+//		
+////		int year = _cal.get(Calendar.YEAR);
+////		int month = _cal.get(Calendar.MONTH);
+//////		Log.e(TAG, "month="+month);
+////		int day = _cal.get(Calendar.DAY_OF_MONTH);
+//		_gc.add(Calendar.MONTH, 1);
+////		return getUrlTimeString(year, month, day);
+//		String res =  mFormat.format(_gc.getTime());
+//		Log.e(TAG, "++++++++++++"+res);
 //		return res;
-	}
+//	}
+	
+//	public static String getUrlTimeString(int _year, int _month, int _day)
+//	{
+////		Log.e(TAG, "year="+_year+", day ="+_day+", month="+_month);
+//		StringBuilder sb = new StringBuilder();
+//		sb.append(_year);
+//		sb.append(URL_TIME_STRING_SEPARATOR);
+//		if(_month<10)
+//		{
+//			sb.append(0);
+//		}
+//		sb.append(_month);
+//		sb.append(URL_TIME_STRING_SEPARATOR);
+//		if(_day<10)
+//		{
+//			sb.append(0);
+//		}
+//		sb.append(_day);
+//		Log.e(TAG, "result="+sb.toString());
+//		return sb.toString();
+////		String res = mFormat.format(new Date(new GregorianCalendar(_year, _month, _year).getTimeInMillis()));
+////		Log.e(TAG, "result from date conversion:"+res);
+////		return res;
+//	}
 	
 	@Override
 	public String toString() {

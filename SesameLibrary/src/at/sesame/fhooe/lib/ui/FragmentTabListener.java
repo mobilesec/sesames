@@ -4,6 +4,7 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.widget.TabHost;
 
 public class FragmentTabListener 
 implements ActionBar.TabListener 
@@ -39,5 +40,14 @@ implements ActionBar.TabListener
     {
         // User selected the already selected tab. Usually do nothing.
     }
+    
+//    public static Tab createTab(TabHost _tb, String _title, Fragment _frag) throws Exception
+//	{
+//	
+//		Tab tab = _tb.newTab()
+//				.setText(_title)
+//				.setTabListener(new FragmentTabListener(_frag));
+//		mAb.addTab(tab);
+//	}
 
 }

@@ -1,8 +1,10 @@
 package at.sesame.fhooe.midsd.data;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,6 +16,7 @@ import at.sesame.fhooe.esmart.service.EsmartDataAccess;
 import at.sesame.fhooe.ezan.EzanDataAccess;
 import at.sesame.fhooe.ezan.model.EzanMeasurement;
 import at.sesame.fhooe.ezan.model.EzanMeasurementPlace;
+import at.sesame.fhooe.lib.util.EsmartDateProvider;
 import at.sesame.fhooe.midsd.demo.EventSimulator;
 import at.sesame.fhooe.midsd.ld.INotificationListener;
 
@@ -99,12 +102,18 @@ implements ISesameDataProvider
 		long start = System.currentTimeMillis();
 		//		Log.e(TAG, "init");
 		loadEsmartMeasurementPlaces();
-
+		if(null==mEsmartMeasurementPlaces)
+		{
+			return;
+		}
 		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
 		{
+			Date now = new Date();
+			
 			loadEsmartData(	emp, 
-					EsmartDataRow.getUrlTimeString(mStartYear, mStartMonth, mStartDay), 
-					EsmartDataRow.getUrlTimeString());
+//					EsmartDataRow.getUrlTimeString(mStartYear, mStartMonth, mStartDay), 
+					EsmartDateProvider.getUrlTimeStringForXDaysAgo(2), 
+					EsmartDateProvider.getUrlTimeStringForXDaysAgo(1));
 		}
 
 		mEzanMeasurementPlaces = EzanDataAccess.getEzanPlaces();
@@ -129,6 +138,10 @@ implements ISesameDataProvider
 
 	private void resetEsmartUpdateTable()
 	{
+		if(null==mEsmartMeasurementPlaces)
+		{
+			return;
+		}
 		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
 		{
 			//			Log.e(TAG, "id="+emp.getId());
@@ -368,19 +381,37 @@ implements ISesameDataProvider
 
 	private class EsmartUpdateTask extends TimerTask
 	{
-		private int mUpdateYear = 2011;
-		private int mUpdateMonth = 11;
-		private int mUpdateDay = 25;
-
+//		private int mUpdateYear = 2011;
+//		private int mUpdateMonth = 11;
+//		private int mUpdateDay = 25;
+//		
+//		private GregorianCalendar mFrom;
+		
+		private int mDays2Load = 1;
+		
+//		public EsmartUpdateTask()
+//		{
+//			mFrom = new GregorianCalendar();
+//			mFrom.add(Calendar.DAY_OF_YEAR, -1);
+////			mFrom = gc.getTime();
+//		}
+		
 		@Override
 		public void run() 
 		{
 			//			Log.e(TAG, "EsmartUpdateTask");
+			if(null==mEsmartMeasurementPlaces)
+			{
+				return;
+			}
 			for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
 			{
+//				loadEsmartData(	emp, 
+//						EsmartDataRow.getUrlTimeString(mUpdateYear, mUpdateMonth, mUpdateDay), 
+//						EsmartDataRow.getUrlTimeString(2011,11,28));
 				loadEsmartData(	emp, 
-						EsmartDataRow.getUrlTimeString(mUpdateYear, mUpdateMonth, mUpdateDay), 
-						EsmartDataRow.getUrlTimeString(2011,11,28));
+						EsmartDateProvider.getUrlTimeStringForXDaysAgo(mDays2Load+1), 
+						EsmartDateProvider.getUrlTimeStringForXDaysAgo(1));
 			}
 		}
 	}

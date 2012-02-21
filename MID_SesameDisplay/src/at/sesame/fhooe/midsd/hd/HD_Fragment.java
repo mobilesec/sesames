@@ -32,6 +32,8 @@ extends Fragment
 	
 	private PMSFragment mPMSFrag;
 	
+	private HD_TabFragment mTabFrag;
+	
 	private static final int WHEEL_TEXT_SIZE = 20;
 	
 	public HD_Fragment(Context _ctx, FragmentManager _fm)
@@ -52,6 +54,8 @@ extends Fragment
 		
 		mPMSFrag = new PMSFragment(mCtx);
 		
+		mTabFrag = new HD_TabFragment(mCtx, mFragMan);
+		
 		FragmentTransaction ft = _fm.beginTransaction();
 //		ft.add(R.id.hd_layout_edv1Frame, mEdv1Frag);
 //		ft.add(R.id.hd_layout_edv3Frame, mEdv3Frag);
@@ -62,6 +66,8 @@ extends Fragment
 		ft.add(R.id.hd_layout_edv6Frame, mEdv6WheelFrag);
 		
 		ft.add(R.id.hd_layout_pmsFrame, mPMSFrag);
+		
+		ft.add(R.id.hd_layout_chartFrame, mTabFrag);
 		
 		ft.commit();
 	}

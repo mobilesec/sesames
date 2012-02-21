@@ -16,7 +16,7 @@ public class EnergyDataErrorHandler implements ErrorHandler
 		if(arg1 instanceof RequestException)
 		{
 			reqEx = (RequestException)arg1;
-			Log.e(TAG,"return code:" +((RequestException) arg1).getResponse().getStatusCode());
+//			Log.e(TAG,"return code:" +((RequestException) arg1).getResponse().getStatusCode());
 		}
 		else
 		{

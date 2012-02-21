@@ -12,6 +12,7 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import at.sesame.fhooe.esmart.model.EsmartDataRow;
 import at.sesame.fhooe.esmart.service.EsmartDataAccess;
+import at.sesame.fhooe.lib.util.EsmartDateProvider;
 
 public class EnergyDataFragment 
 extends Activity
@@ -42,8 +43,8 @@ implements OnItemClickListener
 //												DataRow.getUrlTimeString(new GregorianCalendar(	mPicker.getYear(), 
 //																								mPicker.getMonth(), 
 //																								mPicker.getDayOfMonth())), 
-												EsmartDataRow.getUrlTimeString(2011, 11, 25),
-												EsmartDataRow.getUrlTimeString());
+												EsmartDateProvider.getTodayUrlTimeString(),
+												EsmartDateProvider.getTodayUrlTimeString());
 		mAdapter = new EnergyDataListAdapter(this, mData);
 		if(null==mList)Log.e(TAG, "list was null");
 		else Log.e(TAG, "list was not null");

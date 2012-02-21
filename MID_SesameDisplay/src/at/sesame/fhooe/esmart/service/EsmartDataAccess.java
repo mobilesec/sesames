@@ -29,8 +29,8 @@ public class EsmartDataAccess
 	static
 	{
 //		HttpClient client = new DefaultHttpClient();
-//		CRest crest = new CRestBuilder().setHttpChannelFactory(new HttpClientHttpChannelFactory(ProxyHelper.getProxiedAllAcceptingHttpsClient())).build();
-        CRest crest = new CRestBuilder().build();
+		CRest crest = new CRestBuilder().setHttpChannelFactory(new HttpClientHttpChannelFactory(ProxyHelper.getProxiedAllAcceptingHttpsClient())).build();
+//        CRest crest = new CRestBuilder().build();
 		mEda= crest.build(IEsmartDataAccess.class);
         
 	}
@@ -68,8 +68,15 @@ public class EsmartDataAccess
 		GetMeasurementPlacesTask gmpt = new GetMeasurementPlacesTask();
 		gmpt.execute(params);
 		
+		
 		try {
-			return (ArrayList<EsmartMeasurementPlace>)gmpt.get().getPlaces();
+			EsmartMeasurementPlaces places = gmpt.get();
+			if(null==places)
+			{
+				Log.e(TAG, "failed to load esmart places");
+				return null;
+			}
+			return (ArrayList<EsmartMeasurementPlace>)places.getPlaces();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

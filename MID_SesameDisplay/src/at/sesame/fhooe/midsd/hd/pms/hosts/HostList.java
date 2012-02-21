@@ -7,7 +7,7 @@ public class HostList
 {
 	protected HashMap<String,String>mHosts = new HashMap<String, String>();
 	
-	public ArrayList<String> getAllMacs()
+	public ArrayList<String> getMacList()
 	{
 		return new ArrayList<String>(mHosts.keySet());
 	}
