@@ -48,7 +48,7 @@ public class EnergyMeter extends View {
 	// Displaying parameter relative to max radius
 	private float mRelativePointerLength = 1.1f;
 	private float mRelativeTickRadius = 1.2f;
-	private float mRelativePointerBaseY = 0.38f;
+	private float mRelativePointerBaseY = 0.46f;
 
 	float centerX = 0.0f;
 	float centerY = 0.0f;

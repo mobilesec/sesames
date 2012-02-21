@@ -34,7 +34,7 @@ extends Fragment
 	
 	private HD_TabFragment mTabFrag;
 	
-	private static final int WHEEL_TEXT_SIZE = 20;
+	private static final int WHEEL_TEXT_SIZE = 30;
 	
 	public HD_Fragment(Context _ctx, FragmentManager _fm)
 	{
