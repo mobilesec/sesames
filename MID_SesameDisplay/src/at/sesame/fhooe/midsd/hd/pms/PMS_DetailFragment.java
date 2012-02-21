@@ -37,6 +37,10 @@ extends DialogFragment
 		//		ArrayList<ExtendedPMSStatus>statuses = PMSProvider.getPMS().extendedStatusList(PMSProvider.getDeviceList());
 //		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getExtendedPMSStatusList(mHostList.getMacList());
 		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getExtendedPMSStatusList(PMSProvider.getDeviceList());
+		if(null==statuses)
+		{
+			return;
+		}
 		ArrayList<ControllableDevice> allDevices = new ArrayList<ControllableDevice>();
 
 		for(ExtendedPMSStatus exStat:statuses)
@@ -74,9 +78,15 @@ extends DialogFragment
 		View v = inflater.inflate(R.layout.pms_detail_fragment_layout, null);
 		ListView active = (ListView)v.findViewById(R.id.activeClientList);
 		ListView inactive = (ListView)v.findViewById(R.id.inactiveClientList);
-
-		active.setAdapter(mActiveClientListAdapter);
-		inactive.setAdapter(mInactiveClientListAdapter);
+		if(null!=mActiveClientListAdapter)
+		{
+			active.setAdapter(mActiveClientListAdapter);
+		}
+		if(null!=mInactiveClientListAdapter)
+		{
+			inactive.setAdapter(mInactiveClientListAdapter);
+		}
+		
 		return v;
 	}
 

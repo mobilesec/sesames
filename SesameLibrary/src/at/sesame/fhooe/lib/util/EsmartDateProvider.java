@@ -26,7 +26,7 @@ public class EsmartDateProvider
 	public static String getUrlTimeStringForXDaysAgo(int _numDaysAgo)
 	{
 		GregorianCalendar cal = new GregorianCalendar();
-		cal.roll(Calendar.DAY_OF_MONTH, -1*_numDaysAgo);
+		cal.add(Calendar.DAY_OF_MONTH, -1*_numDaysAgo);
 		return getUrlTimeString(cal);
 	}
 	
