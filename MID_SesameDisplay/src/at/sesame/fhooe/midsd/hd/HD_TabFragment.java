@@ -1,5 +1,7 @@
 package at.sesame.fhooe.midsd.hd;
 
+import org.achartengine.model.XYMultipleSeriesDataset;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,6 +25,8 @@ extends Fragment
 	
 	private TabHost mTabHost;
 	private TabManager mTabManager;
+	
+	
 	
 	public HD_TabFragment(Context _ctx, FragmentManager _fm)
 	{
