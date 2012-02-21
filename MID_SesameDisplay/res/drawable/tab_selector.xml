@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- PRESSED TAB -->
+    <item android:drawable="@drawable/tab_selected_background" android:state_pressed="true"></item>
+    <!-- INACTIVE TABS -->
+    <item android:drawable="@drawable/tab_unselected_background" android:state_focused="false" android:state_pressed="false" android:state_selected="false"></item>
+    <!-- ACTIVE TAB -->
+    <item android:drawable="@drawable/tab_selected_background" android:state_focused="false" android:state_pressed="false" android:state_selected="true"></item>
+    <!-- SELECTED TAB -->
+    <item android:drawable="@drawable/tab_selected_background" android:state_focused="true" android:state_pressed="false" android:state_selected="true"></item>
+</selector>

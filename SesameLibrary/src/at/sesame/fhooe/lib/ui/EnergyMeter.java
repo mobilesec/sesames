@@ -14,6 +14,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import at.sesame.fhooe.lib.R;
 
 public class EnergyMeter extends View {
@@ -40,6 +41,9 @@ public class EnergyMeter extends View {
 	private Path mPointerPath = null;
 
 	private int mMaxRadius;
+
+	int parentWidth = 0;
+	int parentHeight = 0;
 
 	// Displaying parameter relative to max radius
 	private float mRelativePointerLength = 1.1f;
@@ -103,24 +107,24 @@ public class EnergyMeter extends View {
 		postInvalidate();
 	}
 
-	// @Override
-	// protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-	// // scale view port, so it fits into width
-	// //View parent = (View) getParent();
-	// int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
-	// int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
-	// if (mBackground != null && parentWidth != 0 && parentHeight != 0/*parent
-	// != null*/) {
-	//
-	// //int parentWidth = parent.getWidth();
-	// //int parentHeight = parent.getHeight();
-	// int meterHeight = mBackground.getWidth() * parentHeight / parentWidth;
-	// this.setMeasuredDimension(parentWidth, meterHeight/2);
-	// this.setLayoutParams(new LinearLayout.LayoutParams(parentWidth,
-	// meterHeight));
-	// }
-	// super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-	// }
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		// scale view port, so it fits into width
+		// View parent = (View) getParent();
+		parentWidth = MeasureSpec.getSize(widthMeasureSpec);
+		parentHeight = MeasureSpec.getSize(heightMeasureSpec);
+		if (mBackground != null && parentWidth != 0 && parentHeight != 0) {
+			// int parentWidth = parent.getWidth();
+			// int parentHeight = parent.getHeight();
+			int meterHeight = mBackground.getHeight() * parentWidth
+					/ mBackground.getWidth();
+			this.setMeasuredDimension(parentWidth, meterHeight);
+			// this.setLayoutParams(new LinearLayout.LayoutParams(parentWidth,
+			// meterHeight));
+		} else {
+			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		}
+	}
 
 	private void loadGraphics() {
 		System.gc();
@@ -129,18 +133,18 @@ public class EnergyMeter extends View {
 				R.drawable.meter_background);
 		mCase = BitmapFactory.decodeResource(getContext().getResources(),
 				R.drawable.meter_case);
-		View parent = (View) getParent();
-		if (null != parent) {
-			int meterHeight = mBackground.getHeight() * parent.getWidth()
+		if (parentWidth != 0 && parentHeight != 0) {
+			int meterHeight = mBackground.getHeight() * parentWidth
 					/ mBackground.getWidth();
-			mBackground = Bitmap.createScaledBitmap(mBackground,
-					parent.getWidth(), meterHeight, true);
-			mCase = Bitmap.createScaledBitmap(mCase, parent.getWidth(),
+			mBackground = Bitmap.createScaledBitmap(mBackground, parentWidth,
 					meterHeight, true);
+			mCase = Bitmap.createScaledBitmap(mCase, parentWidth, meterHeight,
+					true);
 		}
 
 		centerX = mBackground.getWidth() / 2;
-		centerY = mBackground.getHeight() + mBackground.getHeight() * mRelativePointerBaseY;
+		centerY = mBackground.getHeight() + mBackground.getHeight()
+				* mRelativePointerBaseY;
 
 		// calculate max radius
 		// mMaxRadius = (mBackground.getWidth() < mBackground.getHeight()) ?
@@ -178,20 +182,21 @@ public class EnergyMeter extends View {
 		}
 	}
 
-//	private float convertPxToDp(float px) {
-//		// DisplayMetrics metrics = new DisplayMetrics();
-//		// Display display = ((WindowManager)
-//		// getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-//		// display.getMetrics(metrics);
-//
-//		// TODO: check how to convert, metrics.density always returns 1.0
-//		// float logicalDensity = metrics.density;
-//		float logicalDensity = 1.5f;
-//		return px / logicalDensity;
-//
-//		// final float scale = getResources().getDisplayMetrics().density;
-//		// return px * scale + 0.5f;
-//	}
+	// private float convertPxToDp(float px) {
+	// // DisplayMetrics metrics = new DisplayMetrics();
+	// // Display display = ((WindowManager)
+	// //
+	// getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+	// // display.getMetrics(metrics);
+	//
+	// // TODO: check how to convert, metrics.density always returns 1.0
+	// // float logicalDensity = metrics.density;
+	// float logicalDensity = 1.5f;
+	// return px / logicalDensity;
+	//
+	// // final float scale = getResources().getDisplayMetrics().density;
+	// // return px * scale + 0.5f;
+	// }
 
 	@Override
 	protected void onDraw(Canvas _c) {
