@@ -61,7 +61,7 @@ implements ISesameDataListener, INotificationListener
 	
 	private Context mCtx;
 	
-	private static final int WHEEL_TEXT_SIZE = 180;
+	private static final int WHEEL_TEXT_SIZE = 100;
 
 
 //	private boolean mAttached = false;

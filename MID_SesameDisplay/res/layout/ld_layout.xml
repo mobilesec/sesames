@@ -6,7 +6,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/shape_gradient_background" >
+        android:background="@drawable/shape_gradient_background"
+        android:padding="50dp" >
 
         <TextView
             android:id="@+id/notificationText"
@@ -17,7 +18,7 @@
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="100dp" />
-
+
         <Button
             android:id="@+id/interactionButt"
             android:layout_width="wrap_content"
@@ -29,7 +30,6 @@
             android:textColor="#ffffffff"
             android:textSize="75dp"
             android:visibility="gone" />
-
     </RelativeLayout>
 
 </FrameLayout>

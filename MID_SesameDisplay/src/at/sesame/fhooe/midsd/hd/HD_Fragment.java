@@ -72,9 +72,9 @@ implements INotificationListener
 //		mEdv1Frag = new MeterWheelFragment(_fm, mCtx, WHEEL_TEXT_SIZE);
 //		mEdv3Frag = new MeterWheelFragment(_fm, mCtx, WHEEL_TEXT_SIZE);
 //		mEdv6Frag = new MeterWheelFragment(_fm, mCtx, WHEEL_TEXT_SIZE);
-//		mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
-//		mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
-//		mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
+		mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
+		mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
+		mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 		
 		mPMSFrag = new PMSFragment(mCtx);
 		
@@ -85,9 +85,9 @@ implements INotificationListener
 //		ft.add(R.id.hd_layout_edv3Frame, mEdv3Frag);
 //		ft.add(R.id.hd_layout_edv6Frame, mEdv6Frag);
 		
-//		ft.add(R.id.hd_layout_edv1Frame, mEdv1WheelFrag);
-//		ft.add(R.id.hd_layout_edv3Frame, mEdv3WheelFrag);
-//		ft.add(R.id.hd_layout_edv6Frame, mEdv6WheelFrag);
+		ft.add(R.id.hd_layout_edv1Frame, mEdv1WheelFrag);
+		ft.add(R.id.hd_layout_edv3Frame, mEdv3WheelFrag);
+		ft.add(R.id.hd_layout_edv6Frame, mEdv6WheelFrag);
 		
 		ft.add(R.id.hd_layout_pmsFrame, mPMSFrag);
 		

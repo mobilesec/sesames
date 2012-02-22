@@ -94,13 +94,27 @@
             </FrameLayout>
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/hd_layout_pmsFrame"
+        <LinearLayout
             style="@style/Tile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.2" >
-        </FrameLayout>
+            android:layout_weight="0.2"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Power Management"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <FrameLayout
+                android:id="@+id/hd_layout_pmsFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </FrameLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

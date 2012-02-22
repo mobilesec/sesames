@@ -5,6 +5,7 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import android.graphics.Paint.Align;
 import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
 
 public abstract class AbstractRendererProvider 
@@ -22,6 +23,7 @@ implements IRendererProvider
 		mRenderer.setPanEnabled(true, false);
 		mRenderer.setAntialiasing(true);
 		mRenderer.setShowGrid(true);
+		mRenderer.setYLabelsAlign(Align.RIGHT);
 	}
 
 	@Override

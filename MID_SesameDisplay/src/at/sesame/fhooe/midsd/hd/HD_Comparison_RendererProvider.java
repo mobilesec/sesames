@@ -4,6 +4,7 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.graphics.Color;
+import android.graphics.Paint.Align;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
 
 public class HD_Comparison_RendererProvider extends AbstractRendererProvider {
@@ -55,5 +56,6 @@ public class HD_Comparison_RendererProvider extends AbstractRendererProvider {
 		mRenderer.setPanEnabled(true, true);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(true, true);
+		mRenderer.setYTitle("kW");
 	}
 }

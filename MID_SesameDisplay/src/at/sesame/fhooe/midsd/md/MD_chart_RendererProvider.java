@@ -37,5 +37,6 @@ public class MD_chart_RendererProvider extends AbstractRendererProvider {
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
+		mRenderer.setYTitle("kW");
 	}
 }

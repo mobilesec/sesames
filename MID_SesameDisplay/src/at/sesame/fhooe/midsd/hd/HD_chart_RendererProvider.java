@@ -29,7 +29,7 @@ public class HD_chart_RendererProvider extends AbstractRendererProvider {
 		if (_series.getTitle().equals(EDV1_TITLE)) {
 			return Color.GREEN;
 		} else if (_series.getTitle().equals(EDV3_TITLE)) {
-			return Color.RED;
+			return Color.CYAN;
 		} else if (_series.getTitle().equals(EDV6_TITLE)) {
 			return Color.BLUE;
 		} else {
@@ -53,6 +53,7 @@ public class HD_chart_RendererProvider extends AbstractRendererProvider {
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
+		mRenderer.setYTitle("kW");
 	}
 
 }

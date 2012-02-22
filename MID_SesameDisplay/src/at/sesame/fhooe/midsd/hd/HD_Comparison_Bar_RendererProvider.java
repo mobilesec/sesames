@@ -39,6 +39,7 @@ public class HD_Comparison_Bar_RendererProvider extends
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
+		mRenderer.setYTitle("kW");
 		mRenderer.setXLabels(7);
 		mRenderer.setBarSpacing(0.5);
 		mRenderer.setXAxisMin(0.5);

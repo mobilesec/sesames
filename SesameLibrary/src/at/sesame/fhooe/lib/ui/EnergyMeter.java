@@ -27,6 +27,7 @@ public class EnergyMeter extends View {
 
 	private float mFullAngle = 84;
 
+	// Parameters for ticks & labels
 	private int mTickColor = Color.BLACK;
 
 	private int mMinorTickSpacing = 5;
@@ -34,6 +35,8 @@ public class EnergyMeter extends View {
 
 	private int mMajorTickSpacing = 25;
 	private float mMajorTickLength = 30;
+	
+	private float mTickTextSize = 16.0f;
 
 	private double mDisplayedValue;
 
@@ -72,6 +75,126 @@ public class EnergyMeter extends View {
 	public EnergyMeter(Context context) {
 		super(context);
 		loadGraphics();
+	}
+
+	public boolean isDrawColorLabes() {
+		return mDrawColorLabes;
+	}
+
+	public void setDrawColorLabes(boolean mDrawColorLabes) {
+		this.mDrawColorLabes = mDrawColorLabes;
+	}
+
+	public float[] getColorLabelRange() {
+		return mColorLabelRange;
+	}
+
+	public void setColorLabelRange(float[] mColorLabelRange) {
+		this.mColorLabelRange = mColorLabelRange;
+	}
+
+	public int[] getColorLabels() {
+		return mColorLabels;
+	}
+
+	public void setColorLabels(int[] mColorLabels) {
+		this.mColorLabels = mColorLabels;
+	}
+
+	public float getColorLabelWidth() {
+		return mColorLabelWidth;
+	}
+
+	public void setColorLabelWidth(float mColorLabelWidth) {
+		this.mColorLabelWidth = mColorLabelWidth;
+	}
+
+	public float getMinValue() {
+		return mMinValue;
+	}
+
+	public void setMinValue(float mMinValue) {
+		this.mMinValue = mMinValue;
+	}
+
+	public float getMaxValue() {
+		return mMaxValue;
+	}
+
+	public void setMaxValue(float mMaxValue) {
+		this.mMaxValue = mMaxValue;
+	}
+
+	public float getFullAngle() {
+		return mFullAngle;
+	}
+
+	public void setFullAngle(float mFullAngle) {
+		this.mFullAngle = mFullAngle;
+	}
+
+	public int getMinorTickSpacing() {
+		return mMinorTickSpacing;
+	}
+
+	public void setMinorTickSpacing(int mMinorTickSpacing) {
+		this.mMinorTickSpacing = mMinorTickSpacing;
+	}
+
+	public float getMinorTickLength() {
+		return mMinorTickLength;
+	}
+
+	public void setMinorTickLength(float mMinorTickLength) {
+		this.mMinorTickLength = mMinorTickLength;
+	}
+
+	public int getMajorTickSpacing() {
+		return mMajorTickSpacing;
+	}
+
+	public void setMajorTickSpacing(int mMajorTickSpacing) {
+		this.mMajorTickSpacing = mMajorTickSpacing;
+	}
+
+	public float getMajorTickLength() {
+		return mMajorTickLength;
+	}
+
+	public void setMajorTickLength(float mMajorTickLength) {
+		this.mMajorTickLength = mMajorTickLength;
+	}
+
+	public float getRelativePointerLength() {
+		return mRelativePointerLength;
+	}
+
+	public void setRelativePointerLength(float mRelativePointerLength) {
+		this.mRelativePointerLength = mRelativePointerLength;
+	}
+
+	public float getRelativeTickRadius() {
+		return mRelativeTickRadius;
+	}
+
+	public void setRelativeTickRadius(float mRelativeTickRadius) {
+		this.mRelativeTickRadius = mRelativeTickRadius;
+	}
+
+	public float getRelativePointerBaseY() {
+		return mRelativePointerBaseY;
+	}
+
+	public void setRelativePointerBaseY(float mRelativePointerBaseY) {
+		this.mRelativePointerBaseY = mRelativePointerBaseY;
+	}
+
+	public float getTickTextSize() {
+		return mTickTextSize;
+	}
+
+	public void setTickTextSize(float mTickTextSize) {
+		this.mTickTextSize = mTickTextSize;
 	}
 
 	private boolean checkColorLabelRange() {
@@ -348,12 +471,13 @@ public class EnergyMeter extends View {
 						text = (long) i + "";
 					}
 					p.setTextAlign(Align.CENTER);
+					p.setTextSize(mTickTextSize);
 					canvas.drawText(
 							text,
 							Math.round(centerX
-									- (float) ((shortRadius - 20) * cosValue)),
+									- (float) ((shortRadius - shortRadius*0.15f) * cosValue)),
 							Math.round(centerY
-									- (float) ((shortRadius - 20) * sinValue)),
+									- (float) ((shortRadius - shortRadius*0.15f) * sinValue)),
 							p);
 				}
 			} catch (Exception e) {
