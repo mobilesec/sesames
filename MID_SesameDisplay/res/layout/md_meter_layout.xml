@@ -2,31 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:layout_margin="100dp">
-    
+    android:layout_marginLeft="200dp"
+    android:layout_marginRight="200dp"
+    android:orientation="vertical" >
+
     <at.sesame.fhooe.lib.ui.EnergyMeter
         android:id="@+id/energyMeter"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-        
-     <!-- <at.sesame.fhooe.midsd.md.EnergyWheelView
-          android:id="@+id/wheelView"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          />-->
-
-   <!--   <fragment
-        android:id="@+id/fragment1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:name="at.sesame.fhooe.midsd.md.WheelFragment" />-->
+        android:layout_height="wrap_content" />
 
     <FrameLayout
         android:id="@+id/frameLayout1"
         android:layout_width="match_parent"
-        android:layout_height="0dp" >
+        android:layout_height="wrap_content" >
     </FrameLayout>
 
 </LinearLayout>
