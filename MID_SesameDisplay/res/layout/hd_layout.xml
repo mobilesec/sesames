@@ -15,7 +15,7 @@
             android:id="@+id/hd_layout_sensorDataFrame"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.7"
+            android:layout_weight="0.8"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -34,13 +34,13 @@
 
                     <at.sesame.fhooe.lib.ui.EnergyMeter
                         android:id="@+id/energyMeterViewEdv1"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                     <FrameLayout
                         android:id="@+id/hd_layout_edv1Frame"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
+                        android:layout_height="wrap_content" >
                     </FrameLayout>
                 </LinearLayout>
 
@@ -54,13 +54,13 @@
 
                     <at.sesame.fhooe.lib.ui.EnergyMeter
                         android:id="@+id/energyMeterViewEdv3"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                     <FrameLayout
                         android:id="@+id/hd_layout_edv3Frame"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
+                        android:layout_height="wrap_content" >
                     </FrameLayout>
                 </LinearLayout>
 
@@ -74,13 +74,13 @@
 
                     <at.sesame.fhooe.lib.ui.EnergyMeter
                         android:id="@+id/energyMeterViewEdv6"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                     <FrameLayout
                         android:id="@+id/hd_layout_edv6Frame"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
+                        android:layout_height="wrap_content" >
                     </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -99,7 +99,7 @@
             style="@style/Tile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.3" >
+            android:layout_weight="0.2" >
         </FrameLayout>
     </LinearLayout>
 
