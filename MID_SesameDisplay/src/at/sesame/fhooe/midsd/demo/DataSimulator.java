@@ -1,5 +1,6 @@
 package at.sesame.fhooe.midsd.demo;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -18,7 +19,7 @@ public class DataSimulator
 	private static final int DEFAULT_TIME_UNIT = Calendar.MINUTE;
 	private static final int DEFAULT_INCREMENTATION_STEP = 15;
 	
-	private static final String[] BAR_TITLES = new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"};
+	public static final String[] BAR_TITLES = new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"};
 	
 	public static TimeSeries createTimeSeries(String _title, Date _from, int _numEntries)
 	{
@@ -51,13 +52,13 @@ public class DataSimulator
 	   * @param values the values
 	   * @return the XY multiple bar dataset
 	   */
-	  public static XYMultipleSeriesDataset createBarSeries(int _entriesPerDay)
+	  public static XYMultipleSeriesDataset createBarSeries(ArrayList<String> _titles)
 	  {
 	    XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-	    int length = BAR_TITLES.length;
+	    int length = _titles.size();
 	    for (int i = 0; i < length; i++) {
-	      CategorySeries series = new CategorySeries(BAR_TITLES[i]);
-	      double[] v = createRandomBarSeriesData(_entriesPerDay);
+	      CategorySeries series = new CategorySeries(_titles.get(i));
+	      double[] v = createRandomBarSeriesData();
 	      int seriesLength = v.length;
 	      for (int k = 0; k < seriesLength; k++) {
 	        series.add(v[k]);
@@ -67,11 +68,11 @@ public class DataSimulator
 	    return dataset;
 	  }
 
-	private static double[] createRandomBarSeriesData(int _entriesPerDay) 
+	private static double[] createRandomBarSeriesData() 
 	{
-		double[] res = new double[_entriesPerDay];
+		double[] res = new double[BAR_TITLES.length+1];
 		Random r = new Random();
-		for(int i = 0;i<_entriesPerDay;i++)
+		for(int i = 0;i<BAR_TITLES.length+1;i++)
 		{
 			res[i] = r.nextDouble()*1000;
 		}

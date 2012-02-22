@@ -1,5 +1,6 @@
 package at.sesame.fhooe.midsd.hd;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.achartengine.ChartFactory;
@@ -140,17 +141,28 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	{
 		Log.e(TAG, "update week chart");
 		int cnt = 1;
-		for(int i = 0;i<mSelectedFilters.length;i++)
+		ArrayList<String> titles = new ArrayList<String>();
+		titles.add(CURRENT_DATA_NAME+mRoom.name());
+		if(mSelectedFilters[0])
 		{
-			if(mSelectedFilters[i])
-			{
-				cnt++;
-			}
+			titles.add(mRoom.name()+WEEK_CB1_TEXT);
 		}
-		XYMultipleSeriesDataset dataset = DataSimulator.createBarSeries(cnt);
+		if(mSelectedFilters[1])
+		{
+			titles.add(mRoom.name()+WEEK_CB2_TEXT);
+		}
+		if(mSelectedFilters[2])
+		{
+			titles.add(mRoom.name()+WEEK_CB3_TEXT);
+		}
+		if(mSelectedFilters[3])
+		{
+			titles.add(mRoom.name()+WEEK_CB4_TEXT);
+		}
+		XYMultipleSeriesDataset dataset = DataSimulator.createBarSeries(titles);
 		try {
 			mBarRendererProvider.createMultipleSeriesRenderer(dataset);
-			setChartView(ChartFactory.getBarChartView(getActivity(), dataset, mBarRendererProvider.getRenderer(), Type.STACKED));
+			setChartView(ChartFactory.getBarChartView(getActivity(), dataset, mBarRendererProvider.getRenderer(), Type.DEFAULT));
 		} catch (RendererInitializationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -164,12 +176,16 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 		{
 			return;
 		}
+		
 		mChartFrame.removeAllViews();
+		
 		if(null!=_v)
 		{
-			mChartFrame.addView(_v);			
+			mChartFrame.addView(_v);
+//			_v.invalidate();
+			mChartFrame.invalidate();			
 		}
-		mChartFrame.invalidate();
+		
 	}
 
 	@Override
