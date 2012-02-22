@@ -1,23 +1,27 @@
 package at.sesame.fhooe.midsd.hd;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import at.sesame.fhooe.lib.ui.FragmentTabListener;
 import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.hd.pms.PMSFragment;
 import at.sesame.fhooe.midsd.md.WheelFragment;
-import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
 
 public class HD_Fragment 
 extends Fragment 
 {
+	private static final String TAG = "HD_Fragment";
 	private Context mCtx;
 	private LayoutInflater mLi;
 	private FragmentManager mFragMan;
@@ -41,7 +45,12 @@ extends Fragment
 		mCtx = _ctx;
 		mLi = LayoutInflater.from(_ctx);
 		mFragMan = _fm;
+//		testNotifications();
 	}
+	
+	
+	
+	
 	
 	private void initializeFragments(FragmentManager _fm)
 	{
@@ -79,6 +88,7 @@ extends Fragment
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		initializeFragments(mFragMan);
+//		testNotifications();
 	}
 
 	@Override
@@ -86,6 +96,37 @@ extends Fragment
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		return mLi.inflate(R.layout.hd_layout, null);
+	}
+	
+	
+	
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onViewCreated(view, savedInstanceState);
+		testNotifications();
+	}
+
+
+
+
+
+	private void testNotifications()
+	{
+		Log.e(TAG, "notifying");
+		int icon = R.drawable.ic_warning;
+		CharSequence tickerText = "Hello NOTIFICATION";
+		long when = System.currentTimeMillis();
+		Notification notification = new Notification(icon, tickerText, when);
+		CharSequence contentTitle = "My notification";
+		CharSequence contentText = "Hello World!";
+		Intent notificationIntent = new Intent(mCtx, HD_Fragment.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(mCtx, 0, notificationIntent, 0);
+
+		notification.setLatestEventInfo(mCtx, contentTitle, contentText, contentIntent);
+	
+		NotificationManager nm = (NotificationManager)mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.notify(1, notification);
 	}
 //
 //	@Override
