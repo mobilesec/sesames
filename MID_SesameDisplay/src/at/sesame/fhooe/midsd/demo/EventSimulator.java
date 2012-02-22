@@ -3,6 +3,7 @@ package at.sesame.fhooe.midsd.demo;
 import java.util.ArrayList;
 import java.util.Random;
 
+import at.sesame.fhooe.lib.util.DateHelper;
 import at.sesame.fhooe.midsd.ld.INotificationProvider;
 import at.sesame.fhooe.midsd.ld.INotificationListener;
 
@@ -20,17 +21,18 @@ implements INotificationProvider
 	private final String mNotificationPart2 = " seit ";
 	private final String mNotificationPart3 = " Minuten inaktiv";
 	
-	
+	private static final double MIN_NOTIFICATION_IDLE_TIME = 3600000;
+	private static final double MAX_NOTIFICATION_IDLE_TIME = 18000000;
 	public String getNotification()
 	{
 		int roomIdx = mRandom.nextInt(mRoomNumbers.length);
-		double idleTime = mRandom.nextDouble()*1000;
+		double idleTime = MIN_NOTIFICATION_IDLE_TIME+mRandom.nextDouble()*(MAX_NOTIFICATION_IDLE_TIME-MIN_NOTIFICATION_IDLE_TIME);
 		
 		StringBuilder res = new StringBuilder();
 		res.append(mNotificationPart1);
 		res.append(mRoomNumbers[roomIdx]);
 		res.append(mNotificationPart2);
-		res.append(idleTime);
+		res.append(DateHelper.convertMStoReadableString(idleTime, false));
 		res.append(mNotificationPart3);
 		
 		return res.toString();

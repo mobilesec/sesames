@@ -16,6 +16,7 @@ import at.sesame.fhooe.esmart.service.EsmartDataAccess;
 import at.sesame.fhooe.ezan.EzanDataAccess;
 import at.sesame.fhooe.ezan.model.EzanMeasurement;
 import at.sesame.fhooe.ezan.model.EzanMeasurementPlace;
+import at.sesame.fhooe.lib.util.DateHelper;
 import at.sesame.fhooe.lib.util.EsmartDateProvider;
 import at.sesame.fhooe.midsd.demo.EventSimulator;
 import at.sesame.fhooe.midsd.ld.INotificationListener;
@@ -51,7 +52,7 @@ implements ISesameDataProvider
 	private static final int mNoEzanMeasurements = 100;
 
 	private Timer mNotificationUpdateTimer;
-	private static final long NOTIFICATION_UPDATE_INTERVAL = 20000;//every 20 seconds
+	private static final long NOTIFICATION_UPDATE_INTERVAL = 5000;//every 20 seconds
 	private EventSimulator mEventSim;
 
 	private SesameDataCache()
@@ -100,6 +101,8 @@ implements ISesameDataProvider
 	public void init()
 	{
 		long start = System.currentTimeMillis();
+		mEventSim = new EventSimulator();
+		startNotificationUpdates();
 		//		Log.e(TAG, "init");
 		loadEsmartMeasurementPlaces();
 		if(null==mEsmartMeasurementPlaces)
@@ -125,9 +128,8 @@ implements ISesameDataProvider
 		}
 		long duration = System.currentTimeMillis()-start;
 
-		mEventSim = new EventSimulator();
-		startNotificationUpdates();
-		Log.e(TAG, "init done ("+convertMStoReadableString(duration)+")");
+		
+		Log.e(TAG, "init done ("+DateHelper.convertMStoReadableString(duration, true)+")");
 	}
 
 	private void loadEsmartMeasurementPlaces()
@@ -280,61 +282,7 @@ implements ISesameDataProvider
 	}
 
 
-	private static String convertMStoReadableString(long _millis)
-	{
-		//		long seconds = _millis/1000;
-		long milli = _millis; 
-		int hours = 0;
-		int minutes = 0;
-		int seconds = 0;
-
-		while(milli-3600000>0)
-		{
-			hours++;
-			milli-=3600000;
-		}
-
-		while(milli-60000>0)
-		{
-			minutes++;
-			milli-=60000;
-		}
-
-		while(milli-1000>0)
-		{
-			seconds++;
-			milli-=1000;
-		}
-
-		StringBuilder res = new StringBuilder();
-		if(hours>0)
-		{
-			res.append(hours);
-			res.append("h");
-		}
-
-		if(minutes>0)
-		{
-			res.append(" ");
-			res.append(minutes);
-			res.append("m");
-		}
-
-		if(seconds>0)
-		{
-			res.append(" ");
-			res.append(seconds);
-			res.append("s");
-		}
-
-		if(milli>0)
-		{
-			res.append(" ");
-			res.append(milli);
-			res.append("ms");
-		}
-		return res.toString();
-	}
+	
 
 	@Override
 	public void addEzanDataListener(ISesameDataListener _listener, int _id) {

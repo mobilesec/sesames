@@ -64,27 +64,33 @@ public class EsmartDataAccess
 	public static ArrayList<EsmartMeasurementPlace> getMeasurementPlaces(String _user)
 	{
 		String[] params = new String[]{_user};
-		Looper.prepare();
-		GetMeasurementPlacesTask gmpt = new GetMeasurementPlacesTask();
-		gmpt.execute(params);
-		
-		
-		try {
-			EsmartMeasurementPlaces places = gmpt.get();
-			if(null==places)
-			{
-				Log.e(TAG, "failed to load esmart places");
-				return null;
-			}
-			return (ArrayList<EsmartMeasurementPlace>)places.getPlaces();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		EsmartMeasurementPlaces res = mEda.getMeasurementPlaces(_user);
+		if(null==res)
+		{
+			return null;
 		}
-		return null;
+		return (ArrayList<EsmartMeasurementPlace>)res.getPlaces();
+//		Looper.prepare();
+//		GetMeasurementPlacesTask gmpt = new GetMeasurementPlacesTask();
+//		gmpt.execute(params);
+//		
+//		
+//		try {
+//			EsmartMeasurementPlaces places = gmpt.get();
+//			if(null==places)
+//			{
+//				Log.e(TAG, "failed to load esmart places");
+//				return null;
+//			}
+//			return (ArrayList<EsmartMeasurementPlace>)places.getPlaces();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
 	}
 	
 	public static ArrayList<EsmartDataRow> getLoadProfile(int _mp, String _from, String _to)

@@ -25,35 +25,38 @@ extends FragmentActivity
 	public static final int EDV_1_ID = 15;
 	public static final int EDV_3_ID = 18;
 	public static final int EDV_6_ID = 17;
-	
+
 	private Fragment mLdFrag;
 	private Fragment mMdFrag;
 	private Fragment mHdFrag;
-	
-	private Fragment mCurFrag;
-	
-	private SesameDataCache mDataCache;
-	
-	private DialogFragment mLoadingDialog;
-	
-	private Handler mUiHandler = new Handler();
-	
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        mLdFrag = new LD_Fragment(getApplicationContext(), mUiHandler);
-        mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext(), mUiHandler);
-        mHdFrag = new HD_Fragment(getApplicationContext(), getSupportFragmentManager());
-        mLoadingDialog = ProgressFragmentDialog.newInstance("Bitte warten...", "daten werden geladen");
-        mLoadingDialog.show(getSupportFragmentManager(), null);
-        
-        new Thread(new Runnable() 
-        {	
+	private Fragment mCurFrag;
+
+	private SesameDataCache mDataCache;
+
+	private DialogFragment mLoadingDialog;
+
+	private Handler mUiHandler = new Handler();
+
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) 
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		Log.e(TAG, "before dialog");
+		mLoadingDialog = ProgressFragmentDialog.newInstance("Bitte warten...", "daten werden geladen");
+		mLoadingDialog.show(getSupportFragmentManager(), null);
+		Log.e(TAG, "after dialog");
+		new Thread(new Runnable() {
+
 			@Override
-			public void run() 
-			{	   
+			public void run() {
+
+				mLdFrag = new LD_Fragment(getApplicationContext(), mUiHandler);
+				mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext(), mUiHandler);
+				mHdFrag = new HD_Fragment(getApplicationContext(), getSupportFragmentManager());
+				
 				mDataCache = SesameDataCache.getInstance();
 				
 				mDataCache.addNotificationListener((INotificationListener)mLdFrag);
@@ -62,16 +65,45 @@ extends FragmentActivity
 				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_6_ID);
 				mDataCache.addNotificationListener((INotificationListener)mMdFrag);
 				mDataCache.startDeepEsmartUpdates();
-				mLoadingDialog.dismiss();
 				
+				mLoadingDialog.dismiss();
 			}
 		}).start();
-        
-        setContentView(R.layout.main);
-    }
 
-    
-    
+
+
+
+		//        new Thread(new Runnable() 
+		//        {	
+		//			@Override
+		//			public void run() 
+		//			{	   
+		//				mDataCache = SesameDataCache.getInstance();
+		//				
+		//				mDataCache.addNotificationListener((INotificationListener)mLdFrag);
+		//				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_1_ID);
+		//				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_3_ID);
+		//				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_6_ID);
+		//				mDataCache.addNotificationListener((INotificationListener)mMdFrag);
+		//				mDataCache.startDeepEsmartUpdates();
+		//				mLoadingDialog.dismiss();
+		//				
+		//			}
+		//		}).start();
+		//        mDataCache = SesameDataCache.getInstance();
+		//		
+		//		mDataCache.addNotificationListener((INotificationListener)mLdFrag);
+		//		mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_1_ID);
+		//		mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_3_ID);
+		//		mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_6_ID);
+		//		mDataCache.addNotificationListener((INotificationListener)mMdFrag);
+		//		mDataCache.startDeepEsmartUpdates();
+		//		mLoadingDialog.dismiss();
+
+	}
+
+
+
 	@Override
 	protected void onDestroy() 
 	{
@@ -107,7 +139,7 @@ extends FragmentActivity
 		}
 		return true;
 	}
-	
+
 	public void registerEsmartListener(ISesameDataListener _listener, int _id)
 	{
 		if(null!=mDataCache)
@@ -115,20 +147,20 @@ extends FragmentActivity
 			mDataCache.addEsmartDataListener(_listener, _id);
 		}
 	}
-	
-	
-    private void setShownFragment(Fragment _frag)
-    {
-    	FragmentManager fm = getSupportFragmentManager();
-    	FragmentTransaction ft = fm.beginTransaction();
-    	
-    	if(null!=mCurFrag)
-    	{
-    		ft.remove(mCurFrag);
-    	}
-    	
-    	ft.add(R.id.contentFrame, _frag);
-    	ft.commit();
-    	mCurFrag = _frag;
-    }    
+
+
+	private void setShownFragment(Fragment _frag)
+	{
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+
+		if(null!=mCurFrag)
+		{
+			ft.remove(mCurFrag);
+		}
+
+		ft.add(R.id.contentFrame, _frag);
+		ft.commit();
+		mCurFrag = _frag;
+	}    
 }

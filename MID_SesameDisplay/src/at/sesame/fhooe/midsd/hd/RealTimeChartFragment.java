@@ -31,9 +31,9 @@ implements OnCheckedChangeListener
 	
 //	private final Context mCtx;
 	
-	private boolean mShowEdv1 = false;
-	private boolean mShowEdv3 = false;
-	private boolean mShowEdv6 = false;
+	private boolean mShowEdv1 = true;
+	private boolean mShowEdv3 = true;
+	private boolean mShowEdv6 = true;
 	
 	private FrameLayout mChartFrame;
 	
@@ -46,15 +46,19 @@ implements OnCheckedChangeListener
 		// TODO Auto-generated method stub
 		View v = inflater.inflate(R.layout.hd_realtime_layout, null);
 		CheckBox edv1Box = (CheckBox)v.findViewById(R.id.hd_realtime_layout_edv1Box);
+		edv1Box.setChecked(true);
 		edv1Box.setOnCheckedChangeListener(this);
 		
 		CheckBox edv3Box = (CheckBox)v.findViewById(R.id.hd_realtime_layout_edv3Box);
+		edv3Box.setChecked(true);
 		edv3Box.setOnCheckedChangeListener(this);
 		
 		CheckBox edv6Box = (CheckBox)v.findViewById(R.id.hd_realtime_layout_edv6Box);
+		edv6Box.setChecked(true);
 		edv6Box.setOnCheckedChangeListener(this);
 		
 		mChartFrame = (FrameLayout)v.findViewById(R.id.hd_realtime_layout_chartFrame);
+		updateChart();
 		return v;
 	}
 
