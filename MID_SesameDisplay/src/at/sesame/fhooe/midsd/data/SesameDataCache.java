@@ -73,12 +73,25 @@ implements ISesameDataProvider
 		{
 			mEsmartUpdateTimer.cancel();
 			mEsmartUpdateTimer.purge();
-			Log.e(TAG, "deep esmart updates stopped");
 		}
 	}
-
-	private void startNotificationUpdates()
+	
+	public void scheduleSingleNotification(Date _d)
 	{
+		if(null!=mNotificationUpdateTimer)
+		{
+			mNotificationUpdateTimer.cancel();
+			mNotificationUpdateTimer.purge();
+		}
+
+		mNotificationUpdateTimer = new Timer();
+		mNotificationUpdateTimer.schedule(new NotificationUpdateTask(), _d);
+		Log.e(TAG, "single update scheduled for "+_d.toLocaleString());
+	}
+
+	public void startNotificationUpdates()
+	{
+		
 		mNotificationUpdateTimer = new Timer();
 		mNotificationUpdateTimer.schedule(new NotificationUpdateTask(), 0, NOTIFICATION_UPDATE_INTERVAL);
 	}
@@ -96,13 +109,14 @@ implements ISesameDataProvider
 	{
 		stopDeepEsmartUpdates();
 		stopNotificationUpdates();
+		Log.e(TAG, "Sesame datacache cleaned up");
 	}
 
 	public void init()
 	{
 		long start = System.currentTimeMillis();
 		mEventSim = new EventSimulator();
-		startNotificationUpdates();
+//		startNotificationUpdates();
 		//		Log.e(TAG, "init");
 		loadEsmartMeasurementPlaces();
 		if(null==mEsmartMeasurementPlaces)

@@ -6,4 +6,5 @@
           android:title="Medium Density"/>
 	<item android:id="@+id/high_density"
           android:title="High Density"/>
+	<item android:id="@+id/notification_time_selection" android:title="Benachrichtigungszeit"></item>
 </menu>

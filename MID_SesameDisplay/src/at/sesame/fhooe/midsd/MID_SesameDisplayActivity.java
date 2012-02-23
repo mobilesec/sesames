@@ -29,6 +29,8 @@ extends FragmentActivity
 	private Fragment mLdFrag;
 	private Fragment mMdFrag;
 	private Fragment mHdFrag;
+	
+	private DialogFragment mNotificationFrag;
 
 	private Fragment mCurFrag;
 
@@ -51,11 +53,14 @@ extends FragmentActivity
 		new Thread(new Runnable() {
 
 			@Override
-			public void run() {
+			public void run() 
+			{
 
 				mLdFrag = new LD_Fragment(getApplicationContext(), mUiHandler);
 				mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext(), mUiHandler);
 				mHdFrag = new HD_Fragment(getApplicationContext(), getSupportFragmentManager());
+				
+				mNotificationFrag = new NotificationTimeSelectionFragment();
 				
 				mDataCache = SesameDataCache.getInstance();
 				
@@ -135,6 +140,9 @@ extends FragmentActivity
 			break;
 		case R.id.high_density:
 			setShownFragment(mHdFrag);
+			break;
+		case R.id.notification_time_selection:
+			mNotificationFrag.show(getSupportFragmentManager(), null);
 			break;
 		}
 		return true;
