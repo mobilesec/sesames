@@ -37,6 +37,11 @@ extends Fragment
 		mNotification = "";
 		super.onDetach();
 	}
+	
+	public String getNotification()
+	{
+		return mNotification;
+	}
 
 	public synchronized void setNotification(String _notification)
 	{

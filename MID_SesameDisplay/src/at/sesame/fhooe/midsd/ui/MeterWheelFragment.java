@@ -36,6 +36,7 @@ extends Fragment
 	private int mWheelTextSize = 100;
 
 	private EnergyMeter mMeter;
+	private FrameLayout mMeterContainer;
 	//	private WheelFragment mWheel;
 
 
@@ -89,14 +90,42 @@ extends Fragment
 		TextView bottom = (TextView)v.findViewById(R.id.meter_wheel_layout_bottom_text);
 		bottom.setText(mBottomText);
 		
-		FrameLayout fl = (FrameLayout)v.findViewById(R.id.meter_wheel_layout_meterFrame);
-		fl.addView(mMeter);
-
-		mWheelContainer = (LinearLayout)v.findViewById(R.id.meter_wheel_layout_wheelContainer);
-		for(WheelView wv:mWheels)
+//		if(null==mMeterContainer)
 		{
-			mWheelContainer.addView(wv);
+			if(null!=mMeterContainer)
+			{
+				mMeterContainer.removeAllViews();
+			}
+			mMeterContainer = (FrameLayout)v.findViewById(R.id.meter_wheel_layout_meterFrame);
+//			mMeter = new EnergyMeter(mCtx);
+			mMeterContainer.addView(mMeter);
 		}
+//		ViewGroup parent = (ViewGroup)mMeter.getParent();
+//		if(null!=parent)
+//		{
+//			parent.removeAllViews();
+//		}
+//		mMeter = new EnergyMeter(mCtx);
+//		mMeterContainer.removeAllViews();
+		
+
+//		if(null==mWheelContainer)
+		{
+//			createWheels();
+			if(null!=mWheelContainer)
+			{
+				mWheelContainer.removeAllViews();
+			}
+			mWheelContainer = (LinearLayout)v.findViewById(R.id.meter_wheel_layout_wheelContainer);
+
+			for(WheelView wv:mWheels)
+			{
+				
+				mWheelContainer.addView(wv);
+			}
+		}
+//		mWheelContainer.removeAllViews();
+		
 		return v;
 	}
 

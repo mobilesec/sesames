@@ -112,12 +112,26 @@ implements ISesameDataListener, INotificationListener
 			ft.remove(mCurFrag);
 		}
 
+		Fragment temp = mFragments.get(mCurFragIdx);
+		if(temp instanceof MD_NotificationFragment)
+		{
+			MD_NotificationFragment md = (MD_NotificationFragment)temp;
+			if(null==md.getNotification() || md.getNotification().isEmpty())
+			{
+				incrementFragmentIndex();
+//				showNextFragment();
+			}
+		}
 		mCurFrag = mFragments.get(mCurFragIdx);
-		mCurFragIdx++;
-		mCurFragIdx%=mFragments.size();
+		incrementFragmentIndex();
 
 		ft.add(R.id.md_layout_container, mCurFrag);
 		ft.commit();
+	}
+
+	private void incrementFragmentIndex() {
+		mCurFragIdx++;
+		mCurFragIdx%=mFragments.size();
 	}
 
 	private List<Fragment> createFragments(FragmentManager _fm)
