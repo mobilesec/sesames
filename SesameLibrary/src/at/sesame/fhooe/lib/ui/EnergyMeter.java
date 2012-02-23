@@ -26,6 +26,10 @@ public class EnergyMeter extends View {
 	private float mMaxValue = 100;
 
 	private float mFullAngle = 84;
+	
+	// Parameter for Unit
+	private boolean mDrawUnit = true;
+	private String mUnit = "W"; 
 
 	// Parameters for ticks & labels
 	private int mTickColor = Color.BLACK;
@@ -195,6 +199,22 @@ public class EnergyMeter extends View {
 
 	public void setTickTextSize(float mTickTextSize) {
 		this.mTickTextSize = mTickTextSize;
+	}
+
+	public boolean isDrawUnit() {
+		return mDrawUnit;
+	}
+
+	public void setDrawUnit(boolean mDrawUnit) {
+		this.mDrawUnit = mDrawUnit;
+	}
+
+	public String getUnit() {
+		return mUnit;
+	}
+
+	public void setUnit(String mUnit) {
+		this.mUnit = mUnit;
 	}
 
 	private boolean checkColorLabelRange() {
@@ -468,7 +488,7 @@ public class EnergyMeter extends View {
 					// }
 					String text = i + "";
 					if (Math.round(i) == (long) i) {
-						text = (long) i + "";
+						text = (long) i + (mDrawUnit ? (" " + mUnit) : "");
 					}
 					p.setTextAlign(Align.CENTER);
 					p.setTextSize(mTickTextSize);

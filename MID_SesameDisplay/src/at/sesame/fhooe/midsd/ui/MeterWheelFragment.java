@@ -263,4 +263,8 @@ extends Fragment
 
 	}
 
+	public EnergyMeter getMeter() {
+		return mMeter;
+	}
+
 }

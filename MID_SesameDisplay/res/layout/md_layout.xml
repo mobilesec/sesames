@@ -4,6 +4,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/md_background"
-    android:padding="50dp" >
+    android:paddingLeft="100dp" 
+    android:paddingRight="100dp"
+    android:paddingTop="50dp"
+    android:paddingBottom="50dp">
 
 </FrameLayout>

@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import at.sesame.fhooe.lib.ui.EnergyMeter;
 import at.sesame.fhooe.lib.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib.ui.charts.IRendererProvider;
 import at.sesame.fhooe.lib.ui.charts.exceptions.DatasetCreationException;
@@ -134,6 +135,10 @@ implements ISesameDataListener, INotificationListener
 		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, "test1", WHEEL_TEXT_SIZE,5);
 		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, "test1", WHEEL_TEXT_SIZE,5);
 		
+		setupEnergyMeter(mEnergyMeterRoom1Frag.getMeter());
+		setupEnergyMeter(mEnergyMeterRoom3Frag.getMeter());
+		setupEnergyMeter(mEnergyMeterRoom6Frag.getMeter());
+		
 		mNotificationFrag = new MD_NotificationFragment(mUiHandler);
 
 		mFragments.add(mEsmartRoom1Frag);
@@ -199,6 +204,15 @@ implements ISesameDataListener, INotificationListener
 		case MID_SesameDisplayActivity.EDV_6_ID:
 			updateChartFragment(mEsmartRoom6Frag, data);
 			break;
+		}
+	}
+	
+	private void setupEnergyMeter(EnergyMeter m) {
+		if (m != null) {
+			m.setColorLabelWidth(50.0f);
+			m.setTickTextSize(50.0f);
+			m.setMinorTickLength(60);
+			m.setMajorTickLength(80);
 		}
 	}
 

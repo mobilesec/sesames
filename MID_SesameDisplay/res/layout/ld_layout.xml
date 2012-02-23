@@ -3,11 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/shape_gradient_background"
-        android:padding="50dp" >
+        android:padding="100dp" 
+        android:orientation="vertical"
+        android:gravity="center">
 
         <TextView
             android:id="@+id/notificationText"
@@ -30,6 +32,6 @@
             android:textColor="#ffffffff"
             android:textSize="75dp"
             android:visibility="gone" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </FrameLayout>
