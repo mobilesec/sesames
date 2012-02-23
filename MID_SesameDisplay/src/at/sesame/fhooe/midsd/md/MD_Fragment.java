@@ -126,9 +126,9 @@ implements ISesameDataListener, INotificationListener
 		mEsmartRoom3Frag = new MD_chartFragment(mCtx.getString(R.string.global_Room3_name));
 		mEsmartRoom6Frag = new MD_chartFragment(mCtx.getString(R.string.global_Room6_name));
 		
-		mEnergyMeterRoom1Frag = new MeterWheelFragment(_fm,mCtx, WHEEL_TEXT_SIZE);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(_fm,mCtx, WHEEL_TEXT_SIZE);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(_fm,mCtx, WHEEL_TEXT_SIZE);
+		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
 		
 		mNotificationFrag = new MD_NotificationFragment(mUiHandler);
 

@@ -17,72 +17,33 @@
             android:layout_height="match_parent"
             android:layout_weight="0.8"
             android:orientation="vertical" >
-
+
             <LinearLayout
                 android:id="@+id/hd_layout_roomDataFra"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.3" >
-
-                <LinearLayout
-                    android:id="@+id/hd_layout_edv1_lin"
+
+                <FrameLayout
+                    android:id="@+id/hd_layout_edv1Frame"
                     style="@style/Tile"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical" >
+                    android:layout_weight="1"/>
 
-                    <at.sesame.fhooe.lib.ui.EnergyMeter
-                        android:id="@+id/energyMeterViewEdv1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <FrameLayout
-                        android:id="@+id/hd_layout_edv1Frame"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/hd_layout_edv3_lin"
+                <FrameLayout
+                    android:id="@+id/hd_layout_edv3Frame"
                     style="@style/Tile"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical" >
+                    android:layout_weight="1"/>
 
-                    <at.sesame.fhooe.lib.ui.EnergyMeter
-                        android:id="@+id/energyMeterViewEdv3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <FrameLayout
-                        android:id="@+id/hd_layout_edv3Frame"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
-                    </FrameLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/hd_layout_edv6_lin"
+                <FrameLayout
+                    android:id="@+id/hd_layout_edv6Frame"
                     style="@style/Tile"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical" >
-
-                    <at.sesame.fhooe.lib.ui.EnergyMeter
-                        android:id="@+id/energyMeterViewEdv6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <FrameLayout
-                        android:id="@+id/hd_layout_edv6Frame"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
-                    </FrameLayout>
-                </LinearLayout>
+                    android:layout_weight="1"/>
             </LinearLayout>
 
             <FrameLayout

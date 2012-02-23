@@ -64,5 +64,6 @@ extends AbstractRendererProvider
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(true, true);
 		mRenderer.setYTitle("kW");
+		mRenderer.setXLabels(10);
 	}
 }

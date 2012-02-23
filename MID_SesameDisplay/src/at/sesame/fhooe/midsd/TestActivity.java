@@ -8,18 +8,36 @@ import java.util.TimeZone;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import at.sesame.fhooe.lib.util.EsmartDateProvider;
+import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
 
 public class TestActivity
-extends Activity
+extends FragmentActivity
 {
 	private static final String TAG = "TESTACTIVITY";
+	private Handler mUiHandler = new Handler();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-//		setContentView(R.layout.md_meter_layout);
+		setContentView(R.layout.main);
+		
+		testView();
+	}
+	
+	private void testView()
+	{
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.add(R.id.contentFrame, new MeterWheelFragment(getApplicationContext(), mUiHandler, 100, 5));
+		ft.commit();
+	}
+	
+	private void testDate()
+	{
 		Date nowDate = new Date();
 		GregorianCalendar nowGC = new GregorianCalendar(TimeZone.getTimeZone("Europe/Vienna"));
 		GregorianCalendar yesterday = new GregorianCalendar(TimeZone.getTimeZone("Europe/Vienna"));
@@ -49,7 +67,5 @@ extends Activity
 		GregorianCalendar gc = EsmartDateProvider.createGregorianCalendar(2012, 12, 2);
 		Log.e(TAG, "custom gc="+EsmartDateProvider.getUrlTimeString(gc));
 	}
-	
-	
 
 }

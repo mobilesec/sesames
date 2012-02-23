@@ -2,6 +2,7 @@ package at.sesame.fhooe.midsd;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -56,10 +57,13 @@ extends FragmentActivity
 			@Override
 			public void run() 
 			{
+//				Looper.prepare();
 				mLdFrag = new LD_Fragment(getApplicationContext(), mUiHandler);
 				mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext(), mUiHandler);
-				mHdFrag = new HD_Fragment(getApplicationContext(), getSupportFragmentManager());
+				mHdFrag = new HD_Fragment(getApplicationContext(), getSupportFragmentManager(), mUiHandler);
+				Log.e(TAG, "before loop");
 				
+				Log.e(TAG, "after loop");
 				mNotificationFrag = new NotificationTimeSelectionFragment();
 				
 				mDataCache = SesameDataCache.getInstance();

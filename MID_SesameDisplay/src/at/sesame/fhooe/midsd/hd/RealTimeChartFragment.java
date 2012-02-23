@@ -59,6 +59,7 @@ implements OnCheckedChangeListener
 		
 		mChartFrame = (FrameLayout)v.findViewById(R.id.hd_realtime_layout_chartFrame);
 		updateChart();
+		
 		return v;
 	}
 	
@@ -117,7 +118,7 @@ implements OnCheckedChangeListener
 			mRendererProvider.createMultipleSeriesRenderer(data);
 			mChartFrame.removeAllViews();
 			mChartFrame.addView(ChartFactory.getTimeChartView(getActivity(), data, mRendererProvider.getRenderer(), ""));
-			mChartFrame.invalidate();
+//			mChartFrame.invalidate();
 		} catch (RendererInitializationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

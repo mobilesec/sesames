@@ -1,142 +1,161 @@
 package at.sesame.fhooe.midsd.ui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import kankan.wheel.widget.WheelView;
+import kankan.wheel.widget.adapters.ArrayWheelAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.BounceInterpolator;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import at.sesame.fhooe.lib.ui.EnergyMeter;
 import at.sesame.fhooe.midsd.R;
-import at.sesame.fhooe.midsd.md.EnergyWheelView;
-import at.sesame.fhooe.midsd.md.WheelFragment;
 
 public class MeterWheelFragment
 extends Fragment
 {
-	private static final String TAG = "MD_meterFragment";
+	private static final String TAG = "MeterWheelFragment";
 	private Context mCtx;
 	private static final int NO_WHEEL_DIGITS = 5;
-	
-	private int mWheelTextSize;
+	private static final long SIMULATION_TIMEOUT = 5000;
 
-//	private FrameLayout mMeterContainer;
-//	private FrameLayout mWheelContainer;
+	private int mWheelTextSize = 100;
+
 	private EnergyMeter mMeter;
-//	private WheelFragment mWheel;
+	//	private WheelFragment mWheel;
 
-//	private EnergyWheelView mEnergyWheel;
-//
-//	private View mView;
-//	private LayoutInflater mLi;
 
-	private Timer mMeterSimulationTimer;
+	private Timer mSimulationTimer;
 	private FragmentManager mFragMan;
-//	private boolean mWheelAdded = false;
 
-	public MeterWheelFragment(FragmentManager _fm, Context _ctx, int _wheelTextSize)
+	private static final String[]mDigits = new String[]{"0","1","2","3","4","5","6","7","8","9"};
+	private int mNumDigits;
+	private ArrayWheelAdapter<String> mAdapter;
+	private ArrayList<WheelView> mWheels;
+	private LinearLayout mWheelContainer;
+
+	private Handler mUiHandler;
+	@Override
+	public void onAttach(Activity activity) 
 	{
-		mCtx = _ctx;
-		mWheelTextSize = _wheelTextSize;
-		mFragMan = _fm;
-//		mLi = LayoutInflater.from(mCtx);
-		//		mMeter = new EnergyMeter(_ctx);
-//		mWheel = new WheelFragment(_ctx, null, NO_WHEEL_DIGITS, null);
-		//		LayoutInflater li = LayoutInflater.from(mCtx);
-		//		mView = li.inflate(R.layout.md_meter_layout, null, false);
-		//		FrameLayout fl = (FrameLayout)mView.findViewById(R.id.frameLayout1);
-
+		startSimulation();
+		super.onAttach(activity);
 	}
 
-	//	@Override
-	//	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	//			Bundle savedInstanceState) {
-	//		Log.e(TAG, "onCreateView");
-	//		if(null==mView || null==mMeterContainer || null==mWheelContainer)
-	//		{
-	//			Log.e(TAG, "creating view...");
-	//			createView(inflater, container);
-	//		}
-	//		else
-	//		{
-	//			Log.e(TAG, "view was not created...");
-	//		}
-	//		////		if(null==mView)
-	//		//		{
-	//		//			mView =  inflater.inflate(R.layout.md_meter_layout, null);
-	//		//			FrameLayout meterContainer = (FrameLayout)mView.findViewById(R.id.md_meter_layout_metercontainer);
-	//		////			meterContainer.
-	//		//			meterContainer.removeAllViews();
-	//		//			meterContainer.addView(mMeter);
-	//		////			FragmentTransaction ft = getFragmentManager().beginTransaction();
-	//		//////			ft.remove(mWheel);
-	//		////			ft.replace(R.id.md_meter_layout_wheelcontainer, mWheel);
-	//		////			ft.commit();
-	//		//		}
-	//
-	//		fillMeterContainer();
-	//		Log.e(TAG, "fillMeterContainer returned successfully");
-	////		addWheel();
-	//		return mView;
-	//	}
 
+	public MeterWheelFragment(Context _ctx, Handler _uiHandler, int _wheelTextSize, int _numDigits)
+	{
+		mCtx = _ctx;
+		mUiHandler = _uiHandler;
+		mMeter = new EnergyMeter(mCtx);
+
+		mWheelTextSize = _wheelTextSize;
+		mNumDigits = _numDigits;
+		mAdapter =new ArrayWheelAdapter<String>(mCtx, mDigits);
+		mAdapter.setTextSize(_wheelTextSize);
+		createWheels();
+	}
 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		//		container.removeAllViews();
-		Log.e(TAG, "onCreateView");
-		
-//		if(null!=container)
-//		{
-//			container.removeAllViews();
-//		}
-		View v = inflater.inflate(R.layout.md_meter_layout, container, false);
-		mMeter = (EnergyMeter)v.findViewById(R.id.energyMeter);
-		startMeterSimulation();
-//		FrameLayout fl = (FrameLayout)v.findViewById(R.id.frameLayout1);
-//		fl.removeAllViews();
-		
-//		if(!mWheelAdded)
+
+		View v = inflater.inflate(R.layout.meter_wheel_layout, null);
+		FrameLayout fl = (FrameLayout)v.findViewById(R.id.meter_wheel_layout_meterFrame);
+		fl.addView(mMeter);
+
+		mWheelContainer = (LinearLayout)v.findViewById(R.id.meter_wheel_layout_wheelContainer);
+		for(WheelView wv:mWheels)
 		{
-			addWheel();
+			mWheelContainer.addView(wv);
 		}
-
-		//		FrameLayout fl = (FrameLayout)v.findViewById(R.id.frameLayout1);
-		//		fl.addView(new WheelView(mCtx));
-
-		//		mEnergyWheel = (EnergyWheelView)v.findViewById(R.id.wheelView);
-		//		mEnergyWheel.setValue(10);
-		//		mWheel = (WheelFragment) getFragmentManager().findFragmentById(R.id.fragment1);
-		//		mWheel.init(mCtx, null, NO_WHEEL_DIGITS, null);
-		//		mWheel.startAutoIncrement();
-		//		FrameLayout meterCont = (FrameLayout) v.findViewById(R.id.md_meter_layout_metercontainer);
-		//		meterCont.removeAllViews();
-		//		
-		//		meterCont.addView(new EnergyMeter(mCtx));
-		////		meterCont.addView(mMeter);
-		//		
-		//		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		////		ft.remove(mWheel);
-		//		ft.add(R.id.md_meter_layout_wheelcontainer, new WheelFragment(mCtx, null, NO_WHEEL_DIGITS, null));
-		////		ft.add(R.id.md_meter_layout_wheelcontainer, mWheel);
-		//		ft.commit();
-
 		return v;
 	}
 
 
+	private void createWheels()
+	{
+		mWheels = new ArrayList<WheelView>();
+		for(int i = 0;i<mNumDigits;i++)
+		{
+			addDigit();
+		}
+	}
 
+	private void addDigit()
+	{
+		mUiHandler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				WheelView wv = new WheelView(mCtx);
+
+				wv.setViewAdapter(mAdapter);
+				wv.setCurrentItem(0);
+				wv.setVisibleItems(1);
+				wv.setCyclic(true);
+				wv.setInterpolator(new BounceInterpolator());
+				//		wv.invalidateWheel(true);
+				mWheels.add(wv);
+			}
+		});
+
+	}
+
+	private boolean displayWheelValue(double _val)
+	{
+		final int[] digits = getDigits(_val);
+
+		if(digits.length>mNumDigits)
+		{	
+			return false;
+		}
+
+		for(int i = 0;i<digits.length;i++)
+		{
+			final int val = digits[i];
+			final int idx = i;
+//			mUiHandler.post(new Runnable() {
+//
+//				@Override
+//				public void run() {
+					WheelView wv = mWheels.get(mWheels.size()-idx-1);
+					wv.setCurrentItem(val, true);
+//					wv.invalidate();
+//				}
+//			});
+
+		}
+
+		return true;
+	}
+
+	private int[] getDigits(double _val)
+	{
+		int n = (int) Math.floor(Math.log10(_val) + 1);
+		int i;
+		int[] res = new int[n];
+		for ( i = 0; i < n; ++i, _val /= 10 )
+		{
+			res[i] =(int) _val % 10;
+		}
+		return res;
+	}
 
 
 	//	@Override
@@ -169,68 +188,58 @@ extends Fragment
 
 
 
-	//	@Override
-	//	public void onViewCreated(View view, Bundle savedInstanceState) {
-	//		// TODO Auto-generated method stub
-	//		Log.e(TAG, "onViewCreated");
-	//		//		super.onViewCreated(view, savedInstanceState);
-	//		if(!mWheelAdded)
-	//		{
-	//			mWheelAdded = true;
-	//			FragmentTransaction ft = getFragmentManager().beginTransaction();
-	//			ft.remove(mWheel);
-	//			ft.replace(R.id.frameLayout1, mWheel);
-	//			ft.commit();
-	//			Log.e(TAG, "committed");
-	//		}
-	//	}
+
 
 	@Override
 	public void onDestroy() {
-		stopMeterSimulation();
+		stopSimulation();
 		super.onDestroy();
 	}
 
-	private void addWheel()
-	{
-//		mWheelAdded = true;
-		Log.e(TAG, "adding wheel");
-		// TODO Auto-generated method stub
-		FragmentTransaction ft = mFragMan.beginTransaction();
-		//		ft.remove(mWheel);
-		WheelFragment wf = new WheelFragment(mCtx, null, NO_WHEEL_DIGITS, null, mWheelTextSize);
-		ft.replace(R.id.frameLayout1, wf);
-		ft.commit();
-		Log.e(TAG, "adding wheel commited");
 
-	}
 
-	private void startMeterSimulation()
+	public void setMeterValue(double _val)
 	{
-		stopMeterSimulation();
-		mMeterSimulationTimer = new Timer();
-		mMeterSimulationTimer.schedule(new MeterValueSetterTask(), 0, 1000);
-	}
-
-	private void stopMeterSimulation()
-	{
-		if(null!=mMeterSimulationTimer)
-		{
-			mMeterSimulationTimer.cancel();
-			mMeterSimulationTimer.purge();
+		try {
+			mMeter.setValue(_val);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	private class MeterValueSetterTask extends TimerTask
+	public void setWheelValue(double _val)
+	{
+		displayWheelValue(_val);
+	}
+
+	private void startSimulation()
+	{
+		stopSimulation();
+		mSimulationTimer = new Timer();
+		mSimulationTimer.schedule(new ValueSetterTask(), 0, SIMULATION_TIMEOUT);
+	}
+
+	private void stopSimulation()
+	{
+		if(null!=mSimulationTimer)
+		{
+			mSimulationTimer.cancel();
+			mSimulationTimer.purge();
+		}
+	}
+
+	private class ValueSetterTask extends TimerTask
 	{
 		Random r = new Random();
 		@Override
 		public void run() 
 		{
-			if(null!=mMeter)
+			if(null!=mMeter&&null!=mWheels)
 			{
 				try {
-					mMeter.setValue(r.nextDouble()*100);
+					setMeterValue(r.nextDouble()*100);
+					setWheelValue(r.nextDouble()*1000);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

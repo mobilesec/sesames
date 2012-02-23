@@ -24,8 +24,8 @@ extends ArrayAdapter<ComputerRoomInformation>
 			List<ComputerRoomInformation> objects) {
 		super(context, textViewResourceId, objects);
 		mInfos = new ArrayList<ComputerRoomInformation>(objects);
-		mLi = LayoutInflater.from(context);
 		mCtx = context;
+		mLi = LayoutInflater.from(mCtx);
 	}
 
 	@Override
