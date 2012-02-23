@@ -32,7 +32,7 @@ extends FragmentActivity
 	private void testView()
 	{
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.add(R.id.contentFrame, new MeterWheelFragment(getApplicationContext(), mUiHandler, 100, 5));
+		ft.add(R.id.contentFrame, new MeterWheelFragment(getApplicationContext(), mUiHandler,  "asdf", "test1",100, 5));
 		ft.commit();
 	}
 	

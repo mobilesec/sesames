@@ -121,14 +121,18 @@ implements ISesameDataListener, INotificationListener
 	}
 
 	private List<Fragment> createFragments(FragmentManager _fm)
-	{		
-		mEsmartRoom1Frag = new MD_chartFragment(mCtx.getString(R.string.global_Room1_name));
-		mEsmartRoom3Frag = new MD_chartFragment(mCtx.getString(R.string.global_Room3_name));
-		mEsmartRoom6Frag = new MD_chartFragment(mCtx.getString(R.string.global_Room6_name));
+	{	
+		String room1Name = mCtx.getString(R.string.global_Room1_name);
+		String room3Name = mCtx.getString(R.string.global_Room3_name);
+		String room6Name = mCtx.getString(R.string.global_Room6_name);
 		
-		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
+		mEsmartRoom1Frag = new MD_chartFragment(room1Name);
+		mEsmartRoom3Frag = new MD_chartFragment(room3Name);
+		mEsmartRoom6Frag = new MD_chartFragment(room6Name);
+		
+		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, "test1", WHEEL_TEXT_SIZE,5);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, "test1", WHEEL_TEXT_SIZE,5);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, "test1", WHEEL_TEXT_SIZE,5);
 		
 		mNotificationFrag = new MD_NotificationFragment(mUiHandler);
 

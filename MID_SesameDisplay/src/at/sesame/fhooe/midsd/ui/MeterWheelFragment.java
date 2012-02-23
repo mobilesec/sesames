@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import at.sesame.fhooe.lib.ui.EnergyMeter;
 import at.sesame.fhooe.midsd.R;
 
@@ -46,6 +47,10 @@ extends Fragment
 	private ArrayWheelAdapter<String> mAdapter;
 	private ArrayList<WheelView> mWheels;
 	private LinearLayout mWheelContainer;
+	
+	private String mHeaderText;
+	
+	private String mBottomText;
 
 	private Handler mUiHandler;
 	@Override
@@ -56,10 +61,13 @@ extends Fragment
 	}
 
 
-	public MeterWheelFragment(Context _ctx, Handler _uiHandler, int _wheelTextSize, int _numDigits)
+	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, String _bottom, int _wheelTextSize, int _numDigits)
 	{
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
+		
+		mHeaderText = _header;
+		mBottomText = _bottom;
 		mMeter = new EnergyMeter(mCtx);
 
 		mWheelTextSize = _wheelTextSize;
@@ -75,6 +83,12 @@ extends Fragment
 			Bundle savedInstanceState) {
 
 		View v = inflater.inflate(R.layout.meter_wheel_layout, null);
+		TextView header = (TextView)v.findViewById(R.id.meter_wheel_layout_header_text);
+		header.setText(mHeaderText);
+		
+		TextView bottom = (TextView)v.findViewById(R.id.meter_wheel_layout_bottom_text);
+		bottom.setText(mBottomText);
+		
 		FrameLayout fl = (FrameLayout)v.findViewById(R.id.meter_wheel_layout_meterFrame);
 		fl.addView(mMeter);
 

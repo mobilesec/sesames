@@ -74,9 +74,13 @@ implements INotificationListener
 	
 	private void initializeFragments()
 	{
-		mEdv1Frag = new MeterWheelFragment( mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
-		mEdv3Frag = new MeterWheelFragment(mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
-		mEdv6Frag = new MeterWheelFragment(mCtx, mUiHandler, WHEEL_TEXT_SIZE,5);
+		String room1Name = mCtx.getString(R.string.global_Room1_name);
+		String room3Name = mCtx.getString(R.string.global_Room3_name);
+		String room6Name = mCtx.getString(R.string.global_Room6_name);
+		
+		mEdv1Frag = new MeterWheelFragment( mCtx, mUiHandler, room1Name, "test1", WHEEL_TEXT_SIZE,5);
+		mEdv3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, "test1", WHEEL_TEXT_SIZE,5);
+		mEdv6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, "test1", WHEEL_TEXT_SIZE,5);
 //		mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 //		mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 //		mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
