@@ -5,6 +5,7 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import android.content.Context;
 import android.graphics.Paint.Align;
 import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
 
@@ -12,6 +13,13 @@ public abstract class AbstractRendererProvider
 implements IRendererProvider 
 {
 	protected XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+	protected Context mCtx;
+	
+	
+	protected AbstractRendererProvider(Context _ctx)
+	{
+		mCtx = _ctx;
+	}
 	
 	protected void setupRenderer()
 	{

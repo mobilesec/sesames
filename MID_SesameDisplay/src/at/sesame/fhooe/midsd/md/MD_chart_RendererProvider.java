@@ -3,11 +3,19 @@ package at.sesame.fhooe.midsd.md;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import android.content.Context;
 import android.graphics.Color;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
 
-public class MD_chart_RendererProvider extends AbstractRendererProvider {
+public class MD_chart_RendererProvider 
+extends AbstractRendererProvider 
+{
 	private int mFillColorAlpha = 180;
+	
+	public MD_chart_RendererProvider(Context _ctx) 
+	{
+		super(_ctx);
+	}
 	
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {

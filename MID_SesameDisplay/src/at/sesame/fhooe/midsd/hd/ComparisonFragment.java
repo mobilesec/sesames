@@ -7,6 +7,7 @@ import org.achartengine.ChartFactory;
 import org.achartengine.chart.BarChart.Type;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -21,13 +22,14 @@ import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
 import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.demo.DataSimulator;
 
+@SuppressWarnings("unused")
 public class ComparisonFragment 
 extends Fragment
 implements IComparisonSelectionListener, OnCheckedChangeListener
 {
 	private static final String TAG = "ComparisonFragment";
-	public static final String CURRENT_DATA_NAME = " aktuell";
-	private enum DisplayMode
+
+	public enum DisplayMode
 	{
 		day,
 		week
@@ -37,23 +39,26 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	
 	private FrameLayout mChartFrame;
 	
-	public static final String DAY_CB1_TEXT = " vor 1 Woche";
-	public static final String DAY_CB2_TEXT = " vor 2 Wochen";
-	public static final String DAY_CB3_TEXT = " vor 3 Wochen";
-	public static final String DAY_CB4_TEXT = " vor 4 Wochen";
-	
-	public static final String WEEK_CB1_TEXT = "1 Woche zuvor";
-	public static final String WEEK_CB2_TEXT = "2 Wochen zuvor";
-	public static final String WEEK_CB3_TEXT = "3 Wochen zuvor";
-	public static final String WEEK_CB4_TEXT = "4 Wochen zuvor";
-	
 	private RadioGroup mDayWeekGroup;
 	
 	private boolean[] mSelectedFilters = new boolean[]{false, false, false, false};
-	private ComparisonRoom mRoom = ComparisonRoom.edv1;
 	
-	private HD_Comparison_RendererProvider mChartRendererProvider = new HD_Comparison_RendererProvider();
-	private HD_Comparison_Bar_RendererProvider mBarRendererProvider = new HD_Comparison_Bar_RendererProvider();
+	private HD_Comparison_Line_RendererProvider mChartRendererProvider;
+	private HD_Comparison_Bar_RendererProvider mBarRendererProvider;
+	
+	private String mRoomName;
+	
+	private View mLastView;
+	
+	@Override
+	public void onAttach(Activity activity) 
+	{
+		super.onAttach(activity);
+		mRoomName = activity.getString(R.string.global_Room1_name);
+		mChartRendererProvider = new HD_Comparison_Line_RendererProvider(activity);
+		mBarRendererProvider = new HD_Comparison_Bar_RendererProvider(activity);
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -86,12 +91,12 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	
 	private ComparisonSelectionFragment createDayCSF()
 	{
-		return new ComparisonSelectionFragment(this, DAY_CB1_TEXT, DAY_CB2_TEXT, DAY_CB3_TEXT, DAY_CB4_TEXT);
+		return new ComparisonSelectionFragment(getActivity(), this, DisplayMode.day);
 	}
 	
 	private ComparisonSelectionFragment createWeekCSF()
 	{
-		return new ComparisonSelectionFragment(this, WEEK_CB1_TEXT, WEEK_CB2_TEXT, WEEK_CB3_TEXT, WEEK_CB4_TEXT);
+		return new ComparisonSelectionFragment(getActivity(), this, DisplayMode.week);
 	}
 	
 	private void updateChart()
@@ -109,24 +114,23 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	
 	private void updateDayChart()
 	{
-		String title  = mRoom.name();
 		XYMultipleSeriesDataset data = new XYMultipleSeriesDataset();
-		data.addSeries(DataSimulator.createTimeSeries(title+CURRENT_DATA_NAME, new Date(), 100));
+		data.addSeries(DataSimulator.createTimeSeries(mRoomName+getActivity().getString(R.string.global_current), new Date(), 100));
 		if(mSelectedFilters[0])
 		{
-			data.addSeries(DataSimulator.createTimeSeries(title + DAY_CB1_TEXT, new Date(), 100));
+			data.addSeries(DataSimulator.createTimeSeries(mRoomName + getActivity().getString(R.string.hd_comparison_day_cb1_text), new Date(), 100));
 		}
 		if(mSelectedFilters[1])
 		{
-			data.addSeries(DataSimulator.createTimeSeries(title + DAY_CB2_TEXT, new Date(), 100));
+			data.addSeries(DataSimulator.createTimeSeries(mRoomName + getActivity().getString(R.string.hd_comparison_day_cb2_text), new Date(), 100));
 		}
 		if(mSelectedFilters[2])
 		{
-			data.addSeries(DataSimulator.createTimeSeries(title + DAY_CB3_TEXT, new Date(), 100));
+			data.addSeries(DataSimulator.createTimeSeries(mRoomName + getActivity().getString(R.string.hd_comparison_day_cb3_text), new Date(), 100));
 		}
 		if(mSelectedFilters[3])
 		{
-			data.addSeries(DataSimulator.createTimeSeries(title + DAY_CB4_TEXT, new Date(), 100));
+			data.addSeries(DataSimulator.createTimeSeries(mRoomName + getActivity().getString(R.string.hd_comparison_day_cb4_text), new Date(), 100));
 		}
 		try {
 			mChartRendererProvider.createMultipleSeriesRenderer(data);
@@ -139,30 +143,29 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	
 	private void updateWeekChart()
 	{
-		Log.e(TAG, "update week chart");
-		int cnt = 1;
 		ArrayList<String> titles = new ArrayList<String>();
-		titles.add(CURRENT_DATA_NAME+mRoom.name());
+		titles.add(mRoomName + getActivity().getString(R.string.global_current));
 		if(mSelectedFilters[0])
 		{
-			titles.add(mRoom.name()+WEEK_CB1_TEXT);
+			titles.add(mRoomName+getActivity().getString(R.string.hd_comparison_week_cb1_text));
 		}
 		if(mSelectedFilters[1])
 		{
-			titles.add(mRoom.name()+WEEK_CB2_TEXT);
+			titles.add(mRoomName+getActivity().getString(R.string.hd_comparison_week_cb2_text));
 		}
 		if(mSelectedFilters[2])
 		{
-			titles.add(mRoom.name()+WEEK_CB3_TEXT);
+			titles.add(mRoomName+getActivity().getString(R.string.hd_comparison_week_cb3_text));
 		}
 		if(mSelectedFilters[3])
 		{
-			titles.add(mRoom.name()+WEEK_CB4_TEXT);
+			titles.add(mRoomName+getActivity().getString(R.string.hd_comparison_week_cb4_text));
 		}
 		XYMultipleSeriesDataset dataset = DataSimulator.createBarSeries(titles);
 		try {
 			mBarRendererProvider.createMultipleSeriesRenderer(dataset);
-			setChartView(ChartFactory.getBarChartView(getActivity(), dataset, mBarRendererProvider.getRenderer(), Type.DEFAULT));
+			View chartView = ChartFactory.getBarChartView(getActivity(), dataset, mBarRendererProvider.getRenderer(), Type.DEFAULT);
+			setChartView(chartView);
 		} catch (RendererInitializationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -177,21 +180,27 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 			return;
 		}
 		
-		mChartFrame.removeAllViews();
+		
+		if(null!=mLastView)
+		{
+			mChartFrame.removeView(mLastView);
+		}
 		
 		if(null!=_v)
 		{
 			mChartFrame.addView(_v);
+			mLastView = _v;
+			mChartFrame.getRootView().invalidate();
 //			_v.invalidate();
-			mChartFrame.invalidate();			
+//			mChartFrame.invalidate();			
 		}
 		
 	}
 
 	@Override
-	public void notifyRoomSelection(ComparisonRoom _room) 
+	public void notifyRoomSelection(String _room) 
 	{
-		mRoom = _room;
+		mRoomName = _room;
 		updateChart();	
 	}
 

@@ -45,7 +45,6 @@ implements ISesameDataListener, INotificationListener
 	private int mCurFragIdx = 0;
 	private Fragment mCurFrag = null;
 
-
 	private MD_chartFragment mEsmartRoom1Frag;
 	private MD_chartFragment mEsmartRoom3Frag;
 	private MD_chartFragment mEsmartRoom6Frag;
@@ -57,35 +56,21 @@ implements ISesameDataListener, INotificationListener
 	private MD_NotificationFragment mNotificationFrag;
 	
 	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
-	private IRendererProvider mRendererProvider = new MD_chart_RendererProvider();
+	private IRendererProvider mRendererProvider;
 	
 	private Context mCtx;
 	
 	private static final int WHEEL_TEXT_SIZE = 100;
-
-
-//	private boolean mAttached = false;
 	
 	private Handler mUiHandler;
 
 	public MD_Fragment(FragmentManager _fm, Context _ctx, Handler _uiHandler)
 	{
-//		mAttached = false;
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
+		mRendererProvider = new MD_chart_RendererProvider(mCtx);
 		createFragments(_fm);
 	}
-	
-	
-
-//	@Override
-//	public void onActivityCreated(Bundle savedInstanceState) {
-//		// TODO Auto-generated method stub
-//		super.onActivityCreated(savedInstanceState);
-//		createFragments();
-//	}
-
-
 
 	public void startFlipping()
 	{
@@ -102,21 +87,6 @@ implements ISesameDataListener, INotificationListener
 			mFlipTimer.purge();
 		}
 	}
-
-//	@Override
-//	public void onAttach(Activity activity) 
-//	{
-//		super.onAttach(activity);
-//		mAttached = true;
-//	}
-
-//	@Override
-//	public void onDetach() 
-//	{
-//		super.onDetach();
-//		mAttached = false;
-//		stopFlipping();
-//	}
 
 	public void showNextFragment()
 	{
@@ -145,22 +115,16 @@ implements ISesameDataListener, INotificationListener
 		mCurFrag = mFragments.get(mCurFragIdx);
 		mCurFragIdx++;
 		mCurFragIdx%=mFragments.size();
-//		try
-//		{
-			ft.add(R.id.md_layout_container, mCurFrag);
-			ft.commit();
-//		}
-//		catch(IllegalArgumentException _iae)
-//		{
-//			Log.e(TAG, "illegal argument exception in md_fragment / showNextFragment");
-//		}
+
+		ft.add(R.id.md_layout_container, mCurFrag);
+		ft.commit();
 	}
 
 	private List<Fragment> createFragments(FragmentManager _fm)
 	{		
-		mEsmartRoom1Frag = new MD_chartFragment("EDV 1");
-		mEsmartRoom3Frag = new MD_chartFragment("EDV 3");
-		mEsmartRoom6Frag = new MD_chartFragment("EDV 6");
+		mEsmartRoom1Frag = new MD_chartFragment(mCtx.getString(R.string.global_Room1_name));
+		mEsmartRoom3Frag = new MD_chartFragment(mCtx.getString(R.string.global_Room3_name));
+		mEsmartRoom6Frag = new MD_chartFragment(mCtx.getString(R.string.global_Room6_name));
 		
 		mEnergyMeterRoom1Frag = new MeterWheelFragment(_fm,mCtx, WHEEL_TEXT_SIZE);
 		mEnergyMeterRoom3Frag = new MeterWheelFragment(_fm,mCtx, WHEEL_TEXT_SIZE);
@@ -183,7 +147,6 @@ implements ISesameDataListener, INotificationListener
 		return mFragments;
 	}
 
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) 
@@ -199,15 +162,12 @@ implements ISesameDataListener, INotificationListener
 		super.onDestroyView();
 	}
 	
-	
-
 	@Override
-	public void onDetach() {
+	public void onDetach() 
+	{
 		stopFlipping();
 		super.onDetach();
 	}
-
-
 
 	private class ViewFlipperTask extends TimerTask
 	{
@@ -236,10 +196,6 @@ implements ISesameDataListener, INotificationListener
 			updateChartFragment(mEsmartRoom6Frag, data);
 			break;
 		}
-//		if(null==mFlipTimer)
-//		{
-//			startFlipping();
-//		}
 	}
 
 	private void updateChartFragment(MD_chartFragment _frag, SesameDataContainer _data)
@@ -265,21 +221,20 @@ implements ISesameDataListener, INotificationListener
 			XYMultipleSeriesRenderer renderer = mRendererProvider.getRenderer();
 			_frag.setChart(dataset, renderer);
 
-		} catch (DatasetCreationException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (DatasetCreationException e) 
+		{
 			e.printStackTrace();
-		} catch (RendererInitializationException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (RendererInitializationException e) 
+		{
 			e.printStackTrace();
 		}
 	}
 
-
-
 	@Override
-	public void notifyAboutNotification(String _msg) {
-//		Log.e(TAG, "TODO...."+_msg);
+	public void notifyAboutNotification(String _msg) 
+	{
 		mNotificationFrag.setNotification(_msg);
 	}
-
 }

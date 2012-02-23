@@ -52,6 +52,7 @@ extends Fragment
 		Bundle args = new Bundle();
 		args.putString(BUNDLE_NAME_KEY, "asdf");
 		args.putInt(BUNDLE_NUMBER_KEY, 1);
+//		args.putSerializable("", mCtx);
 		mTabManager.addTab(mTabHost.newTabSpec("real").setIndicator("Echtzeit"), RealTimeChartFragment.class, args);
 		mTabManager.addTab(mTabHost.newTabSpec("comp").setIndicator("Vergleich"), ComparisonFragment.class, args);
 //		mTabHost.

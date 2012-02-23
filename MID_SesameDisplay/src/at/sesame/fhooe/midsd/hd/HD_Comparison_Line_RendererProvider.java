@@ -3,14 +3,21 @@ package at.sesame.fhooe.midsd.hd;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Paint.Align;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
+import at.sesame.fhooe.midsd.R;
 
-public class HD_Comparison_RendererProvider extends AbstractRendererProvider {
-
+public class HD_Comparison_Line_RendererProvider 
+extends AbstractRendererProvider 
+{
 	private int mFillColorAlpha = 180;
 
+	public HD_Comparison_Line_RendererProvider(Context _ctx) 
+	{
+		super(_ctx);
+	}
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();
@@ -25,15 +32,15 @@ public class HD_Comparison_RendererProvider extends AbstractRendererProvider {
 
 	private int getColorForSeries(XYSeries _series) {
 		String title = _series.getTitle();
-		if (title.contains(ComparisonFragment.CURRENT_DATA_NAME)) {
+		if (title.contains(mCtx.getString(R.string.global_current))) {
 			return Color.BLUE;
-		} else if (title.contains(ComparisonFragment.DAY_CB1_TEXT)) {
+		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb1_text))) {
 			return Color.RED;
-		} else if (title.contains(ComparisonFragment.DAY_CB2_TEXT)) {
+		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb2_text))) {
 			return Color.GREEN;
-		} else if (title.contains(ComparisonFragment.DAY_CB3_TEXT)) {
+		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb3_text))) {
 			return Color.YELLOW;
-		} else if (title.contains(ComparisonFragment.DAY_CB4_TEXT)) {
+		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb4_text))) {
 			return Color.LTGRAY;
 		} else {
 			return Color.BLACK;

@@ -19,12 +19,13 @@ extends ArrayAdapter<ComputerRoomInformation>
 	private static final String TAG = "PMSListAdapter";
 	private ArrayList<ComputerRoomInformation> mInfos;
 	private LayoutInflater mLi;
-	
+	private Context mCtx;
 	public PMSListAdapter(Context context, int textViewResourceId,
 			List<ComputerRoomInformation> objects) {
 		super(context, textViewResourceId, objects);
 		mInfos = new ArrayList<ComputerRoomInformation>(objects);
 		mLi = LayoutInflater.from(context);
+		mCtx = context;
 	}
 
 	@Override
@@ -40,13 +41,13 @@ extends ArrayAdapter<ComputerRoomInformation>
 		ComputerRoomInformation info = mInfos.get(position);
 		Log.e(TAG, info.toString());
 		TextView header = (TextView)v.findViewById(R.id.textView1);
-		header.setText(info.getName());
+		header.setText(info.getRoomName());
 
 		TextView idle = (TextView)v.findViewById(R.id.textView2);
-		idle.setText("IDLE:"+info.getNumIdleComputers());
+		idle.setText(mCtx.getString(R.string.pms_room_list_inactive_prefix)+info.getNumIdleComputers());
 		
 		TextView active = (TextView)v.findViewById(R.id.textView3);
-		active.setText("ACTIVE:"+info.getNumActiveComputers());
+		active.setText(mCtx.getString(R.string.pms_room_list_active_prefix)+info.getNumActiveComputers());
 		return v;
 	}
 	

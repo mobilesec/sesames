@@ -1,5 +1,6 @@
 package at.sesame.fhooe.midsd.hd;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -7,11 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RadioButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioGroup;
 import at.sesame.fhooe.midsd.R;
-import at.sesame.fhooe.midsd.hd.IComparisonSelectionListener.ComparisonRoom;
+import at.sesame.fhooe.midsd.hd.ComparisonFragment.DisplayMode;
 
 public class ComparisonSelectionFragment 
 extends Fragment
@@ -29,17 +29,33 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 	
 	private IComparisonSelectionListener mListener;
 	
-	public ComparisonSelectionFragment(	IComparisonSelectionListener _listener, 
-										String _cb1Text, 
-										String _cb2Text, 
-										String _cb3Text, 
-										String _cb4Text)
+	private Context mCtx;
+	
+	public ComparisonSelectionFragment(	Context _ctx, IComparisonSelectionListener _listener, 
+										DisplayMode _mode)
 	{
+		mCtx = _ctx;
 		mListener = _listener;
-		mCb1Text = _cb1Text;
-		mCb2Text = _cb2Text;
-		mCb3Text = _cb3Text;
-		mCb4Text = _cb4Text;
+		switch(_mode)
+		{
+		case day:
+			mCb1Text = mCtx.getString(R.string.hd_comparison_day_cb1_text);
+			mCb2Text = mCtx.getString(R.string.hd_comparison_day_cb2_text);
+			mCb3Text = mCtx.getString(R.string.hd_comparison_day_cb3_text);
+			mCb4Text = mCtx.getString(R.string.hd_comparison_day_cb4_text);
+			break;
+		case week:
+			mCb1Text = mCtx.getString(R.string.hd_comparison_week_cb1_text);
+			mCb2Text = mCtx.getString(R.string.hd_comparison_week_cb2_text);
+			mCb3Text = mCtx.getString(R.string.hd_comparison_week_cb3_text);
+			mCb4Text = mCtx.getString(R.string.hd_comparison_week_cb4_text);
+			break;
+		default:
+			mCb1Text = "";
+			mCb2Text = "";
+			mCb3Text = "";
+			mCb4Text = "";
+		}
 	}
 
 	@Override
@@ -75,16 +91,15 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 		switch(checkedId)
 		{
 		case R.id.hd_comparison_selection_room1RadioButt:
-			mListener.notifyRoomSelection(ComparisonRoom.edv1);
+			mListener.notifyRoomSelection(mCtx.getString(R.string.global_Room1_name));
 			break;
 		case R.id.hd_comparison_selection_room3RadioButt:
-			mListener.notifyRoomSelection(ComparisonRoom.edv3);
+			mListener.notifyRoomSelection(mCtx.getString(R.string.global_Room3_name));
 			break;
 		case R.id.hd_comparison_selection_room6RadioButt:
-			mListener.notifyRoomSelection(ComparisonRoom.edv6);
+			mListener.notifyRoomSelection(mCtx.getString(R.string.global_Room6_name));
 			break;
-		}
-		
+		}	
 	}
 
 	@Override

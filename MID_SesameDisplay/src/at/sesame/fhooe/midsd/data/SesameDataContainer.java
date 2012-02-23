@@ -7,6 +7,7 @@ import java.util.Date;
 import android.util.Log;
 import at.sesame.fhooe.esmart.model.EsmartDataRow;
 
+@SuppressWarnings("unused")
 public class SesameDataContainer 
 {
 	private static final String TAG = "SesameDataContainer";

@@ -3,16 +3,26 @@ package at.sesame.fhooe.midsd.hd;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import android.content.Context;
 import android.graphics.Color;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
 
-public class HD_chart_RendererProvider extends AbstractRendererProvider {
+public class HD_chart_RendererProvider 
+extends AbstractRendererProvider 
+{
+	
+
 	private static final String EDV1_TITLE = "EDV 1";
 	private static final String EDV3_TITLE = "EDV 3";
 	private static final String EDV6_TITLE = "EDV 6";
 
 	private int mFillColorAlpha = 180;
-
+	
+	public HD_chart_RendererProvider(Context _ctx) 
+	{
+		super(_ctx);
+	}
+	
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();

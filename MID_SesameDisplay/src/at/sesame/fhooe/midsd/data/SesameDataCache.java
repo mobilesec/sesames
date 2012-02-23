@@ -1,10 +1,8 @@
 package at.sesame.fhooe.midsd.data;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,22 +27,16 @@ implements ISesameDataProvider
 	private Hashtable<Integer, ArrayList<ISesameDataListener>> mEsmartListener = new Hashtable<Integer, ArrayList<ISesameDataListener>>();
 
 	private static ArrayList<EsmartMeasurementPlace> mEsmartMeasurementPlaces = new ArrayList<EsmartMeasurementPlace>();
-	//	private static ArrayList<EsmartDataRow> mRawEsmartData;
+
 	private static Hashtable<Integer, ArrayList<EsmartDataRow>> mRawEsmartData = new Hashtable<Integer, ArrayList<EsmartDataRow>>();
 	private static Hashtable<EsmartMeasurementPlace, Boolean> mEsmartUpdateTable = new Hashtable<EsmartMeasurementPlace, Boolean>();
 
 	private static ArrayList<EzanMeasurementPlace> mEzanMeasurementPlaces = new ArrayList<EzanMeasurementPlace>();
 	private static Hashtable<EzanMeasurementPlace, ArrayList<EzanMeasurement>> mRawEzanData = new Hashtable<EzanMeasurementPlace, ArrayList<EzanMeasurement>>();
-	//	private static HashTabley<EzanM>
 
 	private static ArrayList<INotificationListener> mNotificationListeners = new ArrayList<INotificationListener>();
 
 	private static SesameDataCache mInstance;
-
-	private static final int mStartYear = 2012;
-	private static final int mStartMonth = 1;
-	private static final int mStartDay = 10;
-
 
 	private Timer mEsmartUpdateTimer;
 	private static final long ESMART_UPDATE_INTERVAL = 600000; //every 10 minutes
@@ -86,7 +78,6 @@ implements ISesameDataProvider
 
 		mNotificationUpdateTimer = new Timer();
 		mNotificationUpdateTimer.schedule(new NotificationUpdateTask(), _d);
-		Log.e(TAG, "single update scheduled for "+_d.toLocaleString());
 	}
 
 	public void startNotificationUpdates()
@@ -117,7 +108,6 @@ implements ISesameDataProvider
 		long start = System.currentTimeMillis();
 		mEventSim = new EventSimulator();
 //		startNotificationUpdates();
-		//		Log.e(TAG, "init");
 		loadEsmartMeasurementPlaces();
 		if(null==mEsmartMeasurementPlaces)
 		{
@@ -125,7 +115,6 @@ implements ISesameDataProvider
 		}
 		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
 		{
-			Date now = new Date();
 			
 			loadEsmartData(	emp, 
 //					EsmartDataRow.getUrlTimeString(mStartYear, mStartMonth, mStartDay), 
@@ -192,7 +181,6 @@ implements ISesameDataProvider
 		else
 		{
 			ArrayList<Date> storedDates = getDatesFromEsmartDataRows(storedRows);
-			//		storedRows.
 
 			for(EsmartDataRow row2Add:_data)
 			{
@@ -280,9 +268,7 @@ implements ISesameDataProvider
 				//				Log.e(TAG, "updating esmart data for "+emp.getName());
 				ArrayList<ISesameDataListener> listeners = mEsmartListener.get(emp.getId());
 				ArrayList<EsmartDataRow> results = mRawEsmartData.get(emp.getId());
-				//				ArrayList<SesameDataContainer> data = new ArrayList<SesameDataContainer>();
 
-				//TODO create real list of sesamedatacontainers
 				ArrayList<SesameDataContainer> data = new ArrayList<SesameDataContainer>();
 				data.add(new SesameDataContainer(""+emp.getId(), results));
 				for(ISesameDataListener sdl:listeners)
@@ -320,14 +306,12 @@ implements ISesameDataProvider
 	public void addNotificationListener(INotificationListener _listener) 
 	{
 		mNotificationListeners.add(_listener);
-
 	}
 
 	@Override
 	public void removeNotificationListener(INotificationListener _listener) 
 	{
 		mNotificationListeners.remove(_listener);
-
 	}
 
 	@Override
@@ -337,40 +321,21 @@ implements ISesameDataProvider
 		{
 			listener.notifyAboutNotification(_msg);
 		}
-
 	}
 
-
 	private class EsmartUpdateTask extends TimerTask
-	{
-//		private int mUpdateYear = 2011;
-//		private int mUpdateMonth = 11;
-//		private int mUpdateDay = 25;
-//		
-//		private GregorianCalendar mFrom;
-		
+	{		
 		private int mDays2Load = 1;
-		
-//		public EsmartUpdateTask()
-//		{
-//			mFrom = new GregorianCalendar();
-//			mFrom.add(Calendar.DAY_OF_YEAR, -1);
-////			mFrom = gc.getTime();
-//		}
 		
 		@Override
 		public void run() 
 		{
-			//			Log.e(TAG, "EsmartUpdateTask");
 			if(null==mEsmartMeasurementPlaces)
 			{
 				return;
 			}
 			for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
 			{
-//				loadEsmartData(	emp, 
-//						EsmartDataRow.getUrlTimeString(mUpdateYear, mUpdateMonth, mUpdateDay), 
-//						EsmartDataRow.getUrlTimeString(2011,11,28));
 				loadEsmartData(	emp, 
 						EsmartDateProvider.getUrlTimeStringForXDaysAgo(mDays2Load+1), 
 						EsmartDateProvider.getUrlTimeStringForXDaysAgo(1));

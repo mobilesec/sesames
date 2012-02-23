@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.TimePicker;
 import at.sesame.fhooe.midsd.data.SesameDataCache;
 
+@SuppressWarnings("unused")
 public class NotificationTimeSelectionFragment 
 extends DialogFragment 
 {
@@ -23,8 +24,8 @@ extends DialogFragment
 		return new TimePickerDialog(getActivity(), new OnTimeSetListener() {
 			
 			@Override
-			public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-				Log.e(TAG, "hours:"+hourOfDay+", minute:"+minute);
+			public void onTimeSet(TimePicker view, int hourOfDay, int minute) 
+			{
 				GregorianCalendar notificationTime = new GregorianCalendar();
 				notificationTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
 				notificationTime.set(Calendar.MINUTE, minute);

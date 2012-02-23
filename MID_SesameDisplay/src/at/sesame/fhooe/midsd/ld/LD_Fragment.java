@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import at.sesame.fhooe.midsd.R;
-import at.sesame.fhooe.midsd.demo.EventSimulator;
 
 public class LD_Fragment 
 extends Fragment
@@ -37,7 +35,6 @@ implements INotificationListener
 
 	private ColorInterpolationManager mBackgroundColMan;
 	private ColorInterpolationManager mForegroundColMan;
-
 
 	private InterpolationThread mInterThread;
 
@@ -88,23 +85,15 @@ implements INotificationListener
 	{
 		mView = mLi.inflate(R.layout.ld_layout, null, false);
 
-
 		mButt = (Button)mView.findViewById(R.id.interactionButt);
-
-
-		mButt.setOnClickListener(new View.OnClickListener() {
-
+		mButt.setOnClickListener(new View.OnClickListener() 
+		{
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) 
+			{
 				processInteraction();
-
 			}
 		});
-
-		//		if(mState.equals(LdState.background))
-		//		{
-		//			mButt.setVisibility(View.GONE);
-		//		}
 
 		mNotificationTextView = (TextView)mView.findViewById(R.id.notificationText);
 

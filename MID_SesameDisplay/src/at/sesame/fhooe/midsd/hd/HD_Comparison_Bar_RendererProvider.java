@@ -1,18 +1,24 @@
 package at.sesame.fhooe.midsd.hd;
 
-import org.achartengine.chart.BarChart;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
+import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.demo.DataSimulator;
 
-public class HD_Comparison_Bar_RendererProvider extends
-		AbstractRendererProvider {
-	
+public class HD_Comparison_Bar_RendererProvider 
+extends AbstractRendererProvider
+{
 	private int mFillColorAlpha = 180;
-
+	
+	public HD_Comparison_Bar_RendererProvider(Context _ctx) 
+	{
+		super(_ctx);
+	}
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		// TODO Auto-generated method stub
@@ -56,23 +62,23 @@ public class HD_Comparison_Bar_RendererProvider extends
 	{
 		String title = _series.getTitle();
 		
-		if(title.contains(ComparisonFragment.CURRENT_DATA_NAME))
+		if(title.contains(mCtx.getString(R.string.global_current)))
 		{
 			return Color.BLUE;
 		}
-		else if(title.contains(ComparisonFragment.WEEK_CB1_TEXT))
+		else if(title.contains(mCtx.getString(R.string.hd_comparison_week_cb1_text)))
 		{
 			return Color.GREEN;
 		}
-		else if(title.contains(ComparisonFragment.WEEK_CB2_TEXT))
+		else if(title.contains(mCtx.getString(R.string.hd_comparison_week_cb2_text)))
 		{
 			return Color.RED;
 		}
-		else if(title.contains(ComparisonFragment.WEEK_CB3_TEXT))
+		else if(title.contains(mCtx.getString(R.string.hd_comparison_week_cb3_text)))
 		{
 			return Color.YELLOW;
 		}
-		else if(title.contains(ComparisonFragment.WEEK_CB4_TEXT))
+		else if(title.contains(mCtx.getString(R.string.hd_comparison_week_cb4_text)))
 		{
 			return Color.CYAN;
 		}

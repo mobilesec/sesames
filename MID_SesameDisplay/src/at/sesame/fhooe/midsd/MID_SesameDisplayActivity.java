@@ -18,6 +18,7 @@ import at.sesame.fhooe.midsd.ld.INotificationListener;
 import at.sesame.fhooe.midsd.ld.LD_Fragment;
 import at.sesame.fhooe.midsd.md.MD_Fragment;
 
+@SuppressWarnings("unused")
 public class MID_SesameDisplayActivity 
 extends FragmentActivity
 {
@@ -46,16 +47,15 @@ extends FragmentActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		Log.e(TAG, "before dialog");
-		mLoadingDialog = ProgressFragmentDialog.newInstance("Bitte warten...", "daten werden geladen");
+		
+		mLoadingDialog = ProgressFragmentDialog.newInstance(getString(R.string.mid_sesame_display_loading_dialog_title), getString(R.string.mid_sesame_display_loading_dialog_message));
 		mLoadingDialog.show(getSupportFragmentManager(), null);
-		Log.e(TAG, "after dialog");
-		new Thread(new Runnable() {
-
+		
+		new Thread(new Runnable() 
+		{
 			@Override
 			public void run() 
 			{
-
 				mLdFrag = new LD_Fragment(getApplicationContext(), mUiHandler);
 				mMdFrag = new MD_Fragment(getSupportFragmentManager(),getApplicationContext(), mUiHandler);
 				mHdFrag = new HD_Fragment(getApplicationContext(), getSupportFragmentManager());
@@ -74,40 +74,7 @@ extends FragmentActivity
 				mLoadingDialog.dismiss();
 			}
 		}).start();
-
-
-
-
-		//        new Thread(new Runnable() 
-		//        {	
-		//			@Override
-		//			public void run() 
-		//			{	   
-		//				mDataCache = SesameDataCache.getInstance();
-		//				
-		//				mDataCache.addNotificationListener((INotificationListener)mLdFrag);
-		//				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_1_ID);
-		//				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_3_ID);
-		//				mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_6_ID);
-		//				mDataCache.addNotificationListener((INotificationListener)mMdFrag);
-		//				mDataCache.startDeepEsmartUpdates();
-		//				mLoadingDialog.dismiss();
-		//				
-		//			}
-		//		}).start();
-		//        mDataCache = SesameDataCache.getInstance();
-		//		
-		//		mDataCache.addNotificationListener((INotificationListener)mLdFrag);
-		//		mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_1_ID);
-		//		mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_3_ID);
-		//		mDataCache.addEsmartDataListener((ISesameDataListener)mMdFrag, EDV_6_ID);
-		//		mDataCache.addNotificationListener((INotificationListener)mMdFrag);
-		//		mDataCache.startDeepEsmartUpdates();
-		//		mLoadingDialog.dismiss();
-
 	}
-
-
 
 	@Override
 	protected void onDestroy() 
@@ -118,8 +85,6 @@ extends FragmentActivity
 		}
 		super.onDestroy();
 	}
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 
@@ -155,7 +120,6 @@ extends FragmentActivity
 			mDataCache.addEsmartDataListener(_listener, _id);
 		}
 	}
-
 
 	private void setShownFragment(Fragment _frag)
 	{

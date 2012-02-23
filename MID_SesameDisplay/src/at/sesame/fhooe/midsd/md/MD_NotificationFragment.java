@@ -12,7 +12,6 @@ import at.sesame.fhooe.midsd.R;
 public class MD_NotificationFragment 
 extends Fragment 
 {
-
 	private String mNotification;
 	private Handler mUiHandler;
 	private TextView mNotificationView;
@@ -23,9 +22,8 @@ extends Fragment
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
+	{
 		View v = inflater.inflate(R.layout.md_notification_layout, null);
 		mNotificationView = (TextView)v.findViewById(R.id.md_notification_textview);
 		mNotificationView.setText(mNotification);
@@ -33,6 +31,13 @@ extends Fragment
 		return v;
 	}
 	
+	@Override
+	public void onDetach() 
+	{
+		mNotification = "";
+		super.onDetach();
+	}
+
 	public synchronized void setNotification(String _notification)
 	{
 		mNotification = _notification;
@@ -43,11 +48,10 @@ extends Fragment
 		mUiHandler.post(new Runnable() {
 			
 			@Override
-			public void run() {
-				// TODO Auto-generated method stub
+			public void run() 
+			{
 				mNotificationView.setText(mNotification);
 			}
 		});
 	}
-
 }

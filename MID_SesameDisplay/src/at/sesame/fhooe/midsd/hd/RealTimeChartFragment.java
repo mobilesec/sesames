@@ -1,13 +1,13 @@
 package at.sesame.fhooe.midsd.hd;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.achartengine.ChartFactory;
-import org.achartengine.chart.TimeChart;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
+import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -21,8 +21,8 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
 import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.demo.DataSimulator;
-import at.sesame.fhooe.midsd.md.MD_chart_RendererProvider;
 
+@SuppressWarnings("unused")
 public class RealTimeChartFragment 
 extends Fragment
 implements OnCheckedChangeListener
@@ -38,7 +38,7 @@ implements OnCheckedChangeListener
 	private FrameLayout mChartFrame;
 	
 	
-	private HD_chart_RendererProvider mRendererProvider = new HD_chart_RendererProvider();
+	private HD_chart_RendererProvider mRendererProvider;
 //	private MD_chart_RendererProvider mRendererProvider = new MD_chart_RendererProvider();
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,6 +61,16 @@ implements OnCheckedChangeListener
 		updateChart();
 		return v;
 	}
+	
+	
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mRendererProvider = new HD_chart_RendererProvider(activity);
+	}
+
+
 
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
@@ -87,20 +97,20 @@ implements OnCheckedChangeListener
 //		tomorrow.roll(Calendar.DAY_OF_MONTH, true);
 //		DataSimulator.createTimeSeries("asdf", now.getTime(), tomorrow.getTime());
 		GregorianCalendar yesterday = new GregorianCalendar();
-		yesterday.roll(Calendar.DAY_OF_MONTH, false);
+		yesterday.add(Calendar.DAY_OF_MONTH, -1);
 		
 		XYMultipleSeriesDataset data = new XYMultipleSeriesDataset();
 		if(mShowEdv1)
 		{
-			data.addSeries(DataSimulator.createTimeSeries("EDV 1", yesterday.getTime(), 100));
+			data.addSeries(DataSimulator.createTimeSeries(getActivity().getString(R.string.global_Room1_name), yesterday.getTime(), 100));
 		}
 		if(mShowEdv3)
 		{
-			data.addSeries(DataSimulator.createTimeSeries("EDV 3", yesterday.getTime(), 100));
+			data.addSeries(DataSimulator.createTimeSeries(getActivity().getString(R.string.global_Room3_name), yesterday.getTime(), 100));
 		}
 		if(mShowEdv6)
 		{
-			data.addSeries(DataSimulator.createTimeSeries("EDV 6", yesterday.getTime(), 100));
+			data.addSeries(DataSimulator.createTimeSeries(getActivity().getString(R.string.global_Room6_name), yesterday.getTime(), 100));
 		}
 		
 		try {

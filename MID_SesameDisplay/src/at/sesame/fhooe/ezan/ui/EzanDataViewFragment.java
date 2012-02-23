@@ -93,21 +93,21 @@ extends Fragment
 		switch(_type)
 		{
 		case temperature:
-			mRendererProvider = new EzanTemperatureChartRendererProvider();
+			mRendererProvider = new EzanTemperatureChartRendererProvider(getActivity());
 			break;
 		case temperature2:
 //			break;
 		case humidity:
-			mRendererProvider = new EzanHumidityChartRendererProvider();
+			mRendererProvider = new EzanHumidityChartRendererProvider(getActivity());
 			break;
 		case light:
-			mRendererProvider = new EzanLightChartRendererProvider();
+			mRendererProvider = new EzanLightChartRendererProvider(getActivity());
 			break;
 		case voltage:
-			mRendererProvider = new EzanVoltageChartRendererProvider();
+			mRendererProvider = new EzanVoltageChartRendererProvider(getActivity());
 			break;
 			default:
-			mRendererProvider = new EzanHumidityChartRendererProvider();
+			mRendererProvider = new EzanHumidityChartRendererProvider(getActivity());
 			break;
 			
 		}

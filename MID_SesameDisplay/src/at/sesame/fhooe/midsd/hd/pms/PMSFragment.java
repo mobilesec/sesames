@@ -9,7 +9,7 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import at.sesame.fhooe.midsd.hd.pms.ComputerRoomInformation.RoomName;
+import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.hd.pms.hosts.EDV1Hosts;
 import at.sesame.fhooe.midsd.hd.pms.hosts.EDV3Hosts;
 import at.sesame.fhooe.midsd.hd.pms.hosts.EDV6Hosts;
@@ -32,9 +32,9 @@ extends ListFragment
 	private ArrayList<ComputerRoomInformation> createDummyInfos()
 	{
 		ArrayList<ComputerRoomInformation> infos = new ArrayList<ComputerRoomInformation>();
-		infos.add(new ComputerRoomInformation(RoomName.EDV_1, 10, 5));
-		infos.add(new ComputerRoomInformation(RoomName.EDV_3, 3, 52));
-		infos.add(new ComputerRoomInformation(RoomName.EDV_6, 6, 15));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 10, 5));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 3, 52));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 6, 15));
 		return infos;
 	}
 
@@ -46,26 +46,29 @@ extends ListFragment
 //		FragmentManager fm = getFragmentManager();
 //		FragmentTransaction ft = fm.beginTransaction();
 //		String tag;
-		switch(cri.getRoomName())
+		String roomName = cri.getRoomName();
+		if(roomName.equals(mCtx.getString(R.string.global_Room1_name)))
 		{
-		case EDV_1:
-			new PMS_DetailFragment(mCtx, new EDV1Hosts()).show(getFragmentManager(), RoomName.EDV_1.name());
+
+			new PMS_DetailFragment(mCtx, new EDV1Hosts()).show(getFragmentManager(), roomName);
 //			tag = RoomName.EDV_1.name();
 //			ft.remove(fm.findFragmentByTag(tag));
 //			ft.add(new PMS_DetailFragment(mCtx, new EDV1Hosts()), tag);
-			break;
-		case EDV_3:
-			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), RoomName.EDV_3.name());
+		}
+		else if(roomName.equals(mCtx.getString(R.string.global_Room3_name)))
+		{
+			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), roomName);
 //			tag = RoomName.EDV_3.name();
 //			ft.remove(fm.findFragmentByTag(tag));
 //			ft.add(new PMS_DetailFragment(mCtx, new EDV3Hosts()), tag);
-			break;
-		case EDV_6:
-			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), RoomName.EDV_6.name());
+		}
+		else if(roomName.equals(mCtx.getString(R.string.global_Room6_name)))
+		{
+			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), roomName);
 //			tag = RoomName.EDV_6.name();
 //			ft.remove(fm.findFragmentByTag(tag));
 //			ft.add(new PMS_DetailFragment(mCtx, new EDV6Hosts()), tag);
-			break;
+		
 		}
 //		ft.commit();
 	}
