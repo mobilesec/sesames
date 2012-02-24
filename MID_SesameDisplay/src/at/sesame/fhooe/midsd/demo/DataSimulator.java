@@ -12,12 +12,21 @@ import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
 import android.util.Log;
+import at.sesame.fhooe.lib.util.EsmartDateProvider;
+import at.sesame.fhooe.midsd.data.IEnergyDataSource;
+import at.sesame.fhooe.midsd.data.IHumidityDataSource;
+import at.sesame.fhooe.midsd.data.ILightDataSource;
+import at.sesame.fhooe.midsd.data.ITemperatureDataSource;
+import at.sesame.fhooe.midsd.data.SesameDataContainer;
+import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
 
-public class DataSimulator 
+public class DataSimulator
+implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILightDataSource
 {
 	private static final String TAG = "DataSimulator";
 	private static final int DEFAULT_TIME_UNIT = Calendar.MINUTE;
 	private static final int DEFAULT_INCREMENTATION_STEP = 15;
+	private static final int DEFAULT_NUM_DATASETS = 100;
 	
 	public static final String[] BAR_TITLES = new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"};
 	
@@ -77,6 +86,71 @@ public class DataSimulator
 			res[i] = r.nextDouble()*1000;
 		}
 		return res;
+	}
+
+	@Override
+	public ArrayList<SesameMeasurementPlace> getLightMeasurementPlaces() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SesameDataContainer getLightData(Date _from, Date _to) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<SesameMeasurementPlace> getHumidityMeasurementPlaces() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SesameDataContainer getHumidityData(Date _from, Date _to) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<SesameMeasurementPlace> getTemperatureMeasurementPlaces() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SesameDataContainer getTemperatureData(Date _from, Date _to) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<SesameMeasurementPlace> getEnergyMeasurementPlaces() {
+		ArrayList<SesameMeasurementPlace> res = new ArrayList<SesameMeasurementPlace>(3);
+		res.add(new SesameMeasurementPlace(15, "EDV 1"));
+		res.add(new SesameMeasurementPlace(18, "EDV 3"));
+		res.add(new SesameMeasurementPlace(17, "EDV 6"));
+		return res;
+	}
+
+	@Override
+	public SesameDataContainer getEnergyData(int _id, String _from, String _to) {
+//		SesameDataContainer res = new TimeSeries(_title);
+		Random r = new Random();
+//		new GregorianCalendar();
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTime(EsmartDateProvider.getDateFromEsmartString(_from));
+		ArrayList<Date> dates = new ArrayList<Date>();
+		ArrayList<Double> values = new ArrayList<Double>();
+		for(int i = 0;i<DEFAULT_NUM_DATASETS;i++)
+		{
+			dates.add(cal.getTime());
+			values.add(r.nextDouble()*1000);
+			
+//			res.add(d, val);
+			cal.add(DEFAULT_TIME_UNIT, DEFAULT_INCREMENTATION_STEP);
+		}
+		return new SesameDataContainer(""+_id, dates, values);
 	}
 
 }

@@ -6,13 +6,11 @@ import java.util.Date;
 import at.sesame.fhooe.esmart.model.EsmartDataRow;
 import at.sesame.fhooe.esmart.model.EsmartMeasurementPlace;
 import at.sesame.fhooe.esmart.service.EsmartDataAccess;
-import at.sesame.fhooe.midsd.data.AbstractDataProvider;
 import at.sesame.fhooe.midsd.data.IEnergyDataSource;
 import at.sesame.fhooe.midsd.data.SesameDataContainer;
 import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
 
 public class EsmartDataProvider
-extends AbstractDataProvider
 implements IEnergyDataSource 
 {
 	private ArrayList<SesameMeasurementPlace> mMeasurementPlaces;
@@ -47,6 +45,10 @@ implements IEnergyDataSource
 	
 	private ArrayList<SesameMeasurementPlace> convertEsmartToSesameMeasurementPlaces(ArrayList<EsmartMeasurementPlace> _emps)
 	{
+		if(null==_emps)
+		{
+			return null;
+		}
 		ArrayList<SesameMeasurementPlace> res = new ArrayList<SesameMeasurementPlace>(_emps.size());
 		for(EsmartMeasurementPlace emp:_emps)
 		{
@@ -58,13 +60,13 @@ implements IEnergyDataSource
 	
 	private SesameDataContainer convertEsmartDataRowsToSesameDataContainer(String _id, ArrayList<EsmartDataRow> _edrs)
 	{
-		Date[] dates = new Date[_edrs.size()];
-		double[] values = new double[_edrs.size()];
+		ArrayList<Date> dates = new ArrayList<Date>(_edrs.size());
+		ArrayList<Double> values = new ArrayList<Double>(_edrs.size());
 		for(int i = 0 ;i<_edrs.size();i++)
 		{
 			EsmartDataRow edr = _edrs.get(i);
-			dates[i] = edr.getDate();
-			values[i] = edr.getDataValue();
+			dates.add(edr.getDate());
+			values.add(edr.getDataValue());
 		}
 		return new SesameDataContainer(_id, dates, values);
 	}

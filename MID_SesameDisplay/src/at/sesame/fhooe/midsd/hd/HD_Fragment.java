@@ -60,7 +60,6 @@ implements INotificationListener
 		mUiHandler = _uiHandler;
 		initializeNotification();
 		initializeFragments();
-		SesameDataCache.getInstance().addNotificationListener(this);
 	}
 	
 	private void initializeNotification()

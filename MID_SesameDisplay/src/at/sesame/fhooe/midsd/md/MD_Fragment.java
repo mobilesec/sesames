@@ -240,10 +240,15 @@ implements ISesameDataListener, INotificationListener
 		String[] titles = new String[]{_frag.getTitle()};
 
 		ArrayList<Date[]>dates = new ArrayList<Date[]>(1);
-		dates.add(_data.getTimeStamps());
+		dates.add((Date[]) _data.getTimeStamps().toArray(new Date[_data.getTimeStamps().size()]));
 
 		ArrayList<double[]>values = new ArrayList<double[]>(1);
-		values.add(_data.getValues());
+		double[] temp = new double[_data.getValues().size()];
+		for(int i = 0;i<_data.getValues().size();i++)
+		{
+			temp[i]=_data.getValues().get(i);
+		}
+		values.add(temp);
 
 		try 
 		{

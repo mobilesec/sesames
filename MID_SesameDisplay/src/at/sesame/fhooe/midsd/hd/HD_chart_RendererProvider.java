@@ -6,16 +6,11 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import android.content.Context;
 import android.graphics.Color;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
+import at.sesame.fhooe.midsd.R;
 
 public class HD_chart_RendererProvider 
 extends AbstractRendererProvider 
 {
-	
-
-	private static final String EDV1_TITLE = "EDV 1";
-	private static final String EDV3_TITLE = "EDV 3";
-	private static final String EDV6_TITLE = "EDV 6";
-
 	private int mFillColorAlpha = 180;
 	
 	public HD_chart_RendererProvider(Context _ctx) 
@@ -36,11 +31,11 @@ extends AbstractRendererProvider
 	}
 
 	private int getColorForSeries(XYSeries _series) {
-		if (_series.getTitle().equals(EDV1_TITLE)) {
+		if (_series.getTitle().equals(mCtx.getString(R.string.global_Room1_name))) {
 			return Color.GREEN;
-		} else if (_series.getTitle().equals(EDV3_TITLE)) {
+		} else if (_series.getTitle().equals(mCtx.getString(R.string.global_Room3_name))) {
 			return Color.CYAN;
-		} else if (_series.getTitle().equals(EDV6_TITLE)) {
+		} else if (_series.getTitle().equals(mCtx.getString(R.string.global_Room6_name))) {
 			return Color.BLUE;
 		} else {
 			return Color.YELLOW;

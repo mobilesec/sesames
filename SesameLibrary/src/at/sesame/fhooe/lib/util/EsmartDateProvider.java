@@ -1,7 +1,9 @@
 package at.sesame.fhooe.lib.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class EsmartDateProvider 
@@ -46,5 +48,22 @@ public class EsmartDateProvider
 		return new GregorianCalendar(_year, _month-1, _day);
 	}
 	
+	public static Date getDateFromEsmartString(String _esmart)
+	{
+		try {
+			return mFormat.parse(_esmart);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static GregorianCalendar getGregorianCalendarFromEsmartString(String _esmart)
+	{
+		GregorianCalendar res = new GregorianCalendar();
+		res.setTime(getDateFromEsmartString(_esmart));
+		return res;
+	}
 	
 }
