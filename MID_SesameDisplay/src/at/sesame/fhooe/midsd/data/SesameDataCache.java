@@ -8,63 +8,134 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.util.Log;
-import at.sesame.fhooe.esmart.model.EsmartDataRow;
-import at.sesame.fhooe.esmart.model.EsmartMeasurementPlace;
-import at.sesame.fhooe.esmart.service.EsmartDataAccess;
-import at.sesame.fhooe.ezan.EzanDataAccess;
-import at.sesame.fhooe.ezan.model.EzanMeasurement;
-import at.sesame.fhooe.ezan.model.EzanMeasurementPlace;
+
 import at.sesame.fhooe.lib.util.DateHelper;
 import at.sesame.fhooe.lib.util.EsmartDateProvider;
-import at.sesame.fhooe.midsd.demo.EventSimulator;
+
+import at.sesame.fhooe.midsd.data.provider.EsmartDataProvider;
+import at.sesame.fhooe.midsd.data.provider.EzanDataProvider;
+import at.sesame.fhooe.midsd.demo.DataSimulator;
+import at.sesame.fhooe.midsd.demo.NotificationSimulator;
 import at.sesame.fhooe.midsd.ld.INotificationListener;
 
 public class SesameDataCache
 implements ISesameDataProvider
 {
+	/**
+	 * the tag to identify the logger output of this class
+	 */
 	private static final String TAG = "SesameDataCache";
 
-	private Hashtable<Integer, ArrayList<ISesameDataListener>> mEsmartListener = new Hashtable<Integer, ArrayList<ISesameDataListener>>();
-
-	private static ArrayList<EsmartMeasurementPlace> mEsmartMeasurementPlaces = new ArrayList<EsmartMeasurementPlace>();
-
-	private static Hashtable<Integer, ArrayList<EsmartDataRow>> mRawEsmartData = new Hashtable<Integer, ArrayList<EsmartDataRow>>();
-	private static Hashtable<EsmartMeasurementPlace, Boolean> mEsmartUpdateTable = new Hashtable<EsmartMeasurementPlace, Boolean>();
-
-	private static ArrayList<EzanMeasurementPlace> mEzanMeasurementPlaces = new ArrayList<EzanMeasurementPlace>();
-	private static Hashtable<EzanMeasurementPlace, ArrayList<EzanMeasurement>> mRawEzanData = new Hashtable<EzanMeasurementPlace, ArrayList<EzanMeasurement>>();
-
+	/**
+	 * hashtable containing information which energy listener is interested in which measurementplace
+	 */
+	private Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>> mEnergyDataListener = new Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>>();
+	
+	/**
+	 * hashtable containing information which temperature listener is interested in which measurementplace
+	 */
+	private Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>> mTemperatureDataListener = new Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>>();
+	
+	/**
+	 * hashtable containing information which humidity listener is interested in which measurementplace
+	 */
+	private Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>> mHumidityDataListener = new Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>>();
+	
+	/**
+	 * hashtable containing information which light listener is interested in which measurementplace
+	 */
+	private Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>> mLightDataListener = new Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>>();
+	
+	/**
+	 * list of all notification listeners
+	 */
 	private static ArrayList<INotificationListener> mNotificationListeners = new ArrayList<INotificationListener>();
+	
+	private static ArrayList<SesameMeasurementPlace> mEnergyMeasurementPlaces;
+	private static ArrayList<SesameMeasurementPlace> mTemperatureMeasurementPlaces;
+	private static ArrayList<SesameMeasurementPlace> mHumidityMeasurementPlaces;
+	private static ArrayList<SesameMeasurementPlace> mLightMeasurementPlaces;
+	
+	
+	private static IEnergyDataSource mEnergyDataSource;
+	private static ITemperatureDataSource mTemperatureDataSource;
+	private static IHumidityDataSource mHumidityDataSource;
+	private static ILightDataSource mLightDataSource;
+	private static INotificationSource mNotificationSource;
+	
+	private static Hashtable<SesameMeasurementPlace, Boolean> mEnergyDataUpdateTable;
+	private static Hashtable<SesameMeasurementPlace, Boolean> mTemperatureDataUpdateTable;
+	private static Hashtable<SesameMeasurementPlace, Boolean> mHumidityDataUpdateTable;
+	private static Hashtable<SesameMeasurementPlace, Boolean> mLightDataUpdateTable;
+	
+	private static Hashtable<SesameMeasurementPlace, SesameDataContainer> mEnergyData = new Hashtable<SesameMeasurementPlace, SesameDataContainer>();
+	private static Hashtable<SesameMeasurementPlace, SesameDataContainer> mHumidityData = new Hashtable<SesameMeasurementPlace, SesameDataContainer>();
+	private static Hashtable<SesameMeasurementPlace, SesameDataContainer> mTemperatureData = new Hashtable<SesameMeasurementPlace, SesameDataContainer>();
+	private static Hashtable<SesameMeasurementPlace, SesameDataContainer> mLightData = new Hashtable<SesameMeasurementPlace, SesameDataContainer>();
 
+//	private static ArrayList<EsmartMeasurementPlace> mEsmartMeasurementPlaces = new ArrayList<EsmartMeasurementPlace>();
+
+//	private static Hashtable<Integer, ArrayList<EsmartDataRow>> mRawEsmartData = new Hashtable<Integer, ArrayList<EsmartDataRow>>();
+//	private static Hashtable<EsmartMeasurementPlace, Boolean> mEsmartUpdateTable = new Hashtable<EsmartMeasurementPlace, Boolean>();
+
+//	private static ArrayList<EzanMeasurementPlace> mEzanMeasurementPlaces = new ArrayList<EzanMeasurementPlace>();
+//	private static Hashtable<EzanMeasurementPlace, ArrayList<EzanMeasurement>> mRawEzanData = new Hashtable<EzanMeasurementPlace, ArrayList<EzanMeasurement>>();
+
+	
+	/**
+	 * instance for singleton
+	 */
 	private static SesameDataCache mInstance;
 
-	private Timer mEsmartUpdateTimer;
-	private static final long ESMART_UPDATE_INTERVAL = 600000; //every 10 minutes
+	private Timer mEnergyUpdateTimer;
+	private static final long ENERGY_DATA_UPDATE_INTERVAL = 600000; //every 10 minutes
 
 	private static final int mNoEzanMeasurements = 100;
 
 	private Timer mNotificationUpdateTimer;
+	
 	private static final long NOTIFICATION_UPDATE_INTERVAL = 5000;//every 20 seconds
-	private EventSimulator mEventSim;
+	
+//	private NotificationSimulator mEventSim;
 
-	private SesameDataCache()
+	private SesameDataCache(boolean _useMockSources)
 	{
+		if(_useMockSources)
+		{
+			DataSimulator ds = new DataSimulator();
+			mEnergyDataSource = ds;
+			mHumidityDataSource = ds;
+			mTemperatureDataSource = ds;
+			mLightDataSource = ds;
+			
+			mNotificationSource = new NotificationSimulator();
+		}
+		else
+		{
+			mEnergyDataSource = new EsmartDataProvider();
+			
+			EzanDataProvider edp = new EzanDataProvider();
+			mHumidityDataSource = edp;
+			mTemperatureDataSource = edp;
+			mLightDataSource = edp;
+			mNotificationSource = new NotificationSimulator();
+		}
 		init();
 	}
 
-	public void startDeepEsmartUpdates()
+	public void startEnergyDataUpdates()
 	{
-		stopDeepEsmartUpdates();
-		mEsmartUpdateTimer = new Timer();
-		mEsmartUpdateTimer.schedule(new EsmartUpdateTask(), 0, ESMART_UPDATE_INTERVAL);
+		stopEnergyDataUpdates();
+		mEnergyUpdateTimer = new Timer();
+		mEnergyUpdateTimer.schedule(new EnergyUpdateTask(), 0, ENERGY_DATA_UPDATE_INTERVAL);
 	}
 
-	private void stopDeepEsmartUpdates()
+	private void stopEnergyDataUpdates()
 	{
-		if(null!=mEsmartUpdateTimer)
+		if(null!=mEnergyUpdateTimer)
 		{
-			mEsmartUpdateTimer.cancel();
-			mEsmartUpdateTimer.purge();
+			mEnergyUpdateTimer.cancel();
+			mEnergyUpdateTimer.purge();
 		}
 	}
 	
@@ -98,7 +169,7 @@ implements ISesameDataProvider
 	
 	public void cleanUp()
 	{
-		stopDeepEsmartUpdates();
+		stopEnergyDataUpdates();
 		stopNotificationUpdates();
 		Log.e(TAG, "Sesame datacache cleaned up");
 	}
@@ -106,171 +177,160 @@ implements ISesameDataProvider
 	public void init()
 	{
 		long start = System.currentTimeMillis();
-		mEventSim = new EventSimulator();
+//		mEventSim = new NotificationSimulator();
 //		startNotificationUpdates();
-		loadEsmartMeasurementPlaces();
-		if(null==mEsmartMeasurementPlaces)
-		{
-			return;
-		}
-		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
+		loadMeasurementPlaces();
+
+		for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
 		{
 			
-			loadEsmartData(	emp, 
+			loadEnergyData(	smp, 
 //					EsmartDataRow.getUrlTimeString(mStartYear, mStartMonth, mStartDay), 
 					EsmartDateProvider.getUrlTimeStringForXDaysAgo(2), 
 					EsmartDateProvider.getUrlTimeStringForXDaysAgo(1));
 		}
 
-		mEzanMeasurementPlaces = EzanDataAccess.getEzanPlaces();
-
-		for(EzanMeasurementPlace emp:mEzanMeasurementPlaces)
-		{
-			ArrayList<EzanMeasurement> data = EzanDataAccess.getEzanMeasurements(emp.getID(), mNoEzanMeasurements);
-			mRawEzanData.put(emp, data);
-		}
+//		mEzanMeasurementPlaces = EzanDataAccess.getEzanPlaces();
+//
+//		for(EzanMeasurementPlace emp:mEzanMeasurementPlaces)
+//		{
+//			ArrayList<EzanMeasurement> data = EzanDataAccess.getEzanMeasurements(emp.getID(), mNoEzanMeasurements);
+//			mRawEzanData.put(emp, data);
+//		}
 		long duration = System.currentTimeMillis()-start;
 
 		
 		Log.e(TAG, "init done ("+DateHelper.convertMStoReadableString(duration, true)+")");
 	}
 
-	private void loadEsmartMeasurementPlaces()
+	private void loadMeasurementPlaces()
 	{
-		mEsmartMeasurementPlaces = EsmartDataAccess.getMeasurementPlaces();
-		resetEsmartUpdateTable();
+		mEnergyMeasurementPlaces = mEnergyDataSource.getEnergyMeasurementPlaces();
+		mTemperatureMeasurementPlaces = mTemperatureDataSource.getTemperatureMeasurementPlaces();
+		mHumidityMeasurementPlaces = mHumidityDataSource.getHumidityMeasurementPlaces();
+		mLightMeasurementPlaces = mLightDataSource.getLightMeasurementPlaces();
+		resetAllUpdateTables();
+	}
+	
+	private void resetAllUpdateTables()
+	{
+		resetUpdateTable(mEnergyDataUpdateTable, mEnergyMeasurementPlaces);
+		resetUpdateTable(mHumidityDataUpdateTable, mHumidityMeasurementPlaces);
+		resetUpdateTable(mLightDataUpdateTable, mLightMeasurementPlaces);
+		resetUpdateTable(mTemperatureDataUpdateTable, mTemperatureMeasurementPlaces);
 	}
 
-	private void resetEsmartUpdateTable()
+	private void resetUpdateTable(Hashtable<SesameMeasurementPlace, Boolean> _updateTable, ArrayList<SesameMeasurementPlace> _measurementPlaces)
 	{
-		if(null==mEsmartMeasurementPlaces)
+		if(null==_measurementPlaces)
 		{
 			return;
 		}
-		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
+		for(SesameMeasurementPlace smp:_measurementPlaces)
 		{
-			//			Log.e(TAG, "id="+emp.getId());
-			//			Log.e(TAG, "name="+emp.getName());
-			mEsmartUpdateTable.put(emp, false);
+			_updateTable.put(smp, false);
 		}
 	}
 
-	private void loadEsmartData(EsmartMeasurementPlace _emp, String _from, String _to)
+	private void loadEnergyData(SesameMeasurementPlace _smp, String _from, String _to)
 	{
-		ArrayList<EsmartDataRow> data = EsmartDataAccess.getLoadProfile(_emp.getId(), 
-				_from, 
-				_to);
+		SesameDataContainer data = mEnergyDataSource.getEnergyData(_smp.getId(), _from, _to);
 		if(null!=data)
 		{
-			addEsmartData(_emp, data);
+			addEnergyData(_smp, data);
 		}
 		else
 		{
-			Log.e(TAG, "data for \""+_emp.getName()+"\" could not be loaded");
+			Log.e(TAG, "data for \""+_smp.getName()+"\" could not be loaded");
 		}
 	}
 
-	private void addEsmartData(EsmartMeasurementPlace _emp, ArrayList<EsmartDataRow> _data)
+	private void addEnergyData(SesameMeasurementPlace _smp, SesameDataContainer _data)
 	{
-		ArrayList<EsmartDataRow> storedRows = mRawEsmartData.get(_emp.getId());
-		if(null==storedRows)
+		SesameDataContainer storedData = mEnergyData.get(_smp);
+		if(null==storedData)
 		{
-			storedRows = _data;
-			mEsmartUpdateTable.put(_emp, true);
+			storedData = _data;
+			mEnergyDataUpdateTable.put(_smp, true);
 		}
 		else
 		{
-			ArrayList<Date> storedDates = getDatesFromEsmartDataRows(storedRows);
 
-			for(EsmartDataRow row2Add:_data)
+			
+			for(int i = 0;i<_data.getTimeStamps().size();i++)
 			{
-				if(!storedDates.contains(row2Add.getDate()))
-				{
-					storedRows.add(row2Add);
-					mEsmartUpdateTable.put(_emp, true);
-				}
+				Date d = _data.getTimeStamps().get(i);
+				double val = _data.getValues().get(i);
+				storedData.addData(d, val);
+				mEnergyDataUpdateTable.put(_smp, true);
 			}
+
+//			for(EsmartDataRow row2Add:_data)
+//			{
+//				if(!storedDates.contains(row2Add.getDate()))
+//				{
+//					storedRows.add(row2Add);
+//					mEsmartUpdateTable.put(_emp, true);
+//				}
+//			}
 		}
 
 
-		mRawEsmartData.put(_emp.getId(), storedRows);
-		updateEsmartData();
+		mEnergyData.put(_smp, storedData);
+		updateEnergyData();
 	}
 
-	private ArrayList<Date> getDatesFromEsmartDataRows(ArrayList<EsmartDataRow> _rows)
-	{
-		ArrayList<Date> res = new ArrayList<Date>();
-		for(EsmartDataRow edr:_rows)
-		{
-			res.add(edr.getDate());
-		}
-		return res;
-	}
+//	private ArrayList<Date> getDatesFromEsmartDataRows(ArrayList<EsmartDataRow> _rows)
+//	{
+//		ArrayList<Date> res = new ArrayList<Date>();
+//		for(EsmartDataRow edr:_rows)
+//		{
+//			res.add(edr.getDate());
+//		}
+//		return res;
+//	}
 
-	public static SesameDataCache getInstance()
+	public static SesameDataCache getInstance(boolean _useMockData)
 	{
 		if(null==mInstance)
 		{
-			mInstance = new SesameDataCache();
+			mInstance = new SesameDataCache(_useMockData);
 		}
 		return mInstance;
 	}
 
-	@Override
-	public void addEsmartDataListener(ISesameDataListener _listener, int _id) 
-	{
-		ArrayList<ISesameDataListener> listeners = mEsmartListener.get(_id);
-		if(null==listeners)
-		{
-			listeners = new ArrayList<ISesameDataListener>();
-		}
-		if(!listeners.contains(_listener))
-		{
-			listeners.add(_listener);
-		}
-		mEsmartListener.put(_id, listeners);
-	}
 
-	@Override
-	public void removeEsmartDataListener(ISesameDataListener _listener, int _id) 
-	{
-		ArrayList<ISesameDataListener> listeners = mEsmartListener.get(_id);
-		if(listeners.contains(_listener))
-		{
-			listeners.remove(_listener);
-		}
-		mEsmartListener.put(_id, listeners);
 
-	}
+//	private EsmartMeasurementPlace getEsmartMeasurementPlaceById(int _id)
+//	{
+//		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
+//		{
+//			if(emp.getId()==_id)
+//			{
+//				return emp;
+//			}
+//		}
+//		return null;
+//	}
 
-	private EsmartMeasurementPlace getEsmartMeasurementPlaceById(int _id)
+	public void updateEnergyData() 
 	{
-		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
-		{
-			if(emp.getId()==_id)
-			{
-				return emp;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public void updateEsmartData() 
-	{
-		Enumeration<Integer> listenerIt = mEsmartListener.keys();
+		Enumeration<SesameMeasurementPlace> listenerIt = mEnergyDataListener.keys();
 		while(listenerIt.hasMoreElements())
 		{
-			EsmartMeasurementPlace emp = getEsmartMeasurementPlaceById(listenerIt.nextElement());
+//			EsmartMeasurementPlace emp = getEsmartMeasurementPlaceById(listenerIt.nextElement());
+			SesameMeasurementPlace smp = listenerIt.nextElement();
+			
 
-			if(mEsmartUpdateTable.get(emp)==true)
+			if(mEnergyDataUpdateTable.get(smp)==true)
 			{
 				//				Log.e(TAG, "updating esmart data for "+emp.getName());
-				ArrayList<ISesameDataListener> listeners = mEsmartListener.get(emp.getId());
-				ArrayList<EsmartDataRow> results = mRawEsmartData.get(emp.getId());
+				ArrayList<ISesameDataListener> listeners = mEnergyDataListener.get(smp);
+				SesameDataContainer results = mEnergyData.get(smp);
 
 				ArrayList<SesameDataContainer> data = new ArrayList<SesameDataContainer>();
-				data.add(new SesameDataContainer(""+emp.getId(), results));
+				data.add(results);
+//				data.add(new SesameDataContainer(""+emp.getId(), results));
 				for(ISesameDataListener sdl:listeners)
 				{
 					sdl.notifyAboutData(data);
@@ -278,43 +338,14 @@ implements ISesameDataProvider
 			}
 		}
 
-		resetEsmartUpdateTable();
+		resetUpdateTable(mEnergyDataUpdateTable, mEnergyMeasurementPlaces);
 	}
 
 
-	
 
-	@Override
-	public void addEzanDataListener(ISesameDataListener _listener, int _id) {
-		// TODO Auto-generated method stub
 
-	}
 
-	@Override
-	public void removeEzanDataListener(ISesameDataListener _listener, int _id) {
-		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void updateEzanData() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void addNotificationListener(INotificationListener _listener) 
-	{
-		mNotificationListeners.add(_listener);
-	}
-
-	@Override
-	public void removeNotificationListener(INotificationListener _listener) 
-	{
-		mNotificationListeners.remove(_listener);
-	}
-
-	@Override
 	public void updateNotificationListener(String _msg) 
 	{
 		for(INotificationListener listener:mNotificationListeners)
@@ -323,20 +354,20 @@ implements ISesameDataProvider
 		}
 	}
 
-	private class EsmartUpdateTask extends TimerTask
+	private class EnergyUpdateTask extends TimerTask
 	{		
 		private int mDays2Load = 1;
 		
 		@Override
 		public void run() 
 		{
-			if(null==mEsmartMeasurementPlaces)
+			if(null==mEnergyMeasurementPlaces)
 			{
 				return;
 			}
-			for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
+			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
 			{
-				loadEsmartData(	emp, 
+				loadEnergyData(	smp, 
 						EsmartDateProvider.getUrlTimeStringForXDaysAgo(mDays2Load+1), 
 						EsmartDateProvider.getUrlTimeStringForXDaysAgo(1));
 			}
@@ -348,7 +379,93 @@ implements ISesameDataProvider
 		@Override
 		public void run() 
 		{
-			updateNotificationListener(mEventSim.getNotification());		
+			updateNotificationListener(mNotificationSource.getNotification());		
 		}
 	}
+	
+	@Override
+	public void registerEnergyDataListener(ISesameDataListener _listener, SesameMeasurementPlace _smp) 
+	{
+		registerListenerInHashTable(mEnergyDataListener, _listener, _smp);
+	}
+
+	@Override
+	public void unregisterEnergyDataListener(ISesameDataListener _listener, SesameMeasurementPlace _smp) 
+	{
+		unregisterListenerInHashTable(mEnergyDataListener, _listener, _smp);
+	}
+	
+	@Override
+	public void registerTemperatureDataListener(ISesameDataListener _listener, SesameMeasurementPlace _smp) 
+	{
+		registerListenerInHashTable(mTemperatureDataListener, _listener, _smp);
+	}
+
+	@Override
+	public void unregisterTemperatureDataListener(ISesameDataListener _listener,SesameMeasurementPlace _smp) 
+	{
+		unregisterListenerInHashTable(mTemperatureDataListener, _listener, _smp);
+	}
+
+	@Override
+	public void registerLightDataListener(ISesameDataListener _listener, SesameMeasurementPlace _smp) 
+	{
+		registerListenerInHashTable(mLightDataListener, _listener, _smp);
+	}
+
+	@Override
+	public void unregisterLightDataListener(ISesameDataListener _listener,SesameMeasurementPlace _smp) 
+	{
+		unregisterListenerInHashTable(mLightDataListener, _listener, _smp);
+		
+	}
+
+	@Override
+	public void registerHumidityDataListener(ISesameDataListener _listener, SesameMeasurementPlace _smp)
+	{
+		registerListenerInHashTable(mHumidityDataListener, _listener, _smp);
+	}
+
+	@Override
+	public void unregisterHumidityDataListener(ISesameDataListener _listener, SesameMeasurementPlace _smp) 
+	{
+		unregisterListenerInHashTable(mHumidityDataListener, _listener, _smp);
+	}
+
+	@Override
+	public void registerNotificationListener(INotificationListener _listener) 
+	{
+		mNotificationListeners.add(_listener);
+	}
+
+	@Override
+	public void unregisterNotificationListener(INotificationListener _listener) 
+	{
+		mNotificationListeners.remove(_listener);
+	}
+	
+	private void registerListenerInHashTable(Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>> _table, ISesameDataListener _listener, SesameMeasurementPlace _smp)
+	{
+		ArrayList<ISesameDataListener> listeners = _table.get(_smp);
+		if(null==listeners)
+		{
+			listeners = new ArrayList<ISesameDataListener>();
+		}
+		if(!listeners.contains(_listener))
+		{
+			listeners.add(_listener);
+		}
+		_table.put(_smp, listeners);
+	}
+	
+	private void unregisterListenerInHashTable(Hashtable<SesameMeasurementPlace, ArrayList<ISesameDataListener>> _table, ISesameDataListener _listener, SesameMeasurementPlace _smp)
+	{
+		ArrayList<ISesameDataListener> listeners = _table.get(_smp);
+		if(listeners.contains(_listener))
+		{
+			listeners.remove(_listener);
+		}
+		_table.put(_smp, listeners);
+	}
+
 }
