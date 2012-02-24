@@ -50,8 +50,12 @@ extends Fragment
 	private LinearLayout mWheelContainer;
 	
 	private String mHeaderText;
+	private float mHeaderTextSize;
 	
 	private String mBottomText;
+	private float mBottomTextSize;
+	
+	private int mSidePadding;
 
 	private Handler mUiHandler;
 	@Override
@@ -62,13 +66,16 @@ extends Fragment
 	}
 
 
-	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, String _bottom, int _wheelTextSize, int _numDigits)
+	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, float _headerSize, String _bottom, float _bottomSize, int _wheelTextSize, int _numDigits, int _sidePadding)
 	{
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
 		
 		mHeaderText = _header;
+		mHeaderTextSize = _headerSize;
 		mBottomText = _bottom;
+		mBottomTextSize = _bottomSize;
+		mSidePadding = _sidePadding;
 		mMeter = new EnergyMeter(mCtx);
 
 		mWheelTextSize = _wheelTextSize;
@@ -86,10 +93,18 @@ extends Fragment
 		View v = inflater.inflate(R.layout.meter_wheel_layout, null);
 		TextView header = (TextView)v.findViewById(R.id.meter_wheel_layout_header_text);
 		header.setText(mHeaderText);
+		header.setTextSize(mHeaderTextSize);
 		
 		TextView bottom = (TextView)v.findViewById(R.id.meter_wheel_layout_bottom_text);
 		bottom.setText(mBottomText);
+		bottom.setTextSize(mBottomTextSize);
 		
+		TextView unit = (TextView)v.findViewById(R.id.meter_wheel_layout_textViewUnit);
+		unit.setTextSize((int)((float)mWheelTextSize - (float)mWheelTextSize * 0.2f));
+
+		LinearLayout c = (LinearLayout)v.findViewById(R.id.meter_wheel_layout_container);
+		c.setPadding(mSidePadding, 0, mSidePadding, 0);
+
 //		if(null==mMeterContainer)
 		{
 			if(null!=mMeterContainer)
@@ -239,8 +254,22 @@ extends Fragment
 		super.onDestroy();
 	}
 
+	public void setColorLabelWidth(float _w) {
+		mMeter.setColorLabelWidth(_w);
+	}
+	
+	public void setTickTextSize(float _s) {
+		mMeter.setTickTextSize(_s);
+	}
 
-
+	public void setMinorTickLength(int _l) {
+		mMeter.setMinorTickLength(_l);
+	}
+	
+	public void setMajorTickLength(int _l) {
+		mMeter.setMajorTickLength(_l);
+	}
+	
 	public void setMeterValue(double _val)
 	{
 		try {

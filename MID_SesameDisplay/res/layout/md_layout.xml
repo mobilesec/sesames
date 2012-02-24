@@ -4,8 +4,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/md_background"
-    android:paddingLeft="100dp" 
-    android:paddingRight="100dp"
+    android:paddingLeft="50dp" 
+    android:paddingRight="50dp"
     android:paddingTop="50dp"
     android:paddingBottom="50dp">
 

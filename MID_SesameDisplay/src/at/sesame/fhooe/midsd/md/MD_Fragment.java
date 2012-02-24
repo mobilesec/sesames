@@ -145,13 +145,13 @@ implements ISesameDataListener, INotificationListener
 		mEsmartRoom3Frag = new MD_chartFragment(room3Name);
 		mEsmartRoom6Frag = new MD_chartFragment(room6Name);
 		
-		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, "test1", WHEEL_TEXT_SIZE,5);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, "test1", WHEEL_TEXT_SIZE,5);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, "test1", WHEEL_TEXT_SIZE,5);
+		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 5, 250);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 5, 250);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 5, 250);
 		
-		setupEnergyMeter(mEnergyMeterRoom1Frag.getMeter());
-		setupEnergyMeter(mEnergyMeterRoom3Frag.getMeter());
-		setupEnergyMeter(mEnergyMeterRoom6Frag.getMeter());
+		setupEnergyMeter(mEnergyMeterRoom1Frag);
+		setupEnergyMeter(mEnergyMeterRoom3Frag);
+		setupEnergyMeter(mEnergyMeterRoom6Frag);
 		
 		mNotificationFrag = new MD_NotificationFragment(mUiHandler);
 
@@ -221,10 +221,10 @@ implements ISesameDataListener, INotificationListener
 		}
 	}
 	
-	private void setupEnergyMeter(EnergyMeter m) {
+	private void setupEnergyMeter(MeterWheelFragment m) {
 		if (m != null) {
 			m.setColorLabelWidth(50.0f);
-			m.setTickTextSize(50.0f);
+			m.setTickTextSize(40.0f);
 			m.setMinorTickLength(60);
 			m.setMajorTickLength(80);
 		}

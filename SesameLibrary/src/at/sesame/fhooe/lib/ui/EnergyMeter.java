@@ -28,7 +28,7 @@ public class EnergyMeter extends View {
 	private float mFullAngle = 84;
 	
 	// Parameter for Unit
-	private boolean mDrawUnit = true;
+	private boolean mDrawUnit = false;
 	private String mUnit = "W"; 
 
 	// Parameters for ticks & labels

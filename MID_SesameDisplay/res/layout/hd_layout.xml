@@ -22,7 +22,7 @@
                 android:id="@+id/hd_layout_roomDataFra"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.35" >
+                android:layout_weight="0.4" >
 
                 <FrameLayout
                     android:id="@+id/hd_layout_edv1Frame"
@@ -51,7 +51,7 @@
                 style="@style/Tile"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.65" >
+                android:layout_weight="0.6" >
             </FrameLayout>
         </LinearLayout>
 
