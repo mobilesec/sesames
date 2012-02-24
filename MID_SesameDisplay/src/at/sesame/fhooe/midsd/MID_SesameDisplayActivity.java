@@ -31,7 +31,7 @@ extends FragmentActivity
 {
 	private static final String TAG = "MID_SesameDisplay";
 	
-	private static final boolean USE_MOCK_DATA = false;
+	private static final boolean USE_MOCK_DATA = true;
 	
 	public static final int EDV_1_ID = 15;
 	public static final int EDV_3_ID = 18;

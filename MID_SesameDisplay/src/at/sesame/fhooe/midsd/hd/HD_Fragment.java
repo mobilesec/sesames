@@ -11,11 +11,11 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import at.sesame.fhooe.midsd.R;
-import at.sesame.fhooe.midsd.data.SesameDataCache;
 import at.sesame.fhooe.midsd.hd.pms.PMSFragment;
 import at.sesame.fhooe.midsd.ld.INotificationListener;
 import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
@@ -30,17 +30,17 @@ implements INotificationListener
 	private LayoutInflater mLi;
 	private FragmentManager mFragMan;
 	
-	private MeterWheelFragment mEdv1Frag;
-	private MeterWheelFragment mEdv3Frag;
-	private MeterWheelFragment mEdv6Frag;
+	private static MeterWheelFragment mEdv1Frag;
+	private static MeterWheelFragment mEdv3Frag;
+	private static MeterWheelFragment mEdv6Frag;
 	
 //	private WheelFragment mEdv1WheelFrag;
 //	private WheelFragment mEdv3WheelFrag;
 //	private WheelFragment mEdv6WheelFrag;
 	
-	private PMSFragment mPMSFrag;
+	private static PMSFragment mPMSFrag;
 	
-	private HD_TabFragment mTabFrag;
+	private static HD_TabFragment mTabFrag;
 	
 	private Notification mNotification;
 	private NotificationManager mNotificationMan;
@@ -92,6 +92,12 @@ implements INotificationListener
 			}
 		});
 		
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		mTabFrag = new HD_TabFragment(mCtx, mFragMan);
 		
@@ -124,7 +130,9 @@ implements INotificationListener
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		mShowNotifications = true;
-		addFragments();
+		Log.e(TAG, "onAttach");
+		initializeFragments();
+//		addFragments();
 //		testNotifications();
 	}
 	
@@ -141,8 +149,9 @@ implements INotificationListener
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		Log.e(TAG, "onCreateView");
 		View v = mLi.inflate(R.layout.hd_layout, null);
-		
+		addFragments();
 		return v;
 	}
 	
