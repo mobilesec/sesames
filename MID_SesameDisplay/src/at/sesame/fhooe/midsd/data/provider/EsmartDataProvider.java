@@ -33,9 +33,9 @@ implements IEnergyDataSource
 
 
 	@Override
-	public SesameDataContainer getEnergyData(int _id, String _from, String _to) 
+	public SesameDataContainer getEnergyData(SesameMeasurementPlace _smp, Date _from, Date _to) 
 	{
-		return convertEsmartDataRowsToSesameDataContainer(""+_id, EsmartDataAccess.getLoadProfile(_id, _from, _to));
+		return convertEsmartDataRowsToSesameDataContainer(_smp, EsmartDataAccess.getLoadProfile(_smp.getId(), EsmartDateHelper.getUrlTimeString(_from), EsmartDateHelper.getUrlTimeString(_to)));
 	}
 	
 	private SesameMeasurementPlace convertEsmartToSesameMeasurementPlace(EsmartMeasurementPlace _emp)
@@ -58,7 +58,7 @@ implements IEnergyDataSource
 	}
 
 	
-	private SesameDataContainer convertEsmartDataRowsToSesameDataContainer(String _id, ArrayList<EsmartDataRow> _edrs)
+	private SesameDataContainer convertEsmartDataRowsToSesameDataContainer(SesameMeasurementPlace _smp, ArrayList<EsmartDataRow> _edrs)
 	{
 		ArrayList<Date> dates = new ArrayList<Date>(_edrs.size());
 		ArrayList<Double> values = new ArrayList<Double>(_edrs.size());
@@ -68,6 +68,6 @@ implements IEnergyDataSource
 			dates.add(edr.getDate());
 			values.add(edr.getDataValue());
 		}
-		return new SesameDataContainer(_id, dates, values);
+		return new SesameDataContainer(_smp, ""+_smp.getId(), dates, values);
 	}
 }

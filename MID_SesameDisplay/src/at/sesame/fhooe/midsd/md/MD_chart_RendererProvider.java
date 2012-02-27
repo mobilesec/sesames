@@ -20,7 +20,15 @@ extends AbstractRendererProvider
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();
-		int color = Color.GREEN;
+		int color;
+		if(arg0.getTitle().contains("aktuell"))
+		{
+			color = Color.GREEN;
+		}
+		else
+		{
+			color = Color.BLACK;
+		}
 		xysr.setColor(color);
 		xysr.setLineWidth(3.0f);
 		xysr.setFillBelowLine(true);

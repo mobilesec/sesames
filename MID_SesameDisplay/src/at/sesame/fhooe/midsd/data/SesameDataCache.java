@@ -10,7 +10,6 @@ import java.util.TimerTask;
 
 import android.util.Log;
 import at.sesame.fhooe.lib.util.DateHelper;
-import at.sesame.fhooe.lib.util.EsmartDateProvider;
 import at.sesame.fhooe.midsd.data.provider.EsmartDataProvider;
 import at.sesame.fhooe.midsd.data.provider.EzanDataProvider;
 import at.sesame.fhooe.midsd.demo.DataSimulator;
@@ -188,8 +187,8 @@ implements ISesameDataProvider
 				
 				loadEnergyData(	smp, 
 	//					EsmartDataRow.getUrlTimeString(mStartYear, mStartMonth, mStartDay), 
-						EsmartDateProvider.getUrlTimeStringForXDaysAgo(2), 
-						EsmartDateProvider.getUrlTimeStringForXDaysAgo(1));
+						DateHelper.getFirstDateXDaysAgo(7), 
+						DateHelper.getFirstDateXDaysAgo(-1));
 			}
 
 		}
@@ -236,9 +235,9 @@ implements ISesameDataProvider
 		}
 	}
 
-	private void loadEnergyData(SesameMeasurementPlace _smp, String _from, String _to)
+	private void loadEnergyData(SesameMeasurementPlace _smp, Date _from, Date _to)
 	{
-		SesameDataContainer data = mEnergyDataSource.getEnergyData(_smp.getId(), _from, _to);
+		SesameDataContainer data = mEnergyDataSource.getEnergyData(_smp, _from, _to);
 		if(null!=data)
 		{
 			addEnergyData(_smp, data);
@@ -411,8 +410,8 @@ implements ISesameDataProvider
 			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
 			{
 				loadEnergyData(	smp, 
-						EsmartDateProvider.getUrlTimeStringForXDaysAgo(mDays2Load+1), 
-						EsmartDateProvider.getUrlTimeStringForXDaysAgo(1));
+						DateHelper.getFirstDateXDaysAgo(mDays2Load+1), 
+						DateHelper.getFirstDateXDaysAgo(0));
 			}
 		}
 	}

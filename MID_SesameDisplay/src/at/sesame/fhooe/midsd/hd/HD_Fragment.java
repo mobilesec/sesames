@@ -1,5 +1,9 @@
 package at.sesame.fhooe.midsd.hd;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -16,6 +20,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import at.sesame.fhooe.midsd.R;
+import at.sesame.fhooe.midsd.data.SesameDataCache;
+import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
 import at.sesame.fhooe.midsd.hd.pms.PMSFragment;
 import at.sesame.fhooe.midsd.ld.INotificationListener;
 import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
@@ -26,9 +32,12 @@ extends Fragment
 implements INotificationListener
 {
 	private static final String TAG = "HD_Fragment";
+	private static final long METER_WHEEL_UPDATE_TIMEOUT = 1000;
 	private Context mCtx;
 	private LayoutInflater mLi;
 	private FragmentManager mFragMan;
+	
+	private Timer mMeterWheelUpdateTimer;
 	
 	private static MeterWheelFragment mEdv1Frag;
 	private static MeterWheelFragment mEdv3Frag;
@@ -132,6 +141,7 @@ implements INotificationListener
 		mShowNotifications = true;
 		Log.e(TAG, "onAttach");
 		initializeFragments();
+		startMeterWheelUpdates();
 //		addFragments();
 //		testNotifications();
 	}
@@ -142,6 +152,7 @@ implements INotificationListener
 	public void onDetach() {
 		mShowNotifications = false;
 		mNotificationMan.cancelAll();
+		stopMeterWheelUpdates();
 		super.onDetach();
 	}
 
@@ -153,6 +164,51 @@ implements INotificationListener
 		View v = mLi.inflate(R.layout.hd_layout, null);
 		addFragments();
 		return v;
+	}
+	
+	public void stopMeterWheelUpdates()
+	{
+		if(null!=mMeterWheelUpdateTimer)
+		{
+			mMeterWheelUpdateTimer.cancel();
+			mMeterWheelUpdateTimer.purge();
+		}
+	}
+	public void startMeterWheelUpdates()
+	{
+		stopMeterWheelUpdates();
+		mMeterWheelUpdateTimer = new Timer();
+		mMeterWheelUpdateTimer.scheduleAtFixedRate(new MeterWheelUpdateTask(), 0, METER_WHEEL_UPDATE_TIMEOUT);
+	}
+	
+	private class MeterWheelUpdateTask extends TimerTask
+	{
+
+		@Override
+		public void run() {
+			SesameDataCache cache = SesameDataCache.getInstance();
+			ArrayList<SesameMeasurementPlace> places = cache.getEnergyMeasurementPlaces();
+			double currentAtPlace1 = cache.getLastEnergyReading(places.get(0));
+			double overallAtPlace1 = cache.getOverallEnergyConsumtion(places.get(0));
+			
+			double currentAtPlace3 = cache.getLastEnergyReading(places.get(1));
+			double overallAtPlace3 = cache.getOverallEnergyConsumtion(places.get(1));
+			
+			double currentAtPlace6 = cache.getLastEnergyReading(places.get(2));
+			double overallAtPlace6 = cache.getOverallEnergyConsumtion(places.get(2));
+			
+			Log.e(TAG, "MeterWheelUpdate:"+currentAtPlace1+", "+currentAtPlace3+", "+currentAtPlace6);
+			mEdv1Frag.setMeterValue(currentAtPlace1);
+			mEdv1Frag.setWheelValue(overallAtPlace1);
+			
+			mEdv3Frag.setMeterValue(currentAtPlace3);
+			mEdv3Frag.setWheelValue(overallAtPlace3);
+			
+			mEdv6Frag.setMeterValue(currentAtPlace6);
+			mEdv6Frag.setWheelValue(overallAtPlace6);
+			
+		}
+		
 	}
 	
 	private void showNotification(String _title, String _text)

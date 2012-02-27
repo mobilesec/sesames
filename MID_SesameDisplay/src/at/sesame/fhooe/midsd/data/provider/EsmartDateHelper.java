@@ -1,4 +1,4 @@
-package at.sesame.fhooe.lib.util;
+package at.sesame.fhooe.midsd.data.provider;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class EsmartDateProvider 
+public class EsmartDateHelper 
 {	
 	private static final SimpleDateFormat mFormat= new SimpleDateFormat("yyyy-MM-dd");
 
@@ -40,7 +40,12 @@ public class EsmartDateProvider
 	 */
 	public static String getUrlTimeString(GregorianCalendar _gc)
 	{
-		return mFormat.format(_gc.getTime());
+		return getUrlTimeString(_gc.getTime());
+	}
+	
+	public static String getUrlTimeString(Date _d)
+	{
+		return mFormat.format(_d);
 	}
 	
 	public static GregorianCalendar createGregorianCalendar(int _year, int _month, int _day)

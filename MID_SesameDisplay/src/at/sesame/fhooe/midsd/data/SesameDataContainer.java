@@ -27,8 +27,15 @@ public class SesameDataContainer
 	private ArrayList<Date> mTimeStamps;
 
 	private ArrayList<Double> mValues;
+	
+	private SesameMeasurementPlace mPlace;
+	
+	public SesameDataContainer(SesameMeasurementPlace _place, String _id)
+	{
+		this(_place, _id, new ArrayList<Date>(), new ArrayList<Double>());
+	}
 
-	public SesameDataContainer(String _id, ArrayList<Date> _timeStamps, ArrayList<Double> _values) 
+	public SesameDataContainer(SesameMeasurementPlace _place, String _id, ArrayList<Date> _timeStamps, ArrayList<Double> _values) 
 	{
 		super();
 		this.mId = _id;
@@ -85,6 +92,79 @@ public class SesameDataContainer
 		mValues.add(_val);
 		
 		return true;
+	}
+	
+	public SesameDataContainer filterByDate(Date _from, Date _to)
+	{
+		double[] values = getValuesBetweenDates(_from, _to);
+		Date[] dates = getDatesBetweenDates(_from, _to);
+		
+		ArrayList<Double> valueList = new ArrayList<Double>(values.length);
+		ArrayList<Date> dateList = new ArrayList<Date>(values.length);
+		for(int i = 0 ;i<values.length;i++)
+		{
+			valueList.add(values[i]);
+			dateList.add(dates[i]);
+		}
+		
+		return new SesameDataContainer(mPlace, mId, dateList, valueList);
+	}
+	
+	public double[] getValuesBetweenDates(Date _from, Date _to)
+	{
+		ArrayList<Integer>mSelectedIndexes = new ArrayList<Integer>();
+		Log.e(TAG, "from:"+_from.toGMTString());
+		Log.e(TAG, "to:"+_to.toGMTString());
+		for(int i = 0 ;i<mTimeStamps.size();i++)
+		{
+			Date d = mTimeStamps.get(i);
+//			Log.e(TAG, "comparing to:"+d.toGMTString());
+			if(d.after(_from)&&d.before(_to))
+			{
+//				Log.e(TAG, d.toGMTString()+" added");
+				mSelectedIndexes.add(i);
+			}
+			else
+			{
+//				Log.e(TAG, "not added");
+			}
+		}
+		if(mSelectedIndexes.isEmpty())
+		{
+			return null;
+		}
+		double[] res = new double[mSelectedIndexes.size()];
+		
+		for(int i = 0;i<mSelectedIndexes.size();i++)
+		{
+			res[i] = mValues.get(mSelectedIndexes.get(i));
+		}
+		return res;
+	}
+	
+	public Date[] getDatesBetweenDates(Date _from, Date _to)
+	{
+		ArrayList<Date>selectedDates = new ArrayList<Date>();
+		for(Date d:mTimeStamps)
+		{
+			
+			if(d.after(_from)&&d.before(_to))
+			{
+				selectedDates.add(d);
+			}
+		}
+		
+		return (Date[]) selectedDates.toArray(new Date[selectedDates.size()]);
+	}
+	
+	
+
+	public SesameMeasurementPlace getMeasurementPlace() {
+		return mPlace;
+	}
+
+	public void setMeasurementPlace(SesameMeasurementPlace _place) {
+		this.mPlace = _place;
 	}
 
 	@Override

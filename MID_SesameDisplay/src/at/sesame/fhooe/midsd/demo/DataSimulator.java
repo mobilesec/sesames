@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Random;
 
 import org.achartengine.model.CategorySeries;
@@ -12,13 +11,13 @@ import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
 import android.util.Log;
-import at.sesame.fhooe.lib.util.EsmartDateProvider;
 import at.sesame.fhooe.midsd.data.IEnergyDataSource;
 import at.sesame.fhooe.midsd.data.IHumidityDataSource;
 import at.sesame.fhooe.midsd.data.ILightDataSource;
 import at.sesame.fhooe.midsd.data.ITemperatureDataSource;
 import at.sesame.fhooe.midsd.data.SesameDataContainer;
 import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
+import at.sesame.fhooe.midsd.data.provider.EsmartDateHelper;
 
 public class DataSimulator
 implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILightDataSource
@@ -27,6 +26,16 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 	private static final int DEFAULT_TIME_UNIT = Calendar.MINUTE;
 	private static final int DEFAULT_INCREMENTATION_STEP = 15;
 	private static final int DEFAULT_NUM_DATASETS = 100;
+	private static final Date START_DATE;
+	private static final Date END_DATE;
+	private static SesameDataContainer mEnergyData = new SesameDataContainer(null,"DummyEnergyData");
+	
+	static
+	{
+		START_DATE = EsmartDateHelper.createGregorianCalendar(2011, 11, 1).getTime();
+		END_DATE = new Date();
+		createDummYEnergyData();
+	}
 	
 	public static final String[] BAR_TITLES = new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"};
 	
@@ -132,25 +141,49 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 		res.add(new SesameMeasurementPlace(17, "EDV 6"));
 		return res;
 	}
-
-	@Override
-	public SesameDataContainer getEnergyData(int _id, String _from, String _to) {
-//		SesameDataContainer res = new TimeSeries(_title);
-		Random r = new Random();
-//		new GregorianCalendar();
+	
+	private static void createDummYEnergyData()
+	{
+		Date curDate = START_DATE;
 		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTime(EsmartDateProvider.getDateFromEsmartString(_from));
-		ArrayList<Date> dates = new ArrayList<Date>();
-		ArrayList<Double> values = new ArrayList<Double>();
-		for(int i = 0;i<DEFAULT_NUM_DATASETS;i++)
+		cal.setTime(curDate);
+		Random r = new Random(System.currentTimeMillis());
+		
+		while(cal.getTime().before(END_DATE))
 		{
-			dates.add(cal.getTime());
-			values.add(r.nextDouble()*1000);
-			
-//			res.add(d, val);
+			mEnergyData.addData(cal.getTime(), r.nextDouble()*1000);
 			cal.add(DEFAULT_TIME_UNIT, DEFAULT_INCREMENTATION_STEP);
 		}
-		return new SesameDataContainer(""+_id, dates, values);
+	}
+
+	@Override
+	public SesameDataContainer getEnergyData(SesameMeasurementPlace _smp, Date _from, Date _to) 
+	{
+		SesameDataContainer res = mEnergyData.filterByDate(_from, _to);
+		res.setMeasurementPlace(_smp);
+		return res;
+//		return mEnergyData.
+////		SesameDataContainer res = new TimeSeries(_title);
+//		Random r = new Random(System.currentTimeMillis());
+////		new GregorianCalendar();
+//		GregorianCalendar cal = new GregorianCalendar();
+//		cal.setTime(EsmartDateProvider.getDateFromEsmartString(_from));
+//		Date end = EsmartDateProvider.getDateFromEsmartString(_to);
+//		ArrayList<Date> dates = new ArrayList<Date>();
+//		ArrayList<Double> values = new ArrayList<Double>();
+//		
+//		while(cal.getTime().before(end))
+//		{
+//			Date d = cal.getTime();
+//			double val = r.nextDouble()*1000;
+//			Log.e(TAG, d.toGMTString()+" = "+val);
+//			dates.add(d);
+//			values.add(val);
+//			
+////			res.add(d, val);
+//			cal.add(DEFAULT_TIME_UNIT, DEFAULT_INCREMENTATION_STEP);
+//		}
+//		return new SesameDataContainer(""+_id, dates, values);
 	}
 
 }

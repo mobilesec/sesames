@@ -1,5 +1,9 @@
 package at.sesame.fhooe.lib.util;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 public class DateHelper 
 {
 	public static String convertMStoReadableString(double _millis, boolean _addMillis)
@@ -61,4 +65,20 @@ public class DateHelper
 		return res.toString();
 	}
 
+	public static Date getFirstDateToday()
+	{
+		GregorianCalendar res = new GregorianCalendar();
+		res.set(Calendar.HOUR_OF_DAY, 0);
+		res.set(Calendar.MINUTE, 0);
+		res.set(Calendar.SECOND, 0);
+		return res.getTime();
+	}
+	
+	public static Date getFirstDateXDaysAgo(int _daysAgo)
+	{
+		GregorianCalendar res = new GregorianCalendar();
+		res.setTime(getFirstDateToday());
+		res.add(Calendar.DATE, _daysAgo*-1);
+		return res.getTime();
+	}
 }

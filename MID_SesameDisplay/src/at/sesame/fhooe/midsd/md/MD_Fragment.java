@@ -1,6 +1,7 @@
 package at.sesame.fhooe.midsd.md;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -25,6 +26,7 @@ import at.sesame.fhooe.lib.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib.ui.charts.IRendererProvider;
 import at.sesame.fhooe.lib.ui.charts.exceptions.DatasetCreationException;
 import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
+import at.sesame.fhooe.lib.util.DateHelper;
 import at.sesame.fhooe.midsd.MID_SesameDisplayActivity;
 import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.data.ISesameDataListener;
@@ -267,19 +269,31 @@ implements ISesameDataListener, INotificationListener
 	{
 		//TODO implement multiple series
 		SesameDataContainer data = _data.get(0)	;
-		int type = Integer.parseInt(data.getId());
-		switch(type)
+		SesameMeasurementPlace smp = data.getMeasurementPlace();
+		if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(0)))
 		{
-		case MID_SesameDisplayActivity.EDV_1_ID:
 			updateChartFragment(mEsmartRoom1Frag, data);
-			break;
-		case MID_SesameDisplayActivity.EDV_3_ID:
-			updateChartFragment(mEsmartRoom3Frag, data);
-			break;
-		case MID_SesameDisplayActivity.EDV_6_ID:
-			updateChartFragment(mEsmartRoom6Frag, data);
-			break;
 		}
+		else if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(1)))
+		{
+			updateChartFragment(mEsmartRoom3Frag, data);
+		}
+		else if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(2)))
+		{
+			updateChartFragment(mEsmartRoom6Frag, data);
+		}
+//		switch(type)
+//		{
+//		case MID_SesameDisplayActivity.EDV_1_ID:
+//			updateChartFragment(mEsmartRoom1Frag, data);
+//			break;
+//		case MID_SesameDisplayActivity.EDV_3_ID:
+//			updateChartFragment(mEsmartRoom3Frag, data);
+//			break;
+//		case MID_SesameDisplayActivity.EDV_6_ID:
+//			updateChartFragment(mEsmartRoom6Frag, data);
+//			break;
+//		}
 	}
 	
 	private void setupEnergyMeter(MeterWheelFragment m) {
@@ -298,18 +312,43 @@ implements ISesameDataListener, INotificationListener
 			return;
 		}
 
-		String[] titles = new String[]{_frag.getTitle()};
+		String[] titles = new String[]{"aktuell", "vor 1 Woche"};
 
-		ArrayList<Date[]>dates = new ArrayList<Date[]>(1);
-		dates.add((Date[]) _data.getTimeStamps().toArray(new Date[_data.getTimeStamps().size()]));
+		ArrayList<Date[]>dates = new ArrayList<Date[]>(2);
+		Date today = DateHelper.getFirstDateToday();
+		Date lastWeek = DateHelper.getFirstDateXDaysAgo(7);
+		Date sixDaysAgo = DateHelper.getFirstDateXDaysAgo(6);
+		
+//		Log.e(TAG, "################today Start = "+today.toGMTString());
+		double[] todayData = _data.getValuesBetweenDates(today, new Date());
+		
+//		Log.e(TAG, "today:"+Arrays.toString(todayData));
+		double[] lastWeekData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
+		
+//		double[] lastWeekData = new double[todayData.length];
+//		for(int i = 0;i<todayData.length;i++)
+//		{
+//			lastWeekData[i]=i;
+//		}
+//		Log.e(TAG, "lastWeek:"+Arrays.toString(lastWeekData));
+		
+		
+		Date[] datesArr = _data.getDatesBetweenDates(today, new Date());
+//		dates.add((Date[]) _data.getTimeStamps().toArray(new Date[_data.getTimeStamps().size()]));
+		
 
-		ArrayList<double[]>values = new ArrayList<double[]>(1);
-		double[] temp = new double[_data.getValues().size()];
-		for(int i = 0;i<_data.getValues().size();i++)
-		{
-			temp[i]=_data.getValues().get(i);
-		}
-		values.add(temp);
+		ArrayList<double[]>values = new ArrayList<double[]>(2);
+//		double[] temp = new double[_data.getValues().size()];
+//		for(int i = 0;i<_data.getValues().size();i++)
+//		{
+//			temp[i]=_data.getValues().get(i);
+//		}
+//		values.add(temp);
+		values.add(lastWeekData);
+		values.add(todayData);
+		
+		dates.add(datesArr);
+		dates.add(datesArr);
 
 		try 
 		{

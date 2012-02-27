@@ -7,5 +7,5 @@ public interface IEnergyDataSource
 {
 	public ArrayList<SesameMeasurementPlace> getEnergyMeasurementPlaces();
 	
-	public SesameDataContainer getEnergyData(int _id, String _from, String _to);
+	public SesameDataContainer getEnergyData(SesameMeasurementPlace _smp, Date _from, Date _to);
 }

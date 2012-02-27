@@ -73,8 +73,8 @@ extends Fragment
 		mBottomTextSize = _bottomSize;
 		mSidePadding = _sidePadding;
 		mMeter = new EnergyMeter(mCtx);
-		mMeter.setMaxValue(1000);
-		mMeter.setMajorTickSpacing(250);
+		mMeter.setMaxValue(2000);
+		mMeter.setMajorTickSpacing(500);
 		mMeter.setMinorTickSpacing(100);
 		mWheelTextSize = _wheelTextSize;
 		mNumDigits = _numDigits;
@@ -168,7 +168,7 @@ extends Fragment
 		}
 		else
 		{
-			Log.e(TAG, "mWheels was null, creating new...");
+//			Log.e(TAG, "mWheels was null, creating new...");
 		}
 		mWheels = new ArrayList<WheelView>();
 		for(int i = 0;i<mNumDigits;i++)
@@ -179,7 +179,7 @@ extends Fragment
 
 	private void addDigit()
 	{
-		Log.e(TAG, "addDigit...");
+//		Log.e(TAG, "addDigit...");
 //		mUiHandler.post(new Runnable() {
 //
 //			@Override
@@ -194,7 +194,7 @@ extends Fragment
 				wv.setInterpolator(new BounceInterpolator());
 				//		wv.invalidateWheel(true);
 				mWheels.add(wv);
-				Log.e(TAG, "wheels size:"+mWheels.size());
+//				Log.e(TAG, "wheels size:"+mWheels.size());
 //			}
 //		});
 //		try {
@@ -207,13 +207,18 @@ extends Fragment
 
 	private boolean displayWheelValue(double _val)
 	{
+		if(null==mWheels)
+		{
+//			Log.e(TAG, "wheel was null");
+			return false;
+		}
 		final int[] digits = getDigits(_val);
 
 		if(digits.length>mNumDigits)
 		{	
 			return false;
 		}
-		Log.e(TAG, "displayWheelVal, size of wheelList:"+mWheels.size());
+//		Log.e(TAG, "displayWheelVal, size of wheelList:"+mWheels.size());
 		for(int i = 0;i<digits.length;i++)
 		{
 			final int val = digits[i];
