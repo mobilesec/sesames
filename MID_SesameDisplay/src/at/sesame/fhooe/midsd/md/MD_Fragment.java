@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,7 +28,9 @@ import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
 import at.sesame.fhooe.midsd.MID_SesameDisplayActivity;
 import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.data.ISesameDataListener;
+import at.sesame.fhooe.midsd.data.SesameDataCache;
 import at.sesame.fhooe.midsd.data.SesameDataContainer;
+import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
 import at.sesame.fhooe.midsd.ld.INotificationListener;
 import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
 
@@ -38,8 +41,10 @@ implements ISesameDataListener, INotificationListener
 	private static final String TAG = "MD_Fragment";
 
 	private static final long FLIP_TIMEOUT = 5000;
+	private static final long METER_WHEEL_UPDATE_TIMEOUT = 4000;
 
 	private Timer mFlipTimer = null;
+	private Timer mMeterWheelUpdateTimer = null;
 
 	private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
 
@@ -87,6 +92,22 @@ implements ISesameDataListener, INotificationListener
 			mFlipTimer.cancel();
 			mFlipTimer.purge();
 		}
+	}
+	
+	
+	public void stopMeterWheelUpdates()
+	{
+		if(null!=mMeterWheelUpdateTimer)
+		{
+			mMeterWheelUpdateTimer.cancel();
+			mMeterWheelUpdateTimer.purge();
+		}
+	}
+	public void startMeterWheelUpdates()
+	{
+		stopMeterWheelUpdates();
+		mMeterWheelUpdateTimer = new Timer();
+		mMeterWheelUpdateTimer.scheduleAtFixedRate(new MeterWheelUpdateTask(), 0, METER_WHEEL_UPDATE_TIMEOUT);
 	}
 
 	public void showNextFragment()
@@ -145,9 +166,9 @@ implements ISesameDataListener, INotificationListener
 		mEsmartRoom3Frag = new MD_chartFragment(room3Name);
 		mEsmartRoom6Frag = new MD_chartFragment(room6Name);
 		
-		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 5, 250);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 5, 250);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 5, 250);
+		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 6, 250);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 6, 250);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 6, 250);
 		
 		setupEnergyMeter(mEnergyMeterRoom1Frag);
 		setupEnergyMeter(mEnergyMeterRoom3Frag);
@@ -174,22 +195,33 @@ implements ISesameDataListener, INotificationListener
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) 
 	{
-		startFlipping();
 		return inflater.inflate(R.layout.md_layout, null);
+	}
+	
+	
+
+	@Override
+	public void onAttach(Activity activity) 
+	{
+		super.onAttach(activity);
+		startFlipping();
+		startMeterWheelUpdates();
 	}
 
 	@Override
 	public void onDestroyView() 
 	{
 		stopFlipping();
+		stopMeterWheelUpdates();
 		super.onDestroyView();
 	}
 	
 	@Override
 	public void onDetach() 
 	{
-		stopFlipping();
 		super.onDetach();
+		stopFlipping();
+		stopMeterWheelUpdates();
 	}
 
 	private class ViewFlipperTask extends TimerTask
@@ -199,6 +231,35 @@ implements ISesameDataListener, INotificationListener
 		{
 			showNextFragment();
 		}
+	}
+	
+	private class MeterWheelUpdateTask extends TimerTask
+	{
+
+		@Override
+		public void run() {
+			SesameDataCache cache = SesameDataCache.getInstance();
+			ArrayList<SesameMeasurementPlace> places = cache.getEnergyMeasurementPlaces();
+			double currentAtPlace1 = cache.getLastEnergyReading(places.get(0));
+			double overallAtPlace1 = cache.getOverallEnergyConsumtion(places.get(0));
+			
+			double currentAtPlace3 = cache.getLastEnergyReading(places.get(1));
+			double overallAtPlace3 = cache.getOverallEnergyConsumtion(places.get(1));
+			
+			double currentAtPlace6 = cache.getLastEnergyReading(places.get(2));
+			double overallAtPlace6 = cache.getOverallEnergyConsumtion(places.get(2));
+			
+			mEnergyMeterRoom1Frag.setMeterValue(currentAtPlace1);
+			mEnergyMeterRoom1Frag.setWheelValue(overallAtPlace1);
+			
+			mEnergyMeterRoom3Frag.setMeterValue(currentAtPlace3);
+			mEnergyMeterRoom3Frag.setWheelValue(overallAtPlace3);
+			
+			mEnergyMeterRoom6Frag.setMeterValue(currentAtPlace6);
+			mEnergyMeterRoom6Frag.setWheelValue(overallAtPlace6);
+			
+		}
+		
 	}
 
 	@Override

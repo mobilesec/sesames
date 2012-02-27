@@ -101,8 +101,10 @@ extends FragmentActivity
 						}
 					});		
 				}
-				
-				mLoadingDialog.dismiss();
+				if(null!=mLoadingDialog)
+				{
+					mLoadingDialog.dismiss();
+				}
 			}
 		}).start();
 	}

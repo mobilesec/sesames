@@ -58,16 +58,12 @@ extends Fragment
 	private int mSidePadding;
 
 	private Handler mUiHandler;
-	@Override
-	public void onAttach(Activity activity) 
-	{
-		startSimulation();
-		super.onAttach(activity);
-	}
+	
 
 
 	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, float _headerSize, String _bottom, float _bottomSize, int _wheelTextSize, int _numDigits, int _sidePadding)
 	{
+		this.setRetainInstance(true);
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
 		
@@ -77,19 +73,35 @@ extends Fragment
 		mBottomTextSize = _bottomSize;
 		mSidePadding = _sidePadding;
 		mMeter = new EnergyMeter(mCtx);
-
+		mMeter.setMaxValue(1000);
+		mMeter.setMajorTickSpacing(250);
+		mMeter.setMinorTickSpacing(100);
 		mWheelTextSize = _wheelTextSize;
 		mNumDigits = _numDigits;
 		mAdapter =new ArrayWheelAdapter<String>(mCtx, mDigits);
 		mAdapter.setTextSize(_wheelTextSize);
-		createWheels();
+		mUiHandler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				createWheels();
+			}
+		});
+		
 	}
 
-
+	@Override
+	public void onAttach(Activity activity) 
+	{
+		super.onAttach(activity);
+//		startSimulation();
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
+		
 		View v = inflater.inflate(R.layout.meter_wheel_layout, null);
 		TextView header = (TextView)v.findViewById(R.id.meter_wheel_layout_header_text);
 		header.setText(mHeaderText);
@@ -126,7 +138,10 @@ extends Fragment
 
 //		if(null==mWheelContainer)
 		{
-//			createWheels();
+			if(null==mWheels)
+			{
+				createWheels();
+			}
 			if(null!=mWheelContainer)
 			{
 				mWheelContainer.removeAllViews();
@@ -147,6 +162,14 @@ extends Fragment
 
 	private void createWheels()
 	{
+		if(null!=mWheels)
+		{
+			return;
+		}
+		else
+		{
+			Log.e(TAG, "mWheels was null, creating new...");
+		}
 		mWheels = new ArrayList<WheelView>();
 		for(int i = 0;i<mNumDigits;i++)
 		{
@@ -156,10 +179,11 @@ extends Fragment
 
 	private void addDigit()
 	{
-		mUiHandler.post(new Runnable() {
-
-			@Override
-			public void run() {
+		Log.e(TAG, "addDigit...");
+//		mUiHandler.post(new Runnable() {
+//
+//			@Override
+//			public void run() {
 				// TODO Auto-generated method stub
 				WheelView wv = new WheelView(mCtx);
 
@@ -170,9 +194,15 @@ extends Fragment
 				wv.setInterpolator(new BounceInterpolator());
 				//		wv.invalidateWheel(true);
 				mWheels.add(wv);
-			}
-		});
-
+				Log.e(TAG, "wheels size:"+mWheels.size());
+//			}
+//		});
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	private boolean displayWheelValue(double _val)
@@ -183,7 +213,7 @@ extends Fragment
 		{	
 			return false;
 		}
-
+		Log.e(TAG, "displayWheelVal, size of wheelList:"+mWheels.size());
 		for(int i = 0;i<digits.length;i++)
 		{
 			final int val = digits[i];
@@ -194,6 +224,7 @@ extends Fragment
 //				public void run() {
 					WheelView wv = mWheels.get(mWheels.size()-idx-1);
 					wv.setCurrentItem(val, true);
+					
 //					wv.invalidate();
 //				}
 //			});

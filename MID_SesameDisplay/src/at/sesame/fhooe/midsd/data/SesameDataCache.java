@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import android.util.Log;
-
 import at.sesame.fhooe.lib.util.DateHelper;
 import at.sesame.fhooe.lib.util.EsmartDateProvider;
-
 import at.sesame.fhooe.midsd.data.provider.EsmartDataProvider;
 import at.sesame.fhooe.midsd.data.provider.EzanDataProvider;
 import at.sesame.fhooe.midsd.demo.DataSimulator;
@@ -72,6 +71,9 @@ implements ISesameDataProvider
 	private static Hashtable<SesameMeasurementPlace, SesameDataContainer> mHumidityData = new Hashtable<SesameMeasurementPlace, SesameDataContainer>();
 	private static Hashtable<SesameMeasurementPlace, SesameDataContainer> mTemperatureData = new Hashtable<SesameMeasurementPlace, SesameDataContainer>();
 	private static Hashtable<SesameMeasurementPlace, SesameDataContainer> mLightData = new Hashtable<SesameMeasurementPlace, SesameDataContainer>();
+	
+	private static Date mFirstEnergyDate;
+	private static Date mLastEnergyDate;
 
 //	private static ArrayList<EsmartMeasurementPlace> mEsmartMeasurementPlaces = new ArrayList<EsmartMeasurementPlace>();
 
@@ -257,8 +259,6 @@ implements ISesameDataProvider
 		}
 		else
 		{
-
-			
 			for(int i = 0;i<_data.getTimeStamps().size();i++)
 			{
 				Date d = _data.getTimeStamps().get(i);
@@ -306,19 +306,6 @@ implements ISesameDataProvider
 		return mInstance;
 	}
 
-
-//	private EsmartMeasurementPlace getEsmartMeasurementPlaceById(int _id)
-//	{
-//		for(EsmartMeasurementPlace emp:mEsmartMeasurementPlaces)
-//		{
-//			if(emp.getId()==_id)
-//			{
-//				return emp;
-//			}
-//		}
-//		return null;
-//	}
-
 	public void updateEnergyData() 
 	{
 		Enumeration<SesameMeasurementPlace> listenerIt = mEnergyDataListener.keys();
@@ -346,11 +333,61 @@ implements ISesameDataProvider
 
 		resetUpdateTable(mEnergyDataUpdateTable, mEnergyMeasurementPlaces);
 	}
-
-
-
-
-
+	
+	public double getLastEnergyReading(SesameMeasurementPlace _smp)
+	{
+		SesameDataContainer energyData = mEnergyData.get(_smp);
+		Date last = new Date(0);
+		int latestDateIdx = -1;
+		for(int i = 0;i<energyData.getTimeStamps().size();i++)
+		{
+			Date current = energyData.getTimeStamps().get(i);
+			if(current.after(last))
+			{
+				last = current;
+				latestDateIdx =i;
+			}
+		}
+		
+		if(latestDateIdx==-1)
+		{
+			return Double.NaN;
+		}
+		return energyData.getValues().get(latestDateIdx);
+	}
+	
+	public double getOverallEnergyConsumtion(SesameMeasurementPlace _smp)
+	{
+		SesameDataContainer energyData = mEnergyData.get(_smp);
+		double overall = 0;
+		
+		for(Double d:energyData.getValues())
+		{
+			overall += d;
+		}
+		return overall;
+	}
+	
+	private Date[] calculateMinMaxDate(Hashtable<Date, SesameDataContainer> _source)
+	{
+		Date earliest = new Date(Long.MAX_VALUE);
+		Date latest = new Date(0);
+		Iterator<Date> keys = _source.keySet().iterator();
+		while(keys.hasNext())
+		{
+			Date current  = keys.next();
+			if(current.before(earliest))
+			{
+				earliest = current;
+			}
+			
+			if(current.after(latest))
+			{
+				latest = current;
+			}
+		}
+		return new Date[]{earliest, latest};
+	}
 
 	public void updateNotificationListener(String _msg) 
 	{
