@@ -55,7 +55,7 @@ implements INotificationListener
 	private NotificationManager mNotificationMan;
 	private static final String NOTIFICATION_TITLE ="Sesame Notification";
 	
-	private static final int WHEEL_TEXT_SIZE = 30;
+	private static final int WHEEL_TEXT_SIZE = 28;
 	
 	private boolean mShowNotifications = false;
 	
@@ -73,7 +73,7 @@ implements INotificationListener
 	
 	private void initializeNotification()
 	{
-		int icon = R.drawable.ic_warning;
+		int icon = R.drawable.ic_stat_warning;
 		CharSequence tickerText = "Hello NOTIFICATION";
 		long when = System.currentTimeMillis();
 		mNotification = new Notification(icon, tickerText, when);

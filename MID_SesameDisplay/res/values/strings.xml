@@ -4,14 +4,14 @@
     <string name="hello">Hello World, MID_SesameDisplayActivity!</string>
     <string name="app_name">MID_SesameDisplay</string>
     <string name="energy_display_separator">,</string>
-    <string name="ld_fragment_button_text_info">info</string>
-    <string name="ld_fragment_button_text_ok">ok</string>
+    <string name="ld_fragment_button_text_info">Info</string>
+    <string name="ld_fragment_button_text_ok">Ok</string>
     <string name="global_Room1_name">EDV 1</string>
     <string name="global_Room3_name">EDV 3</string>
     <string name="global_Room6_name">EDV 6</string>
     <string name="global_current">" aktuell "</string>
     <string name="mid_sesame_display_loading_dialog_title">Bitte warten...</string>
-    <string name="mid_sesame_display_loading_dialog_message">daten werden geladen</string>
+    <string name="mid_sesame_display_loading_dialog_message">Daten werden geladen</string>
     <string name="sesame_data_cache_cleanup_message">Sesame datacache cleaned up</string>
     <string name="hd_comparison_day_cb1_text">" vor 1 Woche"</string>
     <string name="hd_comparison_day_cb2_text">" vor 2 Wochen"</string>
@@ -21,7 +21,7 @@
     <string name="hd_comparison_week_cb2_text">2 Wochen zuvor</string>
     <string name="hd_comparison_week_cb3_text">3 Wochen zuvor</string>
     <string name="hd_comparison_week_cb4_text">4 Wochen zuvor</string>
-    <string name="pms_room_list_inactive_prefix">"Anzahl inaktiver Computer: "</string>
-    <string name="pms_room_list_active_prefix">"Anzahl aktiver Computer: "</string>
+    <string name="pms_room_list_inactive_prefix">"Inaktive Computer: "</string>
+    <string name="pms_room_list_active_prefix">"Aktive Computer: "</string>
 
 </resources>

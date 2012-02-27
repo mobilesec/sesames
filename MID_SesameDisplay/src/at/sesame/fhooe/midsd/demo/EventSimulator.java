@@ -17,7 +17,7 @@ implements INotificationProvider
 	private Random mRandom = new Random();
 	
 	private final String[] mRoomNumbers = new String[]{"1","3","6"};
-	private final String mNotificationPart1 = "Computer in Raum EDV";
+	private final String mNotificationPart1 = "Computer 'EDV1-CLIENT-02' in Raum EDV";
 	private final String mNotificationPart2 = " seit ";
 	private final String mNotificationPart3 = " Minuten inaktiv";
 	

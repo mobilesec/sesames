@@ -59,7 +59,7 @@ extends Fragment implements OnItemClickListener
 	{
 		ArrayList<ComputerRoomInformation> infos = new ArrayList<ComputerRoomInformation>();
 		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 10, 5));
-		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 3, 52));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 5, 12));
 		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 6, 15));
 		return infos;
 	}

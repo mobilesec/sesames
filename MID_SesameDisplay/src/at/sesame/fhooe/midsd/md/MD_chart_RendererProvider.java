@@ -6,6 +6,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import android.content.Context;
 import android.graphics.Color;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
+import at.sesame.fhooe.lib.util.DateHelper;
 
 public class MD_chart_RendererProvider 
 extends AbstractRendererProvider 
@@ -24,10 +25,12 @@ extends AbstractRendererProvider
 		if(arg0.getTitle().contains("aktuell"))
 		{
 			color = Color.GREEN;
+			mFillColorAlpha = 180;
 		}
 		else
 		{
-			color = Color.BLACK;
+			color = Color.CYAN;
+			mFillColorAlpha = 50;
 		}
 		xysr.setColor(color);
 		xysr.setLineWidth(3.0f);

@@ -37,6 +37,12 @@ extends DialogFragment
 		return v;
 	}
 
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Dialog);
+	}
+
 	
 	
 }

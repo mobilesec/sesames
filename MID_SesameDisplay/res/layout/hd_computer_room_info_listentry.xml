@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/list_computer_room_background" >
-
+
     <LinearLayout
         android:id="@+id/linHorz"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_weight="0.1" >
+        android:layout_weight="0.1"
+        android:gravity="center" >
 
         <LinearLayout
             android:id="@+id/linearLayout1"
@@ -28,14 +29,14 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Medium Text"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Medium Text"
@@ -47,15 +48,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.1"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/ic_pms_list_notification_empty"
+            android:paddingRight="5dp" />
 
         <ImageView
             android:id="@+id/hd_computer_room_info_listentry_arrow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.1"
-            android:src="@drawable/ic_launcher" />
-
+            android:src="@drawable/ic_arrow_right"
+            android:paddingRight="5dp" />
     </LinearLayout>
 
 </RelativeLayout>
