@@ -44,12 +44,14 @@ import at.sesame.fhooe.lib.pms.responsehandling.PMSBooleanResponseHandler;
 //http://192.168.2.7:8080/pms/
 @EndPoint("http://80.120.3.4:8080/pms")
 //@EndPoint("http://192.168.2.7:8080/pms")
+
 public interface IPMSService 
 {
 	
 	
 	@GET
 	@Path("/{mac}/status")
+	@ErrorHandler(PMSBooleanErrorHandler.class)
 	public PMSStatus getStatus(@PathParam("mac")String _mac);
 	
 	@POST
@@ -80,6 +82,7 @@ public interface IPMSService
 	
 	@GET
 	@Path("/clients")
+	@ErrorHandler(PMSBooleanErrorHandler.class)
 	public String getClients();
 	
 	@POST

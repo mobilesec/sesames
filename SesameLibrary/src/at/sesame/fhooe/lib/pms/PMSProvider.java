@@ -74,6 +74,10 @@ public class PMSProvider
 		ArrayList<String> macs = new ArrayList<String>();
 		try {
 			String macString = new DeviceListTask().execute(new Void[0]).get();
+			if(macString.equals(Boolean.toString(false)))
+			{
+				return null;
+			}
 //			String macString = mPMSService.getClients();
 			Log.e(TAG, macString);
 			JSONObject json = new JSONObject(macString);

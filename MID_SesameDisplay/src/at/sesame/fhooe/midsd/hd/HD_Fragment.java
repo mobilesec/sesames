@@ -92,21 +92,21 @@ implements INotificationListener
 //		mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 //		mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 //		mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
-		mUiHandler.post(new Runnable() {
-			
-			@Override
-			public void run() {
+//		mUiHandler.post(new Runnable() {
+//			
+//			@Override
+//			public void run() {
 				// TODO Auto-generated method stub
-				mPMSFrag = new PMSFragment(mCtx);
-			}
-		});
+				mPMSFrag = new PMSFragment(mCtx, mUiHandler);
+//			}
+//		});
 		
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(10);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		mTabFrag = new HD_TabFragment(mCtx, mFragMan);
 		
@@ -197,7 +197,7 @@ implements INotificationListener
 			double currentAtPlace6 = cache.getLastEnergyReading(places.get(2));
 			double overallAtPlace6 = cache.getOverallEnergyConsumtion(places.get(2));
 			
-			Log.e(TAG, "MeterWheelUpdate:"+currentAtPlace1+", "+currentAtPlace3+", "+currentAtPlace6);
+//			Log.e(TAG, "MeterWheelUpdate:"+currentAtPlace1+", "+currentAtPlace3+", "+currentAtPlace6);
 			mEdv1Frag.setMeterValue(currentAtPlace1);
 			mEdv1Frag.setWheelValue(overallAtPlace1);
 			
@@ -228,6 +228,7 @@ implements INotificationListener
 	{
 		if(mShowNotifications)
 		{
+			mPMSFrag.setShowNotification(true);
 			showNotification(NOTIFICATION_TITLE, _msg);			
 		}
 		

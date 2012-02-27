@@ -21,7 +21,7 @@ extends AsyncTask<Void, Void, String>
 	@Override
 	protected String doInBackground(Void... params) 
 	{
-		return PMSProvider.getPMS().getClients();
+		return (String)PMSProvider.getPMS().getClients();
 	}
 
 

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import at.sesame.fhooe.midsd.R;
 
@@ -20,6 +21,8 @@ extends ArrayAdapter<ComputerRoomInformation>
 	private ArrayList<ComputerRoomInformation> mInfos;
 	private LayoutInflater mLi;
 	private Context mCtx;
+	
+	private View mView;
 	public PMSListAdapter(Context context, int textViewResourceId,
 			List<ComputerRoomInformation> objects) {
 		super(context, textViewResourceId, objects);
@@ -32,25 +35,39 @@ extends ArrayAdapter<ComputerRoomInformation>
 	public View getView(int position, View convertView, ViewGroup parent) 
 	{
 		Log.e(TAG, "getView");
-		View v = convertView;
-		if(null==v)
+//		mView = convertView;
+//		if(null==v)
 		{
-			v = mLi.inflate(R.layout.hd_computer_room_info_listentry, null);
+			mView = mLi.inflate(R.layout.hd_computer_room_info_listentry, null);
 		}
 		
 		ComputerRoomInformation info = mInfos.get(position);
 		Log.e(TAG, info.toString());
-		TextView header = (TextView)v.findViewById(R.id.textView1);
+		TextView header = (TextView)mView.findViewById(R.id.textView1);
 		header.setText(info.getRoomName());
 
-		TextView idle = (TextView)v.findViewById(R.id.textView2);
+		TextView idle = (TextView)mView.findViewById(R.id.textView2);
 		idle.setText(mCtx.getString(R.string.pms_room_list_inactive_prefix)+info.getNumIdleComputers());
 		
-		TextView active = (TextView)v.findViewById(R.id.textView3);
+		TextView active = (TextView)mView.findViewById(R.id.textView3);
 		active.setText(mCtx.getString(R.string.pms_room_list_active_prefix)+info.getNumActiveComputers());
-		return v;
+		if(info.isShowNotification())
+		{
+			Log.e(TAG, "notification set....");
+			ImageView notification = (ImageView)mView.findViewById(R.id.hd_computer_room_info_listentry_notification);
+			notification.setImageResource(R.drawable.ic_pms_list_notification);
+		}
+		else
+		{
+			Log.e(TAG, "notification not set...");
+		}
+		
+		return mView;
 	}
 	
-	
+	public View getView()
+	{
+		return mView;
+	}
 
 }

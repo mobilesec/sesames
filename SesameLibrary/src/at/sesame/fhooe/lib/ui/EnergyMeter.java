@@ -65,20 +65,22 @@ public class EnergyMeter extends View {
 	float[] mColorLabelRange = { 0.6f, 0.8f, 1.0f };
 	int[] mColorLabels = { 0xff40c200, 0xffffae00, 0xff9e0e0e };
 	float mColorLabelWidth = 10.0f;
+	
+	private boolean mGraphicsLoaded = false;
 
 	public EnergyMeter(Context context, AttributeSet attrs, int _id) {
 		super(context, attrs, _id);
-		loadGraphics();
+//		loadGraphics();
 	}
 
 	public EnergyMeter(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		loadGraphics();
+//		loadGraphics();
 	}
 
 	public EnergyMeter(Context context) {
 		super(context);
-		loadGraphics();
+//		loadGraphics();
 	}
 
 	public boolean isDrawColorLabes() {
@@ -309,21 +311,21 @@ public class EnergyMeter extends View {
 			mDrawColorLabes = checkColorLabelRange();
 	}
 
-	@Override
-	protected void onAttachedToWindow() {
-		checkParent();
-		super.onAttachedToWindow();
-	}
+//	@Override
+//	protected void onAttachedToWindow() {
+//		checkParent();
+//		super.onAttachedToWindow();
+//	}
 
-	private void checkParent() {
-		View parent = (View) getParent();
-		if (null != parent) {
-			Log.e(TAG, "parentwidth=" + parent.getWidth() + ", parentheight="
-					+ parent.getHeight());
-		} else {
-			Log.e(TAG, "parent was null");
-		}
-	}
+//	private void checkParent() {
+//		View parent = (View) getParent();
+//		if (null != parent) {
+//			Log.e(TAG, "parentwidth=" + parent.getWidth() + ", parentheight="
+//					+ parent.getHeight());
+//		} else {
+//			Log.e(TAG, "parent was null");
+//		}
+//	}
 
 	// private float convertPxToDp(float px) {
 	// // DisplayMetrics metrics = new DisplayMetrics();
@@ -344,8 +346,13 @@ public class EnergyMeter extends View {
 	@Override
 	protected void onDraw(Canvas _c) {
 		super.onDraw(_c);
-		checkParent();
-		loadGraphics();
+//		checkParent();
+//		loadGraphics();
+		if(!mGraphicsLoaded)
+		{
+			mGraphicsLoaded = true;
+			loadGraphics();
+		}
 		double radius = mMaxRadius * mRelativeTickRadius;
 
 		// draw dial

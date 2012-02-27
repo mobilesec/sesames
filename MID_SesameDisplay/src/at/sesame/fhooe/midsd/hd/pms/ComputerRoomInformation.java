@@ -5,6 +5,7 @@ public class ComputerRoomInformation
 	private String mRoomName;
 	private int mNumIdleComputers;
 	private int mNumActiveComputers;
+	private boolean mShowNotification;
 	
 	public ComputerRoomInformation(String _name, int _numIdleComputers,int _numActiveComputers) 
 	{
@@ -32,6 +33,16 @@ public class ComputerRoomInformation
 	
 	public String getRoomName() {
 		return mRoomName;
+	}
+	
+	
+
+	public boolean isShowNotification() {
+		return mShowNotification;
+	}
+
+	public void setShowNotification(boolean _showNotification) {
+		this.mShowNotification = _showNotification;
 	}
 
 	@Override
