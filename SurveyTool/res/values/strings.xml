@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">SurveyTool zur Fingerprint Aufzeichnung</string>
+    <string name="app_name">SurveyTool</string>
+    <string name="fpi_laden_button">FPI laden</string>
+    <string name="recoder_view_ModeSelectionLabel">Modus auswählen: </string>
+    <string name="Toasts_no_measurement_points">Noch keine Messpunkte geladen! \nBitte Laden Sie eine FPI-Liste</string>
+    <string name="Recorder_View_choose_Room">Raum wählen</string>
+    <string name="RecorderView_act_mp">"Aktueller Messpunkt: "</string>
+    <string name="Toasts_FPI_data_successfully_loaded">FPI Daten wurden erfolgreich geladen.</string>
+    <string name="Toasts_WLAN_not_active">WLAN nicht aktiv. Bitte aktivieren Sie ihr WLAN um dieses Tool verwenden zu können.</string>
+    <string name="Toasts_no_valid_mp">Kein gültiger Messpunkt ausgewählt!</string>
+    <string name="Toasts_no_arff_name">Kein Name für die Arff Datei eingegeben!</string>
+    <string name="Toasts_no_arff_filename">Kein Dateiname für die Arff Datei eingegeben!</string>
+    <string name="Toasts_arff_file_saved_successfully">Speichern der Arff Datei war erfolgreich.</string>
+    <string name="Toasts_error_writing_arff">Speichern der Arff Datei ist fehlgeschlagen.</string>
+    <string name="Toasts_saving_mp_arff_failed">Speichern der Messpunkt Arff Datei ist fehlgeschlagen.</string>
+    <string name="Toasts_saving_mp_arff_successfully">Speichern der Messpunkt Arff Datei war erfolgreich.</string>
+    <string name="Toasts_input_not_a_number">Eingabe war keine gültige Zahl.</string>
+    <string name="Toasts_number_of_rows_to_big">Anzahl der MP in einer Reihe zu groß gewählt. In Einstellungen ändern!</string>
+    <string name="FileDialogView_path">"Pfad: "</string>
+    <string name="FileDialogView_unable_to_open_folder">Ordner kann nicht geöffnet werden!</string>
+    <string name="FileDialogView_OK_Field">OK</string>
+    <string name="FileDialogView_no_folder">Kein Ordner!</string>
+    <string name="VisualModeView_room">"Raum: "</string>
+    <string name="recorder_view_start_button_text">Start Messung</string>
+    <string name="recorder_view_mp_ready">"Messpunkt erreicht: "</string>
+    <string name="recorder_view_chose_mp_button">MP wählen</string>
+    <string name="recorder_view_chose_mp_label">"Messpunkt auswählen: "</string>
+    <string name="recorder_view_auto_mode_on_off">"Automatikmodus AUS/EIN: "</string>
+    <string name="recorder_view_act_mp">Aktueller Messpunkt:</string>
+    <string name="recorder_view_visual_mode_label">"Visueller Modus: "</string>
+    <string name="recorder_view_open_visual_mode_button">Öffnen</string>
+    <string name="save_arff_file_view_save">Speichern</string>
+    <string name="save_arff_file_view_filename">Dateiname:</string>
+    <string name="settings_view_count_of_measurements">"Anzahl der Messungen: "</string>
+    <string name="settings_view_save_button">Speichern</string>
+    <string name="settings_view_auto_save_label">Automatisches Speichern:</string>
+    <string name="visual_mode_view_room">"Raum: "</string>
+    <string name="RecorderView_Dialog_choose_mp">Messpunkt wählen</string>
+    <string name="RecorderView_measurements_recieved">" Messungen empfangen"</string>
+
+</resources>

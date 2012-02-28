@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout
+	android:id="@+id/widget35"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+<TextView
+	android:id="@+id/settings_view_Label1"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="@string/settings_view_count_of_measurements"
+	android:layout_x="14dp"
+	android:layout_y="18dp" />
+<EditText
+	android:id="@+id/setting_view_MesaureCountField"
+	android:layout_width="70px"
+	android:layout_height="wrap_content"
+	android:layout_x="196dp"
+	android:layout_y="10dp" />
+<Button
+	android:id="@+id/settings_view_saveButton"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="@string/settings_view_save_button"
+	android:layout_x="128dp"
+	android:layout_y="357dp" />
+
+<TextView
+    android:id="@+id/settings_view_Label2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_x="14dp"
+    android:layout_y="82dp"
+    android:text="@string/settings_view_auto_save_label" />
+
+<CheckBox
+    android:id="@+id/settings_view_autoSaveCheckBox"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_x="200dp"
+    android:layout_y="68dp" />
+
+</AbsoluteLayout>

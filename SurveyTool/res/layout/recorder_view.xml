@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout
+	android:id="@+id/widget39"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+<Button
+	android:id="@+id/startAtMPButton"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="@string/recorder_view_start_button_text"
+	android:layout_x="181dp"
+	android:layout_y="191dp" />
+<TextView
+	android:id="@+id/startOnMPLabel"
+	android:layout_width="wrap_content"
+	android:layout_height="27px"
+	android:layout_marginTop="17dp"
+	android:text="@string/recorder_view_mp_ready"
+	android:layout_x="16dp"
+	android:layout_y="199dp" />
+<Button
+	android:id="@+id/chooseMPButton"
+	android:layout_width="160px"
+	android:layout_height="wrap_content"
+	android:text="@string/recorder_view_chose_mp_button"
+	android:layout_x="182dp"
+	android:layout_y="69dp" />
+<TextView
+	android:id="@+id/chooseMPLabel"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_marginTop="26dp"
+	android:text="@string/recorder_view_chose_mp_label"
+	android:layout_x="8dp"
+	android:layout_y="76dp" />
+<TextView
+	android:id="@+id/selcetModeLabel"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_marginLeft="46dp"
+	android:text="@string/recorder_view_auto_mode_on_off"
+	android:layout_x="10dp"
+	android:layout_y="28dp" />
+<CheckBox
+	android:id="@+id/recorder_view_autoCheckBox"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_x="215dp"
+	android:layout_y="18dp" />
+<TextView
+	android:id="@+id/recorder_view_actMPTextView"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="@string/recorder_view_act_mp"
+	android:layout_x="12dp"
+	android:layout_y="136dp" />
+<TextView
+	android:id="@+id/recorder_view_actMPLabel"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="MPx"
+	android:textSize="18sp"
+	android:textStyle="bold"
+	android:layout_x="210dp"
+	android:layout_y="137dp" />
+
+<TextView
+    android:id="@+id/recorder_view_visualLabel"
+    android:layout_width="116dp"
+    android:layout_height="wrap_content"
+    android:layout_x="28dp"
+    android:layout_y="397dp"
+    android:text="@string/recorder_view_visual_mode_label" />
+
+<Button
+    android:id="@+id/recorder_view_visualButton"
+    android:layout_width="107dp"
+    android:layout_height="wrap_content"
+    android:layout_x="184dp"
+    android:layout_y="386dp"
+    android:text="@string/recorder_view_open_visual_mode_button" />
+
+</AbsoluteLayout>

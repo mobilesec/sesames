@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget0"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <Button
+        android:id="@+id/save_arff_file_view_saveButton"
+        android:layout_width="184px"
+        android:layout_height="wrap_content"
+        android:layout_x="98dp"
+        android:layout_y="336dp"
+        android:text="@string/save_arff_file_view_save" />
+
+    <TextView
+        android:id="@+id/save_arff_file_view_fileNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="24px"
+        android:layout_x="18dp"
+        android:layout_y="36dp"
+        android:text="@string/save_arff_file_view_filename" />
+
+    <EditText
+        android:id="@+id/save_arff_file_view_fileNameTextField"
+        android:layout_width="294px"
+        android:layout_height="wrap_content"
+        android:layout_x="102dp"
+        android:layout_y="30dp"
+        android:textSize="15sp" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/save_arff_file_view_chooseDirButton"
+        android:layout_width="150px"
+        android:layout_height="wrap_content"
+        android:layout_x="16dp"
+        android:layout_y="103dp"
+        android:text="Pfad wählen" />
+
+    <TextView
+        android:id="@+id/save_arff_file_view_PathLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="24px"
+        android:layout_x="138dp"
+        android:layout_y="119dp"
+        android:text="/root" />
+
+</AbsoluteLayout>
