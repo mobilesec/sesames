@@ -204,6 +204,19 @@ implements ISesameDataListener, INotificationListener
 	
 
 	@Override
+	public void onPause() {
+		stopFlipping();
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		startFlipping();
+	}
+
+	@Override
 	public void onAttach(Activity activity) 
 	{
 		super.onAttach(activity);
@@ -313,18 +326,32 @@ implements ISesameDataListener, INotificationListener
 			return;
 		}
 
-		String[] titles = new String[]{"aktuell", "vor 1 Woche"};
+		String[] titles = new String[]{" aktuell", "vor 1 Woche"};
+		ArrayList<String> titleList = new ArrayList<String>();
+		
+		for(String s:titles)
+		{
+			titleList.add(s);
+		}
 
-		ArrayList<Date[]>dates = new ArrayList<Date[]>(2);
+//		ArrayList<Date[]>dates = new ArrayList<Date[]>(2);
 		Date today = DateHelper.getFirstDateToday();
 		Date lastWeek = DateHelper.getFirstDateXDaysAgo(7);
 		Date sixDaysAgo = DateHelper.getFirstDateXDaysAgo(6);
 		
 //		Log.e(TAG, "################today Start = "+today.toGMTString());
-		double[] todayData = _data.getValuesBetweenDates(today, new Date());
+		Double[] todayData = _data.getValuesBetweenDates(today, new Date());
 		
 //		Log.e(TAG, "today:"+Arrays.toString(todayData));
-		double[] lastWeekData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
+		Double[] lastWeekData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
+		
+		Double[] lastWeekDataCropped = new Double[todayData.length];
+		for(int i =0;i<todayData.length;i++)
+		{
+			lastWeekDataCropped[i]=lastWeekData[i];
+		}
+		
+		Log.e(TAG, "todayLength:"+todayData.length+", week data length:"+lastWeekDataCropped.length);
 		
 //		double[] lastWeekData = new double[todayData.length];
 //		for(int i = 0;i<todayData.length;i++)
@@ -334,26 +361,31 @@ implements ISesameDataListener, INotificationListener
 //		Log.e(TAG, "lastWeek:"+Arrays.toString(lastWeekData));
 		
 		
-		Date[] datesArr = _data.getDatesBetweenDates(today, new Date());
+//		Date[] datesArr = _data.getDatesBetweenDates(today, new Date());
 //		dates.add((Date[]) _data.getTimeStamps().toArray(new Date[_data.getTimeStamps().size()]));
 		
 
-		ArrayList<double[]>values = new ArrayList<double[]>(2);
+		ArrayList<Double[]>values = new ArrayList<Double[]>(2);
 //		double[] temp = new double[_data.getValues().size()];
 //		for(int i = 0;i<_data.getValues().size();i++)
 //		{
 //			temp[i]=_data.getValues().get(i);
 //		}
 //		values.add(temp);
-		values.add(lastWeekData);
+		
+		
+		values.add(lastWeekDataCropped);
 		values.add(todayData);
 		
-		dates.add(datesArr);
-		dates.add(datesArr);
+//		dates.add(datesArr);
+//		dates.add(datesArr);
 
 		try 
 		{
-			XYMultipleSeriesDataset dataset = mDatasetProvider.buildDateDataset(titles, dates, values);
+//			XYMultipleSeriesDataset dataset = mDatasetProvider.buildDateDataset(titles, dates, values);
+			mDatasetProvider.createDataset(titleList, values);
+			XYMultipleSeriesDataset dataset = mDatasetProvider.getDataset();
+			
 			mRendererProvider.createMultipleSeriesRenderer(dataset);
 
 			XYMultipleSeriesRenderer renderer = mRendererProvider.getRenderer();

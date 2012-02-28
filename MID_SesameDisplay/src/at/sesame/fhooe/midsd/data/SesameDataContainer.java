@@ -96,7 +96,7 @@ public class SesameDataContainer
 	
 	public SesameDataContainer filterByDate(Date _from, Date _to)
 	{
-		double[] values = getValuesBetweenDates(_from, _to);
+		Double[] values = getValuesBetweenDates(_from, _to);
 		Date[] dates = getDatesBetweenDates(_from, _to);
 		
 		ArrayList<Double> valueList = new ArrayList<Double>(values.length);
@@ -110,7 +110,7 @@ public class SesameDataContainer
 		return new SesameDataContainer(mPlace, mId, dateList, valueList);
 	}
 	
-	public double[] getValuesBetweenDates(Date _from, Date _to)
+	public Double[] getValuesBetweenDates(Date _from, Date _to)
 	{
 		ArrayList<Integer>mSelectedIndexes = new ArrayList<Integer>();
 		Log.e(TAG, "from:"+_from.toGMTString());
@@ -133,7 +133,7 @@ public class SesameDataContainer
 		{
 			return null;
 		}
-		double[] res = new double[mSelectedIndexes.size()];
+		Double[] res = new Double[mSelectedIndexes.size()];
 		
 		for(int i = 0;i<mSelectedIndexes.size();i++)
 		{

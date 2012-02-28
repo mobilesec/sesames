@@ -28,17 +28,18 @@ implements IRendererProvider
 		mRenderer.setZoomEnabled(true, false);
 		mRenderer.setZoomRate(10);
 		mRenderer.setFitLegend(true);
-		mRenderer.setPanEnabled(true, false);
+		mRenderer.setPanEnabled(false, false);
 		mRenderer.setAntialiasing(true);
 		mRenderer.setShowGrid(true);
 		mRenderer.setYLabelsAlign(Align.RIGHT);
+		mRenderer.setShowLabels(true);
 	}
 
 	@Override
 	public void createMultipleSeriesRenderer(Object... _data) throws RendererInitializationException
 	{
 		mRenderer = new XYMultipleSeriesRenderer();
-		setupRenderer();
+		
 		XYMultipleSeriesDataset data = null;
 		try
 		{
@@ -49,12 +50,11 @@ implements IRendererProvider
 			throw new RendererInitializationException("passed parameter had wrong type (XYMultipleSeriesDataset expected)");
 		}
 		
-		mRenderer.setXLabels(10);
-		
 		for(XYSeries series:data.getSeries())
 		{
 			mRenderer.addSeriesRenderer(setupSeriesRenderer(series));
 		}
+		setupRenderer();
 	}
 	
 	@Override

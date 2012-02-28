@@ -52,12 +52,12 @@ extends AbstractDatasetProvider
 		for(int i =0;i<rawData.size();i++)
 		{
 			Double[] yValues = rawData.get(i);
-			XYSeries series = new XYSeries(titles.get(i));
+			XYSeries series = new XYSeries(titles.get(i),0);
 			for(int j = 0;j<yValues.length;j++)
 			{
 				series.add(j, yValues[j]);
 			}
-			mDataset.addSeries(series);
+			mDataset.addSeries(i, series);
 		}
 		return mDataset.getSeriesCount();
 		
@@ -102,7 +102,7 @@ extends AbstractDatasetProvider
 			for (int k = 0; k < seriesLength; k++) {
 				series.add(xV[k], yV[k]);
 			}
-			mDataset.addSeries(series);
+			mDataset.addSeries(i,series);
 		}
 		return mDataset;
 	}
