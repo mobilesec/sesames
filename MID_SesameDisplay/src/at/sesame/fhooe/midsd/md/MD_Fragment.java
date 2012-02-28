@@ -42,7 +42,7 @@ implements ISesameDataListener, INotificationListener
 {
 	private static final String TAG = "MD_Fragment";
 
-	private static final long FLIP_TIMEOUT = 5000;
+	private static final long FLIP_TIMEOUT = 20000;
 	private static final long METER_WHEEL_UPDATE_TIMEOUT = 4000;
 
 	private Timer mFlipTimer = null;
@@ -312,10 +312,10 @@ implements ISesameDataListener, INotificationListener
 	
 	private void setupEnergyMeter(MeterWheelFragment m) {
 		if (m != null) {
-			m.setColorLabelWidth(50.0f);
-			m.setTickTextSize(40.0f);
-			m.setMinorTickLength(60);
-			m.setMajorTickLength(80);
+			m.setColorLabelWidth(30.0f);
+			m.setTickTextSize(35.0f);
+			m.setMinorTickLength(40);
+			m.setMajorTickLength(60);
 		}
 	}
 

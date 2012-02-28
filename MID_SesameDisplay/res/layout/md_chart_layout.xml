@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/ic_launcher"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/md_chart_layout_header_textview"
