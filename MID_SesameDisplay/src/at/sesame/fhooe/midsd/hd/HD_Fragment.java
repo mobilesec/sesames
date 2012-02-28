@@ -215,6 +215,9 @@ implements INotificationListener
 	
 	private void showNotification(String _title, String _text)
 	{
+		// UL: in case for HD to correspond with the mocked screenshots for PMS text will be static
+		_text =  "Computer 'EDV1-CLIENT-02' in Raum EDV1 seit 3h inaktiv";
+		
 		Intent notificationIntent = new Intent(mCtx, HD_Fragment.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(mCtx, 0, notificationIntent, 0);
 		mNotification.tickerText = _text;
