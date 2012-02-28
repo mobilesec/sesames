@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import at.sesame.fhooe.midsd.MID_SesameDisplayActivity;
 import at.sesame.fhooe.midsd.R;
 import at.sesame.fhooe.midsd.data.SesameDataCache;
 import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
@@ -86,9 +87,10 @@ implements INotificationListener
 		String room3Name = mCtx.getString(R.string.global_Room3_name);
 		String room6Name = mCtx.getString(R.string.global_Room6_name);
 		
-		mEdv1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 20.0f, "test1", 14.0f, WHEEL_TEXT_SIZE, 6, 0);
-		mEdv3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 20.0f, "test1", 14.0f, WHEEL_TEXT_SIZE, 6, 0);
-		mEdv6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 20.0f, "test1", 14.0f, WHEEL_TEXT_SIZE, 6, 0);
+		
+		mEdv1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, 0);
+		mEdv3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, 0);
+		mEdv6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, 0);
 //		mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 //		mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 //		mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);

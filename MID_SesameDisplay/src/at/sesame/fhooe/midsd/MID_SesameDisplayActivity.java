@@ -1,7 +1,11 @@
 package at.sesame.fhooe.midsd;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import android.graphics.YuvImage;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,6 +36,8 @@ extends FragmentActivity
 	private static final String TAG = "MID_SesameDisplay";
 	
 	private static final boolean USE_MOCK_DATA = true;
+	
+//	public static final Date START_DATE = new Date(2011, 11, 04);
 	
 	public static final int EDV_1_ID = 15;
 	public static final int EDV_3_ID = 18;
@@ -156,6 +162,10 @@ extends FragmentActivity
 
 	private void setShownFragment(Fragment _frag)
 	{
+		if(_frag.equals(mCurFrag))
+		{
+			return;
+		}
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 
@@ -168,4 +178,16 @@ extends FragmentActivity
 		ft.commit();
 		mCurFrag = _frag;
 	}    
+	
+	public static Date getStartDate()
+	{
+		GregorianCalendar cal = new GregorianCalendar(2011,10,04);
+		return cal.getTime();
+	}
+	
+//	public String getStartDateText()
+//	{
+//		String dateText = 
+//		return dateText;
+//	}
 }

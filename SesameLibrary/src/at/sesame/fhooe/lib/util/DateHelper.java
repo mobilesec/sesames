@@ -3,6 +3,7 @@ package at.sesame.fhooe.lib.util;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class DateHelper 
 {
@@ -80,5 +81,11 @@ public class DateHelper
 		res.setTime(getFirstDateToday());
 		res.add(Calendar.DATE, _daysAgo*-1);
 		return res.getTime();
+	}
+	
+	public static String getTodaysWeekDayName()
+	{
+		GregorianCalendar cal = new GregorianCalendar();
+		return cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.GERMAN);
 	}
 }

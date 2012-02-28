@@ -70,17 +70,17 @@ public class EnergyMeter extends View {
 
 	public EnergyMeter(Context context, AttributeSet attrs, int _id) {
 		super(context, attrs, _id);
-//		loadGraphics();
+		loadGraphics();
 	}
 
 	public EnergyMeter(Context context, AttributeSet attrs) {
 		super(context, attrs);
-//		loadGraphics();
+		loadGraphics();
 	}
 
 	public EnergyMeter(Context context) {
 		super(context);
-//		loadGraphics();
+		loadGraphics();
 	}
 
 	public boolean isDrawColorLabes() {

@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import at.sesame.fhooe.lib.ui.EnergyMeter;
+import at.sesame.fhooe.midsd.MID_SesameDisplayActivity;
 import at.sesame.fhooe.midsd.R;
 
 public class MeterWheelFragment
@@ -61,7 +62,7 @@ extends Fragment
 	
 
 
-	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, float _headerSize, String _bottom, float _bottomSize, int _wheelTextSize, int _numDigits, int _sidePadding)
+	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, float _headerSize, float _bottomSize, int _wheelTextSize, int _numDigits, int _sidePadding)
 	{
 		this.setRetainInstance(true);
 		mCtx = _ctx;
@@ -69,7 +70,7 @@ extends Fragment
 		
 		mHeaderText = _header;
 		mHeaderTextSize = _headerSize;
-		mBottomText = _bottom;
+		mBottomText = mCtx.getString(R.string.MeterWheelFrag_bottom_text)+MID_SesameDisplayActivity.getStartDate().toLocaleString();
 		mBottomTextSize = _bottomSize;
 		mSidePadding = _sidePadding;
 		mMeter = new EnergyMeter(mCtx);

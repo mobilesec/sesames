@@ -164,13 +164,14 @@ implements ISesameDataListener, INotificationListener
 		String room3Name = mCtx.getString(R.string.global_Room3_name);
 		String room6Name = mCtx.getString(R.string.global_Room6_name);
 		
+		
 		mEsmartRoom1Frag = new MD_chartFragment(room1Name);
 		mEsmartRoom3Frag = new MD_chartFragment(room3Name);
 		mEsmartRoom6Frag = new MD_chartFragment(room6Name);
 		
-		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 6, 250);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 6, 250);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 100.0f, "test1", 30.0f, WHEEL_TEXT_SIZE, 6, 250);
+		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250);
 		
 		setupEnergyMeter(mEnergyMeterRoom1Frag);
 		setupEnergyMeter(mEnergyMeterRoom3Frag);

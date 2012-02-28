@@ -11,9 +11,9 @@ implements INotificationSource
 
 	private Random mRandom = new Random();
 	
-	private final String[] mRoomNumbers = new String[]{"1","3","6"};
-	private final String mNotificationPart1 = "Computer in Raum EDV";
-	private final String mNotificationPart2 = " seit ";
+//	private final String[] mRoomNumbers = new String[]{"1","3","6"};
+	private final String mNotificationPart1 = "Computer 'EDV1-Client-";
+	private final String mNotificationPart2 = "' in Raum EDV1 seit ";
 	private final String mNotificationPart3 = " Minuten inaktiv";
 	
 	private static final double MIN_NOTIFICATION_IDLE_TIME = 3600000;
@@ -22,12 +22,11 @@ implements INotificationSource
 	@Override
 	public String getNotification()
 	{
-		int roomIdx = mRandom.nextInt(mRoomNumbers.length);
 		double idleTime = MIN_NOTIFICATION_IDLE_TIME+mRandom.nextDouble()*(MAX_NOTIFICATION_IDLE_TIME-MIN_NOTIFICATION_IDLE_TIME);
 		
 		StringBuilder res = new StringBuilder();
 		res.append(mNotificationPart1);
-		res.append(mRoomNumbers[roomIdx]);
+		res.append(mRandom.nextInt(100));
 		res.append(mNotificationPart2);
 		res.append(DateHelper.convertMStoReadableString(idleTime, false));
 		res.append(mNotificationPart3);
