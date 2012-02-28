@@ -31,7 +31,7 @@ extends FragmentActivity
 	private void testView()
 	{
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.add(R.id.contentFrame, new MeterWheelFragment(getApplicationContext(), mUiHandler,  "asdf", 20.0f,16.0f, 100, 5, 0));
+		ft.add(R.id.contentFrame, new MeterWheelFragment(getApplicationContext(), mUiHandler,  "asdf", 20.0f,16.0f, 100, 5, 0, true));
 		ft.commit();
 	}
 	

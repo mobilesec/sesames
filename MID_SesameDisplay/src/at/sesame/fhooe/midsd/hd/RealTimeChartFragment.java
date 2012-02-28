@@ -68,7 +68,7 @@ implements OnCheckedChangeListener
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mRendererProvider = new HD_chart_RendererProvider(activity);
+		mRendererProvider = new HD_chart_RendererProvider(activity,true);
 	}
 
 

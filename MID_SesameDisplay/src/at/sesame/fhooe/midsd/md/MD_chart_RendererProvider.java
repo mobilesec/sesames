@@ -5,38 +5,33 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
 
 public class MD_chart_RendererProvider 
 extends AbstractRendererProvider 
 {
-	private static final String TAG = "~~~~~~~~~~~~~~~~~~";
 	private int mFillColorAlpha = 180;
-	private static final String[] X_LABLES = new String[]{"8:00","10:00","12:00","14:00","16:00","18:00"};
+	
 	
 	public MD_chart_RendererProvider(Context _ctx) 
 	{
 		super(_ctx);
 	}
 	
+	public MD_chart_RendererProvider(Context _ctx, boolean _createFixedLabels)
+	{
+		super(_ctx, _createFixedLabels);
+	}
+	
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();
 
-		Log.e(TAG, "series min="+arg0.getMinX()+", series max = "+arg0.getMaxX());
-		if(mRenderer.getXAxisMin()>arg0.getMinX())
-		{
-			mRenderer.setXAxisMin(arg0.getMinX());
-		}
-		if(mRenderer.getXAxisMax()<arg0.getMaxX())
-		{
-			mRenderer.setXAxisMax(arg0.getMaxX());
-		}
+		
 		int color;
 		if(arg0.getTitle().contains("aktuell"))
 		{
-			color = Color.RED;
+			color = Color.GREEN;
 			mFillColorAlpha = 180;
 		}
 		else
@@ -55,7 +50,6 @@ extends AbstractRendererProvider
 	@Override
 	protected void setupRenderer() {
 		super.setupRenderer();
-		Log.e(TAG, "setupRenderer");
 		mRenderer.setShowGrid(false);
 		mRenderer.setApplyBackgroundColor(false);
 		mRenderer.setMarginsColor(0x00ffffff);
@@ -71,30 +65,7 @@ extends AbstractRendererProvider
 		mRenderer.setZoomEnabled(false, false);
 		mRenderer.setYTitle("kW");
 		mRenderer.setAxisTitleTextSize(20);
-		
-		createLabels();
 	}
 	
-	private void createLabels() {
-		// TODO Auto-generated method stub
-		mRenderer.clearXTextLabels();
-		mRenderer.setXLabels(0);
-//		mRenderer.clearTextLabels();
-		mRenderer.setXLabels(X_LABLES.length);
-		double min = mRenderer.getXAxisMin();
-		double max = mRenderer.getXAxisMax();
-		Log.e(TAG, "min="+min+", max="+max);
-		double labelStepWidth = (max-min)/X_LABLES.length;
-		Log.e(TAG, "stepWidth="+labelStepWidth);
-		
-		double value = mRenderer.getXAxisMin();
-		for(int i = 0;i<X_LABLES.length;i++)
-		{
-			String label = X_LABLES[i];
-			
-//			mRenderer.addXTextLabel(value, label);
-			Log.e(TAG, "adding x label:"+label);
-			value+=labelStepWidth;
-		}
-	}
+	
 }

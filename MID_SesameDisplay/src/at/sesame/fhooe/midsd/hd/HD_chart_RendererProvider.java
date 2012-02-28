@@ -17,6 +17,10 @@ extends AbstractRendererProvider
 	{
 		super(_ctx);
 	}
+	public HD_chart_RendererProvider(Context _ctx, boolean _createFixedLabels) 
+	{
+		super(_ctx, _createFixedLabels);
+	}
 	
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {

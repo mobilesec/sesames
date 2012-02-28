@@ -1,5 +1,6 @@
 package at.sesame.fhooe.midsd.ui;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -60,9 +61,12 @@ extends Fragment
 
 	private Handler mUiHandler;
 	
+	private SimpleDateFormat mDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+	private boolean mMockValue = false;
+	
+	private double mDefaultWheelValue;
 
-
-	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, float _headerSize, float _bottomSize, int _wheelTextSize, int _numDigits, int _sidePadding)
+	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, float _headerSize, float _bottomSize, int _wheelTextSize, int _numDigits, int _sidePadding, boolean _variateValue)
 	{
 		this.setRetainInstance(true);
 		mCtx = _ctx;
@@ -70,7 +74,7 @@ extends Fragment
 		
 		mHeaderText = _header;
 		mHeaderTextSize = _headerSize;
-		mBottomText = mCtx.getString(R.string.MeterWheelFrag_bottom_text)+MID_SesameDisplayActivity.getStartDate().toLocaleString();
+		mBottomText = mCtx.getString(R.string.MeterWheelFrag_bottom_text)+mDateFormat.format(MID_SesameDisplayActivity.getStartDate());
 		mBottomTextSize = _bottomSize;
 		mSidePadding = _sidePadding;
 		mMeter = new EnergyMeter(mCtx);
@@ -81,6 +85,8 @@ extends Fragment
 		mNumDigits = _numDigits;
 		mAdapter =new ArrayWheelAdapter<String>(mCtx, mDigits);
 		mAdapter.setTextSize(_wheelTextSize);
+		mMockValue = _variateValue;
+		mDefaultWheelValue = 300000+new Random().nextDouble()*50000;
 		mUiHandler.post(new Runnable() {
 			
 			@Override
@@ -205,6 +211,20 @@ extends Fragment
 //			e.printStackTrace();
 //		}
 	}
+	
+	private double variateValue(double _val, double _percentage)
+	{
+
+		int fac = 1;
+		Random r = new Random(System.currentTimeMillis());
+		if(r.nextBoolean())
+		{
+			fac*=-1;
+		}
+		double maxVariation = _percentage * _val /100;
+		return _val + r.nextDouble()* maxVariation * fac;
+		
+	}
 
 	private boolean displayWheelValue(double _val)
 	{
@@ -213,7 +233,13 @@ extends Fragment
 //			Log.e(TAG, "wheel was null");
 			return false;
 		}
-		final int[] digits = getDigits(_val);
+		double value = _val;
+		if(mMockValue)
+		{
+			value = mDefaultWheelValue;
+//			value = variateValue(_val,10);
+		}
+		final int[] digits = getDigits(value);
 
 		if(digits.length>mNumDigits)
 		{	
@@ -309,8 +335,13 @@ extends Fragment
 	
 	public void setMeterValue(double _val)
 	{
+		double value = _val;
+		if(mMockValue)
+		{
+			value = variateValue(_val,10);
+		}
 		try {
-			mMeter.setValue(_val);
+			mMeter.setValue(value);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

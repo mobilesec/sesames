@@ -18,6 +18,10 @@ extends AbstractRendererProvider
 	{
 		super(_ctx);
 	}
+	public HD_Comparison_Line_RendererProvider(Context _ctx, boolean _createFixedLabels) 
+	{
+		super(_ctx, _createFixedLabels);
+	}
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();

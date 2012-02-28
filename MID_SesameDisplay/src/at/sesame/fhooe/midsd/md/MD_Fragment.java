@@ -76,7 +76,7 @@ implements ISesameDataListener, INotificationListener
 	{
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
-		mRendererProvider = new MD_chart_RendererProvider(mCtx);
+		mRendererProvider = new MD_chart_RendererProvider(mCtx, true);
 		createFragments(_fm);
 	}
 
@@ -169,9 +169,9 @@ implements ISesameDataListener, INotificationListener
 		mEsmartRoom3Frag = new MD_chartFragment(room3Name);
 		mEsmartRoom6Frag = new MD_chartFragment(room6Name);
 		
-		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250);
+		mEnergyMeterRoom1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250, true);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250, true);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250, true);
 		
 		setupEnergyMeter(mEnergyMeterRoom1Frag);
 		setupEnergyMeter(mEnergyMeterRoom3Frag);
@@ -209,12 +209,12 @@ implements ISesameDataListener, INotificationListener
 		super.onPause();
 	}
 
-	@Override
-	public void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		startFlipping();
-	}
+//	@Override
+//	public void onResume() {
+//		// TODO Auto-generated method stub
+//		super.onResume();
+//		startFlipping();
+//	}
 
 	@Override
 	public void onAttach(Activity activity) 
@@ -334,18 +334,18 @@ implements ISesameDataListener, INotificationListener
 			titleList.add(s);
 		}
 
-//		ArrayList<Date[]>dates = new ArrayList<Date[]>(2);
+		ArrayList<Date[]>dates = new ArrayList<Date[]>(2);
 		Date today = DateHelper.getFirstDateToday();
 		Date lastWeek = DateHelper.getFirstDateXDaysAgo(7);
 		Date sixDaysAgo = DateHelper.getFirstDateXDaysAgo(6);
 		
 //		Log.e(TAG, "################today Start = "+today.toGMTString());
-		Double[] todayData = _data.getValuesBetweenDates(today, new Date());
+		double[] todayData = _data.getValuesBetweenDates(today, new Date());
 		
 //		Log.e(TAG, "today:"+Arrays.toString(todayData));
-		Double[] lastWeekData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
+		double[] lastWeekData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
 		
-		Double[] lastWeekDataCropped = new Double[todayData.length];
+		double[] lastWeekDataCropped = new double[todayData.length];
 		for(int i =0;i<todayData.length;i++)
 		{
 			lastWeekDataCropped[i]=lastWeekData[i];
@@ -361,11 +361,11 @@ implements ISesameDataListener, INotificationListener
 //		Log.e(TAG, "lastWeek:"+Arrays.toString(lastWeekData));
 		
 		
-//		Date[] datesArr = _data.getDatesBetweenDates(today, new Date());
+		Date[] datesArr = _data.getDatesBetweenDates(today, new Date());
 //		dates.add((Date[]) _data.getTimeStamps().toArray(new Date[_data.getTimeStamps().size()]));
 		
 
-		ArrayList<Double[]>values = new ArrayList<Double[]>(2);
+		ArrayList<double[]>values = new ArrayList<double[]>(2);
 //		double[] temp = new double[_data.getValues().size()];
 //		for(int i = 0;i<_data.getValues().size();i++)
 //		{
@@ -377,14 +377,14 @@ implements ISesameDataListener, INotificationListener
 		values.add(lastWeekDataCropped);
 		values.add(todayData);
 		
-//		dates.add(datesArr);
-//		dates.add(datesArr);
+		dates.add(datesArr);
+		dates.add(datesArr);
 
 		try 
 		{
-//			XYMultipleSeriesDataset dataset = mDatasetProvider.buildDateDataset(titles, dates, values);
-			mDatasetProvider.createDataset(titleList, values);
-			XYMultipleSeriesDataset dataset = mDatasetProvider.getDataset();
+			XYMultipleSeriesDataset dataset = mDatasetProvider.buildDateDataset(titles, dates, values);
+//			mDatasetProvider.createDataset(titleList, values);
+//			XYMultipleSeriesDataset dataset = mDatasetProvider.getDataset();
 			
 			mRendererProvider.createMultipleSeriesRenderer(dataset);
 

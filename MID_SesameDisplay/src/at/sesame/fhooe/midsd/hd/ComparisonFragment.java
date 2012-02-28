@@ -55,7 +55,7 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	{
 		super.onAttach(activity);
 		mRoomName = activity.getString(R.string.global_Room1_name);
-		mChartRendererProvider = new HD_Comparison_Line_RendererProvider(activity);
+		mChartRendererProvider = new HD_Comparison_Line_RendererProvider(activity, true);
 		mBarRendererProvider = new HD_Comparison_Bar_RendererProvider(activity);
 	}
 

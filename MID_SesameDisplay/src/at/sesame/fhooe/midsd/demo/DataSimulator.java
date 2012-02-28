@@ -32,7 +32,7 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 	
 	static
 	{
-		START_DATE = EsmartDateHelper.createGregorianCalendar(2011, 11, 1).getTime();
+		START_DATE = EsmartDateHelper.createGregorianCalendar(2012, 2, 10).getTime();
 		END_DATE = new Date();
 		createDummYEnergyData();
 	}

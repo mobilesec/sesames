@@ -1,5 +1,6 @@
 package at.sesame.fhooe.lib.util;
 
+import at.sesame.fhooe.lib.R;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -63,6 +64,40 @@ public class DateHelper
 			}
 		}
 
+		return res.toString();
+	}
+	
+	public static String convertMStoShortReadableString(double _millis)
+	{
+		//		long seconds = _millis/1000;
+		double milli = _millis; 
+		int hours = 0;
+		int minutes = 0;
+		int seconds = 0;
+
+		while(milli-3600000>0)
+		{
+			hours++;
+			milli-=3600000;
+		}
+
+		while(milli-60000>0)
+		{
+			minutes++;
+			milli-=60000;
+		}
+
+//		while(milli-1000>0)
+//		{
+//			seconds++;
+//			milli-=1000;
+//		}
+
+		StringBuilder res = new StringBuilder();
+		res.append(hours);
+		res.append(",");
+		res.append(minutes/60);
+		res.append(" Stunden");
 		return res.toString();
 	}
 

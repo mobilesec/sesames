@@ -69,7 +69,8 @@ extends Fragment
 				FrameLayout fl = (FrameLayout)v.findViewById(R.id.md_chart_layout_chart_container);
 				if(null!=fl)
 				{
-					fl.addView(ChartFactory.getTimeChartView(getActivity(), mDataset, mRenderer, mTitle));
+//					fl.addView(ChartFactory.getTimeChartView(getActivity(), mDataset, mRenderer, "HH:mm"));
+					fl.addView(ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer));
 				}
 			}
 			catch(Exception _e)

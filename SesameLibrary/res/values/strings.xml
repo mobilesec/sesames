@@ -39,4 +39,5 @@
     <string name="ControllableDevice_idleString_prefix">"inactive since "</string>
     <string name="ControllableDevice_minuteString">" min"</string>
     <string name="controllableDevice_hourString">" hrs"</string>
+    <string name="date_helper_hours">" Stunden"</string>
 </resources>
