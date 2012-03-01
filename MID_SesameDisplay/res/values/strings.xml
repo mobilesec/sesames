@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, MID_SesameDisplayActivity!</string>
-    <string name="app_name">MID_SesameDisplay</string>
+    <string name="app_name">SESAME-S Monitor</string>
     <string name="energy_display_separator">,</string>
     <string name="ld_fragment_button_text_info">Info</string>
     <string name="ld_fragment_button_text_ok">Ok</string>
