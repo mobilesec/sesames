@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <FrameLayout
+		android:id="@+id/camera_preview"
+		android:layout_width="400px"
+		android:layout_height="533px"/>
+    
+    <at.fhooe.facedetectionview.view.BitmapView
+		android:id="@+id/bitmapview"
+		android:layout_height="135px"
+		android:layout_width="100px"
+		android:padding="0dip"
+		android:background="#0000ff"/>
+    
+</LinearLayout>
