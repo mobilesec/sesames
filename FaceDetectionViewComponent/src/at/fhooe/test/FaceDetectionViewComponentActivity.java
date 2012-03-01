@@ -43,8 +43,7 @@ public class FaceDetectionViewComponentActivity extends Activity implements Obse
 	@Override
 	protected void onResume() {
 		// add faceview to viewgroup
-		int i = R.id.camera_preview;
-		Object o = findViewById(i);
+		Object o = findViewById(R.id.camera_preview);
 		FrameLayout preview = (FrameLayout) o;
 		mFaceViewComponent.onResume(this, preview, 4, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, mTrigger, true);
 		mFaceViewComponent.addObserver(this);

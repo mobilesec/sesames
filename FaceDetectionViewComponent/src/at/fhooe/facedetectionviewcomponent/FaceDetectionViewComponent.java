@@ -81,14 +81,15 @@ public class FaceDetectionViewComponent {
 		// CVideoRecordUtil.getCameraInstance(CameraInfo.CAMERA_FACING_BACK);
 		mCamera = VideoRecordUtil.getCameraInstance(CameraInfo.CAMERA_FACING_FRONT);
 		// set camera orientation to 90°
-		mCamera.setDisplayOrientation(90);
+//		mCamera.setDisplayOrientation(0);
+		
 
 		// Create preview view and set it as the content of our activity.
 		try {
 			mFaceview = new FaceView(_context, _subsamplingFactor, _haarcascadeFeatures, _trigger, _markFaces);
 		} catch (IOException e) {
 			LOGGER.error("cannot work without a faceview, terminating.");
-			throw new RuntimeException("");
+			throw new RuntimeException("cannot work without a faceview, terminating.");
 		}
 		mPreview = new CameraPreview(_context, mCamera, mFaceview);
 
@@ -113,6 +114,20 @@ public class FaceDetectionViewComponent {
 				return true;
 			}
 		}, _markFaces);
+	}
+	
+	/**
+	 * See
+	 * {@link #onResume(Context, ViewGroup, int, Feature[], ProcessImageTrigger, boolean)}
+	 * 
+	 * 
+	 * @param _context
+	 * @param _viewGroup
+	 * @param _markFaces
+	 * @param _trigger 
+	 */
+	public void onResume(Context _context, ViewGroup _viewGroup, ProcessImageTrigger _trigger, boolean _markFaces) {
+		onResume(_context, _viewGroup, 4, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, _trigger, _markFaces);
 	}
 
 	/**

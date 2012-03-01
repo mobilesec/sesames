@@ -18,10 +18,10 @@ import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.view.View;
 import at.fhooe.facedetectionview.model.FaceDetector;
+import at.fhooe.facedetectionview.model.FaceDetector.Feature;
 import at.fhooe.facedetectionview.model.FacesDetectedEvent;
 import at.fhooe.facedetectionview.model.ImageUtil;
 import at.fhooe.facedetectionview.model.ProcessImageTrigger;
-import at.fhooe.facedetectionview.model.FaceDetector.Feature;
 
 import com.googlecode.javacv.cpp.opencv_core.CvRect;
 import com.googlecode.javacv.cpp.opencv_core.CvSeq;
@@ -121,8 +121,9 @@ public class FaceView extends View implements Camera.PreviewCallback {
 			// create iplimage out of yuv image + rotate it
 			grayImage = ImageUtil
 					.writeGrayPartOfYuvTo1ChannelIplimageVertical(grayImage, data, width, height, mSubsamplingFactor);
-			LOGGER.debug("cam=" + width + "/" + height + ", resized=" + grayImage.width() + "/" + grayImage.height() + ", view="
-					+ getWidth() + "/" + getHeight());
+			grayImage = ImageUtil.createRotatedImage(grayImage);
+//			LOGGER.debug("cam=" + width + "/" + height + ", resized=" + grayImage.width() + "/" + grayImage.height() + ", view="
+//					+ getWidth() + "/" + getHeight());
 
 			// // DEBUG
 			// if (FaceDetectionViewComponentActivity.WILD_HACK == null) {
@@ -140,7 +141,7 @@ public class FaceView extends View implements Camera.PreviewCallback {
 
 			// detect and remember faces to mark them in overlay
 			mFaces = mFaceDetector.detectFaces(grayImage, mSubsamplingFactor);
-			LOGGER.debug("we have " + mFaces.get(Feature.FRONTALFACE_ALT2).total() + " faces.");
+//			LOGGER.debug("we have " + mFaces.get(Feature.FRONTALFACE_ALT2).total() + " faces.");
 			// inform listener
 			mObservable.notifyObservers(new FacesDetectedEvent(this, mFaces, mSubsamplingFactor));
 			// gui update
@@ -171,7 +172,7 @@ public class FaceView extends View implements Camera.PreviewCallback {
 			// image the camera provides
 			float scaleX = (float) getWidth() / (float) grayImage.width();
 			float scaleY = (float) getHeight() / (float) grayImage.height();
-			LOGGER.debug("factor=" + scaleX + "/" + scaleY);
+//			LOGGER.debug("factor=" + scaleX + "/" + scaleY);
 			for (Feature f : mFaces.keySet()) {
 				if (mFaces.get(f) != null) {
 					paint.setColor(featureColor(f));
