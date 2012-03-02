@@ -7,7 +7,7 @@ package at.fhooe.facedetectionview.model;
  * @date 15.02.2012
  * @version 1
  */
-public abstract class ProcessImageTrigger {
+public interface ProcessImageTrigger {
 	/**
 	 * @return true if the next image should be processed
 	 */

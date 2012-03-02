@@ -20,7 +20,8 @@
 	    android:icon="@drawable/ic_launcher">
 	    <activity
 		    android:label="@string/app_name"
-		    android:name="at.fhooe.test.FaceDetectionViewComponentActivity">
+		    android:name="at.fhooe.test.FaceDetectionViewComponentActivity"
+	    	android:configChanges="orientation">
 			    <intent-filter >
 					<action android:name="android.intent.action.MAIN" />
 					<category android:name="android.intent.category.LAUNCHER" />

@@ -3,6 +3,7 @@ package at.fhooe.facedetectionview.model;
 import java.util.EventObject;
 import java.util.HashMap;
 
+import android.graphics.Bitmap;
 import at.fhooe.facedetectionview.model.FaceDetector.Feature;
 
 import com.googlecode.javacv.cpp.opencv_core.CvSeq;
@@ -24,6 +25,8 @@ public class FacesDetectedEvent extends EventObject {
 	private HashMap<Feature, CvSeq>	mOpenCvFaces		= null;
 	/** how much the faces have been made smaller during processing */
 	private float					mSubSamplingFactor	= 1;
+	/** for debugging purposes */
+	private Bitmap					mScreenBitmap		= null;
 
 	// ================================================================================================================
 	// METHODS
@@ -95,5 +98,20 @@ public class FacesDetectedEvent extends EventObject {
 	 */
 	public void setSubSamplingFactor(float _subSamplingFactor) {
 		mSubSamplingFactor = _subSamplingFactor;
+	}
+
+	/**
+	 * @return {@link #screenBitmap}.
+	 */
+	public Bitmap getScreenBitmap() {
+		return mScreenBitmap;
+	}
+
+	/**
+	 * @param _screenBitmap
+	 *            sets {@link #screenBitmap} to _screenBitmap.
+	 */
+	public void setScreenBitmap(Bitmap _screenBitmap) {
+		mScreenBitmap = _screenBitmap;
 	}
 }
