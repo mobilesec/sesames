@@ -19,8 +19,8 @@ import at.sesame.fhooe.lib.R;
 
 public class EnergyMeter extends View {
 	private static final String TAG = "EnergyMeter";
-	private Bitmap mBackground;
-	private Bitmap mCase;
+	private static Bitmap mBackground;
+	private static Bitmap mCase;
 
 	private float mMinValue = 0;
 	private float mMaxValue = 100;
@@ -256,9 +256,11 @@ public class EnergyMeter extends View {
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		// scale view port, so it fits into width
 		// View parent = (View) getParent();
+		Log.e(TAG, "onMeasure...");
 		parentWidth = MeasureSpec.getSize(widthMeasureSpec);
 		parentHeight = MeasureSpec.getSize(heightMeasureSpec);
 		if (mBackground != null && parentWidth != 0 && parentHeight != 0) {
+			Log.e(TAG, "background was not null, parentsize >0");
 			// int parentWidth = parent.getWidth();
 			// int parentHeight = parent.getHeight();
 			int meterHeight = mBackground.getHeight() * parentWidth
@@ -266,13 +268,15 @@ public class EnergyMeter extends View {
 			this.setMeasuredDimension(parentWidth, meterHeight);
 			// this.setLayoutParams(new LinearLayout.LayoutParams(parentWidth,
 			// meterHeight));
-		} else {
+		} else 
+		{
+			mGraphicsLoaded = false;
 			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		}
 	}
 
-	private void loadGraphics() {
-		System.gc();
+	private  void loadGraphics() {
+//		System.gc();
 
 		mBackground = BitmapFactory.decodeResource(getContext().getResources(),
 				R.drawable.meter_background);
@@ -348,10 +352,10 @@ public class EnergyMeter extends View {
 		super.onDraw(_c);
 //		checkParent();
 //		loadGraphics();
-		if(!mGraphicsLoaded)
+//		if(!mGraphicsLoaded)
 		{
-			mGraphicsLoaded = true;
 			loadGraphics();
+			mGraphicsLoaded = true;
 		}
 		double radius = mMaxRadius * mRelativeTickRadius;
 

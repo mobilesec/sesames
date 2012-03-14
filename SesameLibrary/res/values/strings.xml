@@ -40,4 +40,10 @@
     <string name="ControllableDevice_minuteString">" min"</string>
     <string name="controllableDevice_hourString">" hrs"</string>
     <string name="date_helper_hours">" Stunden"</string>
+    <string name="global_Room1_name">EDV 1</string>
+    <string name="global_Room3_name">EDV 3</string>
+    <string name="global_Room6_name">EDV 6</string>
+    <string name="MeterWheelFrag_bottom_text">"Verbrauch seit: "</string>
+    <string name="pms_room_list_inactive_prefix">"Inaktive Computer: "</string>
+    <string name="pms_room_list_active_prefix">"Aktive Computer: "</string>
 </resources>
