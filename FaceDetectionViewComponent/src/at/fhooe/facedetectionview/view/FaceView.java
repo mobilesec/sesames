@@ -18,10 +18,14 @@ import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.view.View;
 import at.fhooe.facedetectionview.model.FaceDetector;
-import at.fhooe.facedetectionview.model.FaceDetector.Feature;
 import at.fhooe.facedetectionview.model.FacesDetectedEvent;
+import at.fhooe.facedetectionview.model.ImageNormalizerUtil;
 import at.fhooe.facedetectionview.model.ImageUtil;
 import at.fhooe.facedetectionview.model.ProcessImageTrigger;
+import at.fhooe.facedetectionview.model.FaceDetector.Feature;
+import at.fhooe.facedetectionview.model.ImageNormalizerUtil.Orientation;
+import at.fhooe.mc.genericobserver.GenericObservable;
+import at.fhooe.mc.genericobserver.GenericObserver;
 
 import com.googlecode.javacv.cpp.opencv_core.CvRect;
 import com.googlecode.javacv.cpp.opencv_core.CvSeq;
@@ -35,7 +39,7 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
  * @version 1
  */
 public class FaceView extends View implements Camera.PreviewCallback {
-	private static final Logger		LOGGER				= LoggerFactory.getLogger(FaceView.class);
+	private static final Logger						LOGGER				= LoggerFactory.getLogger(FaceView.class);
 
 	// ================================================================================================================
 	// MEMBERS
@@ -43,33 +47,35 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	/**
 	 * factor by which {@link #grayImage} is smaller than the real camera image.
 	 */
-	private int						mSubsamplingFactor	= 4;
+	private int										mSubsamplingFactor	= 4;
 	/**
 	 * this image gets used for finding faces in it. it reduces the needed
 	 * processing power as it is {@link #mSubsamplingFactor} times smaller than
 	 * the real camera image.
 	 */
-	private IplImage				grayImage;
+	private IplImage								grayImage;
 	/**
 	 * gives updates about the least recently found faces. the parameter
 	 * <code>_data</code> is an instance of {@link FacesDetectedEvent}.
 	 */
-	private Observable				mObservable			= new Observable() {
-															@Override
-															public void notifyObservers(Object _data) {
-																setChanged();
-																super.notifyObservers(_data);
-															}
-														};
+	private GenericObservable<FacesDetectedEvent>	mObservable			= new GenericObservable<FacesDetectedEvent>() {
+																			@Override
+																			public void notifyObservers(FacesDetectedEvent _arg) {
+																				setChanged();
+																				super.notifyObservers(_arg);
+																			}
+																		};
 
 	/** the face detector we're using to find faces inside the camview */
-	private FaceDetector			mFaceDetector		= null;
+	private FaceDetector							mFaceDetector		= null;
 	/** a list of currently found faces. */
-	private HashMap<Feature, CvSeq>	mFaces				= null;
+	private HashMap<Feature, CvSeq>					mFaces				= null;
 	/** if true, found faces get marked on the screen with rectangles. */
-	private boolean					mMarkFaces			= false;
+	private boolean									mMarkFaces			= false;
 	/** checks if the next image should already be processed. */
-	private ProcessImageTrigger		mTrigger			= null;
+	private ProcessImageTrigger						mTrigger			= null;
+	/** the current device orientation */
+	private Orientation								mOrientation		= Orientation.Landscape;
 
 	// ================================================================================================================
 	// CONSTRUCTORS
@@ -118,12 +124,15 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	 */
 	protected void processImage(byte[] data, int width, int height) {
 		if (mTrigger.processNextImage()) {
-			// create iplimage out of yuv image + rotate it
-			grayImage = ImageUtil
-					.writeGrayPartOfYuvTo1ChannelIplimageVertical(grayImage, data, width, height, mSubsamplingFactor);
-			grayImage = ImageUtil.createRotatedImage(grayImage);
-//			LOGGER.debug("cam=" + width + "/" + height + ", resized=" + grayImage.width() + "/" + grayImage.height() + ", view="
-//					+ getWidth() + "/" + getHeight());
+			// create iplimage out of yuv image
+			grayImage = ImageUtil.writeGrayPartOfYuvTo1ChannelIplimageHorizontal(grayImage, data, width, height,
+					mSubsamplingFactor);
+			// normalize image due to device orientation and cam mirroring
+			grayImage = ImageNormalizerUtil.normalizeImageFromOrientation(grayImage, mOrientation, true);
+
+			// LOGGER.debug("cam=" + width + "/" + height + ", resized=" +
+			// grayImage.width() + "/" + grayImage.height() + ", view="
+			// + getWidth() + "/" + getHeight());
 
 			// // DEBUG
 			// if (FaceDetectionViewComponentActivity.WILD_HACK == null) {
@@ -141,9 +150,12 @@ public class FaceView extends View implements Camera.PreviewCallback {
 
 			// detect and remember faces to mark them in overlay
 			mFaces = mFaceDetector.detectFaces(grayImage, mSubsamplingFactor);
-//			LOGGER.debug("we have " + mFaces.get(Feature.FRONTALFACE_ALT2).total() + " faces.");
+			// LOGGER.debug("we have " +
+			// mFaces.get(Feature.FRONTALFACE_ALT2).total() + " faces.");
 			// inform listener
-			mObservable.notifyObservers(new FacesDetectedEvent(this, mFaces, mSubsamplingFactor));
+			FacesDetectedEvent e = new FacesDetectedEvent(this, mFaces, mSubsamplingFactor);
+			// e.setScreenBitmap(ImageUtil.createBitmapOutOf1ChannelIplImage(grayImage));
+			mObservable.notifyObservers(e);
 			// gui update
 			postInvalidate();
 		}
@@ -172,7 +184,7 @@ public class FaceView extends View implements Camera.PreviewCallback {
 			// image the camera provides
 			float scaleX = (float) getWidth() / (float) grayImage.width();
 			float scaleY = (float) getHeight() / (float) grayImage.height();
-//			LOGGER.debug("factor=" + scaleX + "/" + scaleY);
+			// LOGGER.debug("factor=" + scaleX + "/" + scaleY);
 			for (Feature f : mFaces.keySet()) {
 				if (mFaces.get(f) != null) {
 					paint.setColor(featureColor(f));
@@ -214,14 +226,14 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	/**
 	 * {@link Observable#addObserver(Observer)}.
 	 */
-	public void addObserver(Observer _o) {
+	public void addObserver(GenericObserver<FacesDetectedEvent> _o) {
 		mObservable.addObserver(_o);
 	}
 
 	/**
 	 * {@link Observable#deleteObserver(Observer)}.
 	 */
-	public void deleteObserver(Observer _o) {
+	public void deleteObserver(GenericObserver<FacesDetectedEvent> _o) {
 		mObservable.deleteObserver(_o);
 	}
 
@@ -238,5 +250,20 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	 */
 	public void setPaintFaces(boolean _paintFaces) {
 		mMarkFaces = _paintFaces;
+	}
+
+	/**
+	 * @return {@link #orientation}.
+	 */
+	public Orientation getOrientation() {
+		return mOrientation;
+	}
+
+	/**
+	 * @param _orientation
+	 *            sets {@link #orientation} to _orientation.
+	 */
+	public void setOrientation(Orientation _orientation) {
+		mOrientation = _orientation;
 	}
 }

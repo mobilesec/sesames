@@ -277,7 +277,7 @@ public class ImageUtil {
 	 * @param _angle
 	 * @return
 	 */
-	public static IplImage createRotatedImage(IplImage _src) {
+	public static IplImage createRotated90DegreeLeftImage(IplImage _src) {
 
 		// 1. transpose
 		IplImage r = IplImage.create(_src.height(), _src.width(), _src.depth(), _src.nChannels());
@@ -303,7 +303,26 @@ public class ImageUtil {
 		//
 		// // Do the transformation
 		// cvWarpAffine(_resizedPic, rotatedPic, rot_mat);
+		return r;
+	}
 
+	/**
+	 * Method for scaling and rotating an IplImage. <b>Scaling has not been
+	 * tested yet!</b>.
+	 * 
+	 * @param _src
+	 * @param _scale
+	 * @param _angle
+	 * @return
+	 */
+	public static IplImage createRotated90DegreeRightImage(IplImage _src) {
+
+		// 1. transpose
+		IplImage r = IplImage.create(_src.height(), _src.width(), _src.depth(), _src.nChannels());
+		cvTranspose(_src, r);
+
+		// 2. flip x+y axis
+		cvFlip(r, r, 1);
 		return r;
 	}
 
@@ -469,7 +488,7 @@ public class ImageUtil {
 	 */
 	public static IplImage writeGrayPartOfYuvTo1ChannelIplimageVertical(IplImage _i, byte[] _data, int _yuvImageWidth,
 			int _yuvImageHeigth, int _subsamplingFactor) {
-		return createRotatedImage(writeGrayPartOfYuvTo1ChannelIplimageHorizontal(_i, _data, _yuvImageWidth, _yuvImageHeigth,
-				_subsamplingFactor));
+		return createRotated90DegreeLeftImage(writeGrayPartOfYuvTo1ChannelIplimageHorizontal(_i, _data, _yuvImageWidth,
+				_yuvImageHeigth, _subsamplingFactor));
 	}
 }

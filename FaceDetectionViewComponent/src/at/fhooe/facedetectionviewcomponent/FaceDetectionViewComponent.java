@@ -1,6 +1,8 @@
 package at.fhooe.facedetectionviewcomponent;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -13,11 +15,14 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.view.ViewGroup;
 import at.fhooe.facedetectionview.model.FaceDetector;
+import at.fhooe.facedetectionview.model.FacesDetectedEvent;
 import at.fhooe.facedetectionview.model.ProcessImageTrigger;
 import at.fhooe.facedetectionview.model.VideoRecordUtil;
 import at.fhooe.facedetectionview.model.FaceDetector.Feature;
+import at.fhooe.facedetectionview.model.ImageNormalizerUtil.Orientation;
 import at.fhooe.facedetectionview.view.CameraPreview;
 import at.fhooe.facedetectionview.view.FaceView;
+import at.fhooe.mc.genericobserver.GenericObserver;
 
 /**
  * Shows the camera image and detects faces in it periodically.
@@ -27,17 +32,26 @@ import at.fhooe.facedetectionview.view.FaceView;
  * @version 1
  */
 public class FaceDetectionViewComponent {
-	private static final Logger	LOGGER	= LoggerFactory.getLogger(FaceDetectionViewComponent.class);
+	private static final Logger							LOGGER		= LoggerFactory.getLogger(FaceDetectionViewComponent.class);
 
 	// ================================================================================================================
 	// MEMBERS
 
 	/** android hw camera */
-	private Camera				mCamera;
+	private Camera										mCamera;
 	/** where faces get marked */
-	private FaceView			mFaceview;
+	private FaceView									mFaceview;
 	/** where android automatically projects the current cam image onto */
-	private CameraPreview		mPreview;
+	private CameraPreview								mPreview;
+	/**
+	 * observers of the facedetectioncomponent. get added to the TODO each time
+	 * {@link #onResume(Context, ViewGroup, boolean)} is called.
+	 */
+	private List<GenericObserver<FacesDetectedEvent>>	mListeners	= new ArrayList<GenericObserver<FacesDetectedEvent>>();
+	/**
+	 * viewgroup the view has to be removed from in {@link #onPause(ViewGroup)}.
+	 */
+	private ViewGroup									mViewGroup	= null;
 
 	// ================================================================================================================
 	// METHODS
@@ -76,13 +90,16 @@ public class FaceDetectionViewComponent {
 	 */
 	public void onResume(Context _context, ViewGroup _viewGroup, int _subsamplingFactor, Feature[] _haarcascadeFeatures,
 			ProcessImageTrigger _trigger, boolean _markFaces) {
+		// remember viewgroup
+		mViewGroup = _viewGroup;
+
 		// Create an instance of Camera.
 		// mCamera =
 		// CVideoRecordUtil.getCameraInstance(CameraInfo.CAMERA_FACING_BACK);
 		mCamera = VideoRecordUtil.getCameraInstance(CameraInfo.CAMERA_FACING_FRONT);
 		// set camera orientation to 90°
-//		mCamera.setDisplayOrientation(0);
-		
+		// mCamera.setDisplayOrientation(90);
+		VideoRecordUtil.setCameraDisplayOrientation((Activity) _context, CameraInfo.CAMERA_FACING_FRONT, mCamera);
 
 		// Create preview view and set it as the content of our activity.
 		try {
@@ -96,6 +113,12 @@ public class FaceDetectionViewComponent {
 		// add view-components to viewgroup
 		_viewGroup.addView(mPreview);
 		_viewGroup.addView(mFaceview);
+
+		// add listeners
+		for (GenericObserver<FacesDetectedEvent> o : mListeners) {
+			LOGGER.error("adding observer to faceview...");
+			mFaceview.addObserver(o);
+		}
 	}
 
 	/**
@@ -108,14 +131,14 @@ public class FaceDetectionViewComponent {
 	 * @param _markFaces
 	 */
 	public void onResume(Context _context, ViewGroup _viewGroup, boolean _markFaces) {
-		onResume(_context, _viewGroup, 4, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, new ProcessImageTrigger() {
+		onResume(_context, _viewGroup, 2, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, new ProcessImageTrigger() {
 			@Override
 			public boolean processNextImage() {
 				return true;
 			}
 		}, _markFaces);
 	}
-	
+
 	/**
 	 * See
 	 * {@link #onResume(Context, ViewGroup, int, Feature[], ProcessImageTrigger, boolean)}
@@ -124,10 +147,10 @@ public class FaceDetectionViewComponent {
 	 * @param _context
 	 * @param _viewGroup
 	 * @param _markFaces
-	 * @param _trigger 
+	 * @param _trigger
 	 */
 	public void onResume(Context _context, ViewGroup _viewGroup, ProcessImageTrigger _trigger, boolean _markFaces) {
-		onResume(_context, _viewGroup, 4, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, _trigger, _markFaces);
+		onResume(_context, _viewGroup, 2, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, _trigger, _markFaces);
 	}
 
 	/**
@@ -141,26 +164,34 @@ public class FaceDetectionViewComponent {
 	 *            the view object this {@link FaceDetectionViewComponent} uses
 	 *            to show the camera images + the detected faces.
 	 */
-	public void onPause(ViewGroup _viewGroup) {
+	public void onPause() {
 		VideoRecordUtil.releaseCamera(mCamera);
 		mCamera = null;
 
 		// remove items from view
-		_viewGroup.removeView(mPreview);
-		_viewGroup.removeView(mFaceview);
+		if (mViewGroup != null) {
+			mViewGroup.removeView(mPreview);
+			mViewGroup.removeView(mFaceview);
+		} else {
+			LOGGER.error("mViewGroup=null");
+		}
 	}
 
 	/**
 	 * {@link Observable#addObserver(Observer)}.
 	 */
-	public void addObserver(Observer _o) {
-		mFaceview.addObserver(_o);
+	public void addObserver(GenericObserver<FacesDetectedEvent> _o) {
+		mListeners.add(_o);
 	}
 
 	/**
 	 * {@link Observable#deleteObserver(Observer)}.
 	 */
-	public void deleteObserver(Observer _o) {
-		mFaceview.deleteObserver(_o);
+	public void deleteObserver(GenericObserver<FacesDetectedEvent> _o) {
+		mListeners.remove(_o);
+	}
+
+	public void setOrientation(Orientation _orientation) {
+		mFaceview.setOrientation(_orientation);
 	}
 }

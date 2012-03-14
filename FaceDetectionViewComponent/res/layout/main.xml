@@ -6,8 +6,8 @@
 
     <FrameLayout
 		android:id="@+id/camera_preview"
-		android:layout_width="400px"
-		android:layout_height="533px"/>
+		android:layout_width="300px"
+		android:layout_height="400px"/>
     
     <at.fhooe.facedetectionview.view.BitmapView
 		android:id="@+id/bitmapview"
