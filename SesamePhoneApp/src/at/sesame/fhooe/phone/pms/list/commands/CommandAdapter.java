@@ -5,7 +5,7 @@
  *  Copyright: Peter Riedl, 11/2011
  *
  ******************************************************************************/
-package at.sesame.fhooe.pms.list.commands;
+package at.sesame.fhooe.phone.pms.list.commands;
 
 import java.util.List;
 

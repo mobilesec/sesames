@@ -1,4 +1,4 @@
-package at.sesame.fhooe.pms.list.controllabledevice;
+package at.sesame.fhooe.pms.phone.list.controllabledevice;
 
 public interface IListEntry 
 {

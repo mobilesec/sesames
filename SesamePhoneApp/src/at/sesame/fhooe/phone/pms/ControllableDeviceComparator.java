@@ -5,7 +5,7 @@
  *  Copyright: Peter Riedl, 11/2011
  *
  ******************************************************************************/
-package at.sesame.fhooe.pms;
+package at.sesame.fhooe.phone.pms;
 
 import java.util.Comparator;
 

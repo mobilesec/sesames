@@ -1,4 +1,4 @@
-package at.sesame.fhooe.pms.list.controllabledevice;
+package at.sesame.fhooe.pms.phone.list.controllabledevice;
 
 import android.content.Context;
 import at.sesame.fhooe.phone.R;

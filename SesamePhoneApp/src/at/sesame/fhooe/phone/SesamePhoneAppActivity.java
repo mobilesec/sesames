@@ -7,12 +7,16 @@ import java.util.GregorianCalendar;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import at.sesame.fhooe.lib.data.ISesameDataListener;
 import at.sesame.fhooe.lib.data.SesameDataCache;
 import at.sesame.fhooe.lib.data.SesameDataContainer;
@@ -24,6 +28,7 @@ import at.sesame.fhooe.lib.ui.charts.IRendererProvider;
 import at.sesame.fhooe.lib.ui.charts.exceptions.DatasetCreationException;
 import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
 import at.sesame.fhooe.lib.util.DateHelper;
+import at.sesame.fhooe.phone.pms.PMSClientActivity;
 
 
 public class SesamePhoneAppActivity 
@@ -231,5 +236,19 @@ implements ISesameDataListener
 		super.onDestroy();
 	}
 	
-	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.energy_menu, menu);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) 
+	{
+		startActivity(new Intent(this, PMSClientActivity.class));
+		return true;
+	}
 }

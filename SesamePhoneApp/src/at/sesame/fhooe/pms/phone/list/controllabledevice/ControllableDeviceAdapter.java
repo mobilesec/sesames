@@ -5,7 +5,7 @@
  *  Copyright: Peter Riedl, 11/2011
  *
  ******************************************************************************/
-package at.sesame.fhooe.pms.list.controllabledevice;
+package at.sesame.fhooe.pms.phone.list.controllabledevice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 import at.sesame.fhooe.phone.R;
-import at.sesame.fhooe.pms.PMSClientActivity;
+import at.sesame.fhooe.phone.pms.PMSClientActivity;
 
 public class ControllableDeviceAdapter 
 extends ArrayAdapter<IListEntry>

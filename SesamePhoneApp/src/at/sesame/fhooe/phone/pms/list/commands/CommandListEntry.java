@@ -1,4 +1,4 @@
-package at.sesame.fhooe.pms.list.commands;
+package at.sesame.fhooe.phone.pms.list.commands;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

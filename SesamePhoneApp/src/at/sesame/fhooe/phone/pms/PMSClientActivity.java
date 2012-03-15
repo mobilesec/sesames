@@ -5,7 +5,7 @@
  *  Copyright: Peter Riedl, 11/2011
  *
  ******************************************************************************/
-package at.sesame.fhooe.pms;
+package at.sesame.fhooe.phone.pms;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,12 +17,15 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -39,14 +42,15 @@ import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
 import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
 import at.sesame.fhooe.phone.R;
-import at.sesame.fhooe.pms.list.commands.CommandAdapter;
-import at.sesame.fhooe.pms.list.commands.CommandListEntry;
-import at.sesame.fhooe.pms.list.commands.CommandListEntry.CommandType;
-import at.sesame.fhooe.pms.list.controllabledevice.ControllableDeviceAdapter;
-import at.sesame.fhooe.pms.list.controllabledevice.ControllableDeviceListEntry;
-import at.sesame.fhooe.pms.list.controllabledevice.IListEntry;
-import at.sesame.fhooe.pms.list.controllabledevice.SeparatorListEntry;
-import at.sesame.fhooe.pms.list.controllabledevice.SeparatorListEntry.ListType;
+import at.sesame.fhooe.phone.SesamePhoneAppActivity;
+import at.sesame.fhooe.phone.pms.list.commands.CommandAdapter;
+import at.sesame.fhooe.phone.pms.list.commands.CommandListEntry;
+import at.sesame.fhooe.phone.pms.list.commands.CommandListEntry.CommandType;
+import at.sesame.fhooe.pms.phone.list.controllabledevice.ControllableDeviceAdapter;
+import at.sesame.fhooe.pms.phone.list.controllabledevice.ControllableDeviceListEntry;
+import at.sesame.fhooe.pms.phone.list.controllabledevice.IListEntry;
+import at.sesame.fhooe.pms.phone.list.controllabledevice.SeparatorListEntry;
+import at.sesame.fhooe.pms.phone.list.controllabledevice.SeparatorListEntry.ListType;
 
 /**
  * this class represents the activity that accesses the PMS and displays all
@@ -214,8 +218,8 @@ implements OnClickListener, IErrorReceiver
 			return;
 		}
 		ErrorForwarder.getInstance().register(this);
-//				queryControllableDevicesKDF();
-		queryControllableDevicesTest(65);
+		queryControllableDevicesKDF();
+//		queryControllableDevicesTest(65);
 				
 		refreshListEntries();
 		mAdapter = new ControllableDeviceAdapter(this, mEntries);
@@ -1607,4 +1611,22 @@ implements OnClickListener, IErrorReceiver
 		}
 		return null;
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.pms_menu, menu);
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) 
+	{
+		startActivity(new Intent(this, SesamePhoneAppActivity.class));
+		return true;
+	}
+	
+	
 }
