@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hd_layout_edv3_lin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/hd_background"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/hd_layout_sensorDataFrame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.75"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/hd_layout_roomDataFra"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.4" >
+
+                <FrameLayout
+                    android:id="@+id/hd_layout_edv1Frame"
+                    style="@style/Tile"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <FrameLayout
+                    android:id="@+id/hd_layout_edv3Frame"
+                    style="@style/Tile"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <FrameLayout
+                    android:id="@+id/hd_layout_edv6Frame"
+                    style="@style/Tile"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/hd_layout_chartFrame"
+                style="@style/Tile"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.6" >
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/Tile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Power Management"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <FrameLayout
+                android:id="@+id/hd_layout_pmsFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

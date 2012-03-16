@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, SesameTabletAppActivity!</string>
+    <string name="app_name">SesameTabletApp</string>
+    <string name="global_current">" aktuell "</string>
+    <string name="hd_comparison_day_cb1_text">" vor 1 Woche"</string>
+    <string name="hd_comparison_day_cb2_text">" vor 2 Wochen"</string>
+    <string name="hd_comparison_day_cb3_text">" vor 3 Wochen"</string>
+    <string name="hd_comparison_day_cb4_text">" vor 4 Wochen"</string>
+    <string name="hd_comparison_week_cb1_text">" 1 Woche zuvor"</string>
+    <string name="hd_comparison_week_cb2_text">" 2 Wochen zuvor"</string>
+    <string name="hd_comparison_week_cb3_text">" 3 Wochen zuvor"</string>
+    <string name="hd_comparison_week_cb4_text">" 4 Wochen zuvor"</string>
+
+</resources>

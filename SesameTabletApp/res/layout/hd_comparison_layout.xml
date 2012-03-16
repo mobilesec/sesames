@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RadioGroup
+        android:id="@+id/hd_comparison_layout_day_week_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/hd_comparison_layout_dayRadioButt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Tagesvergleich" />
+
+        <RadioButton
+            android:id="@+id/hd_comparison_layout_weekRadioButt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wochenvergleich" />
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <FrameLayout
+            android:id="@+id/hd_comparison_layout_chartFrame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.70" >
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/hd_comparison_layout_comparisonFrame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.30" >
+        </FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>
