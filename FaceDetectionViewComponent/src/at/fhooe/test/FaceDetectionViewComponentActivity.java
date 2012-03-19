@@ -74,8 +74,9 @@ public class FaceDetectionViewComponentActivity extends Activity implements Gene
 		mFaceViewComponent.onResume(this, preview, true);
 
 		// CHOICE 2: SPECIFIC SETTINGS FOR DEBUGGING
-		// mFaceViewComponent.onResume(this, preview, 4, new Feature[] {
-		// Feature.FRONTALFACE_ALT2 }, new ProcessImageTrigger() {
+		// mFaceViewComponent.onResume(this, preview, 2, new
+		// FaceDetector.Feature[] { FaceDetector.Feature.FRONTALFACE_ALT2 },
+		// new ProcessImageTrigger() {
 		// @Override
 		// public boolean processNextImage() {
 		// return true;
@@ -94,7 +95,7 @@ public class FaceDetectionViewComponentActivity extends Activity implements Gene
 	public void update(GenericObservable<FacesDetectedEvent> _arg0, FacesDetectedEvent _arg1) {
 		// update came from faceviewcomponent
 		FacesDetectedEvent e = (FacesDetectedEvent) _arg1;
-		Log.e("FACES", "totalFoundFaces=" + e.amountOfFaces());
+		Log.d("FACES", "faceDistances=" + _arg1.getDistanceMetricList());
 		// debug: show camera image
 		BitmapView bitmapView = (BitmapView) findViewById(R.id.bitmapview);
 		if (bitmapView == null) {

@@ -22,6 +22,7 @@ import at.fhooe.facedetectionview.model.FaceDetector.Feature;
 import at.fhooe.facedetectionview.model.ImageNormalizerUtil.Orientation;
 import at.fhooe.facedetectionview.view.CameraPreview;
 import at.fhooe.facedetectionview.view.FaceView;
+import at.fhooe.mc.genericobserver.GenericObservable;
 import at.fhooe.mc.genericobserver.GenericObserver;
 
 /**
@@ -31,8 +32,9 @@ import at.fhooe.mc.genericobserver.GenericObserver;
  * @date 17.02.2012
  * @version 1
  */
-public class FaceDetectionViewComponent {
-	private static final Logger							LOGGER		= LoggerFactory.getLogger(FaceDetectionViewComponent.class);
+public class FaceDetectionViewComponent implements GenericObserver<FacesDetectedEvent> {
+	private static final Logger							LOGGER					= LoggerFactory
+																						.getLogger(FaceDetectionViewComponent.class);
 
 	// ================================================================================================================
 	// MEMBERS
@@ -47,11 +49,16 @@ public class FaceDetectionViewComponent {
 	 * observers of the facedetectioncomponent. get added to the TODO each time
 	 * {@link #onResume(Context, ViewGroup, boolean)} is called.
 	 */
-	private List<GenericObserver<FacesDetectedEvent>>	mListeners	= new ArrayList<GenericObserver<FacesDetectedEvent>>();
+	private List<GenericObserver<FacesDetectedEvent>>	mListeners				= new ArrayList<GenericObserver<FacesDetectedEvent>>();
 	/**
 	 * viewgroup the view has to be removed from in {@link #onPause(ViewGroup)}.
 	 */
-	private ViewGroup									mViewGroup	= null;
+	private ViewGroup									mViewGroup				= null;
+	/**
+	 * the last created face detection event. if null, no face detection has
+	 * been done yet.
+	 */
+	private FacesDetectedEvent							mLastFaceDetectedEvent	= null;
 
 	// ================================================================================================================
 	// METHODS
@@ -118,6 +125,7 @@ public class FaceDetectionViewComponent {
 		for (GenericObserver<FacesDetectedEvent> o : mListeners) {
 			LOGGER.error("adding observer to faceview...");
 			mFaceview.addObserver(o);
+			mFaceview.addObserver(this);
 		}
 	}
 
@@ -193,5 +201,23 @@ public class FaceDetectionViewComponent {
 
 	public void setOrientation(Orientation _orientation) {
 		mFaceview.setOrientation(_orientation);
+	}
+
+	@Override
+	public void update(GenericObservable<FacesDetectedEvent> _o, FacesDetectedEvent _arg) {
+		// cache the facedetectedevent
+		mLastFaceDetectedEvent = _arg;
+	}
+
+	/**
+	 * See {@link #mLastFaceDetectedEvent}.
+	 * 
+	 * @return the current (=last cached) {@link FacesDetectedEvent} event. This
+	 *         event was saved the last time a face detection was finished. if
+	 *         the returned value is null, no face detection has been finished
+	 *         yet.
+	 */
+	public FacesDetectedEvent getLastFaceDetectedEven() {
+		return mLastFaceDetectedEvent;
 	}
 }

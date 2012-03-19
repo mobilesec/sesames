@@ -14,6 +14,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.view.View;
@@ -153,7 +154,7 @@ public class FaceView extends View implements Camera.PreviewCallback {
 			// LOGGER.debug("we have " +
 			// mFaces.get(Feature.FRONTALFACE_ALT2).total() + " faces.");
 			// inform listener
-			FacesDetectedEvent e = new FacesDetectedEvent(this, mFaces, mSubsamplingFactor);
+			FacesDetectedEvent e = new FacesDetectedEvent(this, mFaces, mSubsamplingFactor, null, new Point(width, height));
 			// e.setScreenBitmap(ImageUtil.createBitmapOutOf1ChannelIplImage(grayImage));
 			mObservable.notifyObservers(e);
 			// gui update
