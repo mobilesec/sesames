@@ -5,6 +5,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint.Align;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
 
 public class MD_chart_RendererProvider 
@@ -50,21 +51,24 @@ extends AbstractRendererProvider
 	@Override
 	protected void setupRenderer() {
 		super.setupRenderer();
-		mRenderer.setShowGrid(false);
+		mRenderer.setShowGrid(true);
+		mRenderer.setGridColor(0x50ffffff);
 		mRenderer.setApplyBackgroundColor(false);
 		mRenderer.setMarginsColor(0x00ffffff);
-		mRenderer.setMargins(new int[] { 0, 100, 70, 100 });
+		//mRenderer.setMargins(new int[] { 0, 100, 70, 100 });
 		mRenderer.setAxesColor(0xffffffff);
 		mRenderer.setLabelsColor(0xffffffff);
-		mRenderer.setLabelsTextSize(20);
+		//mRenderer.setLabelsTextSize(20);
 		mRenderer.setClickEnabled(false);
-		mRenderer.setLegendTextSize(50);
-		mRenderer.setLegendHeight(70);
+		//mRenderer.setLegendTextSize(50);
+		//mRenderer.setLegendHeight(70);
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
 		mRenderer.setYTitle("kW");
-		mRenderer.setAxisTitleTextSize(20);
+		//mRenderer.setXLabelsAlign(Align.CENTER);
+		mRenderer.setXLabelsAngle(-45);
+		//mRenderer.setAxisTitleTextSize(20);
 	}
 	
 	
