@@ -357,6 +357,10 @@ extends Fragment
 	public void setMeterValue(double _val)
 	{
 //		Log.e(TAG, "meter value set to "+_val);
+		if(null==mMeter)
+		{
+			return;
+		}
 		double value = _val;
 		if(mMockValue)
 		{
