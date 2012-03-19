@@ -80,10 +80,13 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 		{
 			mChartFrame = (FrameLayout)mView.findViewById(R.id.hd_comparison_layout_chartFrame);
 		}
+		if(null==mSelectionFrame)
+		{
+			mSelectionFrame = (FrameLayout)mView.findViewById(R.id.hd_comparison_layout_comparisonFrame);
+			mSelectionFrame.removeAllViews();
+			mSelectionFrame.addView(mComparisonSelectionViewProvider.getComparisonSelectionView());
+		}
 		
-		mSelectionFrame = (FrameLayout)mView.findViewById(R.id.hd_comparison_layout_comparisonFrame);
-		mSelectionFrame.removeAllViews();
-		mSelectionFrame.addView(mComparisonSelectionViewProvider.getComparisonSelectionView());
 		mDayWeekGroup = (RadioGroup)mView.findViewById(R.id.hd_comparison_layout_day_week_group);
 		mDayWeekGroup.setOnCheckedChangeListener(this);
 		updateChart();
@@ -183,9 +186,9 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 		
 		mChartFrame.removeAllViews();
 		mChartFrame.addView(_v);
-		_v.invalidate();
-		mChartFrame.invalidate();
-		mView.invalidate();
+//		_v.invalidate();
+//		mChartFrame.invalidate();
+//		mView.invalidate();
 //		if(null!=mLastView)
 //		{
 //			mChartFrame.removeView(mLastView);
@@ -206,7 +209,8 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	public void notifyRoomSelection(String _room) 
 	{
 		mRoomName = _room;
-		updateChart();	
+//		updateChart();
+		initializeView();
 	}
 
 	@Override

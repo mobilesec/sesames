@@ -19,13 +19,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import at.sesame.fhooe.lib.data.INotificationListener;
+import at.sesame.fhooe.lib.data.SesameDataCache;
+import at.sesame.fhooe.lib.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib.ui.MeterWheelFragment;
+import at.sesame.fhooe.lib.ui.PMSRoomsListFragment;
 import at.sesame.fhooe.midsd.MID_SesameDisplayActivity;
 import at.sesame.fhooe.midsd.R;
-import at.sesame.fhooe.midsd.data.SesameDataCache;
-import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
-import at.sesame.fhooe.midsd.hd.pms.PMSFragment;
-import at.sesame.fhooe.midsd.ld.INotificationListener;
-import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
+
 
 @SuppressWarnings("unused")
 public class HD_Fragment 
@@ -48,7 +49,7 @@ implements INotificationListener
 //	private WheelFragment mEdv3WheelFrag;
 //	private WheelFragment mEdv6WheelFrag;
 	
-	private static PMSFragment mPMSFrag;
+	private static PMSRoomsListFragment mPMSFrag;
 	
 	private static HD_TabFragment mTabFrag;
 	
@@ -99,7 +100,7 @@ implements INotificationListener
 //			@Override
 //			public void run() {
 				// TODO Auto-generated method stub
-				mPMSFrag = new PMSFragment(mCtx, mUiHandler);
+				mPMSFrag = new PMSRoomsListFragment(mCtx, mUiHandler);
 //			}
 //		});
 		
@@ -238,6 +239,31 @@ implements INotificationListener
 		}
 		
 	}
-	
 
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		Log.e(TAG, "onCreate()");
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onDestroy() {
+		Log.e(TAG, "onDestroy()");
+		super.onDestroy();
+	}
+
+	@Override
+	public void onPause() {
+		Log.e(TAG, "onPause()");
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() 
+	{
+		Log.e(TAG, "onResume()");
+		super.onResume();
+	}
+	
+	
 }

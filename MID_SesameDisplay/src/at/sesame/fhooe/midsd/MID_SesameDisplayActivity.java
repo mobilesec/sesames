@@ -25,14 +25,14 @@ import at.fhooe.facedetectionview.model.FaceDetector;
 import at.fhooe.facedetectionview.model.FacesDetectedEvent;
 import at.fhooe.facedetectionview.model.FaceDetector.Feature;
 import at.fhooe.facedetectionviewcomponent.FaceDetectionViewComponent;
+import at.sesame.fhooe.lib.data.INotificationListener;
+import at.sesame.fhooe.lib.data.ISesameDataListener;
+import at.sesame.fhooe.lib.data.SesameDataCache;
+import at.sesame.fhooe.lib.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib.ui.ProgressFragmentDialog;
-import at.sesame.fhooe.midsd.data.ISesameDataListener;
-import at.sesame.fhooe.midsd.data.ISesameDataProvider;
-import at.sesame.fhooe.midsd.data.SesameDataCache;
-import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
+
 import at.sesame.fhooe.midsd.hd.HD_Fragment;
 
-import at.sesame.fhooe.midsd.ld.INotificationListener;
 import at.sesame.fhooe.midsd.ld.LD_Fragment;
 import at.sesame.fhooe.midsd.md.MD_Fragment;
 
@@ -128,17 +128,17 @@ public class MID_SesameDisplayActivity extends FragmentActivity implements
 
 	@Override
 	protected void onPause() {
-		mFaceViewComponent
-				.onPause((FrameLayout) findViewById(R.id.camera_preview));
+//		mFaceViewComponent
+//				.onPause((FrameLayout) findViewById(R.id.camera_preview));
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume() {
 
-		mFaceViewComponent.onResume(this,
-				(FrameLayout) findViewById(R.id.camera_preview), true);
-		mFaceViewComponent.addObserver(this);
+//		mFaceViewComponent.onResume(this,
+//				(FrameLayout) findViewById(R.id.camera_preview), true);
+//		mFaceViewComponent.addObserver(this);
 
 		super.onResume();
 	}

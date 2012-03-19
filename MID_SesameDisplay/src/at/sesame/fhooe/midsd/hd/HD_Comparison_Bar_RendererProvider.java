@@ -6,9 +6,9 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import at.sesame.fhooe.lib.data.simulation.DataSimulator;
 import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
 import at.sesame.fhooe.midsd.R;
-import at.sesame.fhooe.midsd.demo.DataSimulator;
 
 public class HD_Comparison_Bar_RendererProvider 
 extends AbstractRendererProvider

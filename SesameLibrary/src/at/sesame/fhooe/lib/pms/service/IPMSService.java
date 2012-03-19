@@ -75,8 +75,9 @@ public interface IPMSService
 	
 	@GET
 	@Path("/known-os")
-	@ErrorHandler(PMSBooleanErrorHandler.class)
-	@ResponseHandler(PMSBooleanResponseHandler.class)
+//	@ErrorHandler(PMSBooleanErrorHandler.class)
+//	@ErrorHandler(ExtendedStatusErrorHandler.class)
+//	@ResponseHandler(PMSBooleanResponseHandler.class)
 	public String knownOs();
 	
 	

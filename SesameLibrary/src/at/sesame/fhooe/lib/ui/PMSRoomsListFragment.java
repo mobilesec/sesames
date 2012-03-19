@@ -6,22 +6,24 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import at.sesame.fhooe.lib.R;
 import at.sesame.fhooe.lib.pms.ComputerRoomInformation;
+import at.sesame.fhooe.lib.pms.PMSClientFragment;
 
 
 public class PMSRoomsListFragment 
 extends Fragment implements OnItemClickListener
 {
 	private static final String TAG = "PMSFragment";
+	private PMSClientFragment mPMSClientFrag;
 //	private ArrayList<ComputerRoomInformation> mInfos;
 	private PMSRoomListAdapter mAdapter;
 	private Context mCtx;
@@ -32,12 +34,12 @@ extends Fragment implements OnItemClickListener
 	
 	private ListView mList;
 	
-	public PMSRoomsListFragment(Context _ctx, Handler _uiHandler)
+	public PMSRoomsListFragment(Context _ctx, Handler _uiHandler, FragmentManager _fm)
 	{
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
 		mInfos = createDummyInfos();
-
+		mPMSClientFrag = new PMSClientFragment(_ctx, _fm);
 		mAdapter = new PMSRoomListAdapter(mCtx, 1, mInfos);
 
 		
@@ -179,6 +181,8 @@ extends Fragment implements OnItemClickListener
 //			ft.add(new PMS_DetailFragment(mCtx, new EDV6Hosts()), tag);
 		
 		}
+		
+		mPMSClientFrag.show(getFragmentManager(), null);
 		
 	}
 	
