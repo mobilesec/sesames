@@ -54,7 +54,7 @@ implements ISesameDataListener
 	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
 	private IRendererProvider mRendererProvider;
 	
-	private static final int WHEEL_TEXT_SIZE = 70;
+	private static final int WHEEL_TEXT_SIZE = 40;
 	
 	static
 	{

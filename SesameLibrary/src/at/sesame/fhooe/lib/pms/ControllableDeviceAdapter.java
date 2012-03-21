@@ -86,7 +86,23 @@ implements OnClickListener, OnCheckedChangeListener
 		IListEntry item = mDevs.get(_pos);
 		if(null!=item)
 		{
+			if(item.isSeparator())
+			{
+				SeparatorListEntry sep = (SeparatorListEntry)item;
+				v = mLi.inflate(R.layout.controllable_device_listseparator, null);
 
+
+				TextView tv = (TextView)v.findViewById(R.id.separatorNameLabel);
+				tv.setText(sep.getTitle());
+
+				CheckBox separatorCb = (CheckBox)v.findViewById(R.id.separatorCheckBox);
+				separatorCb.setChecked(sep.isSelected());
+				separatorCb.setOnCheckedChangeListener(this);
+				//the separator associated with the checkbox is set as tag for the checkbox to 
+				//be able to determine which separator was selected in onCheckedChanged
+				separatorCb.setTag(sep);
+			}
+			else
 			
 			{
 				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;

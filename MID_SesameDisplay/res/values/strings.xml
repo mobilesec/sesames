@@ -9,10 +9,10 @@
     <string name="global_Room1_name">EDV 1</string>
     <string name="global_Room3_name">EDV 3</string>
     <string name="global_Room6_name">EDV 6</string>
-    <string name="global_current">" aktuell "</string>
     <string name="mid_sesame_display_loading_dialog_title">Bitte warten...</string>
     <string name="mid_sesame_display_loading_dialog_message">Daten werden geladen</string>
     <string name="sesame_data_cache_cleanup_message">Sesame datacache cleaned up</string>
+    <string name="global_current">" aktuell "</string>
     <string name="hd_comparison_day_cb1_text">" vor 1 Woche"</string>
     <string name="hd_comparison_day_cb2_text">" vor 2 Wochen"</string>
     <string name="hd_comparison_day_cb3_text">" vor 3 Wochen"</string>

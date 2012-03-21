@@ -24,7 +24,7 @@ extends Thread
 	private ArrayList<String> mMacs;
 	private boolean mUpdating = true;
 
-	private long mUpdatePeriod = 5000;
+	private long mUpdatePeriod = 10000;
 
 	public DeviceStateUpdateThread(PMSClientActivity _owner, ArrayList<ControllableDevice> _devs)
 	{

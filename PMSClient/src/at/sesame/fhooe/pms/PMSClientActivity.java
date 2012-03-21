@@ -42,6 +42,7 @@ import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
 import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
+import at.sesame.fhooe.lib.pms.model.PMSStatus;
 import at.sesame.fhooe.pms.list.commands.CommandAdapter;
 import at.sesame.fhooe.pms.list.commands.CommandListEntry;
 import at.sesame.fhooe.pms.list.commands.CommandListEntry.CommandType;
@@ -217,9 +218,9 @@ implements OnClickListener, IErrorReceiver
 			return;
 		}
 		ErrorForwarder.getInstance().register(this);
-		//		queryControllableDevicesKDF();
-		queryControllableDevicesTest();
-
+				queryControllableDevicesKDF();
+//		queryControllableDevicesTest(65);
+				
 		refreshListEntries();
 		mAdapter = new ControllableDeviceAdapter(this, mEntries);
 		mDevList = (ListView)findViewById(R.id.deviceList);
@@ -565,7 +566,7 @@ implements OnClickListener, IErrorReceiver
 	{
 		mNetworkingDialog = new ProgressDialog(PMSClientActivity.this);
 		mNetworkingDialog.setMessage(getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
-		mNetworkingDialog.setCancelable(false);
+//		mNetworkingDialog.setCancelable(false);
 		mNetworkingDialog.setCanceledOnTouchOutside(false);
 		//		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mNetworkingDialog.setIndeterminate(true);
@@ -602,7 +603,7 @@ implements OnClickListener, IErrorReceiver
 	 */
 	private void dismissNetworkingDialog()
 	{
-		if(mNetworkingDialog.isShowing())
+//		if(mNetworkingDialog.isShowing())
 		{
 			mNetworkingDialog.dismiss();
 		}
@@ -651,7 +652,11 @@ implements OnClickListener, IErrorReceiver
 			for(ControllableDevice cd:inactiveDevs)
 			{
 				ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
-				cdle.setSelection(mSelection.get(cd.getMac()));
+				if(null!=mSelection)
+				{
+					cdle.setSelection(mSelection.get(cd.getMac()));
+					
+				}
 				mEntries.add(cdle);
 			}
 		}
@@ -724,8 +729,8 @@ implements OnClickListener, IErrorReceiver
 		hosts.put("00:22:64:16:9d:2c", "DV618");
 		hosts.put("00:22:64:15:23:d4", "DV619");
 
-		String clients = PMSProvider.getPMS().getClients();
-		Log.e(TAG, clients);
+//		String clients = PMSProvider.getPMS().getClients();
+//		Log.e(TAG, clients);
 
 		mNetworkingDialog.setMax(hosts.size());
 		showNetworkingDialog();
@@ -768,10 +773,15 @@ implements OnClickListener, IErrorReceiver
 		dismissNetworkingDialog();
 	}
 
-	private void queryControllableDevicesTest()
+	private void queryControllableDevicesTest(int numDummyEntries)
 	{
 		showNetworkingDialog();
-		ArrayList<String> macs = PMSProvider.getDeviceList();
+//		ArrayList<String> macs = PMSProvider.getDeviceList();
+		ArrayList<String>macs = new ArrayList<String>(numDummyEntries);
+		for(int i = 0;i<numDummyEntries;i++)
+		{
+			macs.add("invalid_mac_"+i);
+		}
 //		
 //		JSONObject buffer = new JSONObject();
 //		for(int i = 0;i<macs.size();i++)
@@ -791,17 +801,29 @@ implements OnClickListener, IErrorReceiver
 //			}
 //			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 //		}
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
-		if(null==statuses)
+//		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
+//		if(null==statuses)
+//		{
+//			Log.e(TAG, "retrieving device information failed...");
+//			return;
+//		}
+//		for(int i = 0;i<statuses.size();i++)
+//		{
+//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), statuses.get(i), null, "schule\\\\sesame_pms", " my_sesame_pms", true);
+//			mAllDevices.add(cd);
+//			mSelection.put(cd.getMac(), false);
+//		}
+		
+		for(int i =0;i<macs.size();i++)
 		{
-			Log.e(TAG, "retrieving device information failed...");
-			return;
-		}
-		for(int i = 0;i<statuses.size();i++)
-		{
-			ControllableDevice cd = new ControllableDevice(getApplicationContext(), statuses.get(i), null, "schule\\\\sesame_pms", " my_sesame_pms", true);
-			mAllDevices.add(cd);
-			mSelection.put(cd.getMac(), false);
+			ExtendedPMSStatus status = new ExtendedPMSStatus();
+			status.setMac(macs.get(i));
+			status.setHostname("pc"+i);
+			status.setIp("127.0.0.1");
+			status.setOs(ControllableDevice.OS.unknown.name());
+			status.setAlive("0");
+			mAllDevices.add(new ControllableDevice(getApplicationContext(), status, status.getHostname(), "schule\\\\sesame_pms", " my_sesame_pms", true));
+			mSelection.put(macs.get(i), false);
 		}
 		dismissNetworkingDialog();
 	}

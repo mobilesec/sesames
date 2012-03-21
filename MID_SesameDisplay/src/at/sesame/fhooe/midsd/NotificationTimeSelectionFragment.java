@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.widget.TimePicker;
-import at.sesame.fhooe.midsd.data.SesameDataCache;
+import at.sesame.fhooe.lib.data.SesameDataCache;
 
 @SuppressWarnings("unused")
 public class NotificationTimeSelectionFragment 
@@ -33,6 +33,26 @@ extends DialogFragment
 				SesameDataCache.getInstance().scheduleSingleNotification(notificationTime.getTime());
 			}
 		}, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
+	}
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+	}
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
 	}
 
 //	@Override

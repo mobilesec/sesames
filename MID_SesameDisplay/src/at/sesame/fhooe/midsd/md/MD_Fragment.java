@@ -21,7 +21,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import at.sesame.fhooe.lib.data.INotificationListener;
+import at.sesame.fhooe.lib.data.ISesameDataListener;
+import at.sesame.fhooe.lib.data.SesameDataCache;
+import at.sesame.fhooe.lib.data.SesameDataContainer;
+import at.sesame.fhooe.lib.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib.ui.EnergyMeter;
+import at.sesame.fhooe.lib.ui.MeterWheelFragment;
 import at.sesame.fhooe.lib.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib.ui.charts.IRendererProvider;
 import at.sesame.fhooe.lib.ui.charts.exceptions.DatasetCreationException;
@@ -29,12 +35,7 @@ import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
 import at.sesame.fhooe.lib.util.DateHelper;
 import at.sesame.fhooe.midsd.MID_SesameDisplayActivity;
 import at.sesame.fhooe.midsd.R;
-import at.sesame.fhooe.midsd.data.ISesameDataListener;
-import at.sesame.fhooe.midsd.data.SesameDataCache;
-import at.sesame.fhooe.midsd.data.SesameDataContainer;
-import at.sesame.fhooe.midsd.data.SesameMeasurementPlace;
-import at.sesame.fhooe.midsd.ld.INotificationListener;
-import at.sesame.fhooe.midsd.ui.MeterWheelFragment;
+
 
 public class MD_Fragment 
 extends Fragment
@@ -173,9 +174,9 @@ implements ISesameDataListener, INotificationListener
 		mEnergyMeterRoom3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250, true);
 		mEnergyMeterRoom6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 100.0f, 30.0f, WHEEL_TEXT_SIZE, 6, 250, true);
 		
-		setupEnergyMeter(mEnergyMeterRoom1Frag);
-		setupEnergyMeter(mEnergyMeterRoom3Frag);
-		setupEnergyMeter(mEnergyMeterRoom6Frag);
+//		setupEnergyMeter(mEnergyMeterRoom1Frag);
+//		setupEnergyMeter(mEnergyMeterRoom3Frag);
+//		setupEnergyMeter(mEnergyMeterRoom6Frag);
 		
 		mNotificationFrag = new MD_NotificationFragment(mUiHandler);
 
@@ -407,4 +408,24 @@ implements ISesameDataListener, INotificationListener
 	{
 		mNotificationFrag.setNotification(_msg);
 	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
+
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+	}
+	
+	
 }

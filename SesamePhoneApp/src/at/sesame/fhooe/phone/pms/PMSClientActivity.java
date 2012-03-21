@@ -35,22 +35,27 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import at.sesame.fhooe.lib.pms.ControllableDeviceAdapter;
+import at.sesame.fhooe.lib.pms.ControllableDeviceComparator;
+import at.sesame.fhooe.lib.pms.ControllableDeviceListEntry;
+import at.sesame.fhooe.lib.pms.DeviceStateUpdateThread;
+import at.sesame.fhooe.lib.pms.IListEntry;
+import at.sesame.fhooe.lib.pms.IPMSUpdateListener;
 import at.sesame.fhooe.lib.pms.PMSProvider;
+import at.sesame.fhooe.lib.pms.SeparatorListEntry;
+import at.sesame.fhooe.lib.pms.SeparatorListEntry.ListType;
 import at.sesame.fhooe.lib.pms.errorhandling.ErrorForwarder;
 import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver;
+import at.sesame.fhooe.lib.pms.list.commands.CommandAdapter;
+import at.sesame.fhooe.lib.pms.list.commands.CommandListEntry;
+import at.sesame.fhooe.lib.pms.list.commands.CommandListEntry.CommandType;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice;
 import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
 import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
 import at.sesame.fhooe.phone.R;
 import at.sesame.fhooe.phone.SesamePhoneAppActivity;
-import at.sesame.fhooe.phone.pms.list.commands.CommandAdapter;
-import at.sesame.fhooe.phone.pms.list.commands.CommandListEntry;
-import at.sesame.fhooe.phone.pms.list.commands.CommandListEntry.CommandType;
-import at.sesame.fhooe.pms.phone.list.controllabledevice.ControllableDeviceAdapter;
-import at.sesame.fhooe.pms.phone.list.controllabledevice.ControllableDeviceListEntry;
-import at.sesame.fhooe.pms.phone.list.controllabledevice.IListEntry;
-import at.sesame.fhooe.pms.phone.list.controllabledevice.SeparatorListEntry;
-import at.sesame.fhooe.pms.phone.list.controllabledevice.SeparatorListEntry.ListType;
+
+
 
 /**
  * this class represents the activity that accesses the PMS and displays all
@@ -60,7 +65,7 @@ import at.sesame.fhooe.pms.phone.list.controllabledevice.SeparatorListEntry.List
  */
 public class PMSClientActivity 
 extends Activity 
-implements OnClickListener, IErrorReceiver
+implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 {
 	/**
 	 * the tag to identify the logger output of this class
@@ -1624,8 +1629,17 @@ implements OnClickListener, IErrorReceiver
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) 
 	{
-		startActivity(new Intent(this, SesamePhoneAppActivity.class));
+		finish();
+//		startActivity(new Intent(this, SesamePhoneAppActivity.class));
 		return true;
+	}
+
+	@Override
+	public void notifyPMSUpdated() {
+		Log.e(TAG, "notified by update thread");
+		refreshListEntries();
+		notifyAdapter();
+		
 	}
 	
 	

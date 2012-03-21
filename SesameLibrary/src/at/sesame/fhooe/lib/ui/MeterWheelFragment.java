@@ -8,7 +8,7 @@ import java.util.TimerTask;
 
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
-import android.app.Activity;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -356,7 +356,11 @@ extends Fragment
 	
 	public void setMeterValue(double _val)
 	{
-		Log.e(TAG, "meter value set to "+_val);
+//		Log.e(TAG, "meter value set to "+_val);
+		if(null==mMeter)
+		{
+			return;
+		}
 		double value = _val;
 		if(mMockValue)
 		{
@@ -373,7 +377,7 @@ extends Fragment
 
 	public void setWheelValue(double _val)
 	{
-		Log.e(TAG, "wheel value set to:"+_val);
+//		Log.e(TAG, "wheel value set to:"+_val);
 		displayWheelValue(_val);
 	}
 

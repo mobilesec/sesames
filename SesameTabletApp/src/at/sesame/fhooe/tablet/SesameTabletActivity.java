@@ -16,10 +16,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Window;
+import android.view.WindowManager;
 import at.sesame.fhooe.lib.data.INotificationListener;
 import at.sesame.fhooe.lib.data.SesameDataCache;
 import at.sesame.fhooe.lib.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib.ui.MeterWheelFragment;
+import at.sesame.fhooe.lib.ui.PMSRoomsListFragment;
 
 @SuppressWarnings("unused")
 public class SesameTabletActivity 
@@ -45,7 +48,8 @@ implements INotificationListener
 //	private WheelFragment mEdv6WheelFrag;
 	
 //	private static PMSFragment mPMSFrag;
-//	
+
+	private PMSRoomsListFragment mRoomListFrag;
 	private static TabbedComparisonFragment mTabFrag;
 	
 	private Notification mNotification;
@@ -74,6 +78,10 @@ implements INotificationListener
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+                                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		mDataCache = SesameDataCache.createInstance(true);
 		mCtx = getApplicationContext();
 		mLi = LayoutInflater.from(mCtx);
@@ -131,6 +139,7 @@ implements INotificationListener
 		
 		mTabFrag = new TabbedComparisonFragment(mCtx);
 		
+		mRoomListFrag = new PMSRoomsListFragment(mCtx, mUiHandler, mFragMan);
 		
 	}
 	
@@ -148,7 +157,7 @@ implements INotificationListener
 //		ft.add(R.id.hd_layout_pmsFrame, mPMSFrag);
 //		
 		ft.add(R.id.hd_layout_chartFrame, mTabFrag);
-		
+		ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
 		ft.commit();
 //		mFragMan.executePendingTransactions();
 	}
