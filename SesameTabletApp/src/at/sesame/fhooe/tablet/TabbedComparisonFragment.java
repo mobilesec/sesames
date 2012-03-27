@@ -110,54 +110,6 @@ extends Fragment {
 		// mTabHost.addTab(mTabHost.newTabSpec("").)
 	}
 
-	private void styleTabs() {
-		TabWidget tw = mTabHost.getTabWidget();
-		// Remove line under tab
-		Field mBottomLeftStrip;
-		Field mBottomRightStrip;
-
-		try {
-			mBottomLeftStrip = tw.getClass().getDeclaredField(
-					"mBottomLeftStrip");
-			mBottomRightStrip = tw.getClass().getDeclaredField(
-					"mBottomRightStrip");
-
-			if (!mBottomLeftStrip.isAccessible()) {
-				mBottomLeftStrip.setAccessible(true);
-			}
-
-			if (!mBottomRightStrip.isAccessible()) {
-				mBottomRightStrip.setAccessible(true);
-			}
-
-			mBottomLeftStrip.set(tw,
-					getResources().getDrawable(R.drawable.blank));
-			mBottomRightStrip.set(tw,
-					getResources().getDrawable(R.drawable.blank));
-
-		} catch (java.lang.NoSuchFieldException e) {
-			// possibly 2.2
-			try {
-				Method stripEnabled = tw.getClass().getDeclaredMethod(
-						"setStripEnabled", boolean.class);
-				stripEnabled.invoke(tw, false);
-
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		} catch (Exception e) {
-		}
-
-		for (int i = 0; i < tw.getTabCount(); i++) {
-			View v = tw.getChildAt(i);
-			((RelativeLayout) tw.getChildTabViewAt(i)).removeViewAt(0);
-			((TextView) ((RelativeLayout) tw.getChildTabViewAt(i))
-					.getChildAt(0)).setHeight(30);
-			tw.getChildAt(i).getLayoutParams().height = 38;
-			v.setBackgroundResource(R.drawable.tab_selector);
-		}
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
