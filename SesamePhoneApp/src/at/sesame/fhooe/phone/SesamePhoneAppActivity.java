@@ -17,23 +17,27 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import at.sesame.fhooe.lib.data.ISesameDataListener;
-import at.sesame.fhooe.lib.data.SesameDataCache;
-import at.sesame.fhooe.lib.data.SesameDataContainer;
-import at.sesame.fhooe.lib.data.SesameMeasurementPlace;
-import at.sesame.fhooe.lib.ui.MeterWheelFragment;
-import at.sesame.fhooe.lib.ui.SesameFragmentPagerAdapter;
-import at.sesame.fhooe.lib.ui.charts.DefaultDatasetProvider;
-import at.sesame.fhooe.lib.ui.charts.IRendererProvider;
-import at.sesame.fhooe.lib.ui.charts.exceptions.DatasetCreationException;
-import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
-import at.sesame.fhooe.lib.util.DateHelper;
-import at.sesame.fhooe.phone.pms.PMSClientActivity;
+import at.sesame.fhooe.lib2.data.ISesameDataListener;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
+import at.sesame.fhooe.lib2.data.SesameDataContainer;
+import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
+import at.sesame.fhooe.lib2.pms.PMSProvider;
+import at.sesame.fhooe.lib2.ui.ILoginListener;
+import at.sesame.fhooe.lib2.ui.LoginDialogFragment;
+import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
+import at.sesame.fhooe.lib2.ui.PMSClientActivity;
+import at.sesame.fhooe.lib2.ui.SesameFragmentPagerAdapter;
+import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
+import at.sesame.fhooe.lib2.ui.charts.IRendererProvider;
+import at.sesame.fhooe.lib2.util.DateHelper;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
 
 
 public class SesamePhoneAppActivity 
 extends FragmentActivity
-implements ISesameDataListener
+implements ISesameDataListener, ILoginListener
 {
 	private static final String TAG = "SesameHandyAppActivity";
 	private ArrayList<Fragment> mFrags = new ArrayList<Fragment>();
@@ -54,7 +58,12 @@ implements ISesameDataListener
 	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
 	private IRendererProvider mRendererProvider;
 	
+	private LoginDialogFragment mLoginDialog;
+	
 	private static final int WHEEL_TEXT_SIZE = 40;
+	
+	private String mUser;
+	private String mPass;
 	
 	static
 	{
@@ -67,8 +76,8 @@ implements ISesameDataListener
         setContentView(R.layout.main);
         Log.e(TAG, "onCreate");
         mRendererProvider = new MD_chart_RendererProvider(getApplicationContext(), true);
-        
-        mDataCache = SesameDataCache.createInstance(true);
+        new LoginDialogFragment().show(getSupportFragmentManager(), this);
+        mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
         
         mEnergyMeterRoom1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room1_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, true);
 		mEnergyMeterRoom3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room3_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, true);
@@ -91,13 +100,22 @@ implements ISesameDataListener
         mPager = (ViewPager)findViewById(R.id.sesamePager);
         mPager.setAdapter(mAdapter);
         ArrayList<SesameMeasurementPlace> energyPlaces = mDataCache.getEnergyMeasurementPlaces();
-       mDataCache.registerEnergyDataListener(this, energyPlaces.get(0));
-       mDataCache.registerEnergyDataListener(this, energyPlaces.get(1));
-       mDataCache.registerEnergyDataListener(this, energyPlaces.get(2));
+//       mDataCache.registerEnergyDataListener(this, energyPlaces.get(0));
+//       mDataCache.registerEnergyDataListener(this, energyPlaces.get(1));
+//       mDataCache.registerEnergyDataListener(this, energyPlaces.get(2));
+        for(SesameMeasurementPlace smp:energyPlaces)
+        {
+        	mDataCache.registerEnergyDataListener(this, smp);
+        }
        mDataCache.startEnergyDataUpdates();
     }
     
-    
+//    private void showLoginDialog()
+//    {
+//    	mLoginDialog = new LoginDialogFragment();
+//    	mLoginDialog.setLoginListener(this);
+//    	mLoginDialog.show(getSupportFragmentManager(), null);
+//    }
     
 //    @Override
 //	protected void onPostCreate(Bundle savedInstanceState) {
@@ -122,17 +140,17 @@ implements ISesameDataListener
 		SesameMeasurementPlace smp = data.getMeasurementPlace();
 		double lastReading = mDataCache.getLastEnergyReading(smp);
 		double overallReading = mDataCache.getOverallEnergyConsumtion(smp);
-		if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(0)))
+		if(smp.equals(mDataCache.getEnergyMeasurementPlaces().get(0)))
 		{
 			updateChartFragment(mEdv1Chart, data);
 			updateMeterWheelFragment(mEnergyMeterRoom1Frag, lastReading, overallReading);
 		}
-		else if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(1)))
+		else if(smp.equals(mDataCache.getEnergyMeasurementPlaces().get(1)))
 		{
 			updateChartFragment(mEdv3Chart, data);
 			updateMeterWheelFragment(mEnergyMeterRoom3Frag, lastReading, overallReading);
 		}
-		else if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(2)))
+		else if(smp.equals(mDataCache.getEnergyMeasurementPlaces().get(2)))
 		{
 			updateChartFragment(mEdv6Chart, data);
 			updateMeterWheelFragment(mEnergyMeterRoom6Frag, lastReading, overallReading);
@@ -164,9 +182,10 @@ implements ISesameDataListener
 		Date today = DateHelper.getFirstDateToday();
 		Date lastWeek = DateHelper.getFirstDateXDaysAgo(7);
 		Date sixDaysAgo = DateHelper.getFirstDateXDaysAgo(6);
+		Date fiveDaysAgo = DateHelper.getFirstDateXDaysAgo(5);
 		
 //		Log.e(TAG, "################today Start = "+today.toGMTString());
-		double[] todayData = _data.getValuesBetweenDates(today, new Date());
+		double[] todayData = _data.getValuesBetweenDates(sixDaysAgo, fiveDaysAgo);
 		
 //		Log.e(TAG, "today:"+Arrays.toString(todayData));
 		double[] lastWeekData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
@@ -248,7 +267,23 @@ implements ISesameDataListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) 
 	{
-		startActivity(new Intent(this, PMSClientActivity.class));
+		Intent i = new Intent(this, PMSClientActivity.class);
+//		Bundle extras = new Bundle();
+		i.putExtra(PMSClientActivity.BUNDLE_USER_KEY, mUser);
+		i.putExtra(PMSClientActivity.BUNDLE_PASS_KEY, mPass);
+		
+		startActivity(i);
 		return true;
+	}
+
+	@Override
+	public boolean checkLogin(String _user, String _pass) {
+		boolean res = PMSProvider.checkCredentials(_user, _pass);
+		if(res)
+		{
+			mUser = _user;
+			mPass = _pass;
+		}
+		return res;
 	}
 }
