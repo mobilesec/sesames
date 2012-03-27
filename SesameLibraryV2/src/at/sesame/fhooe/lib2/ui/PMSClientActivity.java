@@ -5,7 +5,7 @@
  *  Copyright: Peter Riedl, 11/2011
  *
  ******************************************************************************/
-package at.sesame.fhooe.phone.pms;
+package at.sesame.fhooe.lib2.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,25 +35,25 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import at.sesame.fhooe.lib.pms.ControllableDeviceAdapter;
-import at.sesame.fhooe.lib.pms.ControllableDeviceComparator;
-import at.sesame.fhooe.lib.pms.ControllableDeviceListEntry;
-import at.sesame.fhooe.lib.pms.DeviceStateUpdateThread;
-import at.sesame.fhooe.lib.pms.IListEntry;
-import at.sesame.fhooe.lib.pms.IPMSUpdateListener;
-import at.sesame.fhooe.lib.pms.PMSProvider;
-import at.sesame.fhooe.lib.pms.SeparatorListEntry;
-import at.sesame.fhooe.lib.pms.SeparatorListEntry.ListType;
-import at.sesame.fhooe.lib.pms.errorhandling.ErrorForwarder;
-import at.sesame.fhooe.lib.pms.errorhandling.IErrorReceiver;
-import at.sesame.fhooe.lib.pms.list.commands.CommandAdapter;
-import at.sesame.fhooe.lib.pms.list.commands.CommandListEntry;
-import at.sesame.fhooe.lib.pms.list.commands.CommandListEntry.CommandType;
-import at.sesame.fhooe.lib.pms.model.ControllableDevice;
-import at.sesame.fhooe.lib.pms.model.ControllableDevice.PowerOffState;
-import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
-import at.sesame.fhooe.phone.R;
-import at.sesame.fhooe.phone.SesamePhoneAppActivity;
+import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.pms.ControllableDeviceAdapter;
+import at.sesame.fhooe.lib2.pms.ControllableDeviceComparator;
+import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
+import at.sesame.fhooe.lib2.pms.DeviceStateUpdateThread;
+import at.sesame.fhooe.lib2.pms.IListEntry;
+import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
+import at.sesame.fhooe.lib2.pms.PMSProvider;
+import at.sesame.fhooe.lib2.pms.SeparatorListEntry;
+import at.sesame.fhooe.lib2.pms.SeparatorListEntry.ListType;
+import at.sesame.fhooe.lib2.pms.errorhandling.ErrorForwarder;
+import at.sesame.fhooe.lib2.pms.errorhandling.IErrorReceiver;
+import at.sesame.fhooe.lib2.pms.list.commands.CommandAdapter;
+import at.sesame.fhooe.lib2.pms.list.commands.CommandListEntry;
+import at.sesame.fhooe.lib2.pms.list.commands.CommandListEntry.CommandType;
+import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
+import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
+import at.sesame.fhooe.lib2.pms.model.ControllableDevice.PowerOffState;
+
 
 
 
@@ -183,6 +183,13 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	 * the button that wakes all selected devices up
 	 */
 	private Button mWakeUpAllButt;
+	
+	public static final String BUNDLE_USER_KEY = "user";
+	public static final String BUNDLE_PASS_KEY = "pass";
+	
+	
+	private String mUser;
+	private String  mPass;
 
 
 	/**
@@ -222,8 +229,13 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 			return;
 		}
+		
+		mUser = getIntent().getExtras().getString(BUNDLE_USER_KEY);
+		mPass = getIntent().getExtras().getString(BUNDLE_PASS_KEY);
+		
 		ErrorForwarder.getInstance().register(this);
-		queryControllableDevicesKDF();
+		queryControllableDevicesSim();
+//		queryControllableDevicesKDF();
 //		queryControllableDevicesTest(65);
 				
 		refreshListEntries();
@@ -248,7 +260,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 	private void startAutoUpdate()
 	{
-		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
+		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices, mUser, mPass);
 		mUpdateThread.start();
 	}
 
@@ -324,7 +336,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 		hosts.add("00:22:64:14:b3:bd");
 		hosts.add("00:22:64:16:9d:2c");
 		hosts.add("00:22:64:15:23:d4");
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(hosts);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(hosts);
 		for(ExtendedPMSStatus epmss:statuses)
 		{
 			Log.e(TAG, epmss.toString());
@@ -666,6 +678,59 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 			}
 		}
 	}
+	
+	private void queryControllableDevicesSim() 
+	{
+		Log.i(TAG, "SIMULATION");
+		//		ArrayList<String> macs = PMSProvider.getDeviceList();
+		HashMap<String,String>hosts = new HashMap<String, String>();
+		hosts.put("00:24:81:1C:3D:90", "Topf");
+		hosts.put("00:21:5A:17:40:CE", "dangl");
+		
+
+//		String clients = PMSProvider.getPMS().getClients();
+//		Log.e(TAG, clients);
+
+		mNetworkingDialog.setMax(hosts.size());
+		showNetworkingDialog();
+		//		String[] macStrings = new String[hosts.size()];
+		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(macs);
+		if(null==statuses)
+		{
+			Log.e(TAG, "could not query statuses");
+			dismissNetworkingDialog();
+			return;
+		}
+		mAllDevices = new ArrayList<ControllableDevice>();
+		for(ExtendedPMSStatus exStat:statuses)
+		{
+			Log.e(TAG, "passed mac="+exStat.getMac());
+			String passedHost = hosts.get(exStat.getMac());
+			Log.e(TAG, "HOST in LIST="+passedHost);
+			ControllableDevice cd = new ControllableDevice(getApplicationContext(), exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
+			//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
+			if(cd.isValid())
+			{
+				mAllDevices.add(cd);
+				mSelection.put(cd.getMac(), false);
+			}
+			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+		}
+
+		//			for(int i = 0;i<macs.size();i++)
+		//			{
+		//				ControllableDevice cd = new ControllableDevice(getApplicationContext(), macs.get(i), "admin1", "pwd", true);
+		//				if(cd.isValid())
+		//				{
+		//					mAllDevices.add(cd);
+		//					mSelection.put(cd.getMac(), false);
+		//				}
+		//				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+		//			}
+
+		dismissNetworkingDialog();
+	}
 
 	/**
 	 * queries which computers can be controlled via PMS and adds their ControllableDevice representations to the list
@@ -741,7 +806,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 		showNetworkingDialog();
 		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(macs);
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");
@@ -1162,20 +1227,14 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	@Override
 	public void onClick(View arg0) 
 	{
-		switch(arg0.getId())
-		{
-		case R.id.sleepButton:
+		if (arg0.getId() == R.id.sleepButton) {
 			powerOffSelectedDevices(PowerOffState.sleep);
-
-			break;
-		case R.id.shutDownButton:
+		} else if (arg0.getId() == R.id.shutDownButton) {
 			Log.e(TAG, "shut down all");
 			powerOffSelectedDevices(PowerOffState.shutdown);
-			break;
-		case R.id.wakeUpButton:
+		} else if (arg0.getId() == R.id.wakeUpButton) {
 			Log.e(TAG, "wake up all");
 			wakeupSelectedDevices();
-			break;
 		}
 	}
 
@@ -1641,6 +1700,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 		notifyAdapter();
 		
 	}
+
+	
 	
 	
 }
