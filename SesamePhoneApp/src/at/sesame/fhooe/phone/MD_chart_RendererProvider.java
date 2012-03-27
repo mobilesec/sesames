@@ -6,7 +6,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
-import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
+import at.sesame.fhooe.lib2.ui.charts.AbstractRendererProvider;
 
 public class MD_chart_RendererProvider 
 extends AbstractRendererProvider 

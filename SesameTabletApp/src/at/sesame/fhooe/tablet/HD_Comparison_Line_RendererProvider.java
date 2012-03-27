@@ -5,7 +5,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.content.Context;
 import android.graphics.Color;
-import at.sesame.fhooe.lib.ui.charts.AbstractRendererProvider;
+import at.sesame.fhooe.lib2.ui.charts.AbstractRendererProvider;
 
 public class HD_Comparison_Line_RendererProvider 
 extends AbstractRendererProvider 

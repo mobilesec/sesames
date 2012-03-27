@@ -17,8 +17,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import at.sesame.fhooe.lib.data.simulation.DataSimulator;
-import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
+import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
 
 
 @SuppressWarnings("unused")

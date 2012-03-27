@@ -18,11 +18,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
-import at.sesame.fhooe.lib.data.INotificationListener;
-import at.sesame.fhooe.lib.data.SesameDataCache;
-import at.sesame.fhooe.lib.data.SesameMeasurementPlace;
-import at.sesame.fhooe.lib.ui.MeterWheelFragment;
-import at.sesame.fhooe.lib.ui.PMSRoomsListFragment;
+import at.sesame.fhooe.lib2.data.INotificationListener;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
+import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
+import at.sesame.fhooe.lib2.data.SesameSensor.SensorType;
+import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
+import at.sesame.fhooe.lib2.ui.PMSRoomsListFragment;
 
 @SuppressWarnings("unused")
 public class SesameTabletActivity 
@@ -82,7 +84,7 @@ implements INotificationListener
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		mDataCache = SesameDataCache.createInstance(true);
+		mDataCache = SesameDataCache.getInstance(DataSource.mock);
 		mCtx = getApplicationContext();
 		mLi = LayoutInflater.from(mCtx);
 		mFragMan = getSupportFragmentManager();

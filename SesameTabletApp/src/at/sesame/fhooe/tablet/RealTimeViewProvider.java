@@ -17,8 +17,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
-import at.sesame.fhooe.lib.data.simulation.DataSimulator;
-import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
+import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
 
 
 @SuppressWarnings("unused")

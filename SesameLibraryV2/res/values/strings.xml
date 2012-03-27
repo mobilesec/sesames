@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, SesameLibraryV2Activity!</string>
+    <string name="app_name">SesameLibraryV2</string>
+    <string name="mainXML_separatorSelectionText">select all</string>
+    <string name="pms_activeDeviceSeparatorText">Active (</string>
+    <string name="pms_inactiveDeviceSeparatorText">Inactive (</string>
+    <string name="mainXML_sleepAllButton_text">sleep</string>
+    <string name="mainXML_shutdownAllButton_text">shut down</string>
+    <string name="mainXML_wakeUpAllButton_text">wake up</string>
+    <string name="PMSClientActivity_activeDeviceActionDialogBaseMessage">The computer could still be in use (idle time:</string>
+    <string name="PMSClientActivity_activeDeviceDialogShutDownCommand">shut down</string>
+    <string name="PMSClientActivity_activeDeviceDialogSleepCommand">sleep</string>
+    <string name="PMSClientActivity_inactiveDeviceDialogWakeUpCommand">wake up</string>
+    <string name="PMSClientActivity_noNetworkDialogTitle">Internet Connection failed</string>
+    <string name="PMSClientActivity_noNetworkDialogMessage">You are currently not connected to the internet. please connect via 3G or wifi to use this app.</string>
+    <string name="PMSClientActivity_networkingProgressDialogTitle">"Networking in progress, please wait."</string>
+    <string name="PMSClientActivity_cantShutDownDialogMessage">shut down of the computer is currently not possible</string>
+    <string name="PMSClientActivity_cantWakeUpDialogMessage">the computer can currently not be turned on.</string>
+    <string name="login_dialog_layout_user_label_text">Benutzername</string>
+    <string name="login_dialog_layout_password_label_text">Kennwort</string>
+    <string name="login_dialog_login_butt_text">Anmelden</string>
+    <string name="MeterWheelFrag_bottom_text">"Verbrauch seit: "</string>
+    <string name="pms_room_list_inactive_prefix">"Inaktive Computer: "</string>
+    <string name="pms_room_list_active_prefix">"Aktive Computer: "</string>
+    <string name="global_Room1_name">EDV 1</string>
+    <string name="global_Room3_name">EDV 3</string>
+    <string name="global_Room6_name">EDV 6</string>
+
+</resources>
