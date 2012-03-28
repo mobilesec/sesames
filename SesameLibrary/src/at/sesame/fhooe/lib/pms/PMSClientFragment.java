@@ -169,6 +169,10 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPMSDialogAction
 	private Button mWakeUpAllButt;
 
 
+	private static final String mUser = "peter";
+	private static final String mPass = "thatpeter";
+	
+	
 	/**
 	 * this enumeration is used to determine which kind of device was selected
 	 * @author admin
@@ -249,7 +253,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPMSDialogAction
 
 	private void startAutoUpdate()
 	{
-		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices);
+		mUpdateThread = new DeviceStateUpdateThread(this, mAllDevices, mUser, mPass);
 		mUpdateThread.start();
 	}
 
@@ -325,7 +329,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPMSDialogAction
 		hosts.add("00:22:64:14:b3:bd");
 		hosts.add("00:22:64:16:9d:2c");
 		hosts.add("00:22:64:15:23:d4");
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(hosts);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(hosts);
 		for(ExtendedPMSStatus exStat:statuses)
 		{
 			Log.e(TAG, "passed mac="+exStat.getMac());
@@ -755,7 +759,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPMSDialogAction
 		mNetworkingDialog.show(mFragMan, null);
 		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(macs);
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");

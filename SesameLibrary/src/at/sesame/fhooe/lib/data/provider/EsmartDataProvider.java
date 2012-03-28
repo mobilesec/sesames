@@ -69,6 +69,6 @@ implements IEnergyDataSource
 			dates.add(edr.getDate());
 			values.add(edr.getDataValue());
 		}
-		return new SesameDataContainer(_smp, ""+_smp.getId(), dates, values);
+		return new SesameDataContainer(_smp, dates, values);
 	}
 }

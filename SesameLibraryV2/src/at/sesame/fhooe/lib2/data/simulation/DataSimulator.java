@@ -16,6 +16,7 @@ import at.sesame.fhooe.lib2.data.IHumidityDataSource;
 import at.sesame.fhooe.lib2.data.ILightDataSource;
 import at.sesame.fhooe.lib2.data.ITemperatureDataSource;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
+import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.provider.EsmartDateHelper;
 
@@ -152,7 +153,7 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 		
 		while(cal.getTime().before(END_DATE))
 		{
-			mEnergyData.addData(cal.getTime(), r.nextDouble()*1000);
+			mEnergyData.addData(new SesameMeasurement(cal.getTime(), r.nextDouble()*1000));
 			cal.add(DEFAULT_TIME_UNIT, DEFAULT_INCREMENTATION_STEP);
 		}
 	}
@@ -160,9 +161,9 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 	@Override
 	public SesameDataContainer getEnergyData(SesameMeasurementPlace _smp, Date _from, Date _to) 
 	{
-		SesameDataContainer res = mEnergyData.filterByDate(_from, _to);
-		res.setMeasurementPlace(_smp);
-		return res;
+		ArrayList<SesameMeasurement> res = SesameDataContainer.filterByDate(mEnergyData.getMeasurements(), _from, _to);
+//		res.setMeasurementPlace(_smp);
+		return new SesameDataContainer(_smp, res);
 //		return mEnergyData.
 ////		SesameDataContainer res = new TimeSeries(_title);
 //		Random r = new Random(System.currentTimeMillis());

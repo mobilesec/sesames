@@ -24,9 +24,14 @@ extends Thread
 	private IPMSUpdateListener mUpdateListener;
 
 	private long mUpdatePeriod = 10000;
+	
+	private String mUser;
+	private String mPass;
 
-	public DeviceStateUpdateThread(IPMSUpdateListener _updateListener, ArrayList<ControllableDevice> _devs)
+	public DeviceStateUpdateThread(IPMSUpdateListener _updateListener, ArrayList<ControllableDevice> _devs, String _user, String _pass)
 	{
+		mUser = _user;
+		mPass = _pass;
 		mUpdateListener = _updateListener;
 		mDevs = _devs;
 		
@@ -45,7 +50,7 @@ extends Thread
 			Log.e(TAG, "updating");
 
 			long begin = System.currentTimeMillis();
-			ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(mMacs);
+			ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(mMacs);
 
 			if(null==statuses)
 			{

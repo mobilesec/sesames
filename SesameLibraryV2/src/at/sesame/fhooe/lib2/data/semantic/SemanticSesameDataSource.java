@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import android.util.Log;
 import at.sesame.fhooe.lib2.data.IEnergyDataSource;
@@ -11,6 +12,7 @@ import at.sesame.fhooe.lib2.data.IHumidityDataSource;
 import at.sesame.fhooe.lib2.data.ILightDataSource;
 import at.sesame.fhooe.lib2.data.ITemperatureDataSource;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
+import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.SesameSensor;
 import at.sesame.fhooe.lib2.data.SesameSensor.SensorType;
@@ -139,22 +141,31 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 		
 		HashMap<Date, Double> dateValueMap = SemanticQueryResultParser.parseValues(result);
 		
-		Iterator<Date> dateIt = dateValueMap.keySet().iterator();
-		ArrayList<Date> dates = new ArrayList<Date>();
-		
-		while(dateIt.hasNext())
-		{
-			dates.add(dateIt.next());
-		}
-		
-		Iterator<Double> valIt = dateValueMap.values().iterator();
-		ArrayList<Double> values = new ArrayList<Double>();
-		
-		while(valIt.hasNext())
-		{
-			values.add(valIt.next());
-		}
-		return new SesameDataContainer(_smp, dates, values);
+		Iterator<Map.Entry<Date, Double>> it = dateValueMap.entrySet().iterator();
+	    ArrayList<SesameMeasurement> measurements = new ArrayList<SesameMeasurement>(dateValueMap.size());
+		while (it.hasNext()) {
+	        Map.Entry<Date, Double> pair = it.next();
+	        measurements.add(new SesameMeasurement(pair.getKey(), pair.getValue()));
+//	        System.out.println(pairs.getKey() + " = " + pairs.getValue());
+//	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+
+//		Iterator<Date> dateIt = dateValueMap.keySet().iterator();
+//		ArrayList<Date> dates = new ArrayList<Date>();
+//		
+//		while(dateIt.hasNext())
+//		{
+//			dates.add(dateIt.next());
+//		}
+//		
+//		Iterator<Double> valIt = dateValueMap.values().iterator();
+//		ArrayList<Double> values = new ArrayList<Double>();
+//		
+//		while(valIt.hasNext())
+//		{
+//			values.add(valIt.next());
+//		}
+		return new SesameDataContainer(_smp, measurements);
 	}
 
 }
