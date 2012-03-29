@@ -169,7 +169,7 @@ implements INotificationListener
 		//		ft.add(R.id.hd_layout_pmsFrame, mPMSFrag);
 		//		
 		ft.add(R.id.hd_layout_chartFrame, mTabFrag);
-		ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
+//		ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
 		ft.commit();
 		//		mFragMan.executePendingTransactions();
 	}

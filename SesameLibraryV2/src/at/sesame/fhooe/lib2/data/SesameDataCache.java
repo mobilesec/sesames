@@ -382,7 +382,7 @@ implements ISesameDataProvider
 		}
 		else
 		{
-			Log.d(TAG, "passed mp:"+_smp.toString());
+//			Log.d(TAG, "passed mp:"+_smp.toString());
 		}
 		if(null==mEnergyData)
 		{
@@ -390,7 +390,7 @@ implements ISesameDataProvider
 		}
 		else
 		{
-			Log.d(TAG, "energy data ok");
+//			Log.d(TAG, "energy data ok");
 		}
 		SesameDataContainer energyData = null;
 		try

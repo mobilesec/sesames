@@ -36,7 +36,8 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 		setDisplayMode(_mode);
 	}
 
-	public void setDisplayMode(DisplayMode _mode) {
+	public void setDisplayMode(DisplayMode _mode) 
+	{
 		switch(_mode)
 		{
 		case day:
