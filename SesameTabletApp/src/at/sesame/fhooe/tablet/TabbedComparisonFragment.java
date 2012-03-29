@@ -85,7 +85,7 @@ extends Fragment {
 				return mRealTimeViewProvider.getRealtimeView();
 			}
 		});
-		realtimeTab.setIndicator("Echtzeit");
+		realtimeTab.setIndicator("Echtzeit", getResources().getDrawable(R.drawable.blank));
 		
 		TabHost.TabSpec comparisonTab = mTabHost.newTabSpec("asdf2");
 		comparisonTab.setContent(new TabContentFactory() {

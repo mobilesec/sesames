@@ -2,8 +2,10 @@ package at.sesame.fhooe.lib2.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import android.util.Log;
 //import at.sesame.fhooe.lib.esmart.model.EsmartDataRow;
@@ -12,6 +14,8 @@ import android.util.Log;
 public class SesameDataContainer 
 {
 	private static final String TAG = "SesameDataContainer";
+	private static final int MEASUREMENT_INTERVAL = 15;
+	private static final int MEASUREMENT_PADDING_VALUE = 0;
 
 	public enum SesameDataType
 	{
@@ -110,19 +114,43 @@ public class SesameDataContainer
 			final ArrayList<SesameMeasurement> res = new ArrayList<SesameMeasurement>();
 			Log.d(TAG, "num measurments to filter:"+_measurements.size());
 			Log.d(TAG, "filtering between:"+_from.toString()+" and "+_to.toString());
-			for(int i = 0;i<_measurements.size();i++)
+			GregorianCalendar cal = new GregorianCalendar();
+			cal.setTime(_from);
+			
+			GregorianCalendar toCal = new GregorianCalendar();
+			toCal.setTime(_to);
+			toCal.add(Calendar.MINUTE, -1*MEASUREMENT_INTERVAL);
+			int i =0;
+			while(cal.getTime().before(toCal.getTime()))
 			{
-				SesameMeasurement sm = _measurements.get(i);
-				if(sm.getTimeStamp().after(_from)&&sm.getTimeStamp().before(_to))
+				if(containsDate(_measurements, cal.getTime()))
 				{
-//					Log.d(TAG, "added:"+sm.toString());
-					res.add(sm);
+					res.add(_measurements.get(i));
+					Log.d(TAG, "added:"+_measurements.get(i).toString());
 				}
 				else
 				{
-//					Log.d(TAG, "did not add:"+sm.toString());
+					SesameMeasurement sm = new SesameMeasurement(cal.getTime(), MEASUREMENT_PADDING_VALUE);
+					Log.d(TAG, "added padding:"+sm.toString());
+					res.add(sm);
 				}
+				cal.add(Calendar.MINUTE, MEASUREMENT_INTERVAL);
+				i++;
 			}
+//			for(int i = 0;i<_measurements.size();i++)
+//			{
+//				SesameMeasurement sm = _measurements.get(i);
+//				Log.d(TAG, sm.toString());
+//				if(sm.getTimeStamp().after(_from)&&sm.getTimeStamp().before(_to))
+//				{
+////					Log.d(TAG, "added:"+sm.toString());
+//					res.add(sm);
+//				}
+//				else
+//				{
+////					Log.d(TAG, "did not add:"+sm.toString());
+//				}
+//			}
 			return res;
 		}
 
@@ -138,6 +166,24 @@ public class SesameDataContainer
 		//		}
 		//		
 		//		return new SesameDataContainer(mPlace, dateList, valueList);
+	}
+	
+	private synchronized static boolean containsDate(final ArrayList<SesameMeasurement> _measurements, final Date _d)
+	{
+		Log.d(TAG, "checking for:"+_d.toString());
+		List<Date> dates = Arrays.asList(getTimeStampArray(_measurements));
+		return dates.contains(_d);
+//		for(SesameMeasurement sm:_measurements)
+//		{
+//			Log.d(TAG, "measurement:"+sm.getTimeStamp().toString());
+//			if(sm.getTimeStamp().equals(_d))
+//			{
+//				Log.d(TAG, "found");
+//				return true;
+//			}
+//		}
+//		Log.d(TAG, " not found");
+//		return false;
 	}
 
 	//	private ArrayList<SesameMeasurement>

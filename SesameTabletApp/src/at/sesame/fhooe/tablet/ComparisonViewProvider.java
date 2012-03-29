@@ -2,23 +2,29 @@ package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.chart.BarChart.Type;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
+import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
+import at.sesame.fhooe.lib2.data.SesameDataContainer;
+import at.sesame.fhooe.lib2.data.SesameMeasurement;
+import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
+import at.sesame.fhooe.lib2.esmart.service.response.GetServicesResponseHandler;
+import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
+import at.sesame.fhooe.lib2.util.DateHelper;
 
 
 @SuppressWarnings("unused")
@@ -55,6 +61,15 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	
 	private ComparisonSelectionViewProvider mComparisonSelectionViewProvider;
 	
+	private SesameDataCache mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
+	private SesameMeasurementPlace mEdv1Place;
+	private SesameMeasurementPlace mEdv3Place;
+	private SesameMeasurementPlace mEdv6Place;
+	
+	private SesameMeasurementPlace mCurRoom;
+	
+	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
+	
 	public ComparisonViewProvider(Context _ctx)
 	{
 		mCtx = _ctx;
@@ -62,6 +77,13 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 		mComparisonSelectionViewProvider = new ComparisonSelectionViewProvider(mCtx, this, mCurMode);
 		mChartRendererProvider = new HD_Comparison_Line_RendererProvider(mCtx, true);
 		mBarRendererProvider = new HD_Comparison_Bar_RendererProvider(mCtx);
+		
+		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
+		mEdv1Place = places.get(0);
+		mEdv3Place = places.get(3);
+		mEdv6Place = places.get(2);
+		
+		mCurRoom = mEdv1Place;
 		initializeView();
 	}
 	
@@ -83,7 +105,7 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 		if(null==mSelectionFrame)
 		{
 			mSelectionFrame = (FrameLayout)mView.findViewById(R.id.hd_comparison_layout_comparisonFrame);
-			mSelectionFrame.removeAllViews();
+//			mSelectionFrame.removeAllViews();
 			mSelectionFrame.addView(mComparisonSelectionViewProvider.getComparisonSelectionView());
 		}
 		
@@ -118,28 +140,62 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 	
 	private void updateDayChart()
 	{
-		XYMultipleSeriesDataset data = new XYMultipleSeriesDataset();
-		data.addSeries(DataSimulator.createTimeSeries(mRoomName+mCtx.getString(R.string.global_current), new Date(), 100));
+//		SesameDataContainer edv1Readings = mDataCache.getEnergyReadings(mEdv1Place, DateHelper.getFirstDateToday(), new Date());
+//		SesameDataContainer edv3Readings = mDataCache.getEnergyReadings(mEdv3Place, DateHelper.getFirstDateToday(), new Date());
+//		SesameDataContainer edv6Readings = mDataCache.getEnergyReadings(mEdv6Place, DateHelper.getFirstDateToday(), new Date());
+		SesameDataContainer readings = mDataCache.getAllEnergyReadings(mCurRoom);
+//		XYMultipleSeriesDataset data = new XYMultipleSeriesDataset();
+		ArrayList<String> titles = new ArrayList<String>();
+		List<Date[]> dates = new ArrayList<Date[]>();
+		List<double[]> values = new ArrayList<double[]>();
+		titles.add(mCtx.getString(R.string.global_current));
+		
+		ArrayList<SesameMeasurement> currentMeasurements = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getFirstDateToday(), DateHelper.getFirstDateXDaysAgo(-1));
+		Date[] currentDates = SesameDataContainer.getTimeStampArray(currentMeasurements);
+		dates.add(currentDates);
+		values.add(SesameDataContainer.getValueArray(currentMeasurements));
+		
+//		data.addSeries(DataSimulator.createTimeSeries(mRoomName+mCtx.getString(R.string.global_current), new Date(), 100));
 		if(mSelectedFilters[0])
 		{
-			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb1_text), new Date(), 100));
+//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb1_text), new Date(), 100));
+			titles.add(mCtx.getString(R.string.hd_comparison_day_cb1_text));
+			ArrayList<SesameMeasurement> oneWeekAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getFirstDateXDaysAgo(7), DateHelper.getFirstDateXDaysAgo(6));
+			dates.add(currentDates);
+			values.add(SesameDataContainer.getValueArray(oneWeekAgo));
 		}
 		if(mSelectedFilters[1])
 		{
-			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb2_text), new Date(), 100));
+//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb2_text), new Date(), 100));
+			titles.add(mCtx.getString(R.string.hd_comparison_day_cb2_text));
+			ArrayList<SesameMeasurement> twoWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getFirstDateXDaysAgo(14), DateHelper.getFirstDateXDaysAgo(13));
+			dates.add(currentDates);
+			values.add(SesameDataContainer.getValueArray(twoWeeksAgo));
 		}
 		if(mSelectedFilters[2])
 		{
-			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb3_text), new Date(), 100));
+//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb3_text), new Date(), 100));
+			titles.add(mCtx.getString(R.string.hd_comparison_day_cb3_text));
+			ArrayList<SesameMeasurement> threeWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getFirstDateXDaysAgo(21), DateHelper.getFirstDateXDaysAgo(20));
+			dates.add(currentDates);
+			values.add(SesameDataContainer.getValueArray(threeWeeksAgo));
 		}
 		if(mSelectedFilters[3])
 		{
-			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb4_text), new Date(), 100));
+//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb4_text), new Date(), 100));
+			titles.add(mCtx.getString(R.string.hd_comparison_day_cb4_text));
+			ArrayList<SesameMeasurement> fourWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getFirstDateXDaysAgo(28), DateHelper.getFirstDateXDaysAgo(27));
+			dates.add(currentDates);
+			values.add(SesameDataContainer.getValueArray(fourWeeksAgo));
 		}
 		try {
+			XYMultipleSeriesDataset data = mDatasetProvider.buildDateDataset((String[]) titles.toArray(new String[titles.size()]), dates, values);
 			mChartRendererProvider.createMultipleSeriesRenderer(data);
 			setChartView(ChartFactory.getTimeChartView(mCtx, data, mChartRendererProvider.getRenderer(), ""));
 		} catch (RendererInitializationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DatasetCreationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -185,7 +241,9 @@ implements IComparisonSelectionListener, OnCheckedChangeListener
 //		}
 		
 		mChartFrame.removeAllViews();
+		mChartFrame.invalidate();
 		mChartFrame.addView(_v);
+		mChartFrame.invalidate();
 //		_v.invalidate();
 //		mChartFrame.invalidate();
 //		mView.invalidate();
