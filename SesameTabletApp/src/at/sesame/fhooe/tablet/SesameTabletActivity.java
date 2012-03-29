@@ -89,17 +89,20 @@ implements INotificationListener
 		setTheme(android.R.style.Theme_Holo_Light);
 		mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
 		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-		mEdv1Place = places.get(0);
-		mEdv3Place = places.get(3);
-		mEdv6Place = places.get(2);
-		mCtx = getApplicationContext();
-		mLi = LayoutInflater.from(mCtx);
-		mFragMan = getSupportFragmentManager();
-		//		mUiHandler = _uiHandler;
-		initializeNotification();
-		initializeFragments();
-		setContentView(R.layout.hd_layout);
-		addFragments();
+		if(null!=places&&places.size()>0)
+		{
+			mEdv1Place = places.get(0);
+			mEdv3Place = places.get(3);
+			mEdv6Place = places.get(2);			
+			mCtx = getApplicationContext();
+			mLi = LayoutInflater.from(mCtx);
+			mFragMan = getSupportFragmentManager();
+			//		mUiHandler = _uiHandler;
+			initializeNotification();
+			initializeFragments();
+			setContentView(R.layout.hd_layout);
+			addFragments();
+		}
 	}
 
 	//	public void onStart()
@@ -148,7 +151,7 @@ implements INotificationListener
 
 		mTabFrag = new TabbedComparisonFragment(mCtx);
 
-		mRoomListFrag = new PMSRoomsListFragment(mCtx, mUiHandler, mFragMan);
+//		mRoomListFrag = new PMSRoomsListFragment(mCtx, mUiHandler, mFragMan);
 
 	}
 

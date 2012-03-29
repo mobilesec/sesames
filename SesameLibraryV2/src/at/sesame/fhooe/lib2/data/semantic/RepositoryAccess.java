@@ -40,7 +40,16 @@ public class RepositoryAccess
 		@Override
 		protected String doInBackground(String... params) 
 		{
-			return mRepo.executeQuery(params[0]);
+			try
+			{
+				String res = mRepo.executeQuery(params[0]);
+				return res;
+			}
+			catch(Exception _e)
+			{
+				_e.printStackTrace();
+				return null;
+			}
 //			return null;
 		}
 

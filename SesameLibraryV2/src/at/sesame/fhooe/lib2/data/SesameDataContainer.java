@@ -120,6 +120,10 @@ public class SesameDataContainer
 			GregorianCalendar toCal = new GregorianCalendar();
 			toCal.setTime(_to);
 			toCal.add(Calendar.MINUTE, -1*MEASUREMENT_INTERVAL);
+			for(SesameMeasurement sm:_measurements)
+			{
+				Log.d(TAG, sm.toString());
+			}
 			int i =0;
 			while(cal.getTime().before(toCal.getTime()))
 			{
@@ -131,7 +135,7 @@ public class SesameDataContainer
 				else
 				{
 					SesameMeasurement sm = new SesameMeasurement(cal.getTime(), MEASUREMENT_PADDING_VALUE);
-					Log.d(TAG, "added padding:"+sm.toString());
+					Log.e(TAG, "added padding:"+sm.toString());
 					res.add(sm);
 				}
 				cal.add(Calendar.MINUTE, MEASUREMENT_INTERVAL);
