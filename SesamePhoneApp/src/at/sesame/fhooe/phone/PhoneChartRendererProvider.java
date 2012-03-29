@@ -8,18 +8,18 @@ import android.graphics.Color;
 import android.graphics.Paint.Align;
 import at.sesame.fhooe.lib2.ui.charts.AbstractRendererProvider;
 
-public class MD_chart_RendererProvider 
+public class PhoneChartRendererProvider 
 extends AbstractRendererProvider 
 {
 	private int mFillColorAlpha = 180;
 	
 	
-	public MD_chart_RendererProvider(Context _ctx) 
+	public PhoneChartRendererProvider(Context _ctx) 
 	{
 		super(_ctx);
 	}
 	
-	public MD_chart_RendererProvider(Context _ctx, boolean _createFixedLabels)
+	public PhoneChartRendererProvider(Context _ctx, boolean _createFixedLabels)
 	{
 		super(_ctx, _createFixedLabels);
 	}
@@ -66,6 +66,7 @@ extends AbstractRendererProvider
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
 		mRenderer.setYTitle("kW");
+		mRenderer.setXLabels(10);
 		//mRenderer.setXLabelsAlign(Align.CENTER);
 		mRenderer.setXLabelsAngle(-45);
 		//mRenderer.setAxisTitleTextSize(20);

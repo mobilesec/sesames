@@ -5,6 +5,7 @@ import java.util.Date;
 
 import at.sesame.fhooe.lib2.data.IEnergyDataSource;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
+import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.esmart.model.EsmartDataRow;
 import at.sesame.fhooe.lib2.esmart.model.EsmartMeasurementPlace;
@@ -61,14 +62,14 @@ implements IEnergyDataSource
 	
 	private SesameDataContainer convertEsmartDataRowsToSesameDataContainer(SesameMeasurementPlace _smp, ArrayList<EsmartDataRow> _edrs)
 	{
-		ArrayList<Date> dates = new ArrayList<Date>(_edrs.size());
-		ArrayList<Double> values = new ArrayList<Double>(_edrs.size());
+//		ArrayList<Date> dates = new ArrayList<Date>(_edrs.size());
+//		ArrayList<Double> values = new ArrayList<Double>(_edrs.size());
+		ArrayList<SesameMeasurement> res = new ArrayList<SesameMeasurement>();
 		for(int i = 0 ;i<_edrs.size();i++)
 		{
 			EsmartDataRow edr = _edrs.get(i);
-			dates.add(edr.getDate());
-			values.add(edr.getDataValue());
+			res.add(new SesameMeasurement(edr.getDate(), edr.getDataValue()));
 		}
-		return new SesameDataContainer(_smp, dates, values);
+		return new SesameDataContainer(_smp, res);
 	}
 }

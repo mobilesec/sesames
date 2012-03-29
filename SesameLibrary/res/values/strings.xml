@@ -65,4 +65,7 @@
     <string name="PMSClientActivity_networkingProgressDialogTitle">Networking in progress, please wait...</string>
     <string name="PMSClientActivity_cantShutDownDialogMessage">shut down of the computer is currently not possible</string>
     <string name="PMSClientActivity_cantWakeUpDialogMessage">the computer can currently not be turned on.</string>
+    <string name="login_dialog_layout_user_label_text">Benutzername</string>
+    <string name="login_dialog_layout_password_label_text">Kennwort</string>
+    <string name="login_dialog_login_butt_text">Anmelden</string>
 </resources>

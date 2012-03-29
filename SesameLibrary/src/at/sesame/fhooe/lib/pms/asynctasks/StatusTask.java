@@ -21,7 +21,8 @@ extends AsyncTask<String, Void, PMSStatus> {
 	@Override
 	protected PMSStatus doInBackground(String... params) {
 		String mac = params[0];
-		return PMSProvider.getPMS().getStatus(mac);
+//		return PMSProvider.getPMS().getStatus(mac);
+		return new PMSStatus();
 	}
 
 }
