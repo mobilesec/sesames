@@ -107,35 +107,37 @@ public class SesameDataContainer
 		return true;
 	}
 
-	public synchronized static ArrayList<SesameMeasurement> filterByDate(final ArrayList<SesameMeasurement> _measurements, final Date _from, final Date _to)
+	public synchronized static ArrayList<SesameMeasurement> filterByDate(ArrayList<SesameMeasurement> _measurements, Date _from, Date _to)
 	{
 //		synchronized (this)
 		{
-			final ArrayList<SesameMeasurement> res = new ArrayList<SesameMeasurement>();
+			ArrayList<SesameMeasurement> res = new ArrayList<SesameMeasurement>();
 			Log.d(TAG, "num measurments to filter:"+_measurements.size());
 			Log.d(TAG, "filtering between:"+_from.toString()+" and "+_to.toString());
 			GregorianCalendar cal = new GregorianCalendar();
-			cal.setTime(_from);
+			cal.setTimeInMillis(_from.getTime());
+//			new G
 			
 			GregorianCalendar toCal = new GregorianCalendar();
-			toCal.setTime(_to);
-			toCal.add(Calendar.MINUTE, -1*MEASUREMENT_INTERVAL);
-			for(SesameMeasurement sm:_measurements)
-			{
-				Log.d(TAG, sm.toString());
-			}
+			toCal.setTimeInMillis(_to.getTime());
+//			toCal.add(Calendar.MINUTE, -1*MEASUREMENT_INTERVAL);
+//			for(SesameMeasurement sm:_measurements)
+//			{
+//				Log.d(TAG, sm.toString());
+//			}
 			int i =0;
 			while(cal.getTime().before(toCal.getTime()))
 			{
-				if(containsDate(_measurements, cal.getTime()))
+				Integer idx = containsDate(_measurements, cal.getTime());
+				if(null!=idx)
 				{
-					res.add(_measurements.get(i));
-					Log.d(TAG, "added:"+_measurements.get(i).toString());
+					res.add(_measurements.get(idx));
+//					Log.d(TAG, "added:"+_measurements.get(i).toString());
 				}
 				else
 				{
 					SesameMeasurement sm = new SesameMeasurement(cal.getTime(), MEASUREMENT_PADDING_VALUE);
-					Log.e(TAG, "added padding:"+sm.toString());
+//					Log.e(TAG, "added padding:"+sm.toString());
 					res.add(sm);
 				}
 				cal.add(Calendar.MINUTE, MEASUREMENT_INTERVAL);
@@ -172,22 +174,25 @@ public class SesameDataContainer
 		//		return new SesameDataContainer(mPlace, dateList, valueList);
 	}
 	
-	private synchronized static boolean containsDate(final ArrayList<SesameMeasurement> _measurements, final Date _d)
+	private synchronized static Integer containsDate(ArrayList<SesameMeasurement> _measurements, Date _d)
 	{
-		Log.d(TAG, "checking for:"+_d.toString());
-		List<Date> dates = Arrays.asList(getTimeStampArray(_measurements));
-		return dates.contains(_d);
-//		for(SesameMeasurement sm:_measurements)
-//		{
+//		Log.d(TAG, "checking for:"+_d.toString());
+//		Date[] timeStamps = ;
+//		List<Date> dates = Arrays.asList(getTimeStampArray(_measurements));
+//		Log.e(TAG, Arrays.toString(timeStamps));
+//		return dates.contains(_d);
+		for(int i = 0;i<_measurements.size();i++)
+		{
+			SesameMeasurement sm = _measurements.get(i);
 //			Log.d(TAG, "measurement:"+sm.getTimeStamp().toString());
-//			if(sm.getTimeStamp().equals(_d))
-//			{
-//				Log.d(TAG, "found");
-//				return true;
-//			}
-//		}
-//		Log.d(TAG, " not found");
-//		return false;
+			if(sm.getTimeStamp().equals(_d))
+			{
+				Log.d(TAG, "found");
+				return i;
+			}
+		}
+		Log.d(TAG, " not found");
+		return null;
 	}
 
 	//	private ArrayList<SesameMeasurement>
@@ -253,7 +258,7 @@ public class SesameDataContainer
 
 	public static double[] getValueArray(ArrayList<SesameMeasurement> _measurements)
 	{
-		double[] res = new double[_measurements.size()];
+		final double[] res = new double[_measurements.size()];
 		Log.d(TAG, "number of measurements to process="+_measurements.size());
 		for(int i = 0;i<_measurements.size();i++)
 		{
