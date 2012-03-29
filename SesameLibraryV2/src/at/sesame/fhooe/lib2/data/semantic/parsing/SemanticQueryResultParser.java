@@ -53,9 +53,9 @@ public class SemanticQueryResultParser
 //				removeSesamePrefix(measurmentPlaceString);
 			}
 		}
-		catch(JSONException _je)
+		catch(Exception _e)
 		{
-			_je.printStackTrace();
+			_e.printStackTrace();
 		}
 		return res;
 	}
@@ -142,9 +142,9 @@ public class SemanticQueryResultParser
 				}
 			}
 		}
-		catch(JSONException _je)
+		catch(Exception _e)
 		{
-			_je.printStackTrace();
+			_e.printStackTrace();
 		}
 		return res;
 	}
