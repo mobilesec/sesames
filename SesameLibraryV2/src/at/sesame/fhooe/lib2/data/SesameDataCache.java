@@ -204,7 +204,7 @@ implements ISesameDataProvider
 
 				loadEnergyData(	smp, 
 						//					EsmartDataRow.getUrlTimeString(mStartYear, mStartMonth, mStartDay), 
-						DateHelper.getFirstDateXDaysAgo(50), 
+						DateHelper.getFirstDateXDaysAgo(30), 
 						new Date());
 			}
 
@@ -358,6 +358,11 @@ implements ISesameDataProvider
 		}
 
 		resetUpdateMap(mEnergyDataUpdateMap, mEnergyMeasurementPlaces);
+	}
+	
+	public SesameDataContainer getAllEnergyReadings(SesameMeasurementPlace _smp)
+	{
+		return mEnergyData.get(_smp);
 	}
 	
 	public SesameDataContainer getEnergyReadings(SesameMeasurementPlace _smp, Date _from, Date _to)

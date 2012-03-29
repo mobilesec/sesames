@@ -25,7 +25,7 @@ public class SemanticQueryResultParser
 			JSONArray jsonResultArray = resultObject.getJSONArray("bindings");
 			return jsonResultArray;
 		} 
-		catch (JSONException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

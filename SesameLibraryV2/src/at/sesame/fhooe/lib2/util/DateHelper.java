@@ -109,6 +109,7 @@ public class DateHelper
 		return res.getTime();
 	}
 	
+	
 	public static Date getFirstDateXDaysAgo(int _daysAgo)
 	{
 		GregorianCalendar res = new GregorianCalendar();
