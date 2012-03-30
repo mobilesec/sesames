@@ -34,15 +34,15 @@
             android:id="@+id/hd_comparison_layout_chartFrame"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.70" >
+            android:layout_weight="1" >
         </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/hd_comparison_layout_comparisonFrame"
+        <fragment
+            android:id="@+id/comparisonSelectionFragment1"
+            android:name="at.sesame.fhooe.tablet.ComparisonSelectionFragment"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.30" >
-        </FrameLayout>
+            android:layout_weight="0.5"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </LinearLayout>
