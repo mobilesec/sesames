@@ -1,16 +1,13 @@
 package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
-import android.content.Context;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.app.Activity;
+import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -20,121 +17,62 @@ import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
-import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
-import at.sesame.fhooe.lib2.esmart.service.response.GetServicesResponseHandler;
 import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
 import at.sesame.fhooe.lib2.util.DateHelper;
 
-
-@SuppressWarnings("unused")
-public class RealTimeViewProvider 
-implements OnCheckedChangeListener
+public class RealTimeActivity 
+extends Activity implements OnCheckedChangeListener 
 {
-	private static final String TAG = "RealTimeChartFragment";
-	
-//	private final Context mCtx;
+
+	private SesameDataCache mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
+	private SesameMeasurementPlace mEdv1Place;
+	private SesameMeasurementPlace mEdv3Place;
+	private SesameMeasurementPlace mEdv6Place;
 	
 	private boolean mShowEdv1 = true;
 	private boolean mShowEdv3 = true;
 	private boolean mShowEdv6 = true;
 	
-	private FrameLayout mChartFrame;
-	
-	private Context mCtx;
-	
-	private View mRealtimeView;
 	private HD_chart_RendererProvider mRendererProvider;
 	
-	private SesameDataCache mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
-	private SesameMeasurementPlace mEdv1Place;
-	private SesameMeasurementPlace mEdv3Place;
-	private SesameMeasurementPlace mEdv6Place;
-//	private MD_chart_RendererProvider mRendererProvider = new MD_chart_RendererProvider();
-//	@Override
-//	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//			Bundle savedInstanceState) {
-//		// TODO Auto-generated method stub
-//		mRealtimeView = inflater.inflate(R.layout.hd_realtime_layout, null);
-//		CheckBox edv1Box = (CheckBox)mRealtimeView.findViewById(R.id.hd_realtime_layout_edv1Box);
-//		edv1Box.setChecked(true);
-//		edv1Box.setOnCheckedChangeListener(this);
-//		
-//		CheckBox edv3Box = (CheckBox)mRealtimeView.findViewById(R.id.hd_realtime_layout_edv3Box);
-//		edv3Box.setChecked(true);
-//		edv3Box.setOnCheckedChangeListener(this);
-//		
-//		CheckBox edv6Box = (CheckBox)mRealtimeView.findViewById(R.id.hd_realtime_layout_edv6Box);
-//		edv6Box.setChecked(true);
-//		edv6Box.setOnCheckedChangeListener(this);
-//		
-//		mChartFrame = (FrameLayout)mRealtimeView.findViewById(R.id.hd_realtime_layout_chartFrame);
-//		updateChart();
-//		
-//		return mRealtimeView;
-//	}
+	private FrameLayout mChartFrame;
 	
-	public RealTimeViewProvider(Context _ctx)
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 
 	{
-		mCtx = _ctx;
+		super.onCreate(savedInstanceState);
 		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
 		mEdv1Place = places.get(0);
-		mEdv3Place = places.get(3);
+		mEdv3Place = places.get(1);
 		mEdv6Place = places.get(2);
+		
 		initializeView();
 	}
 
 	private void initializeView() 
 	{
 		
-		mRendererProvider = new HD_chart_RendererProvider(mCtx,true);
-		LayoutInflater inflater = LayoutInflater.from(mCtx);
-		mRealtimeView = inflater.inflate(R.layout.hd_realtime_layout, null);
-		CheckBox edv1Box = (CheckBox)mRealtimeView.findViewById(R.id.hd_realtime_layout_edv1Box);
+		mRendererProvider = new HD_chart_RendererProvider(getApplicationContext(),true);
+//		LayoutInflater inflater = LayoutInflater.from(mCtx);
+		setContentView(R.layout.hd_realtime_layout);
+		CheckBox edv1Box = (CheckBox)findViewById(R.id.hd_realtime_layout_edv1Box);
 		edv1Box.setChecked(true);
 		edv1Box.setOnCheckedChangeListener(this);
 		
-		CheckBox edv3Box = (CheckBox)mRealtimeView.findViewById(R.id.hd_realtime_layout_edv3Box);
+		CheckBox edv3Box = (CheckBox)findViewById(R.id.hd_realtime_layout_edv3Box);
 		edv3Box.setChecked(true);
 		edv3Box.setOnCheckedChangeListener(this);
 		
-		CheckBox edv6Box = (CheckBox)mRealtimeView.findViewById(R.id.hd_realtime_layout_edv6Box);
+		CheckBox edv6Box = (CheckBox)findViewById(R.id.hd_realtime_layout_edv6Box);
 		edv6Box.setChecked(true);
 		edv6Box.setOnCheckedChangeListener(this);
 		
-		mChartFrame = (FrameLayout)mRealtimeView.findViewById(R.id.hd_realtime_layout_chartFrame);
+		mChartFrame = (FrameLayout)findViewById(R.id.hd_realtime_layout_chartFrame);
 		updateChart();
 	}
-	
-	
 
-//	@Override
-//	public void onAttach(Activity activity) {
-//		super.onAttach(activity);
-//		mRendererProvider = new HD_chart_RendererProvider(activity,true);
-//	}
-
-
-
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
-	{
-		switch(buttonView.getId())
-		{
-		case R.id.hd_realtime_layout_edv1Box:
-			mShowEdv1 = isChecked;
-			break;
-		case R.id.hd_realtime_layout_edv3Box:
-			mShowEdv3 = isChecked;
-			break;
-		case R.id.hd_realtime_layout_edv6Box:
-			mShowEdv6 = isChecked;
-			break;
-		}
-		updateChart();
-	}
-	
 	private void updateChart()
 	{		
 //		GregorianCalendar now = new GregorianCalendar();
@@ -153,7 +91,7 @@ implements OnCheckedChangeListener
 		if(mShowEdv1)
 		{
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room1_name), yesterday.getTime(), 100));
-			titles.add(mCtx.getString(R.string.global_Room1_name));
+			titles.add(getString(R.string.global_Room1_name));
 			SesameDataContainer edv1Raw = mDataCache.getAllEnergyReadings(mEdv1Place);
 			ArrayList<SesameMeasurement> edv1 = SesameDataContainer.filterByDate(edv1Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
@@ -163,7 +101,7 @@ implements OnCheckedChangeListener
 		if(mShowEdv3)
 		{
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room3_name), yesterday.getTime(), 100));
-			titles.add(mCtx.getString(R.string.global_Room3_name));
+			titles.add(getString(R.string.global_Room3_name));
 			SesameDataContainer edv3Raw = mDataCache.getAllEnergyReadings(mEdv3Place);
 			ArrayList<SesameMeasurement> edv3 = SesameDataContainer.filterByDate(edv3Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
@@ -173,7 +111,7 @@ implements OnCheckedChangeListener
 		if(mShowEdv6)
 		{
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room6_name), yesterday.getTime(), 100));
-			titles.add(mCtx.getString(R.string.global_Room6_name));
+			titles.add(getString(R.string.global_Room6_name));
 			SesameDataContainer edv6Raw = mDataCache.getAllEnergyReadings(mEdv6Place);
 			ArrayList<SesameMeasurement> edv6 = SesameDataContainer.filterByDate(edv6Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
@@ -185,7 +123,7 @@ implements OnCheckedChangeListener
 			XYMultipleSeriesDataset data = new DefaultDatasetProvider().buildDateDataset((String[]) titles.toArray(new String[titles.size()]), dates, values);
 			mRendererProvider.createMultipleSeriesRenderer(data);
 			mChartFrame.removeAllViews();
-			mChartFrame.addView(ChartFactory.getTimeChartView(mCtx, data, mRendererProvider.getRenderer(), ""));
+			mChartFrame.addView(ChartFactory.getTimeChartView(getApplicationContext(), data, mRendererProvider.getRenderer(), ""));
 //			mChartFrame.invalidate();
 		} catch (RendererInitializationException e) {
 			// TODO Auto-generated catch block
@@ -195,41 +133,24 @@ implements OnCheckedChangeListener
 			e.printStackTrace();
 		}
 	}
-
-	public View getRealtimeView()
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
 	{
-		return mRealtimeView;
+		switch(buttonView.getId())
+		{
+		case R.id.hd_realtime_layout_edv1Box:
+			mShowEdv1 = isChecked;
+			break;
+		case R.id.hd_realtime_layout_edv3Box:
+			mShowEdv3 = isChecked;
+			break;
+		case R.id.hd_realtime_layout_edv6Box:
+			mShowEdv6 = isChecked;
+			break;
+		}
+		updateChart();
+		
 	}
+	
 
-//	@Override
-//	public void onCreate(Bundle savedInstanceState) {
-//		// TODO Auto-generated method stub
-//		super.onCreate(savedInstanceState);
-//	}
-//
-//
-//
-//	@Override
-//	public void onDestroy() {
-//		// TODO Auto-generated method stub
-//		super.onDestroy();
-//	}
-//
-//
-//
-//	@Override
-//	public void onPause() {
-//		// TODO Auto-generated method stub
-//		super.onPause();
-//	}
-//
-//
-//
-//	@Override
-//	public void onResume() {
-//		// TODO Auto-generated method stub
-//		super.onResume();
-//	}
-	
-	
 }

@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +47,8 @@ extends Fragment {
 		View v = inflater.inflate(R.layout.comparison_tab_fragment_layout, null);
 		mTabHost = (TabHost) v
 				.findViewById(R.id.hd_tab_fragment_layout_tabhost);
+		mTabHost.setup();
+	
 //		mTabManager = new TabManager(mCtx, getFragmentManager(), mTabHost,
 //				android.R.id.tabcontent);
 		createTabs();
@@ -55,50 +57,60 @@ extends Fragment {
 	}
 
 	private void createTabs() {
-		mTabHost.setup();
 		Bundle args = new Bundle();
 		args.putString(BUNDLE_NAME_KEY, "asdf");
 		args.putInt(BUNDLE_NUMBER_KEY, 1);
-		TabHost.TabSpec realtimeTab = mTabHost.newTabSpec("asdf1");
+//		mTabHost.setup();
+		 Intent intent;  // Reusable Intent for each tab
 
-		realtimeTab.setContent(new TabContentFactory() {
-			
-			@Override
-			public View createTabContent(String tag) {
-				// TODO Auto-generated method stub
-				if(null==mRealTimeViewProvider)
-				{
-					Log.e(TAG, "fragment was null");
-				}
-				else
-				{
-					Log.e(TAG, "fragment was ok");
-				}
-				if(null==mRealTimeViewProvider.getRealtimeView())
-				{
-					Log.e(TAG, "view was null");
-				}
-				else
-				{
-					Log.e(TAG, "view was ok");
-				}
-				return mRealTimeViewProvider.getRealtimeView();
-			}
-		});
-		realtimeTab.setIndicator("Echtzeit", getResources().getDrawable(R.drawable.blank));
+		    // Create an Intent to launch an Activity for the tab (to be reused)
+		    intent = new Intent().setClass(mCtx, RealTimeActivity.class);
+
+		    // Initialize a TabSpec for each tab and add it to the TabHost
+		    TabHost.TabSpec spec = mTabHost.newTabSpec("realtime").setIndicator("echtzeit")
+		                  .setContent(intent);
+		    mTabHost.addTab(spec);
+
+//		TabHost.TabSpec realtimeTab = mTabHost.newTabSpec("asdf1");
+//
+//		realtimeTab.setContent(new TabContentFactory() {
+//			
+//			@Override
+//			public View createTabContent(String tag) {
+//				// TODO Auto-generated method stub
+//				if(null==mRealTimeViewProvider)
+//				{
+//					Log.e(TAG, "fragment was null");
+//				}
+//				else
+//				{
+//					Log.e(TAG, "fragment was ok");
+//				}
+//				if(null==mRealTimeViewProvider.getRealtimeView())
+//				{
+//					Log.e(TAG, "view was null");
+//				}
+//				else
+//				{
+//					Log.e(TAG, "view was ok");
+//				}
+//				return mRealTimeViewProvider.getRealtimeView();
+//			}
+//		});
+//		realtimeTab.setIndicator("Echtzeit", getResources().getDrawable(R.drawable.blank));
 		
-		TabHost.TabSpec comparisonTab = mTabHost.newTabSpec("asdf2");
-		comparisonTab.setContent(new TabContentFactory() {
-			
-			@Override
-			public View createTabContent(String tag) {
-				// TODO Auto-generated method stub
-				return mComparisonViewProvider.getComparisonView();
-			}
-		});
-		comparisonTab.setIndicator("vergleich");
-		mTabHost.addTab(realtimeTab);
-		mTabHost.addTab(comparisonTab);
+//		TabHost.TabSpec comparisonTab = mTabHost.newTabSpec("asdf2");
+//		comparisonTab.setContent(new TabContentFactory() {
+//			
+//			@Override
+//			public View createTabContent(String tag) {
+//				// TODO Auto-generated method stub
+//				return mComparisonViewProvider.getComparisonView();
+//			}
+//		});
+//		comparisonTab.setIndicator("vergleich");
+////		mTabHost.addTab(realtimeTab);
+//		mTabHost.addTab(comparisonTab);
 		// args.putSerializable("", mCtx);
 //		mTabManager.addTab(
 //				mTabHost.newTabSpec("real").setIndicator("Echtzeit"),

@@ -187,11 +187,11 @@ public class SesameDataContainer
 //			Log.d(TAG, "measurement:"+sm.getTimeStamp().toString());
 			if(sm.getTimeStamp().equals(_d))
 			{
-				Log.d(TAG, "found");
+//				Log.d(TAG, "found");
 				return i;
 			}
 		}
-		Log.d(TAG, " not found");
+//		Log.d(TAG, " not found");
 		return null;
 	}
 

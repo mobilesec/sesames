@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.LocalActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TabHost;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
@@ -36,6 +38,7 @@ implements INotificationListener
 	private Context mCtx;
 	private LayoutInflater mLi;
 	private FragmentManager mFragMan;
+	private LocalActivityManager mLam;
 
 	private SesameDataCache mDataCache;
 
@@ -52,7 +55,7 @@ implements INotificationListener
 	//	private static PMSFragment mPMSFrag;
 
 	private PMSRoomsListFragment mRoomListFrag;
-	private static TabbedComparisonFragment mTabFrag;
+	//	private static TabbedComparisonFragment mTabFrag;
 
 	private Notification mNotification;
 	private NotificationManager mNotificationMan;
@@ -87,12 +90,14 @@ implements INotificationListener
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setTheme(android.R.style.Theme_Holo_Light);
-		mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
+		mLam = new LocalActivityManager(this, false);
+		mLam.dispatchCreate(savedInstanceState);
+		mDataCache = SesameDataCache.getInstance(DataSource.mock);
 		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
 		if(null!=places&&places.size()>0)
 		{
 			mEdv1Place = places.get(0);
-			mEdv3Place = places.get(3);
+			mEdv3Place = places.get(1);
 			mEdv6Place = places.get(2);			
 			mCtx = getApplicationContext();
 			mLi = LayoutInflater.from(mCtx);
@@ -102,7 +107,30 @@ implements INotificationListener
 			initializeFragments();
 			setContentView(R.layout.hd_layout);
 			addFragments();
+			createTabs();
 		}
+	}
+
+	private void createTabs()
+	{
+		TabHost th = (TabHost)findViewById(R.id.hd_tab_fragment_layout_tabhost);
+		th.setup(mLam);
+
+
+		Intent intent;  // Reusable Intent for each tab
+
+		// Create an Intent to launch an Activity for the tab (to be reused)
+		intent = new Intent().setClass(mCtx, RealTimeActivity.class);
+
+		// Initialize a TabSpec for each tab and add it to the TabHost
+		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("echtzeit")
+				.setContent(intent);
+		th.addTab(spec);
+		intent = new Intent().setClass(mCtx, ComparisonActivity.class);
+		TabHost.TabSpec spec2 = th.newTabSpec("comparison").setIndicator("Vergleich")
+				.setContent(intent);
+		th.addTab(spec2);
+		th.setCurrentTab(0);
 	}
 
 	//	public void onStart()
@@ -149,9 +177,9 @@ implements INotificationListener
 		//			e.printStackTrace();
 		//		}
 
-		mTabFrag = new TabbedComparisonFragment(mCtx);
+		//		mTabFrag = new TabbedComparisonFragment(mCtx);
 
-//		mRoomListFrag = new PMSRoomsListFragment(mCtx, mUiHandler, mFragMan);
+		//		mRoomListFrag = new PMSRoomsListFragment(mCtx, mUiHandler, mFragMan);
 
 	}
 
@@ -168,8 +196,8 @@ implements INotificationListener
 
 		//		ft.add(R.id.hd_layout_pmsFrame, mPMSFrag);
 		//		
-		ft.add(R.id.hd_layout_chartFrame, mTabFrag);
-//		ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
+		//		ft.add(R.id.hd_layout_chartFrame, mTabFrag);
+		//		ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
 		ft.commit();
 		//		mFragMan.executePendingTransactions();
 	}
@@ -231,7 +259,7 @@ implements INotificationListener
 
 
 			try {
-				
+
 				double currentAtPlace1 = mDataCache.getLastEnergyReading(mEdv1Place).getVal();
 				double overallAtPlace1 = mDataCache.getOverallEnergyConsumtion(mEdv1Place);
 
@@ -292,7 +320,9 @@ implements INotificationListener
 	//	}
 
 	@Override
-	public void onDestroy() {
+	public void onDestroy() 
+	{
+		mLam.dispatchDestroy(isFinishing());
 		Log.e(TAG, "onDestroy()");
 		super.onDestroy();
 	}
@@ -300,6 +330,7 @@ implements INotificationListener
 	@Override
 	public void onPause() {
 		stopMeterWheelUpdates();
+		mLam.dispatchPause(isFinishing());
 		Log.e(TAG, "onPause()");
 		super.onPause();
 	}
@@ -308,6 +339,7 @@ implements INotificationListener
 	public void onResume() 
 	{
 		startMeterWheelUpdates();
+		mLam.dispatchResume();
 		Log.e(TAG, "onResume()");
 		super.onResume();
 	}
