@@ -81,7 +81,7 @@ public class EnergyMeter extends View {
 	private Paint paintColorLabels;
 	private Paint paintCurrentValue;
 	private Paint paintTicks;
-	private boolean doScaleBackgroundImages = false;
+	private boolean doScaleBackgroundImages = true;
 
 	public EnergyMeter(Context context, AttributeSet attrs, int _id) {
 		super(context, attrs, _id);
@@ -136,6 +136,31 @@ public class EnergyMeter extends View {
 		paintTicks.setStrokeCap(Cap.ROUND);
 		paintTicks.setTextAlign(Align.CENTER);
 		paintTicks.setTextSize(mTickTextSize);
+	}
+	
+	public void setEnergyMeterRenderer(EnergyMeterRenderer r) {
+		mColorLabelRange = r.getColorLabelRange();
+		mColorLabels = r.getColorLabels();
+		mColorLabelWidth = r.getColorLabelWidth();
+		mCurrentValueX = r.getCurrentValueX();
+		mCurrentValueY = r.getCurrentValueY();
+		mFullAngle = r.getFullAngle();
+		mMajorTickLength = r.getMajorTickLength();
+		mMajorTickSpacing = r.getMajorTickSpacing();
+		mMaxValue = r.getMaxValue();
+		mMinorTickLength = r.getMinorTickLength();
+		mMinorTickSpacing = r.getMinorTickSpacing();
+		mMinValue = r.getMinValue();
+		mPointerBaseWidth = r.getPointerBaseWidth();
+		mRelativePointerBaseY = r.getRelativePointerBaseY();
+		mRelativePointerLength = r.getRelativePointerLength();
+		mRelativeTickRadius = r.getRelativeTickRadius();
+		mTickColor = r.getTickColor();
+		mTickTextSize = r.getTickTextSize();
+		mUnit = r.getUnit();
+		
+		// refresh everything
+		loadParameters();
 	}
 
 	private boolean checkColorLabelRange() {
@@ -233,13 +258,9 @@ public class EnergyMeter extends View {
 		if (mBackground != null && parentWidth != 0 && parentHeight != 0) {
 			this.setMeasuredDimension(parentWidth,
 					(int) (parentWidth / mBackgroundRatio));
-			scaleBackgroundImages();
-			loadPointerPath();
 		} else {
 			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		}
-
-		// Log.e(TAG, "onMeasure()");
 	}
 	
 	@Override
@@ -252,10 +273,10 @@ public class EnergyMeter extends View {
 	protected void onDraw(Canvas _c) {
 		super.onDraw(_c);
 
-		if (!doScaleBackgroundImages) {
+		if (doScaleBackgroundImages) {
 			scaleBackgroundImages();
 			loadPointerPath();
-			doScaleBackgroundImages = true;
+			doScaleBackgroundImages = false;
 		}
 
 		// draw dial
@@ -431,140 +452,4 @@ public class EnergyMeter extends View {
 				- (mFullAngle / 2) + mMinValue; // producing correct values
 												// around the center
 	}
-	public boolean isDrawColorLabes() {
-		return mDrawColorLabes;
-	}
-
-	public void setDrawColorLabes(boolean mDrawColorLabes) {
-		this.mDrawColorLabes = mDrawColorLabes;
-	}
-
-	public float[] getColorLabelRange() {
-		return mColorLabelRange;
-	}
-
-	public void setColorLabelRange(float[] mColorLabelRange) {
-		this.mColorLabelRange = mColorLabelRange;
-	}
-
-	public int[] getColorLabels() {
-		return mColorLabels;
-	}
-
-	public void setColorLabels(int[] mColorLabels) {
-		this.mColorLabels = mColorLabels;
-	}
-
-	public float getColorLabelWidth() {
-		return mColorLabelWidth;
-	}
-
-	public void setColorLabelWidth(float mColorLabelWidth) {
-		this.mColorLabelWidth = mColorLabelWidth;
-	}
-
-	public float getMinValue() {
-		return mMinValue;
-	}
-
-	public void setMinValue(float mMinValue) {
-		this.mMinValue = mMinValue;
-	}
-
-	public float getMaxValue() {
-		return mMaxValue;
-	}
-
-	public void setMaxValue(float mMaxValue) {
-		this.mMaxValue = mMaxValue;
-	}
-
-	public float getFullAngle() {
-		return mFullAngle;
-	}
-
-	public void setFullAngle(float mFullAngle) {
-		this.mFullAngle = mFullAngle;
-	}
-
-	public int getMinorTickSpacing() {
-		return mMinorTickSpacing;
-	}
-
-	public void setMinorTickSpacing(int mMinorTickSpacing) {
-		this.mMinorTickSpacing = mMinorTickSpacing;
-	}
-
-	public float getMinorTickLength() {
-		return mMinorTickLength;
-	}
-
-	public void setMinorTickLength(float mMinorTickLength) {
-		this.mMinorTickLength = mMinorTickLength;
-	}
-
-	public int getMajorTickSpacing() {
-		return mMajorTickSpacing;
-	}
-
-	public void setMajorTickSpacing(int mMajorTickSpacing) {
-		this.mMajorTickSpacing = mMajorTickSpacing;
-	}
-
-	public float getMajorTickLength() {
-		return mMajorTickLength;
-	}
-
-	public void setMajorTickLength(float mMajorTickLength) {
-		this.mMajorTickLength = mMajorTickLength;
-	}
-
-	public float getRelativePointerLength() {
-		return mRelativePointerLength;
-	}
-
-	public void setRelativePointerLength(float mRelativePointerLength) {
-		this.mRelativePointerLength = mRelativePointerLength;
-	}
-
-	public float getRelativeTickRadius() {
-		return mRelativeTickRadius;
-	}
-
-	public void setRelativeTickRadius(float mRelativeTickRadius) {
-		this.mRelativeTickRadius = mRelativeTickRadius;
-	}
-
-	public float getRelativePointerBaseY() {
-		return mRelativePointerBaseY;
-	}
-
-	public void setRelativePointerBaseY(float mRelativePointerBaseY) {
-		this.mRelativePointerBaseY = mRelativePointerBaseY;
-	}
-
-	public float getTickTextSize() {
-		return mTickTextSize;
-	}
-
-	public void setTickTextSize(float mTickTextSize) {
-		this.mTickTextSize = mTickTextSize;
-	}
-
-	public boolean isDrawUnit() {
-		return mDrawUnit;
-	}
-
-	public void setDrawUnit(boolean mDrawUnit) {
-		this.mDrawUnit = mDrawUnit;
-	}
-
-	public String getUnit() {
-		return mUnit;
-	}
-
-	public void setUnit(String mUnit) {
-		this.mUnit = mUnit;
-	}
-
 }

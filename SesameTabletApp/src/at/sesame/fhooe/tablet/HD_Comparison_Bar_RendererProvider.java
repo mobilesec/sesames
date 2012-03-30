@@ -49,6 +49,8 @@ extends AbstractRendererProvider
 		mRenderer.setXAxisMin(0.5);
 		mRenderer.setXAxisMax(7.3);
 		mRenderer.setYAxisMin(0);
+		mRenderer.clearXTextLabels();
+		mRenderer.setXLabels(0);
 		for(int i = 0 ;i<DataSimulator.BAR_TITLES.length;i++)
 		{
 			mRenderer.addXTextLabel(i+1, DataSimulator.BAR_TITLES[i]);

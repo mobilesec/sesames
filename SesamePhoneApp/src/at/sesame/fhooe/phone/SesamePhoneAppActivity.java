@@ -25,6 +25,7 @@ import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.pms.PMSProvider;
+import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.ILoginListener;
 import at.sesame.fhooe.lib2.ui.LoginDialogFragment;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
@@ -87,9 +88,9 @@ implements ISesameDataListener, ILoginListener
 //        new LoginDialogFragment().show(getSupportFragmentManager(), this);
         mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
         
-        mEnergyMeterRoom1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room1_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room3_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room6_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
+        mEnergyMeterRoom1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room1_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room3_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room6_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
         
 		mEdv1Chart = new PhoneChartFragment(getString(R.string.global_Room1_name), getApplicationContext(), mUiHandler);
 		mEdv3Chart = new PhoneChartFragment(getString(R.string.global_Room3_name), getApplicationContext(), mUiHandler);

@@ -53,8 +53,6 @@ extends Fragment
 	
 	private String mBottomText;
 	private float mBottomTextSize;
-	
-	private int mSidePadding;
 
 	private Handler mUiHandler;
 	
@@ -64,24 +62,25 @@ extends Fragment
 	private double mDefaultWheelValue;
 	
 	private double mCurMeterValue;
+	
+	private EnergyMeterRenderer mRenderer;
 
 	public MeterWheelFragment()
 	{
 		
 	}
-	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, float _headerSize, float _bottomSize, int _wheelTextSize, int _numDigits, int _sidePadding, boolean _variateValue)
+	public MeterWheelFragment(Context _ctx, Handler _uiHandler, String _header, float _headerSize, float _bottomSize, int _wheelTextSize, int _numDigits, boolean _variateValue, EnergyMeterRenderer _renderer)
 	{
 //		this.setRetainInstance(true);
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
 //		mMeter = new EnergyMeter(_ctx);
 
+		mRenderer = _renderer;
 		mHeaderText = _header;
 		mHeaderTextSize = _headerSize;
 		mBottomText = mCtx.getString(R.string.MeterWheelFrag_bottom_text)+mDateFormat.format(Constants.getStartDate());
 		mBottomTextSize = _bottomSize;
-		mSidePadding = _sidePadding;
-		
 		mWheelTextSize = _wheelTextSize;
 		mNumDigits = _numDigits;
 		mAdapter =new ArrayWheelAdapter<String>(mCtx, mDigits);
@@ -177,9 +176,12 @@ extends Fragment
 
 	private void initializeMeter()
 	{
-		mMeter.setMaxValue(2000);
-		mMeter.setMajorTickSpacing(500);
-		mMeter.setMinorTickSpacing(100);
+//		mRenderer.setMaxValue(2000);
+//		mRenderer.setMajorTickSpacing(500);
+//		mRenderer.setMinorTickSpacing(100);
+		
+		mMeter.setEnergyMeterRenderer(mRenderer);
+
 		try {
 			mMeter.setValue(mCurMeterValue);
 		} catch (Exception e) {
@@ -338,21 +340,21 @@ extends Fragment
 		super.onDestroy();
 	}
 
-	public void setColorLabelWidth(float _w) {
-		mMeter.setColorLabelWidth(_w);
-	}
-	
-	public void setTickTextSize(float _s) {
-		mMeter.setTickTextSize(_s);
-	}
-
-	public void setMinorTickLength(int _l) {
-		mMeter.setMinorTickLength(_l);
-	}
-	
-	public void setMajorTickLength(int _l) {
-		mMeter.setMajorTickLength(_l);
-	}
+//	public void setColorLabelWidth(float _w) {
+//		mMeter.setColorLabelWidth(_w);
+//	}
+//	
+//	public void setTickTextSize(float _s) {
+//		mMeter.setTickTextSize(_s);
+//	}
+//
+//	public void setMinorTickLength(int _l) {
+//		mMeter.setMinorTickLength(_l);
+//	}
+//	
+//	public void setMajorTickLength(int _l) {
+//		mMeter.setMajorTickLength(_l);
+//	}
 	
 	public void setMeterValue(double _val)
 	{

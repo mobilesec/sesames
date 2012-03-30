@@ -22,9 +22,9 @@ import android.view.WindowManager;
 import android.widget.TabHost;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
-import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
-import at.sesame.fhooe.lib2.data.SesameSensor.SensorType;
+import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
 import at.sesame.fhooe.lib2.ui.PMSRoomsListFragment;
 
@@ -89,7 +89,7 @@ implements INotificationListener
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setTheme(android.R.style.Theme_Holo_Light);
+		setTheme(android.R.style.Theme_Holo);
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
 		mDataCache = SesameDataCache.getInstance(DataSource.mock);
@@ -150,14 +150,23 @@ implements INotificationListener
 
 	private void initializeFragments()
 	{
+		// Setup EnergyMeterRenderer
+		EnergyMeterRenderer r = new EnergyMeterRenderer();
+		r.setCurrentValueY(0.41f);
+		r.setMaxValue(2000);
+		r.setMajorTickSpacing(500);
+		r.setMinorTickSpacing(100);
+		r.setMinorTickLength(16);
+		r.setMajorTickLength(20);
+		r.setRelativeTickRadius(1.05f);
+		
 		String room1Name = mCtx.getString(R.string.global_Room1_name);
 		String room3Name = mCtx.getString(R.string.global_Room3_name);
 		String room6Name = mCtx.getString(R.string.global_Room6_name);
 
-
-		mEdv1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, 0, false);
-		mEdv3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, 0, false);
-		mEdv6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, 0, false);
+		mEdv1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
+		mEdv3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
+		mEdv6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
 		//		mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 		//		mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 		//		mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
