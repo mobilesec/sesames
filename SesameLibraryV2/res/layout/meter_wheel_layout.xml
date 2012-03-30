@@ -18,45 +18,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/meter_wheel_layout_wheelBackgroundContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/wheel_background"
-        android:gravity="center"
-        android:orientation="horizontal" >
-
-        <LinearLayout
-            android:id="@+id/meter_wheel_layout_wheelContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal" >
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/meter_wheel_layout_textViewUnit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="kWh"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-    </LinearLayout>
-    <!-- <FrameLayout -->
-    <!-- android:layout_width="match_parent" -->
-    <!-- android:layout_height="wrap_content" > -->
-
-
-    <!-- <ImageView -->
+    <!-- <LinearLayout -->
+    <!-- android:id="@+id/meter_wheel_layout_wheelBackgroundContainer" -->
     <!-- android:layout_width="match_parent" -->
     <!-- android:layout_height="wrap_content" -->
-    <!-- android:adjustViewBounds="true" -->
-    <!-- android:scaleType="centerCrop" -->
-    <!-- android:src="@drawable/wheel_background" /> -->
-
-
-    <!-- <LinearLayout -->
-    <!-- android:layout_width="match_parent" -->
-    <!-- android:layout_height="match_parent" -->
+    <!-- android:background="@drawable/wheel_background" -->
     <!-- android:gravity="center" -->
     <!-- android:orientation="horizontal" > -->
 
@@ -65,7 +31,8 @@
     <!-- android:id="@+id/meter_wheel_layout_wheelContainer" -->
     <!-- android:layout_width="wrap_content" -->
     <!-- android:layout_height="wrap_content" -->
-    <!-- android:gravity="center" > -->
+    <!-- android:gravity="center" -->
+    <!-- android:orientation="horizontal" > -->
     <!-- </LinearLayout> -->
 
 
@@ -76,7 +43,40 @@
     <!-- android:text="kWh" -->
     <!-- android:textAppearance="?android:attr/textAppearanceLarge" /> -->
     <!-- </LinearLayout> -->
-    <!-- </FrameLayout> -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/wheel_background" >
+
+        <!-- <ImageView -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:adjustViewBounds="true" -->
+        <!-- android:scaleType="centerCrop" -->
+        <!-- android:src="@drawable/wheel_background" /> -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/meter_wheel_layout_wheelContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/meter_wheel_layout_textViewUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Wh"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </LinearLayout>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/meter_wheel_layout_bottom_text"
