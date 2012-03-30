@@ -2,7 +2,8 @@ package at.sesame.fhooe.phone;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
@@ -17,25 +18,32 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import at.sesame.fhooe.lib.data.ISesameDataListener;
-import at.sesame.fhooe.lib.data.SesameDataCache;
-import at.sesame.fhooe.lib.data.SesameDataContainer;
-import at.sesame.fhooe.lib.data.SesameMeasurementPlace;
-import at.sesame.fhooe.lib.ui.MeterWheelFragment;
-import at.sesame.fhooe.lib.ui.SesameFragmentPagerAdapter;
-import at.sesame.fhooe.lib.ui.charts.DefaultDatasetProvider;
-import at.sesame.fhooe.lib.ui.charts.IRendererProvider;
-import at.sesame.fhooe.lib.ui.charts.exceptions.DatasetCreationException;
-import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
-import at.sesame.fhooe.lib.util.DateHelper;
-import at.sesame.fhooe.phone.pms.PMSClientActivity;
+import at.sesame.fhooe.lib2.data.ISesameDataListener;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
+import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
+import at.sesame.fhooe.lib2.data.SesameDataContainer;
+import at.sesame.fhooe.lib2.data.SesameMeasurement;
+import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib2.pms.PMSProvider;
+import at.sesame.fhooe.lib2.ui.ILoginListener;
+import at.sesame.fhooe.lib2.ui.LoginDialogFragment;
+import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
+import at.sesame.fhooe.lib2.ui.PMSClientActivity;
+import at.sesame.fhooe.lib2.ui.SesameFragmentPagerAdapter;
+import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
+import at.sesame.fhooe.lib2.ui.charts.IRendererProvider;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
+import at.sesame.fhooe.lib2.util.DateHelper;
 
 
 public class SesamePhoneAppActivity 
 extends FragmentActivity
-implements ISesameDataListener
+implements ISesameDataListener, ILoginListener
 {
-	private static final String TAG = "SesameHandyAppActivity";
+	private static final String TAG = "SesamePhoneAppActivity";
+	private static final long UI_UPDATE_PERIOD = 5000;
+	private Timer mUiUpdateTimer;
 	private ArrayList<Fragment> mFrags = new ArrayList<Fragment>();
 	private SesameFragmentPagerAdapter mAdapter;
 	private ViewPager mPager;
@@ -47,14 +55,23 @@ implements ISesameDataListener
 	private MeterWheelFragment mEnergyMeterRoom3Frag;
 	private MeterWheelFragment mEnergyMeterRoom6Frag;
 	
-	private MD_chartFragment mEdv1Chart;
-	private MD_chartFragment mEdv3Chart;
-	private MD_chartFragment mEdv6Chart;
+	private PhoneChartFragment mEdv1Chart;
+	private PhoneChartFragment mEdv3Chart;
+	private PhoneChartFragment mEdv6Chart;
 	
 	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
 	private IRendererProvider mRendererProvider;
 	
+	private LoginDialogFragment mLoginDialog;
+	
 	private static final int WHEEL_TEXT_SIZE = 40;
+	
+	private SesameMeasurementPlace mEdv1Place;
+	private SesameMeasurementPlace mEdv3Place;
+	private SesameMeasurementPlace mEdv6Place;
+	
+	private String mUser;
+	private String mPass;
 	
 	static
 	{
@@ -66,17 +83,17 @@ implements ISesameDataListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         Log.e(TAG, "onCreate");
-        mRendererProvider = new MD_chart_RendererProvider(getApplicationContext(), true);
+        mRendererProvider = new PhoneChartRendererProvider(getApplicationContext(), false);
+//        new LoginDialogFragment().show(getSupportFragmentManager(), this);
+        mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
         
-        mDataCache = SesameDataCache.createInstance(true);
+        mEnergyMeterRoom1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room1_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room3_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room6_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
         
-        mEnergyMeterRoom1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room1_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, true);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room3_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, true);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room6_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, true);
-        
-		mEdv1Chart = new MD_chartFragment(getString(R.string.global_Room1_name));
-		mEdv3Chart = new MD_chartFragment(getString(R.string.global_Room3_name));
-		mEdv6Chart = new MD_chartFragment(getString(R.string.global_Room6_name));
+		mEdv1Chart = new PhoneChartFragment(getString(R.string.global_Room1_name), getApplicationContext(), mUiHandler);
+		mEdv3Chart = new PhoneChartFragment(getString(R.string.global_Room3_name), getApplicationContext(), mUiHandler);
+		mEdv6Chart = new PhoneChartFragment(getString(R.string.global_Room6_name), getApplicationContext(), mUiHandler);
 		
 		
 		mFrags.add(mEnergyMeterRoom1Frag);
@@ -91,13 +108,26 @@ implements ISesameDataListener
         mPager = (ViewPager)findViewById(R.id.sesamePager);
         mPager.setAdapter(mAdapter);
         ArrayList<SesameMeasurementPlace> energyPlaces = mDataCache.getEnergyMeasurementPlaces();
-       mDataCache.registerEnergyDataListener(this, energyPlaces.get(0));
-       mDataCache.registerEnergyDataListener(this, energyPlaces.get(1));
-       mDataCache.registerEnergyDataListener(this, energyPlaces.get(2));
+        mEdv1Place = energyPlaces.get(0);
+        mEdv3Place = energyPlaces.get(3);
+        mEdv6Place = energyPlaces.get(2);
+//       mDataCache.registerEnergyDataListener(this, energyPlaces.get(0));
+//       mDataCache.registerEnergyDataListener(this, energyPlaces.get(1));
+//       mDataCache.registerEnergyDataListener(this, energyPlaces.get(2));
+//        for(SesameMeasurementPlace smp:energyPlaces)
+//        {
+//        	Log.d(TAG, "+++++++++smp="+smp.getName());
+//        	mDataCache.registerEnergyDataListener(this, smp);
+//        }
        mDataCache.startEnergyDataUpdates();
     }
     
-    
+//    private void showLoginDialog()
+//    {
+//    	mLoginDialog = new LoginDialogFragment();
+//    	mLoginDialog.setLoginListener(this);
+//    	mLoginDialog.show(getSupportFragmentManager(), null);
+//    }
     
 //    @Override
 //	protected void onPostCreate(Bundle savedInstanceState) {
@@ -118,41 +148,36 @@ implements ISesameDataListener
 	@Override
 	public void notifyAboutData(ArrayList<SesameDataContainer> _data) {
 		Log.e(TAG, "notified about data");
-		SesameDataContainer data = _data.get(0)	;
-		SesameMeasurementPlace smp = data.getMeasurementPlace();
-		double lastReading = mDataCache.getLastEnergyReading(smp);
-		double overallReading = mDataCache.getOverallEnergyConsumtion(smp);
-		if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(0)))
-		{
-			updateChartFragment(mEdv1Chart, data);
-			updateMeterWheelFragment(mEnergyMeterRoom1Frag, lastReading, overallReading);
-		}
-		else if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(1)))
-		{
-			updateChartFragment(mEdv3Chart, data);
-			updateMeterWheelFragment(mEnergyMeterRoom3Frag, lastReading, overallReading);
-		}
-		else if(smp.equals(SesameDataCache.getInstance().getEnergyMeasurementPlaces().get(2)))
-		{
-			updateChartFragment(mEdv6Chart, data);
-			updateMeterWheelFragment(mEnergyMeterRoom6Frag, lastReading, overallReading);
-		}
+		
 	}
 	
 	private void updateMeterWheelFragment(MeterWheelFragment _frag, double _lastReading, double _overallReading)
 	{
-		_frag.setWheelValue(_overallReading);
 		_frag.setMeterValue(_lastReading);
+		_frag.setWheelValue(_overallReading);
 	}
 	
-	private void updateChartFragment(MD_chartFragment _frag, SesameDataContainer _data)
+	private void updateChartFragment(PhoneChartFragment _frag, SesameMeasurementPlace _smp)
 	{
-		if(null==_data)
-		{
-			return;
-		}
+//		if(null==_data)
+//		{
+//			return;
+//		}
+		
+//		Log.d(TAG, "passed data ("+_data.getMeasurements().size()+"):");
+//		for(SesameMeasurement sm:_data.getMeasurements())
+//		{
+//			Log.d(TAG, sm.toString());
+//		}
+//		for(int i = 0;i<_data.getTimeStamps().size();i++)
+//		{
+//			Date d = _data.getTimeStamps().get(i);
+//			double val = _data.getValues().get(i);
+//			Log.d(TAG, d.toGMTString()+": "+val);
+//		}
 
-		String[] titles = new String[]{" aktuell", "vor 1 Woche"};
+//		String[] titles = new String[]{" aktuell", "vor 1 Woche"};
+		String[] titles = new String[]{" aktuell"};
 		ArrayList<String> titleList = new ArrayList<String>();
 		
 		for(String s:titles)
@@ -162,22 +187,30 @@ implements ISesameDataListener
 
 		ArrayList<Date[]>dates = new ArrayList<Date[]>(2);
 		Date today = DateHelper.getFirstDateToday();
+		Date yesterday = DateHelper.getFirstDateXDaysAgo(1);
 		Date lastWeek = DateHelper.getFirstDateXDaysAgo(7);
 		Date sixDaysAgo = DateHelper.getFirstDateXDaysAgo(6);
+		Date fiveDaysAgo = DateHelper.getFirstDateXDaysAgo(5);
 		
 //		Log.e(TAG, "################today Start = "+today.toGMTString());
-		double[] todayData = _data.getValuesBetweenDates(today, new Date());
+//		ArrayList<SesameMeasurement> todayMeasurements = _data.filterByDate(DateHelper.getFirstDateXDaysAgo(38), DateHelper.getFirstDateXDaysAgo(37));
+		ArrayList<SesameMeasurement> todayMeasurements = mDataCache.getEnergyReadings(_smp, DateHelper.getFirstDateXDaysAgo(10), new Date()).getMeasurements();
+		double[] todayData = SesameDataContainer.getValueArray(todayMeasurements);
+//		double[] todayData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
 		
 //		Log.e(TAG, "today:"+Arrays.toString(todayData));
-		double[] lastWeekData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
+//		ArrayList<SesameMeasurement> lastWeekMeasurements = _data.filterByDate(DateHelper.getFirstDateXDaysAgo(45), DateHelper.getFirstDateXDaysAgo(44));
+//		ArrayList<SesameMeasurement> lastWeekMeasurements = mDataCache.getEnergyReadings(_smp, DateHelper.getFirstDateXDaysAgo(45), DateHelper.getFirstDateXDaysAgo(44)).getMeasurements();
+//		double[]lastWeekData = SesameDataContainer.getValueArray(lastWeekMeasurements);
+		//		double[] lastWeekData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
+//		Log.e(TAG, "todayLength:"+todayData.length+", week data length:"+lastWeekData.length);
 		
-		double[] lastWeekDataCropped = new double[todayData.length];
-		for(int i =0;i<todayData.length;i++)
-		{
-			lastWeekDataCropped[i]=lastWeekData[i];
-		}
+//		double[] lastWeekDataCropped = new double[todayData.length];
+//		for(int i =0;i<todayData.length;i++)
+//		{
+//			lastWeekDataCropped[i]=lastWeekData[i];
+//		}
 		
-		Log.e(TAG, "todayLength:"+todayData.length+", week data length:"+lastWeekDataCropped.length);
 		
 //		double[] lastWeekData = new double[todayData.length];
 //		for(int i = 0;i<todayData.length;i++)
@@ -186,8 +219,8 @@ implements ISesameDataListener
 //		}
 //		Log.e(TAG, "lastWeek:"+Arrays.toString(lastWeekData));
 		
-		
-		Date[] datesArr = _data.getDatesBetweenDates(today, new Date());
+		Date[] datesArr = SesameDataContainer.getTimeStampArray(todayMeasurements);
+//		Date[] datesArr = _data.getDatesBetweenDates(today, new Date());
 //		dates.add((Date[]) _data.getTimeStamps().toArray(new Date[_data.getTimeStamps().size()]));
 		
 
@@ -200,11 +233,11 @@ implements ISesameDataListener
 //		values.add(temp);
 		
 		
-		values.add(lastWeekDataCropped);
+//		values.add(lastWeekDataCropped);
 		values.add(todayData);
 		
 		dates.add(datesArr);
-		dates.add(datesArr);
+//		dates.add(datesArr);
 
 		try 
 		{
@@ -231,6 +264,19 @@ implements ISesameDataListener
 
 
 	@Override
+	protected void onPause() {
+		stopUiUpdates();
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() 
+	{
+		super.onResume();
+		startUiUpdates();
+	}
+
+	@Override
 	protected void onDestroy() {
 		mDataCache.cleanUp();
 		super.onDestroy();
@@ -248,7 +294,91 @@ implements ISesameDataListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) 
 	{
-		startActivity(new Intent(this, PMSClientActivity.class));
+		Intent i = new Intent(this, PMSClientActivity.class);
+//		Bundle extras = new Bundle();
+		i.putExtra(PMSClientActivity.BUNDLE_USER_KEY, mUser);
+		i.putExtra(PMSClientActivity.BUNDLE_PASS_KEY, mPass);
+		
+		startActivity(i);
 		return true;
+	}
+
+	@Override
+	public boolean checkLogin(String _user, String _pass) {
+		boolean res = PMSProvider.checkCredentials(_user, _pass);
+		if(res)
+		{
+			mUser = _user;
+			mPass = _pass;
+		}
+		return res;
+	}
+	
+	private void startUiUpdates()
+	{
+		stopUiUpdates();
+		mUiUpdateTimer = new Timer();
+		mUiUpdateTimer.scheduleAtFixedRate(new UiUpdateTask(), 0, UI_UPDATE_PERIOD);
+	}
+	
+	private void stopUiUpdates()
+	{
+		if(null!=mUiUpdateTimer)
+		{
+			mUiUpdateTimer.cancel();
+			mUiUpdateTimer.purge();
+		}
+	}
+	
+	private class UiUpdateTask extends TimerTask
+	{
+		@Override
+		public void run() {
+//			SesameDataContainer data = _data.get(0)	;
+//			SesameMeasurementPlace smp = data.getMeasurementPlace();
+//			double lastReading;
+//			try {
+//				lastReading = mDataCache.getLastEnergyReading(smp).getVal();
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//				return;
+//			}
+//			double overallReading = mDataCache.getOverallEnergyConsumtion(smp);
+//			if(smp.equals(mDataCache.getEnergyMeasurementPlaces().get(0)))
+//			{
+//				Log.d(TAG, "updating edv1 from "+smp.getName());
+//				updateChartFragment(mEdv1Chart, data);
+//				updateMeterWheelFragment(mEnergyMeterRoom1Frag, lastReading, overallReading);
+//			}
+//			else if(smp.equals(mDataCache.getEnergyMeasurementPlaces().get(3)))
+//			{
+//				Log.d(TAG, "updating edv3 from "+smp.getName());
+//				updateChartFragment(mEdv3Chart, data);
+//				updateMeterWheelFragment(mEnergyMeterRoom3Frag, lastReading, overallReading);
+//			}
+//			else if(smp.equals(mDataCache.getEnergyMeasurementPlaces().get(2)))
+//			{
+//				Log.d(TAG, "updating edv6 from "+smp.getName());
+//				updateChartFragment(mEdv6Chart, data);
+//				updateMeterWheelFragment(mEnergyMeterRoom6Frag, lastReading, overallReading);
+//			}
+//			Log.d(TAG, "updating edv1 from "+smp.getName());
+			try {
+				updateChartFragment(mEdv1Chart, mEdv1Place);
+				updateMeterWheelFragment(mEnergyMeterRoom1Frag, mDataCache.getLastEnergyReading(mEdv1Place).getVal(), mDataCache.getOverallEnergyConsumtion(mEdv1Place));
+				
+				updateChartFragment(mEdv3Chart, mEdv3Place);
+				updateMeterWheelFragment(mEnergyMeterRoom3Frag, mDataCache.getLastEnergyReading(mEdv3Place).getVal(), mDataCache.getOverallEnergyConsumtion(mEdv3Place));
+				
+				updateChartFragment(mEdv6Chart,mEdv6Place);
+				updateMeterWheelFragment(mEnergyMeterRoom6Frag, mDataCache.getLastEnergyReading(mEdv6Place).getVal(), mDataCache.getOverallEnergyConsumtion(mEdv6Place));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}	
 	}
 }

@@ -135,7 +135,7 @@ implements Runnable
 		mPassword = _password;
 		mUseCredentials = _useCredentials;
 
-		mPms= PMSProvider.getPMS();
+		mPms= PMSProvider.getPMS(mUser, mPassword);
 		//		mQueue = new LinkedBlockingQueue();
 		updateStatus();
 	}
@@ -203,7 +203,7 @@ implements Runnable
 //		try
 //		{
 			//			return mPms.wakeup(mMac);
-			boolean res = PMSProvider.getPMS().wakeup(mMac);
+			boolean res = PMSProvider.getPMS(mUser, mPassword).wakeup(mMac);
 //			return new WakeupTask().execute(mMac).get();
 //		} 
 //		catch (InterruptedException e) 
@@ -228,12 +228,12 @@ implements Runnable
 //		{
 			if(mUseCredentials)
 			{
-				return PMSProvider.getPMS().poweroff(mMac, _state.name(), "", mUser, mPassword);
+				return PMSProvider.getPMS(mUser, mPassword).poweroff(mMac, _state.name(), "", mUser, mPassword);
 //				return new PowerOffTask().execute(mMac, _state.name(), "", mUser, mPassword).get();
 			}
 			else
 			{
-				return PMSProvider.getPMS().poweroff(mMac, _state.name(), "", "", "");
+				return PMSProvider.getPMS(mUser, mPassword).poweroff(mMac, _state.name(), "", "", "");
 //				return new PowerOffTask().execute(mMac, _state.name(), "", "", "").get();
 			}
 //		} 

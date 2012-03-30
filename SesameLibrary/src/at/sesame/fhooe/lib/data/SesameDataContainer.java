@@ -22,7 +22,7 @@ public class SesameDataContainer
 	
 	private SesameDataType mType;
 	
-	private String mId;
+//	private String mId;
 
 	private ArrayList<Date> mTimeStamps;
 
@@ -30,15 +30,15 @@ public class SesameDataContainer
 	
 	private SesameMeasurementPlace mPlace;
 	
-	public SesameDataContainer(SesameMeasurementPlace _place, String _id)
+	public SesameDataContainer(SesameMeasurementPlace _place)
 	{
-		this(_place, _id, new ArrayList<Date>(), new ArrayList<Double>());
+		this(_place, new ArrayList<Date>(), new ArrayList<Double>());
 	}
 
-	public SesameDataContainer(SesameMeasurementPlace _place, String _id, ArrayList<Date> _timeStamps, ArrayList<Double> _values) 
+	public SesameDataContainer(SesameMeasurementPlace _place, ArrayList<Date> _timeStamps, ArrayList<Double> _values) 
 	{
 		super();
-		this.mId = _id;
+//		this.mId = _id;
 		this.mTimeStamps = _timeStamps;
 		this.mValues = _values;
 	}
@@ -69,9 +69,9 @@ public class SesameDataContainer
 //		}
 //	}
 
-	public String getId() {
-		return mId;
-	}
+//	public String getId() {
+//		return mId;
+//	}
 
 	public ArrayList<Date> getTimeStamps() {
 		return mTimeStamps;
@@ -107,7 +107,7 @@ public class SesameDataContainer
 			dateList.add(dates[i]);
 		}
 		
-		return new SesameDataContainer(mPlace, mId, dateList, valueList);
+		return new SesameDataContainer(mPlace, dateList, valueList);
 	}
 	
 	public double[] getValuesBetweenDates(Date _from, Date _to)
@@ -170,9 +170,7 @@ public class SesameDataContainer
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("SesameDataContainer [mId=");
-		builder.append(mId);
-		builder.append(", mTimeStamps=");
+		builder.append("SesameDataContainer [mTimeStamps=");
 		builder.append(Arrays.toString((Date[]) mTimeStamps.toArray(new Date[mTimeStamps.size()])));
 		builder.append(", mValues=");
 		builder.append(Arrays.toString((Double[]) mValues.toArray(new Double[mValues.size()])));

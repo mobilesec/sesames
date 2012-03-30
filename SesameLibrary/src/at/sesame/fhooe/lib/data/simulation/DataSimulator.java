@@ -29,7 +29,7 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 	private static final int DEFAULT_NUM_DATASETS = 100;
 	private static final Date START_DATE;
 	private static final Date END_DATE;
-	private static SesameDataContainer mEnergyData = new SesameDataContainer(null,"DummyEnergyData");
+	private static SesameDataContainer mEnergyData = new SesameDataContainer(new SesameMeasurementPlace("DummyEnergyData"));
 	
 	static
 	{

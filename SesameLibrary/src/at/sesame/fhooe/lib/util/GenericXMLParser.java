@@ -2,7 +2,6 @@ package at.sesame.fhooe.lib.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -10,11 +9,10 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.util.Log;
 
-
 public abstract class GenericXMLParser <T>
 {
 	private static final String TAG = "GenericXMLParser";
-	private XmlPullParser mParser;
+	protected XmlPullParser mParser;
 	protected T mResult;
 	
 	public GenericXMLParser()
@@ -28,7 +26,8 @@ public abstract class GenericXMLParser <T>
 		try 
 		{
 			factory = XmlPullParserFactory.newInstance();
-			factory.setNamespaceAware(true);
+			
+//			factory.setNamespaceAware(true);
 			mParser = factory.newPullParser();
 		} 
 		catch (XmlPullParserException e) 
@@ -39,7 +38,7 @@ public abstract class GenericXMLParser <T>
 	
 	public T parse(InputStream _is)
 	{
-		Log.e(TAG, "parsing");
+		Log.d(TAG, "parsing");
 		if(null==mParser)
 		{
 			Log.e(TAG, "parser was null, calling init");

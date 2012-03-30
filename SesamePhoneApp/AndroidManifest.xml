@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:label="@string/app_name"
-            android:name=".pms.PMSClientActivity"
+            android:name="at.sesame.fhooe.lib.ui.PMSClientActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>

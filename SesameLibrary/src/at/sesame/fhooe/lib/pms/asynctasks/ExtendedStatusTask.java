@@ -27,8 +27,8 @@ extends AsyncTask<String, Void, Object>
 		String pass = arg0[2];
 		try
 		{
-			Object res = PMSProvider.getPMS().extendedStatus(mac, user, pass);
-			return res;
+//			Object res = PMSProvider.getPMS().extendedStatus(mac, user, pass);
+			return new Object();
 		}
 		catch(Exception e)
 		{

@@ -1,24 +1,31 @@
 package at.sesame.fhooe.tablet;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
-import at.sesame.fhooe.lib.data.simulation.DataSimulator;
-import at.sesame.fhooe.lib.ui.charts.exceptions.RendererInitializationException;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
+import at.sesame.fhooe.lib2.data.SesameDataContainer;
+import at.sesame.fhooe.lib2.data.SesameMeasurement;
+import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
+import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
+import at.sesame.fhooe.lib2.esmart.service.response.GetServicesResponseHandler;
+import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
+import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
+import at.sesame.fhooe.lib2.util.DateHelper;
 
 
 @SuppressWarnings("unused")
@@ -39,6 +46,11 @@ implements OnCheckedChangeListener
 	
 	private View mRealtimeView;
 	private HD_chart_RendererProvider mRendererProvider;
+	
+	private SesameDataCache mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
+	private SesameMeasurementPlace mEdv1Place;
+	private SesameMeasurementPlace mEdv3Place;
+	private SesameMeasurementPlace mEdv6Place;
 //	private MD_chart_RendererProvider mRendererProvider = new MD_chart_RendererProvider();
 //	@Override
 //	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +78,10 @@ implements OnCheckedChangeListener
 	public RealTimeViewProvider(Context _ctx)
 	{
 		mCtx = _ctx;
+		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
+		mEdv1Place = places.get(0);
+		mEdv3Place = places.get(3);
+		mEdv6Place = places.get(2);
 		initializeView();
 	}
 
@@ -125,29 +141,56 @@ implements OnCheckedChangeListener
 //		GregorianCalendar tomorrow = new GregorianCalendar();
 //		tomorrow.roll(Calendar.DAY_OF_MONTH, true);
 //		DataSimulator.createTimeSeries("asdf", now.getTime(), tomorrow.getTime());
-		GregorianCalendar yesterday = new GregorianCalendar();
-		yesterday.add(Calendar.DAY_OF_MONTH, -1);
+//		GregorianCalendar yesterday = new GregorianCalendar();
+//		yesterday.add(Calendar.DAY_OF_MONTH, -1);
 		
-		XYMultipleSeriesDataset data = new XYMultipleSeriesDataset();
+//		XYMultipleSeriesDataset data = new XYMultipleSeriesDataset();
+		
+		ArrayList<String> titles = new ArrayList<String>();
+		ArrayList<Date[]> dates = new ArrayList<Date[]>();
+		ArrayList<double[]> values = new ArrayList<double[]>();
+		
 		if(mShowEdv1)
 		{
-			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room1_name), yesterday.getTime(), 100));
+//			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room1_name), yesterday.getTime(), 100));
+			titles.add(mEdv1Place.getName());
+			SesameDataContainer edv1Raw = mDataCache.getAllEnergyReadings(mEdv1Place);
+			ArrayList<SesameMeasurement> edv1 = SesameDataContainer.filterByDate(edv1Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
+//			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
+			dates.add(SesameDataContainer.getTimeStampArray(edv1));
+			values.add(SesameDataContainer.getValueArray(edv1));
 		}
 		if(mShowEdv3)
 		{
-			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room3_name), yesterday.getTime(), 100));
+//			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room3_name), yesterday.getTime(), 100));
+			titles.add(mEdv3Place.getName());
+			SesameDataContainer edv3Raw = mDataCache.getAllEnergyReadings(mEdv3Place);
+			ArrayList<SesameMeasurement> edv3 = SesameDataContainer.filterByDate(edv3Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
+//			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
+			dates.add(SesameDataContainer.getTimeStampArray(edv3));
+			values.add(SesameDataContainer.getValueArray(edv3));
 		}
 		if(mShowEdv6)
 		{
-			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room6_name), yesterday.getTime(), 100));
+//			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room6_name), yesterday.getTime(), 100));
+			titles.add(mEdv6Place.getName());
+			SesameDataContainer edv6Raw = mDataCache.getAllEnergyReadings(mEdv6Place);
+			ArrayList<SesameMeasurement> edv6 = SesameDataContainer.filterByDate(edv6Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
+//			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
+			dates.add(SesameDataContainer.getTimeStampArray(edv6));
+			values.add(SesameDataContainer.getValueArray(edv6));
 		}
 		
 		try {
+			XYMultipleSeriesDataset data = new DefaultDatasetProvider().buildDateDataset((String[]) titles.toArray(new String[titles.size()]), dates, values);
 			mRendererProvider.createMultipleSeriesRenderer(data);
 			mChartFrame.removeAllViews();
 			mChartFrame.addView(ChartFactory.getTimeChartView(mCtx, data, mRendererProvider.getRenderer(), ""));
 //			mChartFrame.invalidate();
 		} catch (RendererInitializationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DatasetCreationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

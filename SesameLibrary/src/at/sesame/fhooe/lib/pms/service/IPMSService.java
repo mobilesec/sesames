@@ -42,8 +42,8 @@ import at.sesame.fhooe.lib.pms.responsehandling.PMSBooleanResponseHandler;
  *
  */
 //http://192.168.2.7:8080/pms/
-//@EndPoint("http://80.120.3.4:8080/pms")
-@EndPoint("http://192.168.2.7:8080/pms")
+@EndPoint("http://80.120.3.4:8080/pms")
+//@EndPoint("http://192.168.2.7:8080/pms")
 
 public interface IPMSService 
 {
@@ -51,11 +51,13 @@ public interface IPMSService
 	
 	@GET
 	@Path("/{mac}/status")
+//	@HeaderParam(value="Authorization", defaultValue="Basic {basic.auth.digest}")
 	@ErrorHandler(PMSBooleanErrorHandler.class)
 	public PMSStatus getStatus(@PathParam("mac")String _mac);
 	
 	@POST
 	@Path("/{mac}/poweroff")
+//	@HeaderParam(value="Authorization", defaultValue="Basic {basic.auth.digest}")
 	@EntityWriter(PMSEntityWriter.class)
 	@Produces("application/json")
 //	@Consumes("application/json")
@@ -69,12 +71,14 @@ public interface IPMSService
 	
 	@GET
 	@Path("/{mac}/wakeup")
+//	@HeaderParam(value="Authorization", defaultValue="Basic {basic.auth.digest}")
 	@ErrorHandler(PMSBooleanErrorHandler.class)
 	@ResponseHandler(PMSBooleanResponseHandler.class)
 	public Boolean wakeup(@PathParam("mac") String _mac);
 	
 	@GET
 	@Path("/known-os")
+//	@HeaderParam(value="Authorization", defaultValue="Basic {basic.auth.digest}")
 //	@ErrorHandler(PMSBooleanErrorHandler.class)
 //	@ErrorHandler(ExtendedStatusErrorHandler.class)
 //	@ResponseHandler(PMSBooleanResponseHandler.class)
@@ -83,11 +87,13 @@ public interface IPMSService
 	
 	@GET
 	@Path("/clients")
+//	@HeaderParam(value="Authorization", defaultValue="Basic {basic.auth.digest}")
 	@ErrorHandler(PMSBooleanErrorHandler.class)
 	public String getClients();
 	
 	@POST
 	@Path("/{mac}/extended-status")
+//	@HeaderParam(value="Authorization", defaultValue="Basic {basic.auth.digest}")
 	@EntityWriter(PMSEntityWriter.class)
 	@Produces("application/json")
 	@ErrorHandler(ExtendedStatusErrorHandler.class)
@@ -97,6 +103,7 @@ public interface IPMSService
 	
 	@POST
 	@Path("/extended-status-list")
+//	@HeaderParam(value="Authorization", defaultValue="Basic {basic.auth.digest}")
 	@EntityWriter(PMSEntityWriter.class)
 	@Produces("application/json")
 	@ErrorHandler(ExtendedStatusErrorHandler.class)

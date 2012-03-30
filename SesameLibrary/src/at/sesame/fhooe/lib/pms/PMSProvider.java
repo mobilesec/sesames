@@ -18,7 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
 import android.util.Log;
 import at.sesame.fhooe.lib.pms.asynctasks.DeviceListTask;
 import at.sesame.fhooe.lib.pms.model.ExtendedPMSStatus;
@@ -47,29 +46,35 @@ public class PMSProvider
 	 * initializes the crest library and provides the implementation of the service interface
 	 * @return the implementation of the PMS interface
 	 */
-	public static IPMSService getPMS()
+	public static IPMSService getPMS(String _user, String _pwd)
 	{
 		if(null==mPMSService)
 		{
-			
-			CRest crest = new CRestBuilder().bindDeserializer(JacksonDeserializer.class,PMSStatus.class, ExtendedPMSStatus.class)
-											.setHttpChannelFactory(new HttpClientHttpChannelFactory(ProxyHelper.getProxiedAllAcceptingHttpsClient()))
-											.build();
-	        
-	        mPMSService = crest.build(IPMSService.class);
+//			String username = "peter";
+//			String password = "thatpeter";
+//			String basicAuthDigest = Base64.encodeToString((username + ":" + password).getBytes());
+			createPMS(_user, _pwd);
 		}
 		return mPMSService;
+	}
+
+	private static void createPMS(String _user, String _pwd) {
+		CRest crest = new  CRestBuilder().bindDeserializer(JacksonDeserializer.class,PMSStatus.class, ExtendedPMSStatus.class)
+										.setHttpChannelFactory(new HttpClientHttpChannelFactory(ProxyHelper.getProxiedAllAcceptingHttpsClient()))
+										.basicAuth(_user, _pwd)
+										.build();
+		mPMSService = crest.build(IPMSService.class);
 	}
 	
 	/**
 	 * retrieves the list of controllable devices from the PMS
 	 * @return a list containing mac addresses of all controllable devices
 	 */
-	public static ArrayList<String> getDeviceList()
+	public static ArrayList<String> getDeviceList(String _user, String _pass)
 	{
 		if(null==mPMSService)
 		{
-			mPMSService = getPMS();
+			mPMSService = getPMS(_user, _pass);
 		}
 		ArrayList<String> macs = new ArrayList<String>();
 		try {
@@ -102,29 +107,45 @@ public class PMSProvider
 		return macs;
 	}
 	
-	public static ArrayList<ExtendedPMSStatus> getExtendedPMSStatusList(ArrayList<String> _macs)
+	public static boolean checkCredentials(String _user, String _pass)
 	{
-		try {
-			return new ExtendedStatusListTask().execute(_macs).get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		createPMS(_user, _pass);
+		String os = null;
+		try
+		{
+			os = mPMSService.knownOs();			
 		}
-		return null;
-	}
-	
-	private static class ExtendedStatusListTask extends AsyncTask<ArrayList<String>, Void, ArrayList<ExtendedPMSStatus>>
-	{
-
-		@Override
-		protected ArrayList<ExtendedPMSStatus> doInBackground(
-				ArrayList<String>... params) {
-			// TODO Auto-generated method stub
-			return getPMS().extendedStatusList(params[0]);
+		catch(Exception _e)
+		{
+			return false;
 		}
 		
+		return null!=os;
 	}
+	
+//	public static ArrayList<ExtendedPMSStatus> getExtendedPMSStatusList(ArrayList<String> _macs)
+//	{
+//		try {
+//			return new ExtendedStatusListTask().execute(_macs).get();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+//	
+//	private static class ExtendedStatusListTask extends AsyncTask<ArrayList<String>, Void, ArrayList<ExtendedPMSStatus>>
+//	{
+//
+//		@Override
+//		protected ArrayList<ExtendedPMSStatus> doInBackground(
+//				ArrayList<String>... params) {
+//			// TODO Auto-generated method stub
+//			return getPMS().extendedStatusList(params[0]);
+//		}
+//		
+//	}
 }

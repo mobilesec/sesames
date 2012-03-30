@@ -26,8 +26,9 @@ extends AsyncTask<String, Void, Boolean>
 		String os = params[2];
 		String user = params[3];
 		String pwd = params[4];
-		Object res = PMSProvider.getPMS().poweroff(mac, state, os, user, pwd);
+//		Object res = PMSProvider.getPMS().poweroff(mac, state, os, user, pwd);
+		Object res = new Object();
 		return res==null;
 	}
-
+//	[14:43] Vikash Kumar: select ?x { ?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.sesame-s.ftw.at/ontologies/2012/1/SmartBuilding.owl#Location>}
 }
