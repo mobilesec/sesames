@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.achartengine.model.CategorySeries;
 import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
@@ -61,6 +62,30 @@ extends AbstractDatasetProvider
 		}
 		return mDataset.getSeriesCount();
 		
+	}
+	
+	
+	public void createBarDataSet(ArrayList<String> _titles, ArrayList<double[]> _values) throws DatasetCreationException
+	{
+		for(int i =0;i<mDataset.getSeriesCount();i++)
+		{
+			mDataset.removeSeries(i);
+		}
+		if(_titles.size()!=_values.size())
+		{
+			throw new DatasetCreationException("passed arguments must have same size");
+		}
+		
+		for(int i = 0;i<_titles.size();i++)
+		{
+			CategorySeries series = new CategorySeries(_titles.get(i));
+			double[] seriesValues = _values.get(i);
+			for(int j = 0;j<seriesValues.length;j++)
+			{
+				series.add(seriesValues[j]);
+			}
+			mDataset.addSeries(series.toXYSeries());
+		}
 	}
 	
 	/**

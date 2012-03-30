@@ -2,6 +2,7 @@ package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,6 @@ import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
-import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
 import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
@@ -186,25 +186,42 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 	private void updateWeekChart()
 	{
 		ArrayList<String> titles = new ArrayList<String>();
+		ArrayList<double[]>values = new ArrayList<double[]>();
+		SesameDataContainer data = mDataCache.getAllEnergyReadings(mCurRoom);
+
 		titles.add(mRoomName + getString(R.string.global_current));
+		
+		double[] currentValues = extractWeekDayValues(data, 0);
+		values.add(currentValues);
+		
 		if(mSelectedFilters[0])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb1_text));
+			double[] oneWeekAgoValues = extractWeekDayValues(data, 1);
+			values.add(oneWeekAgoValues);
 		}
 		if(mSelectedFilters[1])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb2_text));
+			double[] twoWeeksAgoValues = extractWeekDayValues(data, 2);
+			values.add(twoWeeksAgoValues);
 		}
 		if(mSelectedFilters[2])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb3_text));
+			double[] threeWeeksAgoValues = extractWeekDayValues(data, 3);
+			values.add(threeWeeksAgoValues);
 		}
 		if(mSelectedFilters[3])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb4_text));
+			double[] fourWeeksAgoValues = extractWeekDayValues(data, 4);
+			values.add(fourWeeksAgoValues);
 		}
-		XYMultipleSeriesDataset dataset = DataSimulator.createBarSeries(titles);
+//		XYMultipleSeriesDataset dataset = DataSimulator.createBarSeries(titles);
 		try {
+			mDatasetProvider.createBarDataSet(titles, values);
+			XYMultipleSeriesDataset dataset = mDatasetProvider.getDataset();
 			mBarRendererProvider.createMultipleSeriesRenderer(dataset);
 			Log.e(TAG, "setting chart view with week/bar chart");
 			setChartView(ChartFactory.getBarChartView(getApplicationContext(), dataset, mBarRendererProvider.getRenderer(), Type.DEFAULT));
@@ -212,8 +229,46 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		} catch (RendererInitializationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (DatasetCreationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
+	}
+	
+	private double[] extractWeekDayValues(SesameDataContainer _data, int _numWeeksAgo)
+	{
+		double[] res = new double[7];
+		Date monday = DateHelper.getWeekDayXWeeksAgo(Calendar.MONDAY, _numWeeksAgo);
+		Date tuesday = DateHelper.getWeekDayXWeeksAgo(Calendar.TUESDAY, _numWeeksAgo);
+		Date wednesday = DateHelper.getWeekDayXWeeksAgo(Calendar.WEDNESDAY, _numWeeksAgo);
+		Date thursday = DateHelper.getWeekDayXWeeksAgo(Calendar.THURSDAY, _numWeeksAgo);
+		Date friday = DateHelper.getWeekDayXWeeksAgo(Calendar.FRIDAY, _numWeeksAgo);
+		Date saturday = DateHelper.getWeekDayXWeeksAgo(Calendar.SATURDAY, _numWeeksAgo);
+		Date sunday = DateHelper.getWeekDayXWeeksAgo(Calendar.SUNDAY, _numWeeksAgo);
+		
+		ArrayList<SesameMeasurement> mondayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(monday), DateHelper.getDayEnd(monday));
+		res[0] = SesameDataContainer.sumValues(mondayMeasurements);
+		
+		ArrayList<SesameMeasurement> tuesdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(tuesday), DateHelper.getDayEnd(tuesday));
+		res[1] = SesameDataContainer.sumValues(tuesdayMeasurements);
+		
+		ArrayList<SesameMeasurement> wednesdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(wednesday), DateHelper.getDayEnd(wednesday));
+		res[2] = SesameDataContainer.sumValues(wednesdayMeasurements);
+		
+		ArrayList<SesameMeasurement> thursdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(thursday), DateHelper.getDayEnd(thursday));
+		res[3] = SesameDataContainer.sumValues(thursdayMeasurements);
+		
+		ArrayList<SesameMeasurement> fridayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(friday), DateHelper.getDayEnd(friday));
+		res[4] = SesameDataContainer.sumValues(fridayMeasurements);
+		
+		ArrayList<SesameMeasurement> saturdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(saturday), DateHelper.getDayEnd(saturday));
+		res[5] = SesameDataContainer.sumValues(saturdayMeasurements);
+		
+		ArrayList<SesameMeasurement> sundayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(sunday), DateHelper.getDayEnd(sunday));
+		res[6] = SesameDataContainer.sumValues(sundayMeasurements);
+		
+		return res;
 	}
 
 	private void setChartView(GraphicalView _v)

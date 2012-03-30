@@ -5,8 +5,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import android.util.Log;
+
 public class DateHelper 
 {
+	private static final String TAG = "DateHelper";
 	private static final int SCHOOL_START_HOUR = 8;
 	private static final int SCHOOL_END_HOUR = 18;
 	
@@ -113,11 +116,30 @@ public class DateHelper
 	public static Date getFirstDateXDaysAgo(int _daysAgo)
 	{
 		GregorianCalendar res = new GregorianCalendar();
-		res.set(Calendar.HOUR_OF_DAY, 0);
-		res.set(Calendar.MINUTE, 0);
-		res.set(Calendar.SECOND, 0);
-		res.set(Calendar.MILLISECOND,0);
+		res.setTimeInMillis(getDayStart(res.getTime()).getTime());
 		res.add(Calendar.DATE, _daysAgo*-1);
+		return res.getTime();
+	}
+	
+	public static Date getDayStart(Date _d)
+	{
+		GregorianCalendar res = new GregorianCalendar();
+		res.setTimeInMillis(_d.getTime());
+		res.set(Calendar.HOUR_OF_DAY, res.getMinimum(Calendar.HOUR_OF_DAY));
+		res.set(Calendar.MINUTE, res.getMinimum(Calendar.MINUTE));
+		res.set(Calendar.SECOND, res.getMinimum(Calendar.SECOND));
+		res.set(Calendar.MILLISECOND,res.getMinimum(Calendar.MILLISECOND));
+		return res.getTime();
+	}
+	
+	public static Date getDayEnd(Date _d)
+	{
+		GregorianCalendar res = new GregorianCalendar();
+		res.setTimeInMillis(_d.getTime());
+		res.set(Calendar.HOUR_OF_DAY, res.getMaximum(Calendar.HOUR_OF_DAY));
+		res.set(Calendar.MINUTE, res.getMaximum(Calendar.MINUTE));
+		res.set(Calendar.SECOND, res.getMaximum(Calendar.SECOND));
+		res.set(Calendar.MILLISECOND,res.getMaximum(Calendar.MILLISECOND));
 		return res.getTime();
 	}
 	
@@ -137,6 +159,25 @@ public class DateHelper
 		res.setTimeInMillis(getFirstDateXDaysAgo(_daysAgo).getTime());
 		res.add(Calendar.HOUR_OF_DAY, _hoursToIncrement);
 		return res.getTime();
+	}
+	
+	public static Date getWeekDayXWeeksAgo(int _weekDay, int _numWeeksAgo)
+	{
+		GregorianCalendar gc = new GregorianCalendar(Locale.GERMANY);
+//		Log.d(TAG, "first day:"+gc.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.GERMANY));
+		gc.setTime(getFirstDateToday());
+		gc.add(Calendar.WEEK_OF_YEAR, -1*(_numWeeksAgo));
+		gc.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		for(int i = 0;i<7;i++)
+		{
+			Log.e(TAG, gc.getTime().toString());
+			if(gc.get(Calendar.DAY_OF_WEEK)==_weekDay)
+			{
+				return gc.getTime();
+			}
+			gc.add(Calendar.DAY_OF_WEEK, 1);
+		}
+		return null;
 	}
 	
 	

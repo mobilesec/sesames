@@ -266,6 +266,17 @@ public class SesameDataContainer
 		}
 		return res;
 	}
+	
+	public static double sumValues(ArrayList<SesameMeasurement> _measurements)
+	{
+		double res = 0;
+		
+		for(SesameMeasurement sm:_measurements)
+		{
+			res+=sm.getVal();
+		}
+		return res;
+	}
 
 	public SesameMeasurementPlace getMeasurementPlace() {
 		return mPlace;
