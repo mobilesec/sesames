@@ -259,7 +259,7 @@ public class SesameDataContainer
 	public static double[] getValueArray(ArrayList<SesameMeasurement> _measurements)
 	{
 		final double[] res = new double[_measurements.size()];
-		Log.d(TAG, "number of measurements to process="+_measurements.size());
+//		Log.d(TAG, "number of measurements to process="+_measurements.size());
 		for(int i = 0;i<_measurements.size();i++)
 		{
 			res[i] = _measurements.get(i).getVal();

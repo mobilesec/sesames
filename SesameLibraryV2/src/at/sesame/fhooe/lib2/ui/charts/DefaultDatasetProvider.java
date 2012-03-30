@@ -67,10 +67,11 @@ extends AbstractDatasetProvider
 	
 	public void createBarDataSet(ArrayList<String> _titles, ArrayList<double[]> _values) throws DatasetCreationException
 	{
-		for(int i =0;i<mDataset.getSeriesCount();i++)
-		{
-			mDataset.removeSeries(i);
-		}
+//		for(int i =0;i<mDataset.getSeriesCount();i++)
+//		{
+//			mDataset.removeSeries(i);
+//		}
+		mDataset = new XYMultipleSeriesDataset();
 		if(_titles.size()!=_values.size())
 		{
 			throw new DatasetCreationException("passed arguments must have same size");
@@ -78,12 +79,19 @@ extends AbstractDatasetProvider
 		
 		for(int i = 0;i<_titles.size();i++)
 		{
+			Log.e(TAG, "creating series:"+_titles.get(i));
+			
 			CategorySeries series = new CategorySeries(_titles.get(i));
 			double[] seriesValues = _values.get(i);
+			Log.e(TAG, "number of values in series:"+seriesValues.length);
+//			double[] expanded = new double[seriesValues.length+1];
+			
 			for(int j = 0;j<seriesValues.length;j++)
 			{
+				Log.e(TAG, "value "+j+" = "+seriesValues[j]);
 				series.add(seriesValues[j]);
 			}
+//			series.add(0);
 			mDataset.addSeries(series.toXYSeries());
 		}
 	}

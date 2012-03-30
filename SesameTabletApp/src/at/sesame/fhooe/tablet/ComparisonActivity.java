@@ -18,7 +18,6 @@ import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
-import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
@@ -48,14 +47,15 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 
 	private String mRoomName;
 
-	private SesameDataCache mDataCache = SesameDataCache.getInstance(DataSource.mock);
-	private SesameMeasurementPlace mEdv1Place;
-	private SesameMeasurementPlace mEdv3Place;
-	private SesameMeasurementPlace mEdv6Place;
+	private SesameDataCache mDataCache = SesameDataCache.getInstance();
 
 	private SesameMeasurementPlace mCurRoom;
 
 	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
+	
+	private SesameMeasurementPlace mEdv1Place;
+	private SesameMeasurementPlace mEdv3Place;
+	private SesameMeasurementPlace mEdv6Place;
 
 	private ComparisonSelectionFragment mCsf;
 	@Override
@@ -71,7 +71,6 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		mEdv1Place = places.get(0);
 		mEdv3Place = places.get(1);
 		mEdv6Place = places.get(2);
-
 		mCurRoom = mEdv1Place;
 		initializeView();
 	}

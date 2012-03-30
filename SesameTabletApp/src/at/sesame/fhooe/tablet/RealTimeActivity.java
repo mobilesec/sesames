@@ -8,6 +8,7 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -16,7 +17,6 @@ import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
-import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
 import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
@@ -25,11 +25,8 @@ import at.sesame.fhooe.lib2.util.DateHelper;
 public class RealTimeActivity 
 extends Activity implements OnCheckedChangeListener 
 {
-
-	private SesameDataCache mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
-	private SesameMeasurementPlace mEdv1Place;
-	private SesameMeasurementPlace mEdv3Place;
-	private SesameMeasurementPlace mEdv6Place;
+	private static final String TAG = "RealTimeActivity";
+	private SesameDataCache mDataCache = SesameDataCache.getInstance();
 	
 	private boolean mShowEdv1 = true;
 	private boolean mShowEdv3 = true;
@@ -38,6 +35,9 @@ extends Activity implements OnCheckedChangeListener
 	private HD_chart_RendererProvider mRendererProvider;
 	
 	private FrameLayout mChartFrame;
+	private SesameMeasurementPlace mEdv1Place;
+	private SesameMeasurementPlace mEdv3Place;
+	private SesameMeasurementPlace mEdv6Place;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -47,7 +47,6 @@ extends Activity implements OnCheckedChangeListener
 		mEdv1Place = places.get(0);
 		mEdv3Place = places.get(1);
 		mEdv6Place = places.get(2);
-		
 		initializeView();
 	}
 
@@ -93,6 +92,10 @@ extends Activity implements OnCheckedChangeListener
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room1_name), yesterday.getTime(), 100));
 			titles.add(getString(R.string.global_Room1_name));
 			SesameDataContainer edv1Raw = mDataCache.getAllEnergyReadings(mEdv1Place);
+			if(null==edv1Raw)
+			{
+				Log.e(TAG, "edv1Raw was null");
+			}
 			ArrayList<SesameMeasurement> edv1 = SesameDataContainer.filterByDate(edv1Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
 			dates.add(SesameDataContainer.getTimeStampArray(edv1));

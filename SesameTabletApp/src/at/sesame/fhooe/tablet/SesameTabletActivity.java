@@ -22,7 +22,6 @@ import android.view.WindowManager;
 import android.widget.TabHost;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
-import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
@@ -35,7 +34,7 @@ implements INotificationListener
 {
 	private static final String TAG = "HD_Fragment";
 	private static final long METER_WHEEL_UPDATE_TIMEOUT = 1000;
-	private Context mCtx;
+//	private Context mCtx;
 	private LayoutInflater mLi;
 	private FragmentManager mFragMan;
 	private LocalActivityManager mLam;
@@ -66,6 +65,7 @@ implements INotificationListener
 	private boolean mShowNotifications = false;
 
 	private Handler mUiHandler = new Handler();
+	
 	private SesameMeasurementPlace mEdv1Place;
 	private SesameMeasurementPlace mEdv3Place;
 	private SesameMeasurementPlace mEdv6Place;
@@ -92,23 +92,22 @@ implements INotificationListener
 		setTheme(android.R.style.Theme_Holo);
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
-		mDataCache = SesameDataCache.getInstance(DataSource.mock);
+		mDataCache = SesameDataCache.getInstance();
+		mDataCache.startEnergyDataUpdates();
 		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-		if(null!=places&&places.size()>0)
-		{
-			mEdv1Place = places.get(0);
-			mEdv3Place = places.get(1);
-			mEdv6Place = places.get(2);			
-			mCtx = getApplicationContext();
-			mLi = LayoutInflater.from(mCtx);
-			mFragMan = getSupportFragmentManager();
-			//		mUiHandler = _uiHandler;
-			initializeNotification();
-			initializeFragments();
-			setContentView(R.layout.hd_layout);
-			addFragments();
-			createTabs();
-		}
+		mEdv1Place = places.get(0);
+		mEdv3Place = places.get(1);
+		mEdv6Place = places.get(2);
+//		mCtx = getApplicationContext();
+//		mLi = LayoutInflater.from(mCtx);
+		mFragMan = getSupportFragmentManager();
+		//		mUiHandler = _uiHandler;
+		initializeNotification();
+		initializeFragments();
+		setContentView(R.layout.hd_layout);
+		addFragments();
+		createTabs();
+
 	}
 
 	private void createTabs()
@@ -120,13 +119,13 @@ implements INotificationListener
 		Intent intent;  // Reusable Intent for each tab
 
 		// Create an Intent to launch an Activity for the tab (to be reused)
-		intent = new Intent().setClass(mCtx, RealTimeActivity.class);
+		intent = new Intent().setClass(getApplicationContext(), RealTimeActivity.class);
 
 		// Initialize a TabSpec for each tab and add it to the TabHost
 		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("echtzeit")
 				.setContent(intent);
 		th.addTab(spec);
-		intent = new Intent().setClass(mCtx, ComparisonActivity.class);
+		intent = new Intent().setClass(getApplicationContext(), ComparisonActivity.class);
 		TabHost.TabSpec spec2 = th.newTabSpec("comparison").setIndicator("Vergleich")
 				.setContent(intent);
 		th.addTab(spec2);
@@ -145,7 +144,7 @@ implements INotificationListener
 		CharSequence tickerText = "Hello NOTIFICATION";
 		long when = System.currentTimeMillis();
 		mNotification = new Notification(icon, tickerText, when);
-		mNotificationMan = (NotificationManager)mCtx.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationMan = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 	private void initializeFragments()
@@ -159,14 +158,14 @@ implements INotificationListener
 		r.setMinorTickLength(16);
 		r.setMajorTickLength(20);
 		r.setRelativeTickRadius(1.05f);
-		
-		String room1Name = mCtx.getString(R.string.global_Room1_name);
-		String room3Name = mCtx.getString(R.string.global_Room3_name);
-		String room6Name = mCtx.getString(R.string.global_Room6_name);
 
-		mEdv1Frag = new MeterWheelFragment(mCtx, mUiHandler, room1Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
-		mEdv3Frag = new MeterWheelFragment(mCtx, mUiHandler, room3Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
-		mEdv6Frag = new MeterWheelFragment(mCtx, mUiHandler, room6Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
+		String room1Name = getString(R.string.global_Room1_name);
+		String room3Name = getString(R.string.global_Room3_name);
+		String room6Name = getString(R.string.global_Room6_name);
+
+		mEdv1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room1Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
+		mEdv3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room3Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
+		mEdv6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room6Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
 		//		mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 		//		mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
 		//		mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
@@ -301,10 +300,10 @@ implements INotificationListener
 		// UL: in case for HD to correspond with the mocked screenshots for PMS text will be static
 		_text =  "Computer 'EDV1-CLIENT-02' in Raum EDV1 seit 3h inaktiv";
 
-		Intent notificationIntent = new Intent(mCtx, SesameTabletActivity.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(mCtx, 0, notificationIntent, 0);
+		Intent notificationIntent = new Intent(getApplicationContext(), SesameTabletActivity.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
 		mNotification.tickerText = _text;
-		mNotification.setLatestEventInfo(mCtx, _title, _text, contentIntent);
+		mNotification.setLatestEventInfo(getApplicationContext(), _title, _text, contentIntent);
 
 
 

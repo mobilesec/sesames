@@ -170,7 +170,6 @@ public class DateHelper
 		gc.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		for(int i = 0;i<7;i++)
 		{
-			Log.e(TAG, gc.getTime().toString());
 			if(gc.get(Calendar.DAY_OF_WEEK)==_weekDay)
 			{
 				return gc.getTime();

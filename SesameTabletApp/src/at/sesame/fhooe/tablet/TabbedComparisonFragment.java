@@ -1,7 +1,5 @@
 package at.sesame.fhooe.tablet;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +8,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TabHost;
-import android.widget.TabHost.TabContentFactory;
-import android.widget.TabWidget;
-import android.widget.TextView;
+
 import at.sesame.fhooe.lib2.R;
 
 public class TabbedComparisonFragment 
@@ -28,15 +23,15 @@ extends Fragment {
 
 	private TabHost mTabHost;
 	
-	private RealTimeViewProvider mRealTimeViewProvider;
-	private ComparisonViewProvider mComparisonViewProvider;
+//	private RealTimeViewProvider mRealTimeViewProvider;
+//	private ComparisonViewProvider mComparisonViewProvider;
 //	private TabManager mTabManager;
 
 	public TabbedComparisonFragment(Context _ctx) {
 		mCtx = _ctx;
 //		mFragMan = _fm;
-		mRealTimeViewProvider = new RealTimeViewProvider(mCtx);
-		mComparisonViewProvider = new ComparisonViewProvider(mCtx);
+//		mRealTimeViewProvider = new RealTimeViewProvider(mCtx);
+//		mComparisonViewProvider = new ComparisonViewProvider(mCtx);
 //		mRealTimeViewProvider.initializeView(mCtx);
 	}
 

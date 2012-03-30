@@ -44,13 +44,13 @@ extends AbstractRendererProvider
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
 		mRenderer.setYTitle("kW");
-		mRenderer.setXLabels(7);
+//		mRenderer.setXLabels(7);
 		mRenderer.setBarSpacing(0.5);
 		mRenderer.setXAxisMin(0.5);
-		mRenderer.setXAxisMax(7.3);
-		mRenderer.setYAxisMin(0);
+		mRenderer.setXAxisMax(7.5);
+//		mRenderer.setYAxisMin(0);
 		mRenderer.clearXTextLabels();
-		mRenderer.setXLabels(0);
+//		mRenderer.setXLabels(0);
 		for(int i = 0 ;i<DataSimulator.BAR_TITLES.length;i++)
 		{
 			mRenderer.addXTextLabel(i+1, DataSimulator.BAR_TITLES[i]);
