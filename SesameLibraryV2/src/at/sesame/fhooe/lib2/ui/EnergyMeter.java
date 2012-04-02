@@ -21,6 +21,8 @@ import at.sesame.fhooe.lib2.R;
 public class EnergyMeter extends View {
 	private static final String TAG = "EnergyMeter";
 	
+	EnergyMeterRenderer mRenderer = new EnergyMeterRenderer();
+	
 	private static Bitmap mBackground;
 	private static Bitmap mCase;
 	
@@ -139,6 +141,9 @@ public class EnergyMeter extends View {
 	}
 	
 	public void setEnergyMeterRenderer(EnergyMeterRenderer r) {
+		mRenderer = r;
+		
+		// TODO: replace all occurrences by renderer calls
 		mColorLabelRange = r.getColorLabelRange();
 		mColorLabels = r.getColorLabels();
 		mColorLabelWidth = r.getColorLabelWidth();
@@ -371,7 +376,7 @@ public class EnergyMeter extends View {
 		}
 
 		if (!labels) {
-			paintTicks.setStrokeWidth(3.0f);
+			paintTicks.setStrokeWidth(mRenderer.getMajorTickLineWidth());
 			canvas.drawArc(new RectF((float) (centerX - longRadius),
 					(float) (centerY - longRadius),
 					(float) (centerX + longRadius),
@@ -399,7 +404,7 @@ public class EnergyMeter extends View {
 			int y2 = Math.round(centerY - (float) (longRadius * sinValue));
 
 			try {
-				paintTicks.setStrokeWidth(labels ? 3.0f : 1.0f);
+				paintTicks.setStrokeWidth(labels ? mRenderer.getMajorTickLineWidth() : mRenderer.getMinorTickLineWidth());
 				canvas.drawLine(x1, y1, x2, y2, paintTicks);
 
 				// draw labels

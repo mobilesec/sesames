@@ -26,6 +26,8 @@ public class EnergyMeterRenderer {
 	private int majorTickSpacing = 25;
 	private float majorTickLength = 30;
 	private float tickTextSize = 16.0f;
+	private float majorTickLineWidth = 3.0f;
+	private float minorTickLineWidth = 1.0f;
 
 	// Parameters for pointer
 	private int pointerBaseWidth = 15;
@@ -178,5 +180,17 @@ public class EnergyMeterRenderer {
 	}
 	public void setColorLabelWidth(float colorLabelWidth) {
 		this.colorLabelWidth = colorLabelWidth;
+	}
+	public float getMajorTickLineWidth() {
+		return majorTickLineWidth;
+	}
+	public void setMajorTickLineWidth(float majorTickLineWidth) {
+		this.majorTickLineWidth = majorTickLineWidth;
+	}
+	public float getMinorTickLineWidth() {
+		return minorTickLineWidth;
+	}
+	public void setMinorTickLineWidth(float minorTickLineWidth) {
+		this.minorTickLineWidth = minorTickLineWidth;
 	}
 }
