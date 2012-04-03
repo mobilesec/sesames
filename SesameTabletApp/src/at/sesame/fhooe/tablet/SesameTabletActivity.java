@@ -23,9 +23,9 @@ import android.widget.TabHost;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib2.pms.PMSRoomsListFragment;
 import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
-import at.sesame.fhooe.lib2.ui.PMSRoomsListFragment;
 
 @SuppressWarnings("unused")
 public class SesameTabletActivity 
@@ -187,7 +187,7 @@ implements INotificationListener
 
 		//		mTabFrag = new TabbedComparisonFragment(mCtx);
 
-		//		mRoomListFrag = new PMSRoomsListFragment(mCtx, mUiHandler, mFragMan);
+				mRoomListFrag = new PMSRoomsListFragment(getApplicationContext(), mUiHandler, mFragMan);
 
 	}
 
@@ -205,7 +205,7 @@ implements INotificationListener
 		//		ft.add(R.id.hd_layout_pmsFrame, mPMSFrag);
 		//		
 		//		ft.add(R.id.hd_layout_chartFrame, mTabFrag);
-		//		ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
+				ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
 		ft.commit();
 		//		mFragMan.executePendingTransactions();
 	}

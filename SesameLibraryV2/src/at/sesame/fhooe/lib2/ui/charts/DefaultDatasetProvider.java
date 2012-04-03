@@ -79,16 +79,16 @@ extends AbstractDatasetProvider
 		
 		for(int i = 0;i<_titles.size();i++)
 		{
-			Log.e(TAG, "creating series:"+_titles.get(i));
+//			Log.e(TAG, "creating series:"+_titles.get(i));
 			
 			CategorySeries series = new CategorySeries(_titles.get(i));
 			double[] seriesValues = _values.get(i);
-			Log.e(TAG, "number of values in series:"+seriesValues.length);
+//			Log.e(TAG, "number of values in series:"+seriesValues.length);
 //			double[] expanded = new double[seriesValues.length+1];
 			
 			for(int j = 0;j<seriesValues.length;j++)
 			{
-				Log.e(TAG, "value "+j+" = "+seriesValues[j]);
+//				Log.e(TAG, "value "+j+" = "+seriesValues[j]);
 				series.add(seriesValues[j]);
 			}
 //			series.add(0);
@@ -125,10 +125,10 @@ extends AbstractDatasetProvider
 		mDataset = new XYMultipleSeriesDataset();
 //		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		int length = titles.length;
-		Log.e(TAG, "length of titles="+length);
+//		Log.e(TAG, "length of titles="+length);
 		for (int i = 0; i < length; i++) {
 			TimeSeries series = new TimeSeries(titles[i]);
-			Log.e(TAG, "current index = "+i);
+//			Log.e(TAG, "current index = "+i);
 			Date[] xV = xValues.get(i);
 			double[] yV = yValues.get(i);
 			int seriesLength = xV.length;

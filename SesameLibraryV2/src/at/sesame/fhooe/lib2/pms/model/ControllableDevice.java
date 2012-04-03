@@ -480,6 +480,10 @@ implements Runnable
 		return sb.toString();
 	}
 
+	public boolean equals(ControllableDevice _cd)
+	{
+		return mMac.equals(_cd.getMac());
+	}
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
