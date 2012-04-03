@@ -1,4 +1,4 @@
-package at.sesame.fhooe.lib2.ui;
+package at.sesame.fhooe.lib2.pms;
 
 import java.util.ArrayList;
 
@@ -17,8 +17,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import at.sesame.fhooe.lib2.R;
-import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
-import at.sesame.fhooe.lib2.pms.PMSClientFragment;
 
 
 public class PMSRoomsListFragment 
@@ -41,7 +39,7 @@ extends Fragment implements OnItemClickListener
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
 		mInfos = createDummyInfos();
-		mPMSClientFrag = new PMSClientFragment(_ctx, _fm);
+		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
 		mAdapter = new PMSRoomListAdapter(mCtx, 1, mInfos);
 
 		

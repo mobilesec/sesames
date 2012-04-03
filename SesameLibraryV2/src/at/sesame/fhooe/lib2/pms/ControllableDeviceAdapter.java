@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
+import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
 
 
@@ -65,15 +67,21 @@ implements OnClickListener, OnCheckedChangeListener
 	 * integer constant for group selection
 	 */
 	private static final int GROUP_SELECTION = 1;
+	
+	private PmsUiHelper mUiHelper;
+	
+	private IPmsUi mUi;
 
 	/**
 	 * creates a new ControllableDeviceAdapter
 	 * @param _owner the owner of the adapter
 	 * @param objects the model to be shown via the adapter
 	 */
-	public ControllableDeviceAdapter(Context _ctx, List<IListEntry> objects) 
+	public ControllableDeviceAdapter(Context _ctx, IPmsUi _ui, List<IListEntry> objects, PmsUiHelper _uiHelper) 
 	{
 		super(_ctx, 0, objects);
+		mUi = _ui;
+		mUiHelper = _uiHelper;
 		mContext = _ctx;
 		mDevs = (ArrayList<IListEntry>)objects;
 		mLi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -88,19 +96,19 @@ implements OnClickListener, OnCheckedChangeListener
 		{
 			if(item.isSeparator())
 			{
-				SeparatorListEntry sep = (SeparatorListEntry)item;
+				SeparatorListEntry sle = (SeparatorListEntry)item;
 				v = mLi.inflate(R.layout.controllable_device_listseparator, null);
 
 
 				TextView tv = (TextView)v.findViewById(R.id.separatorNameLabel);
-				tv.setText(sep.getTitle());
+				tv.setText(sle.getTitle());
 
 				CheckBox separatorCb = (CheckBox)v.findViewById(R.id.separatorCheckBox);
-				separatorCb.setChecked(sep.isSelected());
+				separatorCb.setChecked(sle.isSelected());
 				separatorCb.setOnCheckedChangeListener(this);
 				//the separator associated with the checkbox is set as tag for the checkbox to 
 				//be able to determine which separator was selected in onCheckedChanged
-				separatorCb.setTag(sep);
+				separatorCb.setTag(sle);
 			}
 			else
 			
@@ -108,6 +116,7 @@ implements OnClickListener, OnCheckedChangeListener
 				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
 				ControllableDevice cd = cdle.getControllableDevice();
 
+				System.out.println("adapter found device:"+cdle.isSelected());
 				if(cdle.isSelected())
 				{
 					v = mLi.inflate(R.layout.controllable_device_listitem_selected, null);
@@ -170,10 +179,7 @@ implements OnClickListener, OnCheckedChangeListener
 					if(null!=cb)
 					{
 						cb.setOnCheckedChangeListener(null);
-						if(cdle.isSelected())
-						{
-							cb.setChecked(true);
-						}
+						cb.setChecked(cdle.isSelected());
 
 						cb.setOnCheckedChangeListener(this);
 						//the ControllableDevice associated with the checkbox is set as tag for the checkbox to 
@@ -205,12 +211,18 @@ implements OnClickListener, OnCheckedChangeListener
 	public void onClick(View arg0) 
 	{
 		ControllableDevice cd = extractDeviceFromTag(arg0);
+		mUi.handlePowerClick(cd);
+//		if(cd.isAlive())
+//		{
+//			PMSDialogFactory.showDialog(DialogType.ACTIVE_DEVICE_ACTION_DIALOG, _fm, _handler, _params)
+//		}
 
 	}
 
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
 	{
+		System.out.println("onCheckedChanged");
 		buttonView.setOnCheckedChangeListener(null);
 		int type = identifyCheckSource(buttonView);
 		switch(type)
@@ -219,11 +231,11 @@ implements OnClickListener, OnCheckedChangeListener
 			handleSingleSelection(buttonView, isChecked);
 			break;
 		case GROUP_SELECTION:
-//			SeparatorListEntry sle = extractSeparatorFromTag(buttonView);
-//			
-//			boolean selected = mOwner.handleMultipleSelectionAttempt(sle.getType(), isChecked);
-//			sle.setSelected(selected);
-//			buttonView.setChecked(selected);
+			SeparatorListEntry sle = extractSeparatorFromTag(buttonView);
+			boolean selected = mUiHelper.handleMultipleSelectionAttempt(sle.getType(), isChecked);
+			System.out.println("result of group selection:"+selected);
+			sle.setSelected(selected);
+			buttonView.setChecked(selected);
 			break;
 		}
 		buttonView.setOnCheckedChangeListener(this);
@@ -240,8 +252,9 @@ implements OnClickListener, OnCheckedChangeListener
 		ControllableDevice cd = extractDeviceFromTag(buttonView);
 		if(null!=cd)
 		{
-//			boolean selected = mOwner.handleSingleSelectionAttempt(cd, isChecked);
-//			buttonView.setChecked(selected);
+			boolean selected = mUiHelper.handleSingleSelectionAttempt(cd, isChecked);
+			Log.i(TAG, "!!!!result of selection attempt:"+selected);
+			buttonView.setChecked(selected);
 		}
 	}
 
@@ -261,11 +274,11 @@ implements OnClickListener, OnCheckedChangeListener
 	 * @param _v the view to get the SeparatorListEntry from
 	 * @return the SeparatorListEntry contained in the view's tag
 	 */
-//	private SeparatorListEntry extractSeparatorFromTag(View _v)
-//	{
-//		Object o = _v.getTag();
-//		return (SeparatorListEntry)o;
-//	}
+	private SeparatorListEntry extractSeparatorFromTag(View _v)
+	{
+		Object o = _v.getTag();
+		return (SeparatorListEntry)o;
+	}
 
 	/**
 	 * determines whether a checkbox in a separator or a in a list entry was passed
@@ -281,10 +294,10 @@ implements OnClickListener, OnCheckedChangeListener
 		{
 			return SINGLE_SELECTION;
 		}
-//		else if (o instanceof SeparatorListEntry)
-//		{
-//			return GROUP_SELECTION;
-//		}
+		else if (o instanceof SeparatorListEntry)
+		{
+			return GROUP_SELECTION;
+		}
 		else
 		{
 			return -1;

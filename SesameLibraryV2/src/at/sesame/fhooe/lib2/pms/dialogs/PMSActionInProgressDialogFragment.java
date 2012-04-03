@@ -13,9 +13,11 @@ extends DialogFragment
 	
 	private ProgressDialog mProgressDialog;
 	
-	public PMSActionInProgressDialogFragment()
+	public PMSActionInProgressDialogFragment(String _title, int _max)
 	{
 		mProgressDialog = new ProgressDialog(getActivity());
+		mProgressDialog.setTitle(_title);
+		mProgressDialog.setMax(_max);
 		//		mActionInProgressDialog.setMessage(getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
 		mProgressDialog.setCancelable(false);
 		mProgressDialog.setCanceledOnTouchOutside(false);
@@ -34,10 +36,10 @@ extends DialogFragment
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		String title = getArguments().getString(TITLE_BUNDLE_KEY);
-		int max = getArguments().getInt(MAX_BUNDLE_KEY);
-		mProgressDialog.setTitle(title);
-		mProgressDialog.setMax(max);
+//		String title = getArguments().getString(TITLE_BUNDLE_KEY);
+//		int max = getArguments().getInt(MAX_BUNDLE_KEY);
+//		mProgressDialog.setTitle(title);
+//		mProgressDialog.setMax(max);
 		return mProgressDialog;
 	}
 

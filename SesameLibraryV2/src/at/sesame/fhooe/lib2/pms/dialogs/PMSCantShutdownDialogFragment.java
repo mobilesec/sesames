@@ -13,11 +13,11 @@ extends DialogFragment
 {
 	private Dialog mDialog;
 	
-	public PMSCantShutdownDialogFragment()
+	public PMSCantShutdownDialogFragment(String _title)
 	{
 		AlertDialog.Builder shutDownBuilder = new AlertDialog.Builder(getActivity());
 		shutDownBuilder.setCancelable(true);
-		shutDownBuilder.setTitle("");
+		shutDownBuilder.setTitle(_title);
 		shutDownBuilder.setMessage(R.string.PMSClientActivity_cantShutDownDialogMessage);
 
 		shutDownBuilder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {

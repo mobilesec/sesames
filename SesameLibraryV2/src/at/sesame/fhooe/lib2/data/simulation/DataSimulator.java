@@ -19,6 +19,7 @@ import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.provider.EsmartDateHelper;
+import at.sesame.fhooe.lib2.util.DateHelper;
 
 
 public class DataSimulator
@@ -28,17 +29,21 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 	private static final int DEFAULT_TIME_UNIT = Calendar.MINUTE;
 	private static final int DEFAULT_INCREMENTATION_STEP = 15;
 	private static final int DEFAULT_NUM_DATASETS = 100;
-	private static final Date START_DATE;
-	private static final Date END_DATE;
+//	private static final Date START_DATE;
+//	private static final Date END_DATE;
+	private static final int DAYS_TO_LOAD = 2;
 	private static SesameDataContainer mEnergyData = new SesameDataContainer(new SesameMeasurementPlace("DummyEnergyData"));
 	
-	static
+//	static
+//	{
+//		START_DATE = EsmartDateHelper.createGregorianCalendar(2012, 2, 20).getTime();
+//		END_DATE = new Date();
+//		createDummYEnergyData();
+//	}
+	public DataSimulator()
 	{
-		START_DATE = EsmartDateHelper.createGregorianCalendar(2012, 2, 20).getTime();
-		END_DATE = new Date();
-		createDummYEnergyData();
+		createDummyEnergyData();
 	}
-	
 	public static final String[] BAR_TITLES = new String[]{"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"};
 	
 	public static TimeSeries createTimeSeries(String _title, Date _from, int _numEntries)
@@ -144,15 +149,16 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 		return res;
 	}
 	
-	private static void createDummYEnergyData()
+	private static void createDummyEnergyData()
 	{
-		Date curDate = START_DATE;
+		Date curDate = DateHelper.getFirstDateXDaysAgo(DAYS_TO_LOAD);
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.setTime(curDate);
 		Random r = new Random(System.currentTimeMillis());
-		
-		while(cal.getTime().before(END_DATE))
+		Date now = new Date();
+		while(cal.getTime().before(now))
 		{
+//			Log.i(TAG, "creating data for:"+cal.getTime().toString());
 			mEnergyData.addData(new SesameMeasurement(cal.getTime(), r.nextDouble()*1000));
 			cal.add(DEFAULT_TIME_UNIT, DEFAULT_INCREMENTATION_STEP);
 		}

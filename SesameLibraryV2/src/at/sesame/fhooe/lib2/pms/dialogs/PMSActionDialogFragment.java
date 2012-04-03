@@ -3,6 +3,7 @@ package at.sesame.fhooe.lib2.pms.dialogs;
 import java.util.ArrayList;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,36 +26,35 @@ extends DialogFragment
 
 	private Dialog mDialog;
 
-	public enum PMSDialogType
+	public enum PMSActionDialogType
 	{
 		ActiveDeviceActionDialog,
 		InactiveDeviceActionDialog,
 	}
 
-	public PMSActionDialogFragment(final IPMSDialogActionHandler _handler, final ControllableDevice _cd, PMSDialogType _type)
+	public PMSActionDialogFragment(Context _ctx, final IPMSDialogActionHandler _handler, final ControllableDevice _cd, PMSActionDialogType _type)
 	{
-		mDialog = new Dialog(getActivity());
+		mDialog = new Dialog(_ctx);
 		mDialog.setContentView(R.layout.custom_action_dialog);
 		mDialog.setTitle(_cd.getHostname());
-		final ArrayList<CommandListEntry> cles = new ArrayList<CommandListEntry>();
+		ArrayList<CommandListEntry> cles = new ArrayList<CommandListEntry>();
 		ListView commands = (ListView)mDialog.findViewById(R.id.cusomtActionDialogCommandList);
-		commands.setAdapter(new CommandAdapter(getActivity(), cles));
+
 		TextView message = (TextView)mDialog.findViewById(R.id.messageLabel);
-		commands.setBackgroundColor(android.R.color.white);
 		switch(_type)
 		{
 		case ActiveDeviceActionDialog:
 			if(_cd.getIdleSinceMinutes()<IDLE_MINUTES_WARNING_THRESHOLD)
 			{
 
-				message.setText(getString(R.string.PMSClientActivity_activeDeviceActionDialogBaseMessage)+_cd.getIdleSinceMinutes()+")");
+				message.setText(_ctx.getString(R.string.PMSClientActivity_activeDeviceActionDialogBaseMessage)+_cd.getIdleSinceMinutes()+")");
 			}
 			//			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogShutDownCommand));
 			//			strings.add(getString(R.string.PMSClientActivity_activeDeviceDialogSleepCommand));
 			//			strings.add(getString(android.R.string.cancel));
-			cles.add(new CommandListEntry(getActivity(), CommandType.shutDown));
-			cles.add(new CommandListEntry(getActivity(), CommandType.sleep));
-			cles.add(new CommandListEntry(getActivity(), CommandType.cancel));
+			cles.add(new CommandListEntry(_ctx, CommandType.shutDown));
+			cles.add(new CommandListEntry(_ctx, CommandType.sleep));
+			cles.add(new CommandListEntry(_ctx, CommandType.cancel));
 
 			commands.setOnItemClickListener(new OnItemClickListener() 
 			{
@@ -86,8 +86,8 @@ extends DialogFragment
 		case InactiveDeviceActionDialog:
 			//			strings.add(getString(R.string.PMSClientActivity_inactiveDeviceDialogWakeUpCommand));
 			//			strings.add(getString(android.R.string.cancel));
-			cles.add(new CommandListEntry(getActivity(), CommandType.wakeUp));
-			cles.add(new CommandListEntry(getActivity(), CommandType.cancel));
+			cles.add(new CommandListEntry(_ctx, CommandType.wakeUp));
+			cles.add(new CommandListEntry(_ctx, CommandType.cancel));
 			commands.setOnItemClickListener(new OnItemClickListener() 
 			{
 				@Override
@@ -109,5 +109,9 @@ extends DialogFragment
 			});
 			break;
 		}
+		
+		
+		commands.setAdapter(new CommandAdapter(_ctx, cles));
+		commands.setBackgroundColor(android.R.color.white);
 	}
 }
