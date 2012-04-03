@@ -24,7 +24,8 @@ extends AbstractRendererProvider
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();
-		int color = getColorForSeries(arg0);
+		//int color = getColorForSeries(arg0);
+		int color = getColorForRoom(arg0.getTitle());
 		xysr.setColor(color);
 		xysr.setLineWidth(3.0f);
 		xysr.setFillBelowLine(true);
@@ -33,22 +34,21 @@ extends AbstractRendererProvider
 		return xysr;
 	}
 
-	private int getColorForSeries(XYSeries _series) {
-		if (_series.getTitle().equals(mCtx.getString(R.string.global_Room1_name))) {
-			return Color.GREEN;
-		} else if (_series.getTitle().equals(mCtx.getString(R.string.global_Room3_name))) {
-			return Color.CYAN;
-		} else if (_series.getTitle().equals(mCtx.getString(R.string.global_Room6_name))) {
-			return Color.BLUE;
-		} else {
-			return Color.YELLOW;
-		}
-	}
+//	private int getColorForSeries(XYSeries _series) {
+//		if (_series.getTitle().equals(mCtx.getString(R.string.global_Room1_name))) {
+//			return Constants.COLOR_EDV1;
+//		} else if (_series.getTitle().equals(mCtx.getString(R.string.global_Room3_name))) {
+//			return Constants.COLOR_EDV3;
+//		} else if (_series.getTitle().equals(mCtx.getString(R.string.global_Room6_name))) {
+//			return Constants.COLOR_EDV6;
+//		} else {
+//			return Color.GRAY;
+//		}
+//	}
 
 	@Override
 	protected void setupRenderer() {
 		super.setupRenderer();
-		mRenderer.setShowGrid(false);
 		mRenderer.setApplyBackgroundColor(false);
 		mRenderer.setMarginsColor(0x00ffffff);
 		//mRenderer.setMargins(new int[] { 0, 100, 70, 100 });
@@ -61,7 +61,7 @@ extends AbstractRendererProvider
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
-		mRenderer.setYTitle("kW");
+		mRenderer.setYTitle("Watt");
 //		setTimeLabels();
 	}
 	

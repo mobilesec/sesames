@@ -151,13 +151,18 @@ implements INotificationListener
 	{
 		// Setup EnergyMeterRenderer
 		EnergyMeterRenderer r = new EnergyMeterRenderer();
-		r.setCurrentValueY(0.41f);
+		r.setCurrentValueY(0.435f);
 		r.setMaxValue(2000);
 		r.setMajorTickSpacing(500);
 		r.setMinorTickSpacing(100);
 		r.setMinorTickLength(16);
 		r.setMajorTickLength(20);
-		r.setRelativeTickRadius(1.05f);
+		r.setRelativeTickRadius(1.1f);
+		r.setTickTextSize(10);
+		r.setFullAngle(84);
+		r.setPointerBaseWidth(10);
+		r.setMajorTickLineWidth(2.0f);
+		r.setMinorTickLineWidth(1.0f);
 
 		String room1Name = getString(R.string.global_Room1_name);
 		String room3Name = getString(R.string.global_Room3_name);
