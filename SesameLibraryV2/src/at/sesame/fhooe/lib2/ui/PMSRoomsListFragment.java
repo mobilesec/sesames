@@ -3,6 +3,8 @@ package at.sesame.fhooe.lib2.ui;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -54,6 +56,11 @@ extends Fragment implements OnItemClickListener
 		mList = (ListView)v.findViewById(R.id.pms_list_layout_list);
 		mList.setAdapter(mAdapter);
 		mList.setOnItemClickListener(this);
+		
+		// style seperator
+		mList.setDivider(new ColorDrawable(Color.WHITE));
+		mList.setDividerHeight(1);
+		
 		return v;
 	}
 
