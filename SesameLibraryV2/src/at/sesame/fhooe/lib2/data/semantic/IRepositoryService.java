@@ -6,7 +6,7 @@ import org.codegist.crest.annotate.GET;
 import org.codegist.crest.annotate.Path;
 import org.codegist.crest.annotate.QueryParam;
 
-@EndPoint("http://193.170.124.176/openrdf-sesame")
+@EndPoint("http://193.170.124.176:8080/openrdf-sesame")
 public interface IRepositoryService 
 {
 	@GET

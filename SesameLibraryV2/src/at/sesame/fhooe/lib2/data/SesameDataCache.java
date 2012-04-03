@@ -10,7 +10,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.util.Log;
-import at.sesame.fhooe.lib2.Constants;
 import at.sesame.fhooe.lib2.data.provider.EsmartDataProvider;
 import at.sesame.fhooe.lib2.data.provider.EzanDataProvider;
 import at.sesame.fhooe.lib2.data.semantic.SemanticSesameDataSource;
@@ -21,7 +20,7 @@ import at.sesame.fhooe.lib2.util.DateHelper;
 public class SesameDataCache
 implements ISesameDataProvider
 {
-	public enum DataSource
+	private enum DataSource
 	{
 		mock,
 		semantic_repo,
@@ -79,8 +78,14 @@ implements ISesameDataProvider
 	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mTemperatureData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
 	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mLightData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
 
-	private static Date mFirstEnergyDate;
-	private static Date mLastEnergyDate;
+//	private static Date mFirstEnergyDate;
+//	private static Date mLastEnergyDate;
+	
+	private static DataSource mDataSource = DataSource.mock;
+	
+//	public SesameMeasurementPlace EDV1_PLACE;
+//	public SesameMeasurementPlace EDV3_PLACE;
+//	public SesameMeasurementPlace EDV6_PLACE;
 
 	//	private static ArrayList<EsmartMeasurementPlace> mEsmartMeasurementPlaces = new ArrayList<EsmartMeasurementPlace>();
 
@@ -112,6 +117,12 @@ implements ISesameDataProvider
 		{
 		case mock:
 			DataSimulator ds = new DataSimulator();
+//			EDV1_PLACE = ds.getEnergyMeasurementPlaces().get(0);
+//			Log.e(TAG, "edv1 place set to:"+EDV1_PLACE.toString());
+//			EDV3_PLACE = ds.getEnergyMeasurementPlaces().get(1);
+//			Log.e(TAG, "edv3 place set to:"+EDV3_PLACE.toString());
+//			EDV6_PLACE = ds.getEnergyMeasurementPlaces().get(2);
+//			Log.e(TAG, "edv6 place set to:"+EDV6_PLACE.toString());
 			mEnergyDataSource = ds;
 			mHumidityDataSource = ds;
 			mTemperatureDataSource = ds;
@@ -121,6 +132,12 @@ implements ISesameDataProvider
 			break;
 		case semantic_repo:
 			SemanticSesameDataSource ssds = new SemanticSesameDataSource();
+//			EDV1_PLACE = ssds.getEnergyMeasurementPlaces().get(0);
+//			Log.e(TAG, "edv1 place set to:"+EDV1_PLACE.toString());
+//			EDV3_PLACE = ssds.getEnergyMeasurementPlaces().get(3);
+//			Log.e(TAG, "edv3 place set to:"+EDV3_PLACE.toString());
+//			EDV6_PLACE = ssds.getEnergyMeasurementPlaces().get(2);
+//			Log.e(TAG, "edv6 place set to:"+EDV6_PLACE.toString());
 			mEnergyDataSource = ssds;
 			mHumidityDataSource = ssds;
 			mLightDataSource = ssds;
@@ -317,11 +334,11 @@ implements ISesameDataProvider
 	//		return res;
 	//	}
 
-	public static SesameDataCache getInstance(DataSource _source)
+	public static SesameDataCache getInstance()
 	{
 		if(null==mInstance)
 		{
-			mInstance = new SesameDataCache(_source);
+			mInstance = new SesameDataCache(mDataSource);
 		}
 		return mInstance;
 	}

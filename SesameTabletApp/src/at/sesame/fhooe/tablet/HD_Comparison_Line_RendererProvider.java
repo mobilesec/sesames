@@ -5,6 +5,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import at.sesame.fhooe.lib2.ui.charts.AbstractRendererProvider;
 
 public class HD_Comparison_Line_RendererProvider 
@@ -27,37 +28,48 @@ extends AbstractRendererProvider
 		xysr.setColor(color);
 		xysr.setLineWidth(3.0f);
 		xysr.setFillBelowLine(true);
-		xysr.setFillBelowLineColor(Color.argb(mFillColorAlpha,
-				Color.red(color), Color.green(color), Color.blue(color)));
+		xysr.setFillBelowLineColor(applyAlphaForColor(mFillColorAlpha, color));
 		return xysr;
 	}
 
 	private int getColorForSeries(XYSeries _series) {
 		String title = _series.getTitle();
+//		if (title.contains(mCtx.getString(R.string.global_current))) {
+//			return Color.BLUE;
+//		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb1_text))) {
+//			return Color.RED;
+//		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb2_text))) {
+//			return Color.GREEN;
+//		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb3_text))) {
+//			return Color.YELLOW;
+//		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb4_text))) {
+//			return Color.LTGRAY;
+//		} else {
+//			return Color.BLACK;
+//		}
+		
+		int color = getColorForRoom(title);
 		if (title.contains(mCtx.getString(R.string.global_current))) {
-			return Color.BLUE;
+			return color;
 		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb1_text))) {
-			return Color.RED;
+			return getHistoricalColor(color, 1);
 		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb2_text))) {
-			return Color.GREEN;
+			return getHistoricalColor(color, 2);
 		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb3_text))) {
-			return Color.YELLOW;
+			return getHistoricalColor(color, 3);
 		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb4_text))) {
-			return Color.LTGRAY;
+			return getHistoricalColor(color, 4);
 		} else {
-			return Color.BLACK;
-		}
+			return Color.GRAY;
+		}	
 	}
 
 	@Override
 	protected void setupRenderer() {
 		super.setupRenderer();
-		mRenderer.setShowGrid(false);
-		mRenderer.setApplyBackgroundColor(false);
-		mRenderer.setMarginsColor(0x00ffffff);
-		// mRenderer.setMargins(new int[] { 0, 100, 70, 100 });
 		mRenderer.setAxesColor(0xffffffff);
 		mRenderer.setLabelsColor(0xffffffff);
+		mRenderer.setMarginsColor(0x00ffffff);
 		// mRenderer.setLabelsTextSize(20);
 		mRenderer.setClickEnabled(false);
 		// mRenderer.setLegendTextSize(50);
@@ -65,7 +77,7 @@ extends AbstractRendererProvider
 		mRenderer.setPanEnabled(true, true);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(true, true);
-		mRenderer.setYTitle("kW");
+		mRenderer.setYTitle("Watt");
 		//mRenderer.setXLabels(10);
 		setTimeLabels();
 	}

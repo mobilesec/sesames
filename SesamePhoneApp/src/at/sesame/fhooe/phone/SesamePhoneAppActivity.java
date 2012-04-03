@@ -20,11 +20,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import at.sesame.fhooe.lib2.data.ISesameDataListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
-import at.sesame.fhooe.lib2.data.SesameDataCache.DataSource;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.pms.PMSProvider;
+import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.ILoginListener;
 import at.sesame.fhooe.lib2.ui.LoginDialogFragment;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
@@ -66,13 +66,11 @@ implements ISesameDataListener, ILoginListener
 	
 	private static final int WHEEL_TEXT_SIZE = 40;
 	
+	private String mUser;
+	private String mPass;
 	private SesameMeasurementPlace mEdv1Place;
 	private SesameMeasurementPlace mEdv3Place;
 	private SesameMeasurementPlace mEdv6Place;
-	
-	private String mUser;
-	private String mPass;
-	
 	static
 	{
 		Log.e(TAG, "static log");
@@ -85,11 +83,14 @@ implements ISesameDataListener, ILoginListener
         Log.e(TAG, "onCreate");
         mRendererProvider = new PhoneChartRendererProvider(getApplicationContext(), false);
 //        new LoginDialogFragment().show(getSupportFragmentManager(), this);
-        mDataCache = SesameDataCache.getInstance(DataSource.semantic_repo);
-        
-        mEnergyMeterRoom1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room1_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
-		mEnergyMeterRoom3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room3_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
-		mEnergyMeterRoom6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room6_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, 200, false);
+        mDataCache = SesameDataCache.getInstance();
+        ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
+		mEdv1Place = places.get(0);
+		mEdv3Place = places.get(1);
+		mEdv6Place = places.get(2);
+        mEnergyMeterRoom1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room1_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
+		mEnergyMeterRoom3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room3_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
+		mEnergyMeterRoom6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room6_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
         
 		mEdv1Chart = new PhoneChartFragment(getString(R.string.global_Room1_name), getApplicationContext(), mUiHandler);
 		mEdv3Chart = new PhoneChartFragment(getString(R.string.global_Room3_name), getApplicationContext(), mUiHandler);
@@ -107,10 +108,6 @@ implements ISesameDataListener, ILoginListener
 		mAdapter = new SesameFragmentPagerAdapter(getSupportFragmentManager(), mFrags);
         mPager = (ViewPager)findViewById(R.id.sesamePager);
         mPager.setAdapter(mAdapter);
-        ArrayList<SesameMeasurementPlace> energyPlaces = mDataCache.getEnergyMeasurementPlaces();
-        mEdv1Place = energyPlaces.get(0);
-        mEdv3Place = energyPlaces.get(3);
-        mEdv6Place = energyPlaces.get(2);
 //       mDataCache.registerEnergyDataListener(this, energyPlaces.get(0));
 //       mDataCache.registerEnergyDataListener(this, energyPlaces.get(1));
 //       mDataCache.registerEnergyDataListener(this, energyPlaces.get(2));

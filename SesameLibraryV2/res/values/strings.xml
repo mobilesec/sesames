@@ -3,12 +3,12 @@
 
     <string name="hello">Hello World, SesameLibraryV2Activity!</string>
     <string name="app_name">SesameLibraryV2</string>
-    <string name="mainXML_separatorSelectionText">select all</string>
-    <string name="pms_activeDeviceSeparatorText">Active (</string>
-    <string name="pms_inactiveDeviceSeparatorText">Inactive (</string>
-    <string name="mainXML_sleepAllButton_text">sleep</string>
-    <string name="mainXML_shutdownAllButton_text">shut down</string>
-    <string name="mainXML_wakeUpAllButton_text">wake up</string>
+    <string name="mainXML_separatorSelectionText">Alle wählen</string>
+    <string name="pms_activeDeviceSeparatorText">Aktiv (</string>
+    <string name="pms_inactiveDeviceSeparatorText">Inaktiv (</string>
+    <string name="mainXML_sleepAllButton_text">Ruhezustand</string>
+    <string name="mainXML_shutdownAllButton_text">Herunterfahren</string>
+    <string name="mainXML_wakeUpAllButton_text">Starten</string>
     <string name="PMSClientActivity_activeDeviceActionDialogBaseMessage">The computer could still be in use (idle time:</string>
     <string name="PMSClientActivity_activeDeviceDialogShutDownCommand">shut down</string>
     <string name="PMSClientActivity_activeDeviceDialogSleepCommand">sleep</string>

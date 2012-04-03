@@ -6,8 +6,11 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.util.Log;
+import at.sesame.fhooe.lib2.Constants;
+import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
 
 public abstract class AbstractRendererProvider 
@@ -40,9 +43,12 @@ implements IRendererProvider
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setAntialiasing(true);
 		mRenderer.setShowGrid(true);
+		mRenderer.setGridColor(0x50ffffff);
 		mRenderer.setYLabelsAlign(Align.RIGHT);
 		mRenderer.setXLabels(0);
 		mRenderer.setShowLabels(true);
+		mRenderer.setMarginsColor(0x00ffffff);
+		mRenderer.setMargins(new int[]  { 20, 50, 10, 20 });
 	}
 
 	@Override
@@ -106,6 +112,59 @@ implements IRendererProvider
 	public XYMultipleSeriesRenderer getRenderer() {
 		// TODO Auto-generated method stub
 		return mRenderer;
+	}
+	
+	public int applyAlphaForColor(int alpha, int color) {
+		return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));
+	}
+	
+	/**
+	 * Calculates a color for historical visualization
+	 * based on a given color. Parameter steps defined
+	 * as time-dimension (e.g. weeks)
+	 * @param color
+	 * @param steps
+	 * @return
+	 */
+	public int getHistoricalColor(int color, int steps) {
+		float[] hsvColor = new float[3];
+		Color.RGBToHSV(Color.red(color), Color.green(color) , Color.blue(color), hsvColor);
+		
+		switch (steps) {
+		case 0:
+			return color;
+		case 1:
+			hsvColor[1] *= 0.45f;
+			return Color.HSVToColor(hsvColor);
+		case 2:
+			hsvColor[1] *= 0.30f;
+			return Color.HSVToColor(hsvColor);
+		case 3:
+			hsvColor[1] *= 0.15f;
+			return Color.HSVToColor(hsvColor);
+		case 4:
+			hsvColor[1] *= 0.00f;
+			return Color.HSVToColor(hsvColor);
+		default:
+			return color;
+		}
+	}
+	
+	/**
+	 * Get color for a specific room.
+	 * @param room
+	 * @return
+	 */
+	public int getColorForRoom(String room) {
+		if (room.contains(mCtx.getString(R.string.global_Room1_name))) {
+			return Constants.COLOR_EDV1;
+		} else if (room.contains(mCtx.getString(R.string.global_Room3_name))) {
+			return Constants.COLOR_EDV3;
+		} else if (room.contains(mCtx.getString(R.string.global_Room6_name))) {
+			return Constants.COLOR_EDV6;
+		} else {
+			return Color.GRAY;
+		}
 	}
 
 }

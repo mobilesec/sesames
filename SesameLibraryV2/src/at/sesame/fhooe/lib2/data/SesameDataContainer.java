@@ -187,11 +187,11 @@ public class SesameDataContainer
 //			Log.d(TAG, "measurement:"+sm.getTimeStamp().toString());
 			if(sm.getTimeStamp().equals(_d))
 			{
-				Log.d(TAG, "found");
+//				Log.d(TAG, "found");
 				return i;
 			}
 		}
-		Log.d(TAG, " not found");
+//		Log.d(TAG, " not found");
 		return null;
 	}
 
@@ -259,10 +259,21 @@ public class SesameDataContainer
 	public static double[] getValueArray(ArrayList<SesameMeasurement> _measurements)
 	{
 		final double[] res = new double[_measurements.size()];
-		Log.d(TAG, "number of measurements to process="+_measurements.size());
+//		Log.d(TAG, "number of measurements to process="+_measurements.size());
 		for(int i = 0;i<_measurements.size();i++)
 		{
 			res[i] = _measurements.get(i).getVal();
+		}
+		return res;
+	}
+	
+	public static double sumValues(ArrayList<SesameMeasurement> _measurements)
+	{
+		double res = 0;
+		
+		for(SesameMeasurement sm:_measurements)
+		{
+			res+=sm.getVal();
 		}
 		return res;
 	}

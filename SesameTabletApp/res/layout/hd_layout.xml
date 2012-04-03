@@ -3,7 +3,7 @@
     android:id="@+id/hd_layout_edv3_lin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/hd_background"
+    android:background="@drawable/app_background"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -17,42 +17,71 @@
             android:layout_height="match_parent"
             android:layout_weight="0.75"
             android:orientation="vertical" >
-
+
             <LinearLayout
                 android:id="@+id/hd_layout_roomDataFra"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.4" >
-
+                android:layout_weight="0.375" >
+
                 <FrameLayout
                     android:id="@+id/hd_layout_edv1Frame"
                     style="@style/Tile"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:id="@+id/hd_layout_edv3Frame"
                     style="@style/Tile"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:id="@+id/hd_layout_edv6Frame"
                     style="@style/Tile"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
 
+            <!--
             <FrameLayout
                 android:id="@+id/hd_layout_chartFrame"
                 style="@style/Tile"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.6" >
-            </FrameLayout>
+            </FrameLayout>
+            -->
+
+            <TabHost
+                android:id="@+id/hd_tab_fragment_layout_tabhost"
+                style="@style/Tile"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.625" >
+
+                <LinearLayout
+                    android:id="@+id/linearLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <TabWidget
+                        android:id="@android:id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                    </TabWidget>
+
+                    <FrameLayout
+                        android:id="@android:id/tabcontent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+                    </FrameLayout>
+                </LinearLayout>
+            </TabHost>
         </LinearLayout>
 
         <LinearLayout

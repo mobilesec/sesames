@@ -690,7 +690,7 @@ public class WheelView extends View {
 		
 		// update offset
 		scrollingOffset = offset - count * itemHeight;
-		if (scrollingOffset > getHeight()) {
+		if (getHeight() != 0 && scrollingOffset > getHeight()) {
 			scrollingOffset = scrollingOffset % getHeight() + getHeight();
 		}
 	}
