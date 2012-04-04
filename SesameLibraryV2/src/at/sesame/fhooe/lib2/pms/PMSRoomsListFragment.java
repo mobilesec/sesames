@@ -1,8 +1,10 @@
-package at.sesame.fhooe.lib2.ui;
+package at.sesame.fhooe.lib2.pms;
 
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -15,8 +17,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import at.sesame.fhooe.lib2.R;
-import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
-import at.sesame.fhooe.lib2.pms.PMSClientFragment;
 
 
 public class PMSRoomsListFragment 
@@ -39,7 +39,7 @@ extends Fragment implements OnItemClickListener
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
 		mInfos = createDummyInfos();
-		mPMSClientFrag = new PMSClientFragment(_ctx, _fm);
+		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
 		mAdapter = new PMSRoomListAdapter(mCtx, 1, mInfos);
 
 		
@@ -54,6 +54,11 @@ extends Fragment implements OnItemClickListener
 		mList = (ListView)v.findViewById(R.id.pms_list_layout_list);
 		mList.setAdapter(mAdapter);
 		mList.setOnItemClickListener(this);
+		
+		// style seperator
+		mList.setDivider(new ColorDrawable(Color.WHITE));
+		mList.setDividerHeight(1);
+		
 		return v;
 	}
 

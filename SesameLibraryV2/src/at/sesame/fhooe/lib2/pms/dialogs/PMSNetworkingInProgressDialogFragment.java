@@ -5,32 +5,36 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import at.sesame.fhooe.lib2.R;
 
 
 public class PMSNetworkingInProgressDialogFragment 
 extends DialogFragment 
 {
-	private ProgressDialog mDialog;
+	private static final String TAG = "PMSNetworking...";
+//	private ProgressDialog mDialog;
+	private Context  mCtx;;
 	public PMSNetworkingInProgressDialogFragment(Context _ctx)
 	{
-		mDialog = new ProgressDialog(_ctx);
-		mDialog.setMessage(_ctx.getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
-//		mNetworkingDialog.setCancelable(false);
-		mDialog.setCanceledOnTouchOutside(false);
-		//		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		mDialog.setIndeterminate(true);
+		mCtx = _ctx;
 	}
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		Log.e(TAG, "creating progress dialog...");
 		// TODO Auto-generated method stub
-		
-		return mDialog;
+		ProgressDialog pd = new ProgressDialog(mCtx);
+		pd.setMessage(mCtx.getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
+//		mNetworkingDialog.setCancelable(false);
+		pd.setCanceledOnTouchOutside(false);
+		//		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		pd.setIndeterminate(true);
+		return pd;
 	}
 	
 	
-	public void setMax(int _max)
-	{
-		mDialog.setMax(_max);
-	}
+//	public void setMax(int _max)
+//	{
+//		mDialog.setMax(_max);
+//	}
 }

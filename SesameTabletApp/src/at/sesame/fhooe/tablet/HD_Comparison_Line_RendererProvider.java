@@ -34,20 +34,6 @@ extends AbstractRendererProvider
 
 	private int getColorForSeries(XYSeries _series) {
 		String title = _series.getTitle();
-//		if (title.contains(mCtx.getString(R.string.global_current))) {
-//			return Color.BLUE;
-//		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb1_text))) {
-//			return Color.RED;
-//		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb2_text))) {
-//			return Color.GREEN;
-//		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb3_text))) {
-//			return Color.YELLOW;
-//		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb4_text))) {
-//			return Color.LTGRAY;
-//		} else {
-//			return Color.BLACK;
-//		}
-		
 		int color = getColorForRoom(title);
 		if (title.contains(mCtx.getString(R.string.global_current))) {
 			return color;
@@ -70,15 +56,11 @@ extends AbstractRendererProvider
 		mRenderer.setAxesColor(0xffffffff);
 		mRenderer.setLabelsColor(0xffffffff);
 		mRenderer.setMarginsColor(0x00ffffff);
-		// mRenderer.setLabelsTextSize(20);
 		mRenderer.setClickEnabled(false);
-		// mRenderer.setLegendTextSize(50);
-		// mRenderer.setLegendHeight(70);
 		mRenderer.setPanEnabled(true, true);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(true, true);
 		mRenderer.setYTitle("Watt");
-		//mRenderer.setXLabels(10);
 		setTimeLabels();
 	}
 	

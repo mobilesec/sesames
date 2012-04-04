@@ -112,8 +112,8 @@ public class SesameDataContainer
 //		synchronized (this)
 		{
 			ArrayList<SesameMeasurement> res = new ArrayList<SesameMeasurement>();
-			Log.d(TAG, "num measurments to filter:"+_measurements.size());
-			Log.d(TAG, "filtering between:"+_from.toString()+" and "+_to.toString());
+//			Log.d(TAG, "num measurments to filter:"+_measurements.size());
+//			Log.d(TAG, "filtering between:"+_from.toString()+" and "+_to.toString());
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTimeInMillis(_from.getTime());
 //			new G

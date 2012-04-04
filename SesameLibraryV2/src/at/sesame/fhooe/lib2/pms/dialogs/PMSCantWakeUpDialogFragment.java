@@ -12,11 +12,11 @@ extends DialogFragment
 {
 	private Dialog mDialog;
 	
-	public PMSCantWakeUpDialogFragment()
+	public PMSCantWakeUpDialogFragment(String _title)
 	{
 		AlertDialog.Builder wakeUpBuilder = new AlertDialog.Builder(getActivity());
 		wakeUpBuilder.setCancelable(true);
-		wakeUpBuilder.setTitle("");
+		wakeUpBuilder.setTitle(_title);
 		wakeUpBuilder.setMessage(R.string.PMSClientActivity_cantWakeUpDialogMessage);
 
 		wakeUpBuilder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
