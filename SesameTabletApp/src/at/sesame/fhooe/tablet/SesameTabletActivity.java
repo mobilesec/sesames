@@ -23,7 +23,6 @@ import android.widget.TabHost;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
-import at.sesame.fhooe.lib2.pms.PMSRoomsListFragment;
 import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
 
@@ -32,11 +31,11 @@ public class SesameTabletActivity
 extends FragmentActivity
 implements INotificationListener
 {
-	private static final String TAG = "HD_Fragment";
+	private static final String TAG = "SesameTabletActivity";
 	private static final long METER_WHEEL_UPDATE_TIMEOUT = 1000;
 //	private Context mCtx;
 	private LayoutInflater mLi;
-	private FragmentManager mFragMan;
+//	private FragmentManager mFragMan;
 	private LocalActivityManager mLam;
 
 	private SesameDataCache mDataCache;
@@ -100,11 +99,11 @@ implements INotificationListener
 		mEdv6Place = places.get(2);
 //		mCtx = getApplicationContext();
 //		mLi = LayoutInflater.from(mCtx);
-		mFragMan = getSupportFragmentManager();
+//		mFragMan = getSupportFragmentManager();
 		//		mUiHandler = _uiHandler;
+		setContentView(R.layout.hd_layout);
 		initializeNotification();
 		initializeFragments();
-		setContentView(R.layout.hd_layout);
 		addFragments();
 		createTabs();
 
@@ -192,13 +191,13 @@ implements INotificationListener
 
 		//		mTabFrag = new TabbedComparisonFragment(mCtx);
 
-				mRoomListFrag = new PMSRoomsListFragment(getApplicationContext(), mUiHandler, mFragMan);
+				mRoomListFrag = new PMSRoomsListFragment(this, mUiHandler, getSupportFragmentManager());
 
 	}
 
 	private void addFragments()
 	{
-		FragmentTransaction ft = mFragMan.beginTransaction();
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.add(R.id.hd_layout_edv1Frame, mEdv1Frag);
 		ft.add(R.id.hd_layout_edv3Frame, mEdv3Frag);
 		ft.add(R.id.hd_layout_edv6Frame, mEdv6Frag);
