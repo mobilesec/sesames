@@ -21,13 +21,7 @@ extends AbstractRendererProvider
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();
-		
-		int color = getColorForSeries(arg0);
-		
-		xysr.setColor(color);
-//		xysr.setGradientEnabled(true);
-//		xysr.setGradientStart(0.0f, color);
-//		xysr.setGradientStop(20.0f, applyAlphaForColor(200, color));
+		xysr.setColor(getColorForSeries(arg0));
 		return xysr;
 	}
 	
@@ -38,21 +32,15 @@ extends AbstractRendererProvider
 		mRenderer.setAxesColor(0xffffffff);
 		mRenderer.setLabelsColor(0xffffffff);
 		mRenderer.setMarginsColor(0x00ffffff);
-		//mRenderer.setLabelsTextSize(20);
 		mRenderer.setClickEnabled(false);
-		//mRenderer.setLegendTextSize(50);
-		//mRenderer.setLegendHeight(70);
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
 		mRenderer.setYTitle("Watt");
-//		mRenderer.setXLabels(7);
 		mRenderer.setBarSpacing(1.5f);
 		mRenderer.setXAxisMin(0.5);
 		mRenderer.setXAxisMax(7.5);
-//		mRenderer.setYAxisMin(0);
 		mRenderer.clearXTextLabels();
-//		mRenderer.setXLabels(0);
 		for(int i = 0 ;i<DataSimulator.BAR_TITLES.length;i++)
 		{
 			mRenderer.addXTextLabel(i+1, DataSimulator.BAR_TITLES[i]);
@@ -63,19 +51,17 @@ extends AbstractRendererProvider
 	private int getColorForSeries(XYSeries _series)
 	{
 		String title = _series.getTitle();
-		
-		int rgbColor = getColorForRoom(title);
-		
+		int color = getColorForRoom(title);
 		if (title.contains(mCtx.getString(R.string.global_current)))
-			return Constants.COLOR_EDV1;
+			return color;
 		else if (title.contains(mCtx.getString(R.string.hd_comparison_week_cb1_text)))
-			return getHistoricalColor(rgbColor, 1);
+			return getHistoricalColor(color, 1);
 		else if (title.contains(mCtx.getString(R.string.hd_comparison_week_cb2_text)))
-			return getHistoricalColor(rgbColor, 2);
+			return getHistoricalColor(color, 2);
 		else if (title.contains(mCtx.getString(R.string.hd_comparison_week_cb3_text)))
-			return getHistoricalColor(rgbColor, 3);
+			return getHistoricalColor(color, 3);
 		else if (title.contains(mCtx.getString(R.string.hd_comparison_week_cb4_text)))
-			return getHistoricalColor(rgbColor, 4);
+			return getHistoricalColor(color, 4);
 		else
 			return Color.GRAY;
 	}
