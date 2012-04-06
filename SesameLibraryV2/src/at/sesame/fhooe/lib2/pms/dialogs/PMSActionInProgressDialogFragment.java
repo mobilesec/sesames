@@ -2,6 +2,7 @@ package at.sesame.fhooe.lib2.pms.dialogs;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -13,9 +14,9 @@ extends DialogFragment
 	
 	private ProgressDialog mProgressDialog;
 	
-	public PMSActionInProgressDialogFragment(String _title, int _max)
+	public PMSActionInProgressDialogFragment(Context _ctx, String _title, int _max)
 	{
-		mProgressDialog = new ProgressDialog(getActivity());
+		mProgressDialog = new ProgressDialog(_ctx);
 		mProgressDialog.setTitle(_title);
 		mProgressDialog.setMax(_max);
 		//		mActionInProgressDialog.setMessage(getString(R.string.PMSClientActivity_networkingProgressDialogTitle));

@@ -83,6 +83,7 @@ implements EntityWriter
 				}
 				sb.append(lastObject.toString());
 				sb.append("]");
+//				Log.e(TAG, "sent params:"+sb.toString());
 				mData = sb.toString().getBytes();
 			}
 			else

@@ -52,6 +52,9 @@ implements Runnable
 		mac,
 		unknown
 	}
+	
+	private String mBasicAuthName = "peter";
+	private String mBasicAuthPass = "thatpeter";
 
 	/**
 	 * the MAC address of the device
@@ -135,7 +138,7 @@ implements Runnable
 		mPassword = _password;
 		mUseCredentials = _useCredentials;
 
-		mPms= PMSProvider.getPMS(mUser, mPassword);
+		mPms= PMSProvider.getPMS(mBasicAuthName, mBasicAuthPass);
 		//		mQueue = new LinkedBlockingQueue();
 		updateStatus();
 	}
@@ -156,7 +159,7 @@ implements Runnable
 		{
 			mHostname = _hostName;
 		}
-
+		mPms = PMSProvider.getPMS(mBasicAuthName, mBasicAuthPass);
 		setExtendedPMSStatus(_status);
 	}
 
@@ -203,7 +206,7 @@ implements Runnable
 //		try
 //		{
 			//			return mPms.wakeup(mMac);
-			boolean res = PMSProvider.getPMS(mUser, mPassword).wakeup(mMac);
+			boolean res = mPms.wakeup(mMac);
 //			return new WakeupTask().execute(mMac).get();
 //		} 
 //		catch (InterruptedException e) 
@@ -224,23 +227,77 @@ implements Runnable
 	 */
 	public boolean powerOff(PowerOffState _state)
 	{
-//		try 
-//		{
+		System.out.println("--------------------------------------------------");
+		System.out.println("controllable device poweroff");
+		if(null==mPms)
+		{
+			System.out.println("pms was null");
+			Log.i(TAG,"pms was null");
+		}
+		else
+		{
+			System.out.println("pms was ok");
+			Log.i(TAG,"pms was ok");
+		}
+		if(null==mMac)
+		{
+			System.out.println("mac was null");
+			Log.i(TAG,"mac was null");
+		}
+		else
+		{
+			System.out.println("mac was ok");
+			Log.i(TAG,"mac was ok");
+		}
+		if(null==_state)
+		{
+			System.out.println("state was null");
+			Log.i(TAG,"state was null");
+		}
+		else
+		{
+			System.out.println("state was ok");
+			Log.i(TAG,"state was ok");
+		}
+		if(null==mUser)
+		{
+			System.out.println("user was null");
+			Log.i(TAG,"user was null");
+		}
+		else
+		{
+			System.out.println("user was ok");
+			Log.i(TAG,"user was ok");
+		}
+		if(null==mPassword)
+		{
+			System.out.println("password was null");
+			Log.i(TAG,"password was null");
+		}
+		else
+		{
+			System.out.println("password was ok");
+			Log.i(TAG, "password was ok");
+		}
+		try 
+		{
 			if(mUseCredentials)
 			{
-				return PMSProvider.getPMS(mUser, mPassword).poweroff(mMac, _state.name(), "", mUser, mPassword);
+//				return PMSProvider.getPMS(mBasicAuthName, mBasicAuthPass).poweroff(mMac, _state.name(), "", mUser, mPassword);
+				return mPms.poweroff(mMac, _state.name(), "", mUser, mPassword);
 //				return new PowerOffTask().execute(mMac, _state.name(), "", mUser, mPassword).get();
 			}
 			else
 			{
-				return PMSProvider.getPMS(mUser, mPassword).poweroff(mMac, _state.name(), "", "", "");
+				return mPms.poweroff(mMac, _state.name(), "", "", "");
 //				return new PowerOffTask().execute(mMac, _state.name(), "", "", "").get();
 			}
-//		} 
-//		catch (InterruptedException e) 
-//		{
-//			e.printStackTrace();
-//		}
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			return false;
+		}
 //		catch (ExecutionException e) 
 //		{
 //			e.printStackTrace();
@@ -464,7 +521,7 @@ implements Runnable
 	@Override
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder("------------------------\n");
+		StringBuilder sb = new StringBuilder("\n------------------------\n");
 		sb.append("MAC: ");
 		sb.append(mMac);
 		sb.append("\nIP: ");

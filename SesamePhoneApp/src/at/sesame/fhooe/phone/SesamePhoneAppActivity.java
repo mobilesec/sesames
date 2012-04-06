@@ -25,7 +25,7 @@ import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
-import at.sesame.fhooe.lib2.pms.PMSClientActivity;
+
 import at.sesame.fhooe.lib2.pms.PMSProvider;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;

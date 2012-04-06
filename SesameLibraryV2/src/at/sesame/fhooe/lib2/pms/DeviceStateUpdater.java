@@ -24,18 +24,20 @@ public class DeviceStateUpdater
 	private boolean mUpdating = true;
 	private IPMSUpdateListener mUpdateListener;
 
-	private long mUpdatePeriod = 15000;
+	private long mUpdatePeriod = 10000;
 
 	private Timer mUpdateTimer = new Timer();
 
 	private String mUser;
 	private String mPass;
 
-	public DeviceStateUpdater(IPMSUpdateListener _updateListener, ArrayList<ControllableDevice> _devs, String _user, String _pass)
+	private PmsHelper mUiHelper;
+	public DeviceStateUpdater(IPMSUpdateListener _updateListener, ArrayList<ControllableDevice> _devs, PmsHelper _uiHelper, String _user, String _pass)
 	{
 		mUser = _user;
 		mPass = _pass;
 		mUpdateListener = _updateListener;
+		mUiHelper = _uiHelper;
 		mDevs = _devs;
 
 		mMacs = new ArrayList<String>();
@@ -85,7 +87,8 @@ public class DeviceStateUpdater
 						if(cd.getMac().equals(statuses.get(i).getMac().toLowerCase()))
 						{
 							cd.setExtendedPMSStatus(statuses.get(i));
-							Log.e(TAG, mDevs.get(i).getHostname()+" updated");
+							mUiHelper.markDirty(cd, false);
+//							Log.e(TAG, mDevs.get(i).getHostname()+" updated");
 						}
 					}
 				}
