@@ -1,4 +1,4 @@
-package at.sesame.fhooe.lib2.pms;
+package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
 
@@ -17,6 +17,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
+import at.sesame.fhooe.lib2.pms.hosts.EDV1Hosts;
+import at.sesame.fhooe.lib2.pms.hosts.EDV3Hosts;
+import at.sesame.fhooe.lib2.pms.hosts.EDV6Hosts;
 
 
 public class PMSRoomsListFragment 
@@ -33,19 +37,24 @@ extends Fragment implements OnItemClickListener
 	private Handler mUiHandler;
 	
 	private ListView mList;
+	private FragmentManager mFragMan;
 	
 	public PMSRoomsListFragment(Context _ctx, Handler _uiHandler, FragmentManager _fm)
 	{
 		mCtx = _ctx;
 		mUiHandler = _uiHandler;
 		mInfos = createDummyInfos();
-		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
+		mFragMan = _fm;
+//		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
 		mAdapter = new PMSRoomListAdapter(mCtx, 1, mInfos);
 
 		
 	}
 	
-	
+	private void createFragment()
+	{
+		
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -154,6 +163,7 @@ extends Fragment implements OnItemClickListener
 		String roomName = cri.getRoomName();
 		if(roomName.equals(mCtx.getString(R.string.global_Room1_name)))
 		{
+			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new EDV1Hosts()).show(mFragMan, null);
 			if(mShowNotification)
 			{
 				Log.e(TAG, "notification");
@@ -171,6 +181,7 @@ extends Fragment implements OnItemClickListener
 		}
 		else if(roomName.equals(mCtx.getString(R.string.global_Room3_name)))
 		{
+			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new EDV3Hosts()).show(mFragMan, null);
 //			new PMS_MockDetailFragment(R.drawable.ic_edv3_pms_detail_no_notification).show(getFragmentManager(), roomName);
 //			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), roomName);
 //			tag = RoomName.EDV_3.name();
@@ -179,6 +190,7 @@ extends Fragment implements OnItemClickListener
 		}
 		else if(roomName.equals(mCtx.getString(R.string.global_Room6_name)))
 		{
+			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new EDV6Hosts()).show(mFragMan, null);
 //			new PMS_MockDetailFragment(R.drawable.ic_edv6_pms_detail_no_notification).show(getFragmentManager(), roomName);
 //			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), roomName);
 //			tag = RoomName.EDV_6.name();
@@ -187,7 +199,7 @@ extends Fragment implements OnItemClickListener
 		
 		}
 		
-		mPMSClientFrag.show(getFragmentManager(), null);
+//		mPMSClientFrag.show(getFragmentManager(), null);
 		
 	}
 	

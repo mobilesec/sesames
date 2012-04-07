@@ -5,7 +5,7 @@
  *  Copyright: Peter Riedl, 11/2011
  *
  ******************************************************************************/
-package at.sesame.fhooe.lib2.pms;
+package at.sesame.fhooe.phone;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +36,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.pms.ControllableDeviceAdapter;
+import at.sesame.fhooe.lib2.pms.ControllableDeviceComparator;
+import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
+import at.sesame.fhooe.lib2.pms.IListEntry;
+import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
+import at.sesame.fhooe.lib2.pms.PMSController;
+import at.sesame.fhooe.lib2.pms.PMSProvider;
+import at.sesame.fhooe.lib2.pms.SeparatorListEntry;
 import at.sesame.fhooe.lib2.pms.SeparatorListEntry.ListType;
 import at.sesame.fhooe.lib2.pms.dialogs.IPMSDialogActionHandler;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
@@ -60,7 +68,7 @@ import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
  */
 public class PMSClientActivity 
 extends FragmentActivity 
-implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
+implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 {
 	/**
 	 * the tag to identify the logger output of this class
@@ -186,8 +194,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	private String mUser;
 	private String  mPass;
 
-	private PmsUiHelper mUiHelper;
-	private PMSController mPmsController;
+//	private PmsUiHelper mUiHelper;
+//	private PMSController mPmsController;
 
 	//	private Handler mUiHandler = new Handler();
 
@@ -219,14 +227,14 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 		super.onCreate(_savedInstance);
 		setContentView(R.layout.pms);
 
-		mPmsController = new PMSController(this, this, getSupportFragmentManager());
+//		mPmsController = new PMSController(this, this, getSupportFragmentManager());
 		//		setupNetworkingDialog();
 		//		setupActionInProgressDialog();
 
 		if(!checkConnectivity())
 		{
 			//			showDialog(NO_NETWORK_DIALOG);
-			PMSDialogFactory.showDialog(DialogType.NO_NETWORK_DIALOG, getSupportFragmentManager(), mPmsController, null);
+			PMSDialogFactory.showDialog(DialogType.NO_NETWORK_DIALOG, getSupportFragmentManager(), null, null);
 			return;
 		}
 
@@ -243,11 +251,11 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 		ViewGroup inactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
 		//		setControlContainerVisibility(View.GONE, View.GONE);
 
-		mUiHelper = new PmsUiHelper(getApplicationContext(), this, activeDeviceControlContainer, inactiveDeviceControlContainer);
+//		mUiHelper = new PmsUiHelper(getApplicationContext(), this, activeDeviceControlContainer, inactiveDeviceControlContainer);
 		//		refreshListEntries();
-		mAdapter = new ControllableDeviceAdapter(this, this, mEntries, mUiHelper);
-		mDevList = (ListView)findViewById(R.id.deviceList);
-		mDevList.setAdapter(mAdapter);
+//		mAdapter = new ControllableDeviceAdapter(this, this, mEntries, mUiHelper);
+//		mDevList = (ListView)findViewById(R.id.deviceList);
+//		mDevList.setAdapter(mAdapter);
 
 
 		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
@@ -410,14 +418,14 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	public void onDestroy()
 	{
 		super.onDestroy();
-		mPmsController.stopAutoUpdate();
+//		mPmsController.stopAutoUpdate();
 	}
 
 	@Override
 	public void onPause()
 	{
 		super.onPause();
-		mPmsController.stopAutoUpdate();
+//		mPmsController.stopAutoUpdate();
 	}
 
 	@Override
@@ -427,7 +435,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 		Log.e(TAG, "onResume");
 		if(checkConnectivity())
 		{
-			mPmsController.startAutoUpdate();
+//			mPmsController.startAutoUpdate();
 		}
 	}
 
@@ -637,59 +645,59 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	{
 
 
-		ArrayList<ControllableDevice> activeDevs = new ArrayList<ControllableDevice>();
-		ArrayList<ControllableDevice> inactiveDevs = new ArrayList<ControllableDevice>();
-//		mUiHelper.createListEntries(mPmsController.getAllDevices());
-//		Log.e(TAG, "size of all devs:"+mPmsController.getAllDevices().size());
-		for(ControllableDevice cd:mPmsController.getAllDevices())
-		{
-			if(cd.isAlive())
-			{
-				activeDevs.add(cd);
-			}
-			else
-			{
-				inactiveDevs.add(cd);
-			}
-		}
-		if(!activeDevs.isEmpty())
-		{
-			Collections.sort(activeDevs, new ControllableDeviceComparator());
-		}
-
-		if(!inactiveDevs.isEmpty())
-		{
-			Collections.sort(inactiveDevs, new ControllableDeviceComparator());
-		}
-//		Log.e(TAG, "active:"+activeDevs.size()+", inactive:"+inactiveDevs.size());
-		mEntries.clear();
-		mEntries.add(new SeparatorListEntry(getApplicationContext(), ListType.active, activeDevs.size()));
-
-//		HashMap<String, Boolean> selection = mUiHelper.getSelectionMap(mPmsController.getAllDevices());
-//		System.out.println("selection:"+selection.size());
-		for(ControllableDevice cd:activeDevs)
-		{
-//			System.out.println("adding entry for:"+cd.toString());
-			ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
-			cdle.setSelection(mUiHelper.isDeviceSelected(cd));
-			mEntries.add(cdle);
-		}
-		mEntries.add(new SeparatorListEntry(getApplicationContext(), ListType.inactive, inactiveDevs.size()));
-		for(ControllableDevice cd:inactiveDevs)
-		{
-//			Log.e(TAG, "adding entry for:"+cd.toString());
-			ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
-//			if(null!=selection)
-			{
-//				Boolean rawSelection = selection.get(cd.getMac());
-//				boolean selected = rawSelection==null?false:rawSelection;
-				cdle.setSelection(mUiHelper.isDeviceSelected(cd));
-
-			}
-			mEntries.add(cdle);
-		}	
-		
-		notifyAdapter();
+//		ArrayList<ControllableDevice> activeDevs = new ArrayList<ControllableDevice>();
+//		ArrayList<ControllableDevice> inactiveDevs = new ArrayList<ControllableDevice>();
+////		mUiHelper.createListEntries(mPmsController.getAllDevices());
+////		Log.e(TAG, "size of all devs:"+mPmsController.getAllDevices().size());
+//		for(ControllableDevice cd:mPmsController.getAllDevices())
+//		{
+//			if(cd.isAlive())
+//			{
+//				activeDevs.add(cd);
+//			}
+//			else
+//			{
+//				inactiveDevs.add(cd);
+//			}
+//		}
+//		if(!activeDevs.isEmpty())
+//		{
+//			Collections.sort(activeDevs, new ControllableDeviceComparator());
+//		}
+//
+//		if(!inactiveDevs.isEmpty())
+//		{
+//			Collections.sort(inactiveDevs, new ControllableDeviceComparator());
+//		}
+////		Log.e(TAG, "active:"+activeDevs.size()+", inactive:"+inactiveDevs.size());
+//		mEntries.clear();
+//		mEntries.add(new SeparatorListEntry(getApplicationContext(), ListType.active, activeDevs.size()));
+//
+////		HashMap<String, Boolean> selection = mUiHelper.getSelectionMap(mPmsController.getAllDevices());
+////		System.out.println("selection:"+selection.size());
+//		for(ControllableDevice cd:activeDevs)
+//		{
+////			System.out.println("adding entry for:"+cd.toString());
+//			ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
+//			cdle.setSelection(mUiHelper.isDeviceSelected(cd));
+//			mEntries.add(cdle);
+//		}
+//		mEntries.add(new SeparatorListEntry(getApplicationContext(), ListType.inactive, inactiveDevs.size()));
+//		for(ControllableDevice cd:inactiveDevs)
+//		{
+////			Log.e(TAG, "adding entry for:"+cd.toString());
+//			ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
+////			if(null!=selection)
+//			{
+////				Boolean rawSelection = selection.get(cd.getMac());
+////				boolean selected = rawSelection==null?false:rawSelection;
+//				cdle.setSelection(mUiHelper.isDeviceSelected(cd));
+//
+//			}
+//			mEntries.add(cdle);
+//		}	
+//		
+//		notifyAdapter();
 //		PMSDialogFactory.dismissCurrentDialog();
 	}
 
@@ -1241,15 +1249,15 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	@Override
 	public void onClick(View arg0) 
 	{
-		if (arg0.getId() == R.id.sleepButton) {
-			mPmsController.powerOffDevices(mUiHelper.getSelectedDevices(),PowerOffState.sleep);
-		} else if (arg0.getId() == R.id.shutDownButton) {
-			Log.e(TAG, "shut down all");
-			mPmsController.powerOffDevices(mUiHelper.getSelectedDevices(),PowerOffState.shutdown);
-		} else if (arg0.getId() == R.id.wakeUpButton) {
-			Log.e(TAG, "wake up all");
-			mPmsController.wakeupDevices(mUiHelper.getSelectedDevices());
-		}
+//		if (arg0.getId() == R.id.sleepButton) {
+//			mPmsController.powerOffDevices(mUiHelper.getSelectedDevices(),PowerOffState.sleep);
+//		} else if (arg0.getId() == R.id.shutDownButton) {
+//			Log.e(TAG, "shut down all");
+//			mPmsController.powerOffDevices(mUiHelper.getSelectedDevices(),PowerOffState.shutdown);
+//		} else if (arg0.getId() == R.id.wakeUpButton) {
+//			Log.e(TAG, "wake up all");
+//			mPmsController.wakeupDevices(mUiHelper.getSelectedDevices());
+//		}
 	}
 
 	//	/**
@@ -1589,8 +1597,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	 */
 	private void removeFromList(String _mac)
 	{
-		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
-		Log.e(TAG, "removed "+cd.toString()+", actual remove has to be implemented yet.");
+//		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
+//		Log.e(TAG, "removed "+cd.toString()+", actual remove has to be implemented yet.");
 	}
 
 	/**
@@ -1599,8 +1607,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	 */
 	private void addToNotAvailableList(String _mac)
 	{
-		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
-		Log.e(TAG, "added "+cd.toString()+" to the not available list, actual add has to be implemented yet.");
+//		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
+//		Log.e(TAG, "added "+cd.toString()+" to the not available list, actual add has to be implemented yet.");
 	}
 
 	/**
@@ -1609,8 +1617,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	 */
 	private void toastComputerNotAvailable(String _mac)
 	{
-		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
-		Toast.makeText(getApplicationContext(), cd.getHostname()+" is currently not available", Toast.LENGTH_LONG).show();
+//		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
+//		Toast.makeText(getApplicationContext(), cd.getHostname()+" is currently not available", Toast.LENGTH_LONG).show();
 	}
 
 	/**
@@ -1619,8 +1627,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	 */
 	private void toastNoInformationAvailable(String _mac)
 	{
-		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
-		Toast.makeText(getApplicationContext(), "no information about "+cd.getHostname()+" available", Toast.LENGTH_LONG).show();
+//		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
+//		Toast.makeText(getApplicationContext(), "no information about "+cd.getHostname()+" available", Toast.LENGTH_LONG).show();
 	}
 
 	/**
@@ -1629,8 +1637,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	 */
 	private void showLoginDialog(String _mac)
 	{
-		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
-		Log.e(TAG, "showing login dialog for "+cd.getHostname());
+//		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
+//		Log.e(TAG, "showing login dialog for "+cd.getHostname());
 	}
 
 	/**
@@ -1640,7 +1648,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	private void showCantShutDownDialog(String _mac)
 	{
 		//		showDialog(CANT_SHUTDOWN_DIALOG, getBundledHostname(_mac));
-		PMSDialogFactory.showDialog(DialogType.CANT_SHUTDONW_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{_mac});
+//		PMSDialogFactory.showDialog(DialogType.CANT_SHUTDONW_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{_mac});
 	}
 
 	/**
@@ -1650,7 +1658,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	private void showCantWakeUpDialog(String _mac)
 	{
 		//		showDialog(CANT_WAKEUP_DIALOG, getBundledHostname(_mac));
-		PMSDialogFactory.showDialog(DialogType.CANT_WAKEUP_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{_mac});
+//		PMSDialogFactory.showDialog(DialogType.CANT_WAKEUP_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{_mac});
 	}
 
 	/**
@@ -1658,21 +1666,21 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 	 * @param _mac the mac address of the device which's hostname should be bundled 
 	 * @return a bundle containing the hostname
 	 */
-	private Bundle getBundledHostname(String _mac)
-	{
-		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
-		Bundle res = new Bundle();
-		res.putCharSequence(BUNDLE_HOSTNAME_KEY, cd.getHostname());
-		return res;
-	}
-
-	private Bundle createMessageAndMaxBundle(String _msg, int _max)
-	{
-		Bundle res = new Bundle();
-		res.putString(BUNDLE_MESSAGE_KEY, _msg);
-		res.putInt(BUNDLE_SELECTED_NUMBER_KEY, _max);
-		return res;
-	}
+//	private Bundle getBundledHostname(String _mac)
+//	{
+//		ControllableDevice cd = mPmsController.getDeviceFromMac(_mac);
+//		Bundle res = new Bundle();
+//		res.putCharSequence(BUNDLE_HOSTNAME_KEY, cd.getHostname());
+//		return res;
+//	}
+//
+//	private Bundle createMessageAndMaxBundle(String _msg, int _max)
+//	{
+//		Bundle res = new Bundle();
+//		res.putString(BUNDLE_MESSAGE_KEY, _msg);
+//		res.putInt(BUNDLE_SELECTED_NUMBER_KEY, _max);
+//		return res;
+//	}
 
 	//	/**
 	//	 * searches the list of ControllableDevices for the first occurrence of the passed mac address 
@@ -1715,46 +1723,46 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener, IPmsUi
 
 	}
 
-	@Override
-	public int getNumSelectedDevices() {
-		return mUiHelper.getSelectedDevices().size();
-	}
-
-	@Override
-	public void markDirty(ControllableDevice _cd) {
-		mUiHelper.markDirty(_cd);
-
-	}
-
-	@Override
-	public void deselectAll() {
-		mUiHelper.deselectAll();
-
-	}
-
-	@Override
-	public void notifySelectionFail() {
-		toastSelectionFail();
-
-	}	
-	
-	@Override
-	public void notifyDevicesLoaded()
-	{
-		mUiHelper.createListEntries(mPmsController.getAllDevices());
-		refreshListEntries();
-	}
-
-	@Override
-	public void handlePowerClick(ControllableDevice _cd) {
-		if(_cd.isAlive())
-		{
-			PMSDialogFactory.showDialog(DialogType.ACTIVE_DEVICE_ACTION_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{this, _cd});
-		}
-		else
-		{
-			PMSDialogFactory.showDialog(DialogType.INACTIVE_DEVICE_ACTION_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{this, _cd});
-		}
-		
-	}
+//	@Override
+//	public int getNumSelectedDevices() {
+//		return mUiHelper.getSelectedDevices().size();
+//	}
+//
+//	@Override
+//	public void markDirty(ControllableDevice _cd) {
+//		mUiHelper.markDirty(_cd);
+//
+//	}
+//
+//	@Override
+//	public void deselectAll() {
+//		mUiHelper.deselectAll();
+//
+//	}
+//
+//	@Override
+//	public void notifySelectionFail() {
+//		toastSelectionFail();
+//
+//	}	
+//	
+//	@Override
+//	public void notifyDevicesLoaded()
+//	{
+//		mUiHelper.createListEntries(mPmsController.getAllDevices());
+//		refreshListEntries();
+//	}
+//
+//	@Override
+//	public void handlePowerClick(ControllableDevice _cd) {
+//		if(_cd.isAlive())
+//		{
+//			PMSDialogFactory.showDialog(DialogType.ACTIVE_DEVICE_ACTION_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{this, _cd});
+//		}
+//		else
+//		{
+//			PMSDialogFactory.showDialog(DialogType.INACTIVE_DEVICE_ACTION_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{this, _cd});
+//		}
+//		
+//	}
 }

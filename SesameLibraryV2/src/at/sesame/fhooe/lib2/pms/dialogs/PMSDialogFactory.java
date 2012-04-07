@@ -16,7 +16,7 @@ public class PMSDialogFactory
 	private static final String TAG = "PMSDialogFactory";
 
 	private static DialogFragment mShownDialog = null;
-	private static FragmentManager mFragMan;
+//	private static FragmentManager mFragMan;
 	public enum DialogType
 	{
 		NETWORKING_IN_PROGRESS,
@@ -32,7 +32,7 @@ public class PMSDialogFactory
 
 	public static DialogFragment showDialog(DialogType _dt, final FragmentManager _fm, IPMSDialogActionHandler _handler, Object... _params)
 	{
-		mFragMan = _fm;
+//		mFragMan = _fm;
 		if(null!=mShownDialog&&mShownDialog.isVisible())
 		{
 			mShownDialog.dismiss();
@@ -87,7 +87,7 @@ public class PMSDialogFactory
 			break;
 
 		case ACTION_IN_PROGRESS_DIALOG:
-			if(!checkParams(_params, new Class[]{String.class, int.class}))
+			if(!checkParams(_params, new Class[]{Context.class, String.class, Integer.class}))
 			{
 				throw new IllegalArgumentException("passed parameters for action in progress dialog were not ok");
 			}
@@ -95,12 +95,13 @@ public class PMSDialogFactory
 			//			args.putString(PMSActionInProgressDialogFragment.TITLE_BUNDLE_KEY, (String)_params[0]);
 			//			args.putInt(PMSActionInProgressDialogFragment.MAX_BUNDLE_KEY, (Integer)_params[1]);
 
-			dialog2Show = new PMSActionInProgressDialogFragment((String)_params[0], (Integer)_params[1]);
+			dialog2Show = new PMSActionInProgressDialogFragment((Context)_params[0], (String)_params[1], (Integer)_params[2]);
 			break;
 
 		default:
 			break;
 		}
+		
 		mShownDialog = dialog2Show;
 
 
@@ -115,7 +116,7 @@ public class PMSDialogFactory
 			Log.e(TAG, "could not show dialog");
 		}
 		//		Log.i(TAG, "returning:"+mShownDialog.toString());
-		return mShownDialog;
+		return dialog2Show;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -169,11 +170,5 @@ public class PMSDialogFactory
 			//			ft.remove(mShownDialog);
 			//			ft.commit();
 		}
-	}
-
-	private static void runOnUiThread(Runnable _toRun)
-	{
-		Log.i(TAG, "running on ui thread");
-		new Handler(Looper.getMainLooper()).post(_toRun);
 	}
 }

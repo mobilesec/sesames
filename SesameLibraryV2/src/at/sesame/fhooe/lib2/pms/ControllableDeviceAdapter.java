@@ -12,6 +12,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,42 +69,106 @@ implements OnClickListener, OnCheckedChangeListener
 	 */
 	private static final int GROUP_SELECTION = 1;
 	
-	private PmsUiHelper mUiHelper;
+	private PmsHelper mUiHelper;
 	
-	private IPmsUi mUi;
+	private static Drawable OFF_DRAWABLE;
+	private static Drawable ON_DRAWABLE;
+	
+	private static Drawable WINDOWS_DRAWABLE;
+	private static Drawable LINUX_DRAWABLE;
+	private static Drawable MAC_DRAWABLE;
+	private static Drawable UNKNOWN_DRAWABLE;
+	
+	private static Drawable NOT_SELECTED_BG;
+	private static Drawable SELECTED_BG;
+	
+	private static ProgressBar mDirtyProgressBar;
+	
+//	private IPmsUi mUi;
+	
+//	private PMSController mController;
 
 	/**
 	 * creates a new ControllableDeviceAdapter
 	 * @param _owner the owner of the adapter
 	 * @param objects the model to be shown via the adapter
 	 */
-	public ControllableDeviceAdapter(Context _ctx, IPmsUi _ui, List<IListEntry> objects, PmsUiHelper _uiHelper) 
+	public ControllableDeviceAdapter(Context _ctx, List<IListEntry> objects, PmsHelper _uiHelper) 
 	{
 		super(_ctx, 0, objects);
-		mUi = _ui;
+//		mController = _controller;
 		mUiHelper = _uiHelper;
 		mContext = _ctx;
 		mDevs = (ArrayList<IListEntry>)objects;
 		mLi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mDirtyProgressBar = (ProgressBar)mLi.inflate(R.layout.dirty_progressbar, null);
+		loadDrawables();
+	}
+	
+	private void loadDrawables()
+	{
+		WINDOWS_DRAWABLE = mContext.getResources().getDrawable(R.drawable.ic_list_windows);
+		LINUX_DRAWABLE = mContext.getResources().getDrawable(R.drawable.ic_list_linux);
+		MAC_DRAWABLE = mContext.getResources().getDrawable(R.drawable.ic_list_mac);
+		UNKNOWN_DRAWABLE = mContext.getResources().getDrawable(R.drawable.ic_list_unknown);
+		
+		ON_DRAWABLE = mContext.getResources().getDrawable(R.drawable.ic_power_on);
+		OFF_DRAWABLE = mContext.getResources().getDrawable(R.drawable.ic_power_off);
+		
+		NOT_SELECTED_BG = mContext.getResources().getDrawable(R.drawable.list_item_background);
+		SELECTED_BG = mContext.getResources().getDrawable(R.drawable.list_item_background_selected);
+	}
+	
+	static class ViewHolder
+	{
+//		public ControllableDevice CONTROLLABLE_DEV; 
+		
+		public ProgressBar DIRTY_BAR;
+		public ImageView OS_VIEW;
+		public FrameLayout CONTAINER;
+		public ImageButton POWER_BUTT;
+		public CheckBox CB;
+		
+		public TextView NAME_LABEL;
+		public TextView IP_LABEL;
+		public TextView IDLE_LABEL;
 	}
 
 	@Override
 	public View getView(int _pos, View _convertView, ViewGroup _parent)
 	{
-		View v = _convertView;
+//		Log.e(TAG, "getView "+_pos);
+		View rowView = _convertView;
+		if(null==mDevs||(mDevs.size()-1)<_pos)
+		{
+			Log.e(TAG, "tried to access devices @"+_pos);
+			if(null!=mDevs)
+			{
+				Log.e(TAG, "size of devs="+mDevs.size());
+			}
+			else
+			{
+				Log.e(TAG, "devs were null");
+			}
+			return rowView;
+		}
 		IListEntry item = mDevs.get(_pos);
 		if(null!=item)
 		{
+			long start = System.currentTimeMillis();
+			ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
+			ControllableDevice cd = cdle.getControllableDevice();
 			if(item.isSeparator())
 			{
+				Log.e(TAG, "separator found");
 				SeparatorListEntry sle = (SeparatorListEntry)item;
-				v = mLi.inflate(R.layout.controllable_device_listseparator, null);
+				rowView = mLi.inflate(R.layout.controllable_device_listseparator, null);
 
 
-				TextView tv = (TextView)v.findViewById(R.id.separatorNameLabel);
+				TextView tv = (TextView)rowView.findViewById(R.id.separatorNameLabel);
 				tv.setText(sle.getTitle());
 
-				CheckBox separatorCb = (CheckBox)v.findViewById(R.id.separatorCheckBox);
+				CheckBox separatorCb = (CheckBox)rowView.findViewById(R.id.separatorCheckBox);
 				separatorCb.setChecked(sle.isSelected());
 				separatorCb.setOnCheckedChangeListener(this);
 				//the separator associated with the checkbox is set as tag for the checkbox to 
@@ -111,107 +176,133 @@ implements OnClickListener, OnCheckedChangeListener
 				separatorCb.setTag(sle);
 			}
 			else
-			
 			{
-				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
-				ControllableDevice cd = cdle.getControllableDevice();
-
-				System.out.println("adapter found device:"+cdle.isSelected());
-				if(cdle.isSelected())
+				if(null==rowView)
 				{
-					v = mLi.inflate(R.layout.controllable_device_listitem_selected, null);
+					ViewHolder vh = new ViewHolder();
+//					vh.CONTROLLABLE_DEV = ((ControllableDeviceListEntry)item).getControllableDevice();
+					
+//				System.out.println("adapter found device:"+cdle.isSelected());
+					if(cdle.isSelected())
+					{
+						rowView = mLi.inflate(R.layout.controllable_device_listitem_selected, null);
+					}
+					else
+					{
+						rowView = mLi.inflate(R.layout.controllable_device_listitem_not_selected, null);
+					}
+					vh.OS_VIEW = (ImageView)rowView.findViewById(R.id.osIconView);
+					vh.CONTAINER = (FrameLayout)rowView.findViewById(R.id.controllable_device_list_item_placeholder);
+					vh.DIRTY_BAR = (ProgressBar)mLi.inflate(R.layout.dirty_progressbar, null);
+				
+					vh.CB = (CheckBox)rowView.findViewById(R.id.controllable_device_list_item_selection_box);
+					vh.NAME_LABEL =(TextView) rowView.findViewById(R.id.nameLabel);
+					vh.IP_LABEL = (TextView)rowView.findViewById(R.id.ipLabel);
+					vh.IDLE_LABEL = (TextView)rowView.findViewById(R.id.idleLabel);
+					rowView.setTag(vh);
 				}
-				else
-				{
-					v = mLi.inflate(R.layout.controllable_device_listitem_not_selected, null);
-				}
-
+				ViewHolder holder = (ViewHolder)rowView.getTag();
 				if(null!=cd)
 				{
-					ImageView osView = (ImageView)v.findViewById(R.id.osIconView);
 
 					switch(cd.getOs())
 					{
 					case windows:
-						osView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_list_windows));
+						holder.OS_VIEW.setImageDrawable(WINDOWS_DRAWABLE);
 						break;
 					case linux:
-						osView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_list_linux));
+						holder.OS_VIEW.setImageDrawable(LINUX_DRAWABLE);
 						break;
 					case mac:
-						osView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_list_mac));
+						holder.OS_VIEW.setImageDrawable(MAC_DRAWABLE);
 						break;
 					case unknown:
-						osView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_list_unknown));
+						holder.OS_VIEW.setImageDrawable(UNKNOWN_DRAWABLE);
 						break;
 					}
-					FrameLayout container = (FrameLayout)v.findViewById(R.id.controllable_device_list_item_placeholder);
-					if(cdle.isDirty())
+					
+					
+					if(cdle.isSelected())
 					{
-						//						LayoutInflater inflater = mLi.in
-						ProgressBar pg = (ProgressBar ) mLi.inflate(R.layout.dirty_progressbar, null);
-						//						pg.setIndeterminate(true);
-
-						container.addView(pg);
+						rowView.setBackgroundDrawable(SELECTED_BG);
 					}
 					else
 					{
-						//						ImageButton powerView = (ImageButton)v.findViewById(R.id.controllable_device_list_item_powerIconView);
-						ImageButton powerView = new ImageButton(mContext);
+						rowView.setBackgroundDrawable(NOT_SELECTED_BG);
+					}
+					
 
-						powerView.setOnClickListener(this);
-						powerView.setTag(cd);
-						powerView.setBackgroundColor(Color.TRANSPARENT);
+					
+					if(!cdle.isDirty())
+					{
+//						ImageButton powerView = (ImageButton)v.findViewById(R.id.controllable_device_list_item_powerIconView);
+
+						holder.POWER_BUTT = new ImageButton(mContext);	
+						holder.POWER_BUTT.setOnClickListener(this);
+						holder.POWER_BUTT.setTag(cd);
+						holder.POWER_BUTT.setBackgroundColor(Color.TRANSPARENT);
 
 						if(cd.isAlive())
 						{
-							powerView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_power_on));
+							holder.POWER_BUTT.setImageDrawable(ON_DRAWABLE);
 						}
 						else
 						{
-							powerView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_power_off));
+							holder.POWER_BUTT.setImageDrawable(OFF_DRAWABLE);
 						}
+						holder.CONTAINER.removeAllViews();
+						holder.CONTAINER.addView(holder.POWER_BUTT);
+					}
+					else
+					{
+						//						LayoutInflater inflater = mLi.in
+//						ProgressBar pg = (ProgressBar ) mLi.inflate(R.layout.dirty_progressbar, null);
+						//						pg.setIndeterminate(true);
 
-						container.addView(powerView);
+						holder.CONTAINER.removeAllViews();
+						holder.CONTAINER.addView(holder.DIRTY_BAR);
 					}
 
-					CheckBox cb = (CheckBox)v.findViewById(R.id.controllable_device_list_item_selection_box);
-					if(null!=cb)
+					if(null!=holder.CB)
 					{
-						cb.setOnCheckedChangeListener(null);
-						cb.setChecked(cdle.isSelected());
+						holder.CB.setOnCheckedChangeListener(null);
+						holder.CB.setChecked(cdle.isSelected());
 
-						cb.setOnCheckedChangeListener(this);
+						holder.CB.setOnCheckedChangeListener(this);
 						//the ControllableDevice associated with the checkbox is set as tag for the checkbox to 
 						//be able to determine which device was selected in onCheckedChanged
-						cb.setTag(cd);
+						holder.CB.setTag(cd);
 					}
 					else
 					{
 						Log.e(TAG, "checkbox was null");
 					}
 
-					TextView nameLabel =(TextView) v.findViewById(R.id.nameLabel);
-					nameLabel.setText(cd.getHostname());
+					holder.NAME_LABEL.setText(cd.getHostname());
 
-					TextView ipLabel = (TextView)v.findViewById(R.id.ipLabel);
-					ipLabel.setText(cd.getIp());
+					holder.IP_LABEL.setText(cd.getIp());
 
-					TextView idleLabel = (TextView)v.findViewById(R.id.idleLabel);
 //					idleLabel.setText(mContext.getString(R.string.ControllableDeviceAdapter_idleLabel_text)+cd.getIdleSince());
-					idleLabel.setText(cd.getIdleString());
+					holder.IDLE_LABEL.setText(cd.getIdleString());
+					long duration = System.currentTimeMillis()-start;
+//					Log.e(TAG, "view generation took:"+duration+"ms");
+				}
+				else
+				{
+					Log.e(TAG, "cd was null");
 				}
 			}
 		}
 
-		return v;
+		return rowView;
 	}
 
 	@Override
 	public void onClick(View arg0) 
 	{
 		ControllableDevice cd = extractDeviceFromTag(arg0);
-		mUi.handlePowerClick(cd);
+		mUiHelper.handlePowerClick(cd);
+//		mUi.handlePowerClick(cd);
 //		if(cd.isAlive())
 //		{
 //			PMSDialogFactory.showDialog(DialogType.ACTIVE_DEVICE_ACTION_DIALOG, _fm, _handler, _params)
@@ -303,5 +394,7 @@ implements OnClickListener, OnCheckedChangeListener
 			return -1;
 		}
 	}
+	
+	
 
 }

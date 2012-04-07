@@ -1,4 +1,4 @@
-package at.sesame.fhooe.lib2.pms;
+package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
 
 
 public class PMSRoomListAdapter 

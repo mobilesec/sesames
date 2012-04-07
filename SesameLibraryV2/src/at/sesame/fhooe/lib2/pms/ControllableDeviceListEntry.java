@@ -44,4 +44,15 @@ implements IListEntry
 	{
 		return mDirty;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ControllableDeviceListEntry [mDevice=").append(mDevice)
+				.append(", mSelected=").append(mSelected).append(", mDirty=")
+				.append(mDirty).append("]");
+		return builder.toString();
+	}
+	
+	
 }

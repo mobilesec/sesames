@@ -42,8 +42,8 @@ import at.sesame.fhooe.lib2.pms.responsehandling.PMSBooleanResponseHandler;
  *
  */
 //http://192.168.2.7:8080/pms/
-@EndPoint("http://80.120.3.4:8080/pms")
-//@EndPoint("http://192.168.2.7:8080/pms")
+//@EndPoint("http://80.120.3.4:8080/pms")
+@EndPoint("http://192.168.2.7:8080/pms")
 
 public interface IPMSService 
 {
