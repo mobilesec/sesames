@@ -87,7 +87,10 @@ public class DeviceStateUpdater
 						if(cd.getMac().equals(statuses.get(i).getMac().toLowerCase()))
 						{
 							cd.setExtendedPMSStatus(statuses.get(i));
-							mUiHelper.markDirty(cd, false);
+							if(null!=mUiHelper)
+							{
+								mUiHelper.markDirty(cd, false);								
+							}
 //							Log.e(TAG, mDevs.get(i).getHostname()+" updated");
 						}
 					}
