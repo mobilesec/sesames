@@ -16,8 +16,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Übersicht für Raum..."
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffffff" />
+
         <ScrollView
             android:id="@+id/sv1"
             android:layout_width="match_parent"
@@ -34,19 +35,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="EDV 1" />
+                    android:text="EDV 1"
+                    android:textColor="#ffffffff" />
 
                 <RadioButton
                     android:id="@+id/hd_comparison_selection_room3RadioButt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EDV 3" />
+                    android:text="EDV 3"
+                    android:textColor="#ffffffff" />
 
                 <RadioButton
                     android:id="@+id/hd_comparison_selection_room6RadioButt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EDV 6" />
+                    android:text="EDV 6"
+                    android:textColor="#ffffffff" />
             </RadioGroup>
         </ScrollView>
     </LinearLayout>
@@ -63,8 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Vergleich mit..."
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffffff" />
+
         <ScrollView
             android:id="@+id/sv2"
             android:layout_width="match_parent"
@@ -81,25 +86,29 @@
                     android:id="@+id/hd_comparison_selection_box1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CheckBox" />
+                    android:text="CheckBox"
+                    android:textColor="#ffffffff" />
 
                 <CheckBox
                     android:id="@+id/hd_comparison_selection_box2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CheckBox" />
+                    android:text="CheckBox"
+                    android:textColor="#ffffffff" />
 
                 <CheckBox
                     android:id="@+id/hd_comparison_selection_box3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CheckBox" />
+                    android:text="CheckBox"
+                    android:textColor="#ffffffff" />
 
                 <CheckBox
                     android:id="@+id/hd_comparison_selection_box4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CheckBox" />
+                    android:text="CheckBox"
+                    android:textColor="#ffffffff" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

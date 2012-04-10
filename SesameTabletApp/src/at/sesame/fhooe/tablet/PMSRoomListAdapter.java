@@ -47,12 +47,16 @@ extends ArrayAdapter<ComputerRoomInformation>
 		Log.e(TAG, info.toString());
 		TextView header = (TextView)mView.findViewById(R.id.textView1);
 		header.setText(info.getRoomName());
+		header.setTextColor(0xffffffff);
 
 		TextView idle = (TextView)mView.findViewById(R.id.textView2);
 		idle.setText(mCtx.getString(R.string.pms_room_list_inactive_prefix)+info.getNumIdleComputers());
+		idle.setTextColor(0xffffffff);
 		
 		TextView active = (TextView)mView.findViewById(R.id.textView3);
 		active.setText(mCtx.getString(R.string.pms_room_list_active_prefix)+info.getNumActiveComputers());
+		active.setTextColor(0xffffffff);
+		
 		if(info.isShowNotification())
 		{
 			Log.e(TAG, "notification set....");

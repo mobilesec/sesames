@@ -88,7 +88,7 @@ implements INotificationListener
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setTheme(android.R.style.Theme_Holo);
+		setTheme(android.R.style.Theme_Holo_Light);
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
 		mDataCache = SesameDataCache.getInstance();

@@ -79,8 +79,8 @@ implements OnClickListener, OnCheckedChangeListener
 	private static Drawable MAC_DRAWABLE;
 	private static Drawable UNKNOWN_DRAWABLE;
 	
-	private static Drawable NOT_SELECTED_BG;
-	private static Drawable SELECTED_BG;
+	//private static Drawable NOT_SELECTED_BG;
+	//private static Drawable SELECTED_BG;
 	
 	private static ProgressBar mDirtyProgressBar;
 	
@@ -115,8 +115,8 @@ implements OnClickListener, OnCheckedChangeListener
 		ON_DRAWABLE = mContext.getResources().getDrawable(R.drawable.ic_power_on);
 		OFF_DRAWABLE = mContext.getResources().getDrawable(R.drawable.ic_power_off);
 		
-		NOT_SELECTED_BG = mContext.getResources().getDrawable(R.drawable.list_item_background);
-		SELECTED_BG = mContext.getResources().getDrawable(R.drawable.list_item_background_selected);
+	//	NOT_SELECTED_BG = mContext.getResources().getDrawable(R.drawable.list_item_background);
+	//	SELECTED_BG = mContext.getResources().getDrawable(R.drawable.list_item_background_selected);
 	}
 	
 	static class ViewHolder
@@ -221,15 +221,14 @@ implements OnClickListener, OnCheckedChangeListener
 						break;
 					}
 					
-					
-					if(cdle.isSelected())
-					{
-						rowView.setBackgroundDrawable(SELECTED_BG);
-					}
-					else
-					{
-						rowView.setBackgroundDrawable(NOT_SELECTED_BG);
-					}
+//					if(cdle.isSelected())
+//					{
+//						rowView.setBackgroundDrawable(SELECTED_BG);
+//					}
+//					else
+//					{
+//						rowView.setBackgroundDrawable(NOT_SELECTED_BG);
+//					}
 					
 
 					
