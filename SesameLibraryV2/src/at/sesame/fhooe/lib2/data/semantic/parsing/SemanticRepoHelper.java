@@ -129,6 +129,17 @@ public class SemanticRepoHelper
 		queryBuilder.append(") . filter( ?y > ");
 		queryBuilder.append(getRDFTimeString(_start));
 		queryBuilder.append(")} order by ?y");
+		Log.i(TAG, queryBuilder.toString());
+		return queryBuilder.toString();
+	}
+	
+	public static String getNotificationQuery()
+	{
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select ?s ?o where{?s <");
+		queryBuilder.append(PREFIXES.get(DEFAULT_PREFIX_KEY));
+		queryBuilder.append("alertFromComputer> ?o}");
+		Log.i(TAG, queryBuilder.toString());
 		return queryBuilder.toString();
 	}
 	
@@ -142,4 +153,5 @@ public class SemanticRepoHelper
 		timeBuilder.append("dateTime>");
 		return timeBuilder.toString();
 	}
+	
 }

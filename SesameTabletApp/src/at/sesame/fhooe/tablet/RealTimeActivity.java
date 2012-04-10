@@ -44,9 +44,9 @@ extends Activity implements OnCheckedChangeListener
 	{
 		super.onCreate(savedInstanceState);
 		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-		mEdv1Place = places.get(0);
-		mEdv3Place = places.get(1);
-		mEdv6Place = places.get(2);
+		mEdv1Place = places.get(4);
+		mEdv3Place = places.get(3);
+		mEdv6Place = places.get(5);
 		initializeView();
 	}
 

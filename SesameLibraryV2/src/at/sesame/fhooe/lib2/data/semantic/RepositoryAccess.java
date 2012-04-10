@@ -10,19 +10,21 @@ import android.os.AsyncTask;
 
 public class RepositoryAccess 
 {
+	private static CRest mCrest;
 	private static IRepositoryService mRepo;
 	
 	static
 	{
-		CRest crest = new CRestBuilder().setHttpChannelFactory(new HttpClientHttpChannelFactory(RequestInterceptingClientProvider.getInterceptedClient()))
+		mCrest = new CRestBuilder().setHttpChannelFactory(new HttpClientHttpChannelFactory(RequestInterceptingClientProvider.getInterceptedClient()))
 										.build();
-		mRepo = crest.build(IRepositoryService.class);
+		mRepo = mCrest.build(IRepositoryService.class);
 	}
 
 	public static String executeQuery(String _query)
 	{
 		try 
 		{
+//			if(nul=Mr
 			return new ExecuteQueryTask().execute(new String[]{_query}).get();
 		} 
 		catch (InterruptedException e) {
@@ -42,12 +44,13 @@ public class RepositoryAccess
 		{
 			try
 			{
+				
 				String res = mRepo.executeQuery(params[0]);
 				return res;
 			}
 			catch(Exception _e)
 			{
-				_e.printStackTrace();
+//				_e.printStackTrace();
 				return null;
 			}
 //			return null;

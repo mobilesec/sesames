@@ -71,6 +71,13 @@ extends ArrayAdapter<ComputerRoomInformation>
 		return mView;
 	}
 	
+	
+	
+	@Override
+	public int getCount() {
+		return mInfos.size();
+	}
+
 	public View getView()
 	{
 		return mView;

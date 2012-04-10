@@ -1,6 +1,9 @@
 package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+import org.codegist.crest.security.handler.RefreshAuthorizationRetryHandler;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.BoringLayout.Metrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,21 +21,30 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.data.SesameNotification;
 import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
+import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
+import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
+import at.sesame.fhooe.lib2.pms.PMSController;
+import at.sesame.fhooe.lib2.pms.PmsHelper;
+import at.sesame.fhooe.lib2.pms.PmsUiInfo;
 import at.sesame.fhooe.lib2.pms.hosts.EDV1Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV3Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV6Hosts;
+import at.sesame.fhooe.lib2.pms.hosts.HostList;
+import at.sesame.fhooe.lib2.pms.hosts.SimulationHosts;
+import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
 
 
 public class PMSRoomsListFragment 
-extends Fragment implements OnItemClickListener
+extends Fragment implements IPMSUpdateListener, OnItemClickListener
 {
-	private static final String TAG = "PMSFragment";
+	private static final String TAG = "PMSRoomListFragment";
 	private PMSClientFragment mPMSClientFrag;
 //	private ArrayList<ComputerRoomInformation> mInfos;
 	private PMSRoomListAdapter mAdapter;
 	private Context mCtx;
-	private ArrayList<ComputerRoomInformation> mInfos;
+	private ArrayList<ComputerRoomInformation> mInfos = new ArrayList<ComputerRoomInformation>();
 	
 	private boolean mShowNotification = false;
 	private Handler mUiHandler;
@@ -39,21 +52,38 @@ extends Fragment implements OnItemClickListener
 	private ListView mList;
 	private FragmentManager mFragMan;
 	
+	private PmsHelper mPmsHelper;
+	private ArrayList<ControllableDevice> mAllDevs;
+	
+	private HostList mEdv1Hosts = new EDV1Hosts();
+	private HostList mEdv3Hosts = new EDV3Hosts();
+	private HostList mEdv6Hosts = new EDV6Hosts();
+	
 	public PMSRoomsListFragment(Context _ctx, Handler _uiHandler, FragmentManager _fm)
 	{
 		mCtx = _ctx;
+		
 		mUiHandler = _uiHandler;
-		mInfos = createDummyInfos();
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 0, 0));
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 0, 0));
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 0, 0));
+//		mInfos = createDummyInfos();
 		mFragMan = _fm;
 //		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
+		loadDevices();
 		mAdapter = new PMSRoomListAdapter(mCtx, 1, mInfos);
 
 		
 	}
-	
-	private void createFragment()
+
+	private void loadDevices() 
 	{
-		
+		Log.i(TAG, "loading devices");
+		HostList hl = new HostList();
+		hl.addAll(mEdv1Hosts.getHosts());
+		hl.addAll(mEdv3Hosts.getHosts());
+		hl.addAll(mEdv6Hosts.getHosts());
+		mPmsHelper = new PmsHelper(mCtx, mFragMan, this, hl, null, null);
 	}
 	
 	@Override
@@ -72,6 +102,73 @@ extends Fragment implements OnItemClickListener
 	}
 
 
+	private void updateComputerRoomInfos()
+	{
+		Log.i(TAG, "updating computer room infos");
+		final int[] activeInactive1 = getActiveAndInactiveDevCount(mEdv1Hosts);
+		final int[] activeInactive3 = getActiveAndInactiveDevCount(mEdv3Hosts);
+		final int[] activeInactive6 = getActiveAndInactiveDevCount(mEdv6Hosts);
+		mUiHandler.post(new Runnable() 
+		{	
+			@Override
+			public void run() 
+			{
+				Log.i(TAG, "onUiThread");
+				if(mInfos.size()!=3)
+				{
+					Log.i(TAG, "size of list not 3 ==> creating new");
+					ComputerRoomInformation cri1 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), activeInactive1[1], activeInactive1[0]);
+					ComputerRoomInformation cri3 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), activeInactive3[1], activeInactive3[0]);
+					ComputerRoomInformation cri6 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), activeInactive6[1], activeInactive6[0]);
+					mInfos.add(cri1);
+					mInfos.add(cri3);
+					mInfos.add(cri6);
+				}
+				else
+				{
+					Log.i(TAG, "size of list == 3 ==> updating values");
+					ComputerRoomInformation cri1 = mInfos.get(0);
+					cri1.setNumActiveComputers(activeInactive1[0]);
+					cri1.setNumIdleComputers(activeInactive1[1]);
+					
+					ComputerRoomInformation cri3 = mInfos.get(1);
+					cri3.setNumActiveComputers(activeInactive3[0]);
+					cri3.setNumIdleComputers(activeInactive3[1]);
+					
+					ComputerRoomInformation cri6 = mInfos.get(2);
+					cri6.setNumActiveComputers(activeInactive6[0]);
+					cri6.setNumIdleComputers(activeInactive6[1]);
+				}
+				mAdapter.notifyDataSetChanged();
+			}
+		});
+		
+	}
+	
+	private int[]getActiveAndInactiveDevCount(HostList _hosts)
+	{
+		int active = 0;
+		int inactive = 0;
+		
+//		ArrayList<ControllableDevice> devices = mPmsHelper.get
+		for(String mac:_hosts.getMacList())
+		{
+			ControllableDevice cd = mPmsHelper.getDeviceByMac(mac);
+			if(null!=cd)
+			{
+				if(cd.isAlive())
+				{
+					active++;
+				}
+				else
+				{
+					inactive++;
+				}
+			}
+		}
+		
+		return new int[]{active, inactive};
+	}
 
 	private ArrayList<ComputerRoomInformation> createDummyInfos()
 	{
@@ -156,6 +253,7 @@ extends Fragment implements OnItemClickListener
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) 
 	{
 		ComputerRoomInformation cri = mAdapter.getItem(arg2);
+		cri.setShowNotification(false);
 		Log.e(TAG, cri.toString());
 //		FragmentManager fm = getFragmentManager();
 //		FragmentTransaction ft = fm.beginTransaction();
@@ -163,7 +261,8 @@ extends Fragment implements OnItemClickListener
 		String roomName = cri.getRoomName();
 		if(roomName.equals(mCtx.getString(R.string.global_Room1_name)))
 		{
-			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new EDV1Hosts()).show(mFragMan, null);
+//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
+			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room1_name), new EDV1Hosts()).show(mFragMan, null);
 			if(mShowNotification)
 			{
 				Log.e(TAG, "notification");
@@ -181,7 +280,8 @@ extends Fragment implements OnItemClickListener
 		}
 		else if(roomName.equals(mCtx.getString(R.string.global_Room3_name)))
 		{
-			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new EDV3Hosts()).show(mFragMan, null);
+//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
+			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room3_name), new EDV3Hosts()).show(mFragMan, null);
 //			new PMS_MockDetailFragment(R.drawable.ic_edv3_pms_detail_no_notification).show(getFragmentManager(), roomName);
 //			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), roomName);
 //			tag = RoomName.EDV_3.name();
@@ -190,7 +290,8 @@ extends Fragment implements OnItemClickListener
 		}
 		else if(roomName.equals(mCtx.getString(R.string.global_Room6_name)))
 		{
-			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new EDV6Hosts()).show(mFragMan, null);
+//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
+			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room6_name), new EDV6Hosts()).show(mFragMan, null);
 //			new PMS_MockDetailFragment(R.drawable.ic_edv6_pms_detail_no_notification).show(getFragmentManager(), roomName);
 //			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), roomName);
 //			tag = RoomName.EDV_6.name();
@@ -200,6 +301,69 @@ extends Fragment implements OnItemClickListener
 		}
 		
 //		mPMSClientFrag.show(getFragmentManager(), null);
+		
+	}
+
+	@Override
+	public void notifyPMSUpdated() 
+	{
+		Log.i(TAG, "notified about pms update");
+		updateComputerRoomInfos();	
+	}
+
+	@Override
+	public void onDestroy() 
+	{
+		mPmsHelper.stopUpdates();
+		super.onDestroy();
+	}
+	
+	
+
+	@Override
+	public void onPause() {
+		mPmsHelper.stopUpdates();
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() 
+	{
+		super.onResume();
+		mPmsHelper.startUpdates();
+	}
+
+	public void notifyAboutNotification(final SesameNotification sn) 
+	{
+		mUiHandler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				ComputerRoomInformation cri = null;
+				ControllableDevice cd = mPmsHelper.getDeviceByMac(sn.getMac());
+				if(mEdv1Hosts.getMacList().contains(sn.getMac()))
+				{
+					cri = mAdapter.getItem(0);
+				}
+				else if(mEdv3Hosts.getMacList().contains(sn.getMac()))
+				{
+					cri = mAdapter.getItem(1);
+				}
+				else if(mEdv6Hosts.getMacList().contains(sn.getMac()))
+				{
+					cri = mAdapter.getItem(2);
+				}
+				if(null!=cri)
+				{
+					cri.setShowNotification(true);					
+				}
+				else
+				{
+					Log.e(TAG, sn.getMac()+" not found in list");
+				}
+				
+			}
+		});
 		
 	}
 	

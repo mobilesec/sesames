@@ -582,7 +582,7 @@ public class PmsHelper
 		//		mUi.notifyPMSUpdated();
 		mDirtyMap.put(_cd.getMac(), _dirty);
 		mUpdateListener.notifyPMSUpdated();
-		Log.e(TAG, "marked dirty:"+_cd.getHostname());
+//		Log.e(TAG, "marked dirty:"+_cd.getHostname());
 	}
 
 	/**
@@ -591,6 +591,10 @@ public class PmsHelper
 	public void setControlContainerVisibility(final int _v1, final int _v2)
 	{
 		System.out.println("set control container visibility ("+_v1+", "+_v2+")");
+		if(null==mActiveDeviceControlContainer || null==mInactiveDeviceControlContainer)
+		{
+			return;
+		}
 		new Handler(Looper.getMainLooper()).post(new Runnable() {
 
 			@Override

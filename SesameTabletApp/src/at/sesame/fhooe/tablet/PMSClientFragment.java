@@ -202,13 +202,14 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	private Context mCtx;
 	private HostList mHostList;
 	private Handler mUiHandler;
-
-	public PMSClientFragment(Context _ctx, FragmentManager _fragMan, Handler _handler, HostList _hosts2Load)
+	private String mTitle;
+	public PMSClientFragment(Context _ctx, FragmentManager _fragMan, Handler _handler, String _title, HostList _hosts2Load)
 	{
 		mCtx = _ctx;
 //		mFragMan = _fragMan;
 		mHostList = _hosts2Load;
 		mUiHandler = _handler;
+		mTitle = _title;
 		//		mNetworkingDialog = new PMSNetworkingInProgressDialogFragment(_ctx);
 		ErrorForwarder.getInstance().register(this);
 		//		queryControllableDevicesKDF();
@@ -241,6 +242,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		Log.e(TAG, "onCreateView");
+		getDialog().setTitle(mTitle);
 		View v = inflater.inflate(R.layout.pms_2_colums, null);
 
 		ViewGroup activeDeviceControlContainer = (ViewGroup)v.findViewById(R.id.activeDeviceControllContainer);
@@ -278,6 +280,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 		mSelectAllInactiveDevCb.setOnCheckedChangeListener(this);
 		return v;
 	}
+	
+	
 
 	//	private void refreshListEntries() 
 	//	{
@@ -542,6 +546,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	//		////		 [{ "mac" : "1" }, { "mac" : "2" }, { "mac" : "3" } ]
 	//
 	//	}
+
 
 	/**
 	 * checks if the device currently is connected to the internet

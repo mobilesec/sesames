@@ -13,8 +13,10 @@ public interface IRepositoryService
 //	@Path("/repositories/NONE/server/namespaces")
 //	@Consumes("application/xml")
 //	@Consumes("application/sparql-results+json")
-//	@Path("/repositories/smartbuilding")
-	@Path("/repositories/test")
+//	@Consumes("application/sparql-results+json")
+//	@HeaderParam(value="Accept", defaultValue = "application/sparql-results+json")
+	@Path("/repositories/smartbuilding")
+//	@Path("/repositories/test")
 //	@ResponseHandler(RepositoryResponseHandler.class)
 	@ConnectionTimeout(30000)
 	String executeQuery(@QueryParam("query")String query);

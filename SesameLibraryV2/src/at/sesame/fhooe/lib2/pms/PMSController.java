@@ -174,7 +174,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 				try {
 				cd.wakeUp();
 //				aipdf.incrementProgressBy(1);
-					Thread.sleep(50);
+					Thread.sleep(100);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -567,7 +567,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	}
 	
 	
-	private class QueryDevsTask extends AsyncTask<HostList, Void, Void>
+	public class QueryDevsTask extends AsyncTask<HostList, Void, Void>
 	{
 		
 		@Override
@@ -577,19 +577,28 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 
 		@Override
 		protected void onPostExecute(Void result) {
-			PMSDialogFactory.dismissCurrentDialog();
 //			mUi.notifyPMSUpdated();
 			mDevicesLoaded = true;
-			mUiHelper.notifyDevicesLoaded();
+			if(null!=mUiHelper)
+			{
+				mUiHelper.notifyDevicesLoaded();				
+			}
 			Log.e(TAG, Arrays.toString((ControllableDevice[]) mAllDevices.toArray(new ControllableDevice[mAllDevices.size()])));
 			startAutoUpdate();
+			PMSDialogFactory.dismissCurrentDialog();
 		}
 
 		@Override
 		protected Void doInBackground(HostList... params) {
 //			queryControllableDevicesSim();
 //			queryControllableDevicesKDF();
-			loadDevices(params[0]);
+			for(HostList hl:params)
+			{
+				if(null!=hl)
+				{
+					loadDevices(hl);					
+				}
+			}
 			return null;
 		}
 		
@@ -683,7 +692,10 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	public void notifyPMSUpdated() 
 	{
 		Log.e(TAG, "%%%%%%%%%%%%%%%notified about pms update");
-		mUiHelper.notifyPMSUpdated();
+		if(null!=mUiHelper)
+		{
+			mUiHelper.notifyPMSUpdated();			
+		}
 //		mUpdateListener.notifyPMSUpdated();
 		
 	}
