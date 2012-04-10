@@ -17,4 +17,13 @@ public class HostList
 		return mHosts.get(_mac);
 	}
 
+	public void addAll(HashMap<String, String> _hosts)
+	{
+		mHosts.putAll(_hosts);
+	}
+	
+	public HashMap<String, String> getHosts()
+	{
+		return mHosts;
+	}
 }

@@ -10,17 +10,19 @@ import android.util.Log;
 import at.sesame.fhooe.lib2.data.IEnergyDataSource;
 import at.sesame.fhooe.lib2.data.IHumidityDataSource;
 import at.sesame.fhooe.lib2.data.ILightDataSource;
+import at.sesame.fhooe.lib2.data.INotificationSource;
 import at.sesame.fhooe.lib2.data.ITemperatureDataSource;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib2.data.SesameNotification;
 import at.sesame.fhooe.lib2.data.SesameSensor;
 import at.sesame.fhooe.lib2.data.SesameSensor.SensorType;
 import at.sesame.fhooe.lib2.data.semantic.parsing.SemanticQueryResultParser;
 import at.sesame.fhooe.lib2.data.semantic.parsing.SemanticRepoHelper;
 
 public class SemanticSesameDataSource 
-implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatureDataSource 
+implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatureDataSource, INotificationSource
 {
 	private static final String TAG = "SemanticSesameDataSource";
 	private ArrayList<SesameMeasurementPlace> mEnergyPlaces = new ArrayList<SesameMeasurementPlace>();
@@ -166,6 +168,22 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 //			values.add(valIt.next());
 //		}
 		return new SesameDataContainer(_smp, measurements);
+	}
+
+	@Override
+	public ArrayList<SesameNotification> getNotifications() 
+	{
+		String resultString = RepositoryAccess.executeQuery(SemanticRepoHelper.getNotificationQuery());
+		ArrayList<SesameNotification> res = new ArrayList<SesameNotification>();
+		if(null!=resultString)
+		{
+			res = SemanticQueryResultParser.parseNotifications(resultString);
+		}
+		else
+		{
+			Log.e(TAG, "result of notification query was null");
+		}
+		return res;
 	}
 
 }

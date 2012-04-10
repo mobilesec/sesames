@@ -73,7 +73,7 @@ implements ISesameDataProvider
 	private static HashMap<SesameMeasurementPlace, Boolean> mHumidityDataUpdateMap = new HashMap<SesameMeasurementPlace, Boolean>();
 	private static HashMap<SesameMeasurementPlace, Boolean> mLightDataUpdateMap = new HashMap<SesameMeasurementPlace, Boolean>();
 
-	private static Hashtable<SesameMeasurementPlace, SesameDataContainer> mEnergyData = new Hashtable<SesameMeasurementPlace, SesameDataContainer>();
+	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mEnergyData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
 	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mHumidityData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
 	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mTemperatureData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
 	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mLightData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
@@ -81,7 +81,7 @@ implements ISesameDataProvider
 //	private static Date mFirstEnergyDate;
 //	private static Date mLastEnergyDate;
 	
-	private static DataSource mDataSource = DataSource.mock;
+	private static DataSource mDataSource = DataSource.semantic_repo;
 	
 //	public SesameMeasurementPlace EDV1_PLACE;
 //	public SesameMeasurementPlace EDV3_PLACE;
@@ -142,6 +142,7 @@ implements ISesameDataProvider
 			mHumidityDataSource = ssds;
 			mLightDataSource = ssds;
 			mTemperatureDataSource = ssds;
+			mNotificationSource = ssds;
 			break;
 		case webservices:
 			mEnergyDataSource = new EsmartDataProvider();
@@ -246,6 +247,11 @@ implements ISesameDataProvider
 		mTemperatureMeasurementPlaces = mTemperatureDataSource.getTemperatureMeasurementPlaces();
 		mHumidityMeasurementPlaces = mHumidityDataSource.getHumidityMeasurementPlaces();
 		mLightMeasurementPlaces = mLightDataSource.getLightMeasurementPlaces();
+		Collections.sort(mEnergyMeasurementPlaces, new SesameMeasurementPlaceComparator());
+		for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+		{
+			Log.i(TAG, smp.toString());
+		}
 		resetAllUpdateTables();
 	}
 
@@ -284,21 +290,28 @@ implements ISesameDataProvider
 
 	private void addEnergyData(SesameMeasurementPlace _smp, SesameDataContainer _data)
 	{
+		Log.i(TAG, "adding energy data for smp:"+_smp);
 		SesameDataContainer storedData = mEnergyData.get(_smp);
 		if(null==storedData)
 		{
 			storedData = _data;
+			Log.i(TAG, "stored data were null, adding new ("+_data.getMeasurements().size()+")");
 //			mEnergyDataUpdateTable.put(_smp, true);
 		}
 		else
 		{
+			Log.i(TAG, "number of measurements in container:"+_data.getMeasurements().size());
 			for(int i = 0;i<_data.getMeasurements().size();i++)
 			{
 				SesameMeasurement sm = _data.getMeasurements().get(i);
 				if(!storedData.getMeasurements().contains(sm))
 				{
 					storedData.addData(sm);
-					
+					Log.i(TAG, "added measurement:"+sm.toString());
+				}
+				else
+				{
+					Log.i(TAG, "did not add measurement:"+sm.toString());
 				}
 			}
 //			for(int i = 0;i<_data.getTimeStamps().size();i++)
@@ -460,32 +473,32 @@ implements ISesameDataProvider
 		}
 	}
 
-	private Date[] calculateMinMaxDate(Hashtable<Date, SesameDataContainer> _source)
-	{
-		Date earliest = new Date(Long.MAX_VALUE);
-		Date latest = new Date(0);
-		Iterator<Date> keys = _source.keySet().iterator();
-		while(keys.hasNext())
-		{
-			Date current  = keys.next();
-			if(current.before(earliest))
-			{
-				earliest = current;
-			}
+//	private Date[] calculateMinMaxDate(Hashtable<Date, SesameDataContainer> _source)
+//	{
+//		Date earliest = new Date(Long.MAX_VALUE);
+//		Date latest = new Date(0);
+//		Iterator<Date> keys = _source.keySet().iterator();
+//		while(keys.hasNext())
+//		{
+//			Date current  = keys.next();
+//			if(current.before(earliest))
+//			{
+//				earliest = current;
+//			}
+//
+//			if(current.after(latest))
+//			{
+//				latest = current;
+//			}
+//		}
+//		return new Date[]{earliest, latest};
+//	}
 
-			if(current.after(latest))
-			{
-				latest = current;
-			}
-		}
-		return new Date[]{earliest, latest};
-	}
-
-	public void updateNotificationListener(String _msg) 
+	public void updateNotificationListener(ArrayList<SesameNotification> _notifications) 
 	{
 		for(INotificationListener listener:mNotificationListeners)
 		{
-			listener.notifyAboutNotification(_msg);
+			listener.notifyAboutNotification(_notifications);
 		}
 	}
 
@@ -496,6 +509,7 @@ implements ISesameDataProvider
 		@Override
 		public void run() 
 		{
+			Log.i(TAG, "updating energy data");
 			if(null==mEnergyMeasurementPlaces)
 			{
 				return;
@@ -514,7 +528,7 @@ implements ISesameDataProvider
 		@Override
 		public void run() 
 		{
-			updateNotificationListener(mNotificationSource.getNotification());		
+			updateNotificationListener(mNotificationSource.getNotifications());		
 		}
 	}
 

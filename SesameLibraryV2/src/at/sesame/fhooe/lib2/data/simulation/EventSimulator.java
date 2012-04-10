@@ -5,6 +5,8 @@ import java.util.Random;
 
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.INotificationProvider;
+import at.sesame.fhooe.lib2.data.SesameNotification;
+import at.sesame.fhooe.lib2.data.SesameNotification.NotificationType;
 import at.sesame.fhooe.lib2.util.DateHelper;
 
 public class EventSimulator
@@ -51,11 +53,11 @@ implements INotificationProvider
 	}
 
 	@Override
-	public void updateNotificationReceivers(String _msg) 
+	public void updateNotificationReceivers(ArrayList<SesameNotification> _notifications) 
 	{
 		for(INotificationListener recv:mRecvs)
 		{
-			recv.notifyAboutNotification(_msg);
+			recv.notifyAboutNotification(_notifications);
 		}
 	}
 	
@@ -74,9 +76,11 @@ implements INotificationProvider
 	public void run()
 	{
 		int cnt = 0;
+		ArrayList<SesameNotification> notifications = new ArrayList<SesameNotification>();
+		notifications.add(new SesameNotification(NotificationType.Type40, "00:00:00:00:00"));
 		while(mRunning)
 		{
-			updateNotificationReceivers("Notification "+cnt);
+			updateNotificationReceivers(notifications);
 			cnt++;
 			try 
 			{

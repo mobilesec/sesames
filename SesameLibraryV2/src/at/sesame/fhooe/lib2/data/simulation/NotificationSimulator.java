@@ -1,8 +1,10 @@
 package at.sesame.fhooe.lib2.data.simulation;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import at.sesame.fhooe.lib2.data.INotificationSource;
+import at.sesame.fhooe.lib2.data.SesameNotification;
 import at.sesame.fhooe.lib2.util.DateHelper;
 
 public class NotificationSimulator
@@ -20,7 +22,7 @@ implements INotificationSource
 	private static final double MAX_NOTIFICATION_IDLE_TIME = 18000000;
 	
 	@Override
-	public String getNotification()
+	public ArrayList<SesameNotification> getNotifications()
 	{
 		double idleTime = MIN_NOTIFICATION_IDLE_TIME+mRandom.nextDouble()*(MAX_NOTIFICATION_IDLE_TIME-MIN_NOTIFICATION_IDLE_TIME);
 		
@@ -31,7 +33,7 @@ implements INotificationSource
 		res.append(DateHelper.convertMStoShortReadableString(idleTime));
 		res.append(mNotificationPart3);
 		
-		return res.toString();
+		return new ArrayList<SesameNotification>();
 	}
 
 
