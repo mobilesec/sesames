@@ -2,6 +2,8 @@ package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.model.XYMultipleSeriesDataset;
@@ -26,7 +28,9 @@ public class RealTimeActivity
 extends Activity implements OnCheckedChangeListener 
 {
 	private static final String TAG = "RealTimeActivity";
-	private SesameDataCache mDataCache = SesameDataCache.getInstance();
+	private static final int UPDATE_PERIOD = 5000;
+	private Timer mUpdateTimer;
+	private SesameDataCache mDataCache = SesameDataCache.getInstance(null);
 	
 	private boolean mShowEdv1 = true;
 	private boolean mShowEdv3 = true;
@@ -48,6 +52,39 @@ extends Activity implements OnCheckedChangeListener
 		mEdv3Place = places.get(3);
 		mEdv6Place = places.get(5);
 		initializeView();
+	}
+	
+	private class UpdateTask extends TimerTask
+	{
+
+		@Override
+		public void run() 
+		{
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					updateChart();
+				}
+			});
+			
+		}
+	}
+	
+	private void stopUpdates()
+	{
+		if(null!=mUpdateTimer)
+		{
+			mUpdateTimer.cancel();
+			mUpdateTimer.purge();
+		}
+	}
+	
+	private void startUpdates()
+	{
+		stopUpdates();
+		mUpdateTimer = new Timer();
+		mUpdateTimer.scheduleAtFixedRate(new UpdateTask(), 0, UPDATE_PERIOD);
 	}
 
 	private void initializeView() 
@@ -96,7 +133,7 @@ extends Activity implements OnCheckedChangeListener
 			{
 				Log.e(TAG, "edv1Raw was null");
 			}
-			ArrayList<SesameMeasurement> edv1 = SesameDataContainer.filterByDate(edv1Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
+			ArrayList<SesameMeasurement> edv1 = SesameDataContainer.filterByDate(edv1Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0));
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
 			dates.add(SesameDataContainer.getTimeStampArray(edv1));
 			values.add(SesameDataContainer.getValueArray(edv1));
@@ -106,7 +143,7 @@ extends Activity implements OnCheckedChangeListener
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room3_name), yesterday.getTime(), 100));
 			titles.add(getString(R.string.global_Room3_name));
 			SesameDataContainer edv3Raw = mDataCache.getAllEnergyReadings(mEdv3Place);
-			ArrayList<SesameMeasurement> edv3 = SesameDataContainer.filterByDate(edv3Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
+			ArrayList<SesameMeasurement> edv3 = SesameDataContainer.filterByDate(edv3Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0));
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
 			dates.add(SesameDataContainer.getTimeStampArray(edv3));
 			values.add(SesameDataContainer.getValueArray(edv3));
@@ -116,7 +153,7 @@ extends Activity implements OnCheckedChangeListener
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room6_name), yesterday.getTime(), 100));
 			titles.add(getString(R.string.global_Room6_name));
 			SesameDataContainer edv6Raw = mDataCache.getAllEnergyReadings(mEdv6Place);
-			ArrayList<SesameMeasurement> edv6 = SesameDataContainer.filterByDate(edv6Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
+			ArrayList<SesameMeasurement> edv6 = SesameDataContainer.filterByDate(edv6Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0));
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
 			dates.add(SesameDataContainer.getTimeStampArray(edv6));
 			values.add(SesameDataContainer.getValueArray(edv6));
@@ -154,6 +191,26 @@ extends Activity implements OnCheckedChangeListener
 		updateChart();
 		
 	}
+
+	@Override
+	protected void onResume() 
+	{
+		super.onResume();
+		startUpdates();
+	}
+
+	@Override
+	protected void onPause() {
+		stopUpdates();
+		super.onPause();
+	}
+
+	@Override
+	protected void onDestroy() {
+		stopUpdates();
+		super.onDestroy();
+	}
 	
 
+	
 }

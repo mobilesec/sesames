@@ -36,7 +36,7 @@ extends ArrayAdapter<ComputerRoomInformation>
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) 
 	{
-		Log.e(TAG, "getView");
+//		Log.e(TAG, "getView");
 //		mView = convertView;
 //		if(null==v)
 		{
@@ -44,7 +44,7 @@ extends ArrayAdapter<ComputerRoomInformation>
 		}
 		
 		ComputerRoomInformation info = mInfos.get(position);
-		Log.e(TAG, info.toString());
+//		Log.e(TAG, info.toString());
 		TextView header = (TextView)mView.findViewById(R.id.textView1);
 		header.setText(info.getRoomName());
 
@@ -55,13 +55,13 @@ extends ArrayAdapter<ComputerRoomInformation>
 		active.setText(mCtx.getString(R.string.pms_room_list_active_prefix)+info.getNumActiveComputers());
 		if(info.isShowNotification())
 		{
-			Log.e(TAG, "notification set....");
+//			Log.e(TAG, "notification set....");
 			ImageView notification = (ImageView)mView.findViewById(R.id.hd_computer_room_info_listentry_notification);
 			notification.setImageResource(R.drawable.ic_pms_list_notification);
 		}
 		else
 		{
-			Log.e(TAG, "notification not set...");
+//			Log.e(TAG, "notification not set...");
 		}
 		
 		return mView;

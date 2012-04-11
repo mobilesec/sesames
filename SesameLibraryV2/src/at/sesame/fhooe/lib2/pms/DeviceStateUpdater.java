@@ -21,8 +21,8 @@ public class DeviceStateUpdater
 
 	private ArrayList<ControllableDevice> mDevs;
 	private ArrayList<String> mMacs;
-	private boolean mUpdating = true;
-	private IPMSUpdateListener mUpdateListener;
+	private boolean mUpdating = false;
+//	private IPMSUpdateListener mUpdateListener;
 
 	private long mUpdatePeriod = 10000;
 
@@ -31,13 +31,13 @@ public class DeviceStateUpdater
 	private String mUser;
 	private String mPass;
 
-	private PmsHelper mUiHelper;
-	public DeviceStateUpdater(IPMSUpdateListener _updateListener, ArrayList<ControllableDevice> _devs, PmsHelper _uiHelper, String _user, String _pass)
+//	private PmsHelper mUiHelper;
+	public DeviceStateUpdater(ArrayList<ControllableDevice> _devs, String _user, String _pass)
 	{
 		mUser = _user;
 		mPass = _pass;
-		mUpdateListener = _updateListener;
-		mUiHelper = _uiHelper;
+//		mUpdateListener = _updateListener;
+//		mUiHelper = _uiHelper;
 		mDevs = _devs;
 
 		mMacs = new ArrayList<String>();
@@ -53,7 +53,7 @@ public class DeviceStateUpdater
 		{
 //			while(mUpdating)
 			{
-				Log.e(TAG, "updating");
+				Log.i(TAG, "updating");
 
 				long begin = System.currentTimeMillis();
 				ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(mMacs);
@@ -66,10 +66,10 @@ public class DeviceStateUpdater
 				else
 				{
 					double duration = System.currentTimeMillis()-begin;
-					Log.e(TAG, "update took "+(duration/1000)+" seconds");
+					Log.i(TAG, "update took "+(duration/1000)+" seconds");
 				}
 
-				Log.e(TAG, "received statuses:"+statuses.size());
+				Log.i(TAG, "received statuses:"+statuses.size());
 
 				for(int i = 0;i<statuses.size();i++)
 				{
@@ -87,15 +87,15 @@ public class DeviceStateUpdater
 						if(cd.getMac().equals(statuses.get(i).getMac().toLowerCase()))
 						{
 							cd.setExtendedPMSStatus(statuses.get(i));
-							if(null!=mUiHelper)
-							{
-								mUiHelper.markDirty(cd, false);								
-							}
+//							if(null!=mUiHelper)
+//							{
+//								mUiHelper.markDirty(cd, false);								
+//							}
 //							Log.e(TAG, mDevs.get(i).getHostname()+" updated");
 						}
 					}
 				}
-				mUpdateListener.notifyPMSUpdated();
+//				mUpdateListener.notifyPMSUpdated();
 				try 
 				{
 					Thread.sleep(mUpdatePeriod );
@@ -111,12 +111,13 @@ public class DeviceStateUpdater
 	public void startUpdating()
 	{
 		stopUpdating();
+		mUpdating = true;
 		mUpdateTimer = new Timer();
 		mUpdateTimer.schedule(new UpdateTask(), 0, mUpdatePeriod);
 	}
 	public void stopUpdating()
 	{
-		System.out.println("stopping updates");
+		mUpdating = false;
 		if(null!=mUpdateTimer)
 		{
 			mUpdateTimer.cancel();

@@ -160,7 +160,6 @@ implements OnClickListener, OnCheckedChangeListener
 			ControllableDevice cd = cdle.getControllableDevice();
 			if(item.isSeparator())
 			{
-				Log.e(TAG, "separator found");
 				SeparatorListEntry sle = (SeparatorListEntry)item;
 				rowView = mLi.inflate(R.layout.controllable_device_listseparator, null);
 

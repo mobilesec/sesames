@@ -10,8 +10,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -87,38 +89,71 @@ implements INotificationListener
 	////		startMeterWheelUpdates();
 	//	}
 
-	public void onCreate(Bundle savedInstanceState)
+	public void onCreate(final Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setTheme(android.R.style.Theme_Holo);
-		setContentView(R.layout.hd_layout);
-		PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, getSupportFragmentManager(), null, new Object[]{this});
+		
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
-		mDataCache = SesameDataCache.getInstance();
-		mDataCache.registerNotificationListener(this);
-		mDataCache.startEnergyDataUpdates();
-		mDataCache.startNotificationUpdates();
-		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-		mEdv1Place = places.get(4);
-		mEdv3Place = places.get(3);
-		mEdv6Place = places.get(5);
-//		mCtx = getApplicationContext();
-//		mLi = LayoutInflater.from(mCtx);
-//		mFragMan = getSupportFragmentManager();
-		//		mUiHandler = _uiHandler;
-		initializeNotification();
-		initializeFragments();
-		addFragments();
-		createTabs();
+		new CreationTask().execute();
 
 	}
 
+	private class CreationTask extends AsyncTask<Void, Void, Void>
+	{
+
+		@Override
+		protected Void doInBackground(Void... params) 
+		{
+			
+			mDataCache = SesameDataCache.getInstance(SesameTabletActivity.this);
+			mDataCache.registerNotificationListener(SesameTabletActivity.this);
+			mDataCache.startEnergyDataUpdates();
+			mDataCache.startNotificationUpdates();
+			ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
+			mEdv1Place = places.get(4);
+			mEdv3Place = places.get(3);
+			mEdv6Place = places.get(5);
+			
+			Log.e(TAG, "EDV1:"+mEdv1Place.toString());
+			Log.e(TAG, "EDV3:"+mEdv3Place.toString());
+			Log.e(TAG, "EDV6:"+mEdv6Place.toString());
+
+			initializeNotification();
+			initializeFragments();
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() 
+				{	
+					setContentView(R.layout.hd_layout);
+					addFragments();
+					createTabs();
+				}
+			});
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) 
+		{
+			PMSDialogFactory.dismissCurrentDialog();
+		}
+
+		@Override
+		protected void onPreExecute()
+		{
+			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, getSupportFragmentManager(), null, new Object[]{SesameTabletActivity.this});
+		}
+		
+	}
 	private void createTabs()
 	{
+		
 		TabHost th = (TabHost)findViewById(R.id.hd_tab_fragment_layout_tabhost);
 		th.setup(mLam);
 
@@ -301,9 +336,10 @@ implements INotificationListener
 
 				mEdv6Frag.setMeterValue(currentAtPlace6);
 				mEdv6Frag.setWheelValue(overallAtPlace6);
-			} catch (Exception e) {
+			} 
+			catch (Exception e) 
+			{
 				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 
 		}
@@ -328,18 +364,20 @@ implements INotificationListener
 	@Override
 	public void notifyAboutNotification(ArrayList<SesameNotification> _notifications) 
 	{
+		Log.i(TAG, "notified about notifications:"+_notifications.size());
 		if(mShowNotifications)
 		{
 			for(SesameNotification sn:_notifications)
 			{
-				if(null==mLastNotifications||!mLastNotifications.contains(sn))
+//				if(null==mLastNotifications||!mLastNotifications.contains(sn))
 				{
 					mRoomListFrag.notifyAboutNotification(sn);
+					
 				}
-				else
-				{
-					Log.i(TAG, "notification already forwarded, discarded");
-				}
+//				else
+//				{
+//					Log.i(TAG, "notification already forwarded, discarded");
+//				}
 			}
 //			//			mPMSFrag.setShowNotification(true);
 //			showNotification(NOTIFICATION_TITLE, _notifications);			

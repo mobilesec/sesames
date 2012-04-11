@@ -1,9 +1,8 @@
 package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-
-import org.codegist.crest.security.handler.RefreshAuthorizationRetryHandler;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.text.BoringLayout.Metrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,18 +19,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameNotification;
 import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
-import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
 import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
-import at.sesame.fhooe.lib2.pms.PMSController;
-import at.sesame.fhooe.lib2.pms.PmsHelper;
-import at.sesame.fhooe.lib2.pms.PmsUiInfo;
 import at.sesame.fhooe.lib2.pms.hosts.EDV1Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV3Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV6Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.HostList;
-import at.sesame.fhooe.lib2.pms.hosts.SimulationHosts;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
 
 
@@ -40,52 +34,55 @@ public class PMSRoomsListFragment
 extends Fragment implements IPMSUpdateListener, OnItemClickListener
 {
 	private static final String TAG = "PMSRoomListFragment";
+	private static final int UPDATE_PERIOD = 5000;
 	private PMSClientFragment mPMSClientFrag;
-//	private ArrayList<ComputerRoomInformation> mInfos;
+	//	private ArrayList<ComputerRoomInformation> mInfos;
 	private PMSRoomListAdapter mAdapter;
 	private Context mCtx;
 	private ArrayList<ComputerRoomInformation> mInfos = new ArrayList<ComputerRoomInformation>();
-	
+
 	private boolean mShowNotification = false;
 	private Handler mUiHandler;
-	
+
 	private ListView mList;
 	private FragmentManager mFragMan;
-	
-	private PmsHelper mPmsHelper;
-	private ArrayList<ControllableDevice> mAllDevs;
-	
+
+//	private PmsHelper mPmsHelper;
+//	private ArrayList<ControllableDevice> mAllDevs;
+
 	private HostList mEdv1Hosts = new EDV1Hosts();
 	private HostList mEdv3Hosts = new EDV3Hosts();
 	private HostList mEdv6Hosts = new EDV6Hosts();
 	
+	private Timer mUpdateTimer;
+
 	public PMSRoomsListFragment(Context _ctx, Handler _uiHandler, FragmentManager _fm)
 	{
 		mCtx = _ctx;
-		
+
 		mUiHandler = _uiHandler;
 		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 0, 0));
 		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 0, 0));
 		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 0, 0));
-//		mInfos = createDummyInfos();
+		//		mInfos = createDummyInfos();
 		mFragMan = _fm;
-//		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
-		loadDevices();
+		//		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
+//		loadDevices();
 		mAdapter = new PMSRoomListAdapter(mCtx, 1, mInfos);
 
-		
+
 	}
 
-	private void loadDevices() 
-	{
-		Log.i(TAG, "loading devices");
-		HostList hl = new HostList();
-		hl.addAll(mEdv1Hosts.getHosts());
-		hl.addAll(mEdv3Hosts.getHosts());
-		hl.addAll(mEdv6Hosts.getHosts());
-		mPmsHelper = new PmsHelper(mCtx, mFragMan, this, hl, null, null);
-	}
-	
+//	private void loadDevices() 
+//	{
+//		Log.i(TAG, "loading devices");
+//		HostList hl = new HostList();
+//		hl.addAll(mEdv1Hosts.getHosts());
+//		hl.addAll(mEdv3Hosts.getHosts());
+//		hl.addAll(mEdv6Hosts.getHosts());
+//		mPmsHelper = new PmsHelper(mCtx, mFragMan, this, hl, null, null);
+//	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -93,11 +90,11 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		mList = (ListView)v.findViewById(R.id.pms_list_layout_list);
 		mList.setAdapter(mAdapter);
 		mList.setOnItemClickListener(this);
-		
+
 		// style seperator
 		mList.setDivider(new ColorDrawable(Color.WHITE));
 		mList.setDividerHeight(1);
-		
+
 		return v;
 	}
 
@@ -130,11 +127,11 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 					ComputerRoomInformation cri1 = mInfos.get(0);
 					cri1.setNumActiveComputers(activeInactive1[0]);
 					cri1.setNumIdleComputers(activeInactive1[1]);
-					
+
 					ComputerRoomInformation cri3 = mInfos.get(1);
 					cri3.setNumActiveComputers(activeInactive3[0]);
 					cri3.setNumIdleComputers(activeInactive3[1]);
-					
+
 					ComputerRoomInformation cri6 = mInfos.get(2);
 					cri6.setNumActiveComputers(activeInactive6[0]);
 					cri6.setNumIdleComputers(activeInactive6[1]);
@@ -142,18 +139,18 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 				mAdapter.notifyDataSetChanged();
 			}
 		});
-		
+
 	}
-	
+
 	private int[]getActiveAndInactiveDevCount(HostList _hosts)
 	{
 		int active = 0;
 		int inactive = 0;
-		
-//		ArrayList<ControllableDevice> devices = mPmsHelper.get
+
+		//		ArrayList<ControllableDevice> devices = mPmsHelper.get
 		for(String mac:_hosts.getMacList())
 		{
-			ControllableDevice cd = mPmsHelper.getDeviceByMac(mac);
+			ControllableDevice cd = SesameDataCache.getInstance(null).getDeviceByMac(mac);
 			if(null!=cd)
 			{
 				if(cd.isAlive())
@@ -166,7 +163,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 				}
 			}
 		}
-		
+
 		return new int[]{active, inactive};
 	}
 
@@ -179,51 +176,51 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		return infos;
 	}
 
-//	@Override
-//	public void onListItemClick(ListView l, View v, int position, long id) {
-//		// TODO Auto-generated method stub
-//		ComputerRoomInformation cri = mAdapter.getItem(position);
-//		Log.e(TAG, cri.toString());
-////		FragmentManager fm = getFragmentManager();
-////		FragmentTransaction ft = fm.beginTransaction();
-////		String tag;
-//		String roomName = cri.getRoomName();
-//		if(roomName.equals(mCtx.getString(R.string.global_Room1_name)))
-//		{
-//			if(mShowNotification)
-//			{
-//				Log.e(TAG, "notification");
-//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_notification).show(getFragmentManager(), roomName);
-//			}
-//			else
-//			{
-//				Log.e(TAG, "no notification");
-//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_no_notification).show(getFragmentManager(), roomName);
-//			}
-////			new PMS_DetailFragment(mCtx, new EDV1Hosts()).show(getFragmentManager(), roomName);
-////			tag = RoomName.EDV_1.name();
-////			ft.remove(fm.findFragmentByTag(tag));
-////			ft.add(new PMS_DetailFragment(mCtx, new EDV1Hosts()), tag);
-//		}
-//		else if(roomName.equals(mCtx.getString(R.string.global_Room3_name)))
-//		{
-//			new PMS_MockDetailFragment(R.drawable.ic_edv3_pms_detail_no_notification).show(getFragmentManager(), roomName);
-////			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), roomName);
-////			tag = RoomName.EDV_3.name();
-////			ft.remove(fm.findFragmentByTag(tag));
-////			ft.add(new PMS_DetailFragment(mCtx, new EDV3Hosts()), tag);
-//		}
-//		else if(roomName.equals(mCtx.getString(R.string.global_Room6_name)))
-//		{
-//			new PMS_MockDetailFragment(R.drawable.ic_edv6_pms_detail_no_notification).show(getFragmentManager(), roomName);
-////			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), roomName);
-////			tag = RoomName.EDV_6.name();
-////			ft.remove(fm.findFragmentByTag(tag));
-////			ft.add(new PMS_DetailFragment(mCtx, new EDV6Hosts()), tag);
-//		
-//		}
-////		ft.commit();
-//	}
+	//	@Override
+	//	public void onListItemClick(ListView l, View v, int position, long id) {
+	//		// TODO Auto-generated method stub
+	//		ComputerRoomInformation cri = mAdapter.getItem(position);
+	//		Log.e(TAG, cri.toString());
+	////		FragmentManager fm = getFragmentManager();
+	////		FragmentTransaction ft = fm.beginTransaction();
+	////		String tag;
+	//		String roomName = cri.getRoomName();
+	//		if(roomName.equals(mCtx.getString(R.string.global_Room1_name)))
+	//		{
+	//			if(mShowNotification)
+	//			{
+	//				Log.e(TAG, "notification");
+	//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_notification).show(getFragmentManager(), roomName);
+	//			}
+	//			else
+	//			{
+	//				Log.e(TAG, "no notification");
+	//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_no_notification).show(getFragmentManager(), roomName);
+	//			}
+	////			new PMS_DetailFragment(mCtx, new EDV1Hosts()).show(getFragmentManager(), roomName);
+	////			tag = RoomName.EDV_1.name();
+	////			ft.remove(fm.findFragmentByTag(tag));
+	////			ft.add(new PMS_DetailFragment(mCtx, new EDV1Hosts()), tag);
+	//		}
+	//		else if(roomName.equals(mCtx.getString(R.string.global_Room3_name)))
+	//		{
+	//			new PMS_MockDetailFragment(R.drawable.ic_edv3_pms_detail_no_notification).show(getFragmentManager(), roomName);
+	////			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), roomName);
+	////			tag = RoomName.EDV_3.name();
+	////			ft.remove(fm.findFragmentByTag(tag));
+	////			ft.add(new PMS_DetailFragment(mCtx, new EDV3Hosts()), tag);
+	//		}
+	//		else if(roomName.equals(mCtx.getString(R.string.global_Room6_name)))
+	//		{
+	//			new PMS_MockDetailFragment(R.drawable.ic_edv6_pms_detail_no_notification).show(getFragmentManager(), roomName);
+	////			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), roomName);
+	////			tag = RoomName.EDV_6.name();
+	////			ft.remove(fm.findFragmentByTag(tag));
+	////			ft.add(new PMS_DetailFragment(mCtx, new EDV6Hosts()), tag);
+	//		
+	//		}
+	////		ft.commit();
+	//	}
 
 	public boolean isShowNotification() {
 		return mShowNotification;
@@ -232,21 +229,21 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	public void setShowNotification(boolean _showNotification) {
 		mAdapter.getItem(0).setShowNotification(_showNotification);
 		mShowNotification = _showNotification;
-//		mAdapter.notifyDataSetChanged();
-//		getListView().invalidate();
-//		mAdapter.getView().invalidate();
-//		getListView().postInvalidate();
-		
+		//		mAdapter.notifyDataSetChanged();
+		//		getListView().invalidate();
+		//		mAdapter.getView().invalidate();
+		//		getListView().postInvalidate();
+
 		mUiHandler.post(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				mAdapter.notifyDataSetChanged();
 			}
 		});
-		
-	
+
+
 	}
 
 	@Override
@@ -254,54 +251,54 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	{
 		ComputerRoomInformation cri = mAdapter.getItem(arg2);
 		cri.setShowNotification(false);
-		Log.e(TAG, cri.toString());
-//		FragmentManager fm = getFragmentManager();
-//		FragmentTransaction ft = fm.beginTransaction();
-//		String tag;
+//		Log.e(TAG, cri.toString());
+		//		FragmentManager fm = getFragmentManager();
+		//		FragmentTransaction ft = fm.beginTransaction();
+		//		String tag;
 		String roomName = cri.getRoomName();
 		if(roomName.equals(mCtx.getString(R.string.global_Room1_name)))
 		{
-//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
+			//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
 			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room1_name), new EDV1Hosts()).show(mFragMan, null);
 			if(mShowNotification)
 			{
 				Log.e(TAG, "notification");
-//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_notification).show(getFragmentManager(), roomName);
+				//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_notification).show(getFragmentManager(), roomName);
 			}
 			else
 			{
 				Log.e(TAG, "no notification");
-//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_no_notification).show(getFragmentManager(), roomName);
+				//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_no_notification).show(getFragmentManager(), roomName);
 			}
-//			new PMS_DetailFragment(mCtx, new EDV1Hosts()).show(getFragmentManager(), roomName);
-//			tag = RoomName.EDV_1.name();
-//			ft.remove(fm.findFragmentByTag(tag));
-//			ft.add(new PMS_DetailFragment(mCtx, new EDV1Hosts()), tag);
+			//			new PMS_DetailFragment(mCtx, new EDV1Hosts()).show(getFragmentManager(), roomName);
+			//			tag = RoomName.EDV_1.name();
+			//			ft.remove(fm.findFragmentByTag(tag));
+			//			ft.add(new PMS_DetailFragment(mCtx, new EDV1Hosts()), tag);
 		}
 		else if(roomName.equals(mCtx.getString(R.string.global_Room3_name)))
 		{
-//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
+			//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
 			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room3_name), new EDV3Hosts()).show(mFragMan, null);
-//			new PMS_MockDetailFragment(R.drawable.ic_edv3_pms_detail_no_notification).show(getFragmentManager(), roomName);
-//			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), roomName);
-//			tag = RoomName.EDV_3.name();
-//			ft.remove(fm.findFragmentByTag(tag));
-//			ft.add(new PMS_DetailFragment(mCtx, new EDV3Hosts()), tag);
+			//			new PMS_MockDetailFragment(R.drawable.ic_edv3_pms_detail_no_notification).show(getFragmentManager(), roomName);
+			//			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), roomName);
+			//			tag = RoomName.EDV_3.name();
+			//			ft.remove(fm.findFragmentByTag(tag));
+			//			ft.add(new PMS_DetailFragment(mCtx, new EDV3Hosts()), tag);
 		}
 		else if(roomName.equals(mCtx.getString(R.string.global_Room6_name)))
 		{
-//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
+			//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
 			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room6_name), new EDV6Hosts()).show(mFragMan, null);
-//			new PMS_MockDetailFragment(R.drawable.ic_edv6_pms_detail_no_notification).show(getFragmentManager(), roomName);
-//			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), roomName);
-//			tag = RoomName.EDV_6.name();
-//			ft.remove(fm.findFragmentByTag(tag));
-//			ft.add(new PMS_DetailFragment(mCtx, new EDV6Hosts()), tag);
-		
+			//			new PMS_MockDetailFragment(R.drawable.ic_edv6_pms_detail_no_notification).show(getFragmentManager(), roomName);
+			//			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), roomName);
+			//			tag = RoomName.EDV_6.name();
+			//			ft.remove(fm.findFragmentByTag(tag));
+			//			ft.add(new PMS_DetailFragment(mCtx, new EDV6Hosts()), tag);
+
 		}
-		
-//		mPMSClientFrag.show(getFragmentManager(), null);
-		
+
+		//		mPMSClientFrag.show(getFragmentManager(), null);
+
 	}
 
 	@Override
@@ -310,19 +307,44 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		Log.i(TAG, "notified about pms update");
 		updateComputerRoomInfos();	
 	}
+	
+	public class UpdateTask extends TimerTask
+	{
+		@Override
+		public void run() 
+		{
+			updateComputerRoomInfos();	
+		}	
+	}
+	
+	private void stopUpdates()
+	{
+		if(null!=mUpdateTimer)
+		{
+			mUpdateTimer.cancel();
+			mUpdateTimer.purge();
+		}
+	}
+	
+	private void startUpdates()
+	{
+		stopUpdates();
+		mUpdateTimer = new Timer();
+		mUpdateTimer.scheduleAtFixedRate(new UpdateTask(), 0, UPDATE_PERIOD);
+	}
 
 	@Override
 	public void onDestroy() 
 	{
-		mPmsHelper.stopUpdates();
+		stopUpdates();
 		super.onDestroy();
 	}
-	
-	
+
+
 
 	@Override
 	public void onPause() {
-		mPmsHelper.stopUpdates();
+		stopUpdates();
 		super.onPause();
 	}
 
@@ -330,43 +352,75 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	public void onResume() 
 	{
 		super.onResume();
-		mPmsHelper.startUpdates();
+		startUpdates();
 	}
 
 	public void notifyAboutNotification(final SesameNotification sn) 
 	{
-		mUiHandler.post(new Runnable() {
-			
-			@Override
-			public void run() {
-				ComputerRoomInformation cri = null;
-				ControllableDevice cd = mPmsHelper.getDeviceByMac(sn.getMac());
-				if(mEdv1Hosts.getMacList().contains(sn.getMac()))
-				{
-					cri = mAdapter.getItem(0);
-				}
-				else if(mEdv3Hosts.getMacList().contains(sn.getMac()))
-				{
-					cri = mAdapter.getItem(1);
-				}
-				else if(mEdv6Hosts.getMacList().contains(sn.getMac()))
-				{
-					cri = mAdapter.getItem(2);
-				}
-				if(null!=cri)
-				{
-					cri.setShowNotification(true);					
-				}
-				else
-				{
-					Log.e(TAG, sn.getMac()+" not found in list");
-				}
-				
+//		Log.i(TAG, "notified about notification:"+sn.getMac());
+		//				ControllableDevice cd = mPmsHelper.getDeviceByMac(sn.getMac());
+		//		Log.i(TAG, "---------------------------------------");
+		//		Log.i(TAG, Arrays.toString((String[]) mEdv1Hosts.getMacList().toArray(new String[mEdv1Hosts.getMacList().size()])));
+		//		Log.i(TAG, "---------------------------------------");
+		//		Log.i(TAG, Arrays.toString((String[]) mEdv3Hosts.getMacList().toArray(new String[mEdv3Hosts.getMacList().size()])));
+		//		Log.i(TAG, "---------------------------------------");
+		//		Log.i(TAG, Arrays.toString((String[]) mEdv6Hosts.getMacList().toArray(new String[mEdv6Hosts.getMacList().size()])));
+		//		Log.i(TAG, "---------------------------------------");
+		boolean found = false;
+		int idx = -1;
+		for(String mac:mEdv1Hosts.getMacList())
+		{
+			if(mac.equals(sn.getMac()))
+			{
+				idx = 0;
+				found = true;
+				break;
 			}
-		});
-		
+		}
+		if(!found)
+		{
+			for(String mac:mEdv3Hosts.getMacList())
+			{
+				if(mac.equals(sn.getMac()))
+				{
+//					cri = mAdapter.getItem(1);
+					idx = 1;
+					found = true;
+					break;
+				}
+			}					
+		}
+		if(!found)
+		{
+			for(String mac:mEdv6Hosts.getMacList())
+			{
+				if(mac.equals(sn.getMac()))
+				{
+//					cri = mAdapter.getItem(2);
+					idx = 2;
+					found = true;
+					break;
+				}
+			}					
+		}
+		if(found)
+		{
+			final int finalIdx = idx;
+			mUiHandler.post(new Runnable() 
+			{	
+				@Override
+				public void run() 
+				{
+					mAdapter.getItem(finalIdx).setShowNotification(true);	
+				}
+			});				
+		}
+		else
+		{
+			Log.e(TAG, sn.getMac()+" not found in list");
+		}
 	}
-	
-	
-	
+
+
+
 }

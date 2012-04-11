@@ -169,7 +169,7 @@ public class SemanticQueryResultParser
 				String macString = removeSesamePrefix(object.getString("value"));
 				
 //				Log.i(TAG, "typeString = "+typeString);
-//				Log.i(TAG, "macString = "+macString.substring(macString.indexOf(":")+1, macString.length()));
+				macString = macString.substring(macString.indexOf(":")+1, macString.length());
 				NotificationType type = null;
 				if(typeString.contains("40"))
 				{

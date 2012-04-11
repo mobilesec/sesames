@@ -12,6 +12,7 @@ import java.security.KeyStore;
 import java.security.Principal;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -91,6 +92,15 @@ public class ProxyHelper
 //			HttpClient defClient = AndroidHttpClient.
 			defClient.getParams().setParameter(ClientPNames.HANDLE_AUTHENTICATION, true);
 			defClient.getParams().setParameter(AuthPNames.CREDENTIAL_CHARSET, "UTF-8");
+			defClient.setReuseStrategy(new ConnectionReuseStrategy() {
+
+				@Override
+				public boolean keepAlive(HttpResponse response, HttpContext context) {
+					// TODO Auto-generated method stub
+					return true;
+				}
+			});
+			
 			defClient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
 				
 				@Override
@@ -111,7 +121,7 @@ public class ProxyHelper
 				@Override
 				public void process(HttpRequest request, HttpContext context)throws HttpException, IOException 
 				{
-					Log.e(TAG, request.getRequestLine().toString());
+					Log.i(TAG, request.getRequestLine().toString());
 					request.addHeader(BasicScheme.authenticate(getCredentials(),"UTF-8",true));
 				}    
 			};

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.pms.SeparatorListEntry.ListType;
 import at.sesame.fhooe.lib2.pms.hosts.HostList;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
@@ -53,11 +54,13 @@ public class PmsHelper
 
 	private Context mCtx;
 
-	private PMSController mController;
+//	private PMSController mController;
 
 	private boolean mDevicesLoaded = false;
 
 	private IPMSUpdateListener mUpdateListener;
+	
+	private SesameDataCache mCache = SesameDataCache.getInstance(null);
 
 	//	private ArrayList<ControllableDeviceListEntry> mEntries;
 	//	/**
@@ -65,20 +68,26 @@ public class PmsHelper
 	//	 */
 	//	private HashMap<String, Boolean> mSelection = new HashMap<String, Boolean>();
 
+	private String mRoomName;
+
+	private FragmentManager mFragMan;
 	
-	public PmsHelper(Context _ctx, FragmentManager _fm, IPMSUpdateListener _updateListener, HostList _hosts2Load, ViewGroup _activeDeviceControl, ViewGroup _inactiveDeviceControl)
+	public PmsHelper(Context _ctx, FragmentManager _fm, IPMSUpdateListener _updateListener, String _roomName, ViewGroup _activeDeviceControl, ViewGroup _inactiveDeviceControl)
 	{
 		mCtx = _ctx;
-		mController = new PMSController(mCtx, this, _hosts2Load, _fm);
+		mRoomName = _roomName;
+//		mController = new PMSController(mCtx, this, _hosts2Load, _fm);
 		mUpdateListener = _updateListener;
 		//		mUi = _listener;
-		//		mFragMan = _fragMan;
+		mFragMan = _fm;
 		//		mUi = _ui;
 
 
 		mActiveDeviceControlContainer = _activeDeviceControl;
 		mInactiveDeviceControlContainer = _inactiveDeviceControl;
 
+		initializeSelectionMap();
+		initializeDirtyMap();
 		//		resetDirtyMap();
 		setSelectedType(SelectedType.none);
 	}
@@ -212,22 +221,11 @@ public class PmsHelper
 		return mSelectionMap.get(_cd.getMac());
 	}
 
-	public ArrayList<ControllableDevice> getDevices(boolean _active)
-	{
-		ArrayList<ControllableDevice>res = new ArrayList<ControllableDevice>();
-		for(ControllableDevice cd:mController.getAllDevices())
-		{
-			if(cd.isAlive()==_active)
-			{
-				res.add(cd);
-			}
-		}
-		return res;
-	}
+
 
 	public void handlePowerClick(ControllableDevice _cd)
 	{
-		mController.handlePowerClick(_cd);
+//		mController.handlePowerClick(_cd);
 	}
 
 	//	public ControllableDeviceListEntry getEntry(ControllableDevice _cd)
@@ -235,32 +233,33 @@ public class PmsHelper
 	//		return getUiInfo(new ControllableDeviceListEntry(_cd));
 	//	}
 
-	public void startUpdates()
-	{
-		mController.startAutoUpdate();
-	}
+//	public void startUpdates()
+//	{
+//		mController.startAutoUpdate();
+//	}
+//
+//	public void stopUpdates()
+//	{
+//		mController.stopAutoUpdate();
+//	}
 
-	public void stopUpdates()
-	{
-		mController.stopAutoUpdate();
-	}
-
-	public ControllableDevice getDeviceByMac(String _mac)
-	{
-		for(ControllableDevice cd:mController.getAllDevices())
-		{
-			if(cd.getMac().equals(_mac))
-			{
-				return cd;
-			}
-		}
-		return null;
-	}
-
-	public PMSController getController()
-	{
-		return mController;
-	}
+//	public ControllableDevice getDeviceByMac(String _mac)
+//	{
+////		for(int i = 0;i<mController.getAllDevices().size();i++)
+////		{
+////			ControllableDevice cd = mController
+////			if(cd.getMac().equals(_mac))
+////			{
+////				return cd;
+////			}
+////		}
+//		return mController.getDeviceFromMac(_mac);
+//	}
+//
+//	public PMSController getController()
+//	{
+//		return mController;
+//	}
 
 	//	/**
 	//	 * finds the listentry associated with the passed ControllableDevice
@@ -369,7 +368,7 @@ public class PmsHelper
 			}
 			if(null==dirty)
 			{
-				prefix+=" dirdy";
+				prefix+=" dirty";
 			}
 			Log.e(TAG, prefix+" failed for:"+_cdle.getControllableDevice().getHostname());
 		}
@@ -421,7 +420,7 @@ public class PmsHelper
 		}
 
 		//		boolean result = true;
-		for(ControllableDevice cd:mController.getAllDevices())
+		for(ControllableDevice cd:mCache.getDevicesForRoom(mRoomName))
 		{
 			if(cd.isAlive()==selectionFlag)
 			{
@@ -757,7 +756,7 @@ public class PmsHelper
 	public ArrayList<ControllableDevice> getSelectedDevices()
 	{
 		ArrayList<ControllableDevice> res = new ArrayList<ControllableDevice>();
-		for(ControllableDevice cd:mController.getAllDevices())
+		for(ControllableDevice cd:mCache.getDevicesForRoom(mRoomName))
 		{
 			System.out.println(cd);
 			if(mSelectionMap.get(cd.getMac()))
@@ -784,7 +783,7 @@ public class PmsHelper
 	private void initializeSelectionMap()
 	{
 		System.out.println("initialize selection map");
-		for(ControllableDevice cd:mController.getAllDevices())
+		for(ControllableDevice cd:mCache.getDevicesForRoom(mRoomName))
 		{
 			mSelectionMap.put(cd.getMac(), false);
 		}
@@ -792,7 +791,7 @@ public class PmsHelper
 
 	public void initializeDirtyMap()
 	{
-		for(ControllableDevice cd:mController.getAllDevices())
+		for(ControllableDevice cd:mCache.getDevicesForRoom(mRoomName))
 		{
 			mDirtyMap.put(cd.getMac(), false);
 		}
@@ -805,17 +804,17 @@ public class PmsHelper
 
 	public void handlePowerOffAll()
 	{
-		mController.powerOffDevices(getSelectedDevices(), PowerOffState.shutdown);
+		mCache.getController().powerOffDevices(this, mFragMan, getSelectedDevices(), PowerOffState.shutdown);
 	}
 
 	public void handleSleepAll()
 	{
-		mController.powerOffDevices(getSelectedDevices(), PowerOffState.sleep);
+		mCache.getController().powerOffDevices(this, mFragMan, getSelectedDevices(), PowerOffState.sleep);
 	}
 
 	public void handleWakeUpAll()
 	{
-		mController.wakeupDevices(getSelectedDevices());
+		mCache.getController().wakeupDevices(this, mFragMan, getSelectedDevices());
 	}
 
 	public void notifyPMSUpdated() {

@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -32,7 +34,8 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 {
 	private static final String TAG = "ComparisonActivity";
 
-	
+	private static final int UPDATE_PERIOD = 5000;
+	private Timer mUpdateTimer;
 
 	private DisplayMode mCurMode = DisplayMode.day;
 
@@ -47,7 +50,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 
 	private String mRoomName;
 
-	private SesameDataCache mDataCache = SesameDataCache.getInstance();
+	private SesameDataCache mDataCache = SesameDataCache.getInstance(null);
 
 	private SesameMeasurementPlace mCurRoom;
 
@@ -73,6 +76,41 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		mEdv6Place = places.get(5);
 		mCurRoom = mEdv1Place;
 		initializeView();
+	}
+	
+	private class UpdateTask extends TimerTask
+	{
+
+		@Override
+		public void run() 
+		{
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() 
+				{
+					updateChart();
+				}
+			});
+			
+		}
+		
+	}
+	
+	private void stopUpdates()
+	{
+		if(null != mUpdateTimer)
+		{
+			mUpdateTimer.cancel();
+			mUpdateTimer.purge();
+		}
+	}
+	
+	private void startUpdates()
+	{
+		stopUpdates();
+		mUpdateTimer = new Timer();
+		mUpdateTimer.schedule(new UpdateTask(), 0, UPDATE_PERIOD);
 	}
 
 	public void initializeView() 
@@ -350,4 +388,24 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 
 	}
 
+	@Override
+	protected void onDestroy() {
+		stopUpdates();
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onPause() {
+		stopUpdates();
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() 
+	{
+		super.onResume();
+		startUpdates();
+	}
+
+	
 }

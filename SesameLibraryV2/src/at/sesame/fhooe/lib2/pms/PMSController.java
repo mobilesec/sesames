@@ -1,38 +1,27 @@
 package at.sesame.fhooe.lib2.pms;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.concurrent.ExecutionException;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.app.DialogFragment;
+
 import android.support.v4.app.FragmentManager;
-import android.text.format.Time;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import at.sesame.fhooe.lib2.pms.SeparatorListEntry.ListType;
+
+import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.pms.dialogs.IPMSDialogActionHandler;
-import at.sesame.fhooe.lib2.pms.dialogs.PMSActionDialogFragment;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSActionInProgressDialogFragment;
-import at.sesame.fhooe.lib2.pms.dialogs.PMSActionDialogFragment.PMSActionDialogType;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
-import at.sesame.fhooe.lib2.pms.dialogs.PMSNetworkingInProgressDialogFragment;
 import at.sesame.fhooe.lib2.pms.hosts.HostList;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice.PowerOffState;
 import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
 
 public class PMSController
-implements IPMSDialogActionHandler, IPMSUpdateListener
+implements IPMSDialogActionHandler
 {
 	/**
 	 * the tag to identify the logger output of this class
@@ -55,10 +44,10 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	private String mPass = "thatpeter";
 
 //	private IPmsUi mUi;
-	private PmsHelper mUiHelper;
-	private FragmentManager mFragMan;
+//	private PmsHelper mUiHelper;
+//	private FragmentManager mFragMan;
 
-	private boolean mDevicesLoaded = false;
+//	private boolean mDevicesLoaded = false;
 
 //	
 //
@@ -71,7 +60,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	/**
 	 * the currently selected device
 	 */
-	private ControllableDevice mSelectedDevice;
+//	private ControllableDevice mSelectedDevice;
 	
 
 
@@ -80,15 +69,15 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 
 	public PMSController(Context _ctx, PmsHelper _helper, HostList _hosts2Load, FragmentManager _fragMan)
 	{
-		mDevicesLoaded = false;
+//		mDevicesLoaded = false;
 		mCtx = _ctx;
 //		mUiHandler = _uiHandler;
 //		mUi = _listener;
-		mUiHelper = _helper;
+//		mUiHelper = _helper;
+//
+//		mFragMan = _fragMan;
 
-		mFragMan = _fragMan;
-
-			new QueryDevsTask().execute(new HostList[]{_hosts2Load});
+//			new QueryDevsTask().execute(new HostList[]{_hosts2Load});
 
 
 //		queryControllableDevicesSim();
@@ -100,9 +89,9 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	public void startAutoUpdate()
 	{
 		stopAutoUpdate();
-		if(mDevicesLoaded)
+//		if(mDevicesLoaded)
 		{
-			mUpdater = new DeviceStateUpdater(this, mAllDevices, mUiHelper, mUser, mPass);
+			mUpdater = new DeviceStateUpdater(mAllDevices, mUser, mPass);
 			mUpdater.startUpdating();
 //			mUpdateThread.start();			
 		}
@@ -149,19 +138,23 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 
 
 
-	public void wakeupDevices(final ArrayList<ControllableDevice> _selectedDevs)
+	public void wakeupDevices(PmsHelper _helper, FragmentManager _fragMan, final ArrayList<ControllableDevice> _selectedDevs)
 	{
-			new WakeupTask(_selectedDevs.size()).execute(_selectedDevs);
+			new WakeupTask(_selectedDevs.size(), _helper, _fragMan).execute(_selectedDevs);
 	}
 	
 	private class WakeupTask extends AsyncTask<ArrayList<ControllableDevice>, Void, Void>
 	{
 		private PMSActionInProgressDialogFragment mDialog;
 		private int mMax;
+		private PmsHelper mHelper;
+		private FragmentManager mFragMan;
 		
-		public WakeupTask(int _max)
+		public WakeupTask(int _max, PmsHelper _helper, FragmentManager _fragMan)
 		{
 			mMax = _max;
+			mHelper = _helper;
+			mFragMan = _fragMan;
 		}
 		@Override
 		protected Void doInBackground(ArrayList<ControllableDevice>... params) {
@@ -170,16 +163,21 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 			for(ControllableDevice cd:selDevs)
 			{
 //				ControllableDevice cd = selDevs.get(i);
-				mUiHelper.markDirty(cd, true);
+				mHelper.markDirty(cd, true);
 				try {
 				cd.wakeUp();
 //				aipdf.incrementProgressBy(1);
-					Thread.sleep(100);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				publishProgress(new Void[]{});
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			return null;
 		}
@@ -188,7 +186,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 		protected void onPostExecute(Void result) 
 		{
 			super.onPostExecute(result);
-			mUiHelper.deselectAll();
+			mHelper.deselectAll();
 			startAutoUpdate();
 			PMSDialogFactory.dismissCurrentDialog();
 		}
@@ -309,9 +307,9 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 //		mAllDevices = new ArrayList<ControllableDevice>();
 		for(ExtendedPMSStatus exStat:statuses)
 		{
-			Log.e(TAG, "passed mac="+exStat.getMac());
+//			Log.e(TAG, "passed mac="+exStat.getMac());
 			String passedHost = hosts.get(exStat.getMac());
-			Log.e(TAG, "HOST in LIST="+passedHost);
+//			Log.e(TAG, "HOST in LIST="+passedHost);
 			ControllableDevice cd = new ControllableDevice(mCtx, exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
 			//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
 			if(cd.isValid())
@@ -350,9 +348,9 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 //		mAllDevices = new ArrayList<ControllableDevice>();
 		for(ExtendedPMSStatus exStat:statuses)
 		{
-			Log.e(TAG, "passed mac="+exStat.getMac());
+//			Log.e(TAG, "passed mac="+exStat.getMac());
 			String passedHost = _hl.getHostNameForMac(exStat.getMac());
-			Log.e(TAG, "HOST in LIST="+passedHost);
+//			Log.e(TAG, "HOST in LIST="+passedHost);
 			ControllableDevice cd = new ControllableDevice(mCtx, exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
 			//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
 			if(cd.isValid())
@@ -462,7 +460,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	@Override
 	public void handleDialogPowerOff(ControllableDevice _cd) 
 	{
-		mUiHelper.markDirty(_cd, true);
+//		mUiHelper.markDirty(_cd, true);
 		_cd.powerOff(PowerOffState.shutdown);
 
 	}
@@ -470,7 +468,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	@Override
 	public void handleDialogSleep(ControllableDevice _cd) 
 	{
-		mUiHelper.markDirty(_cd, true);
+//		mUiHelper.markDirty(_cd, true);
 		_cd.powerOff(PowerOffState.sleep);
 
 	}
@@ -478,7 +476,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	@Override
 	public void handleDialogWakeUp(ControllableDevice _cd) 
 	{
-		mUiHelper.markDirty(_cd, true);
+//		mUiHelper.markDirty(_cd, true);
 		_cd.wakeUp();
 	}
 	
@@ -486,9 +484,9 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	 * powers off or puts to sleep all currently selected devices based on the passed PowerOffState
 	 * @param _state determines whether to shut down or put to sleep all selected devices 
 	 */
-	public void powerOffDevices(final ArrayList<ControllableDevice> _devices, final PowerOffState _state)
+	public void powerOffDevices(PmsHelper _helper, FragmentManager _fragMan, final ArrayList<ControllableDevice> _devices, final PowerOffState _state)
 	{
-		new PowerOffTask(_state.name(), _devices.size()).execute(new Object[]{_devices,_state});
+		new PowerOffTask(_state.name(), _devices.size(), _helper, _fragMan).execute(new Object[]{_devices,_state});
 	}
 	
 	
@@ -498,15 +496,20 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 		private String mTitle;
 		private int mMax;
 		private PMSActionInProgressDialogFragment mDialog;
+		private PmsHelper mHelper;
+		private FragmentManager mFragMan;
 		
-		public PowerOffTask(String _title, int _max)
+		public PowerOffTask(String _title, int _max, PmsHelper _helper, FragmentManager _fragMan)
 		{
 			mTitle = _title;
 			mMax  =_max;
+			mHelper = _helper;
+			mFragMan = _fragMan;
 		}
 		
 		@Override
 		protected void onPostExecute(Void result) {
+			startAutoUpdate();
 			PMSDialogFactory.dismissCurrentDialog();
 			super.onPostExecute(result);
 		}
@@ -515,6 +518,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 		protected void onPreExecute() 
 		{
 			super.onPreExecute();
+			stopAutoUpdate();
 			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mTitle, mMax});
 		}
 		
@@ -541,19 +545,24 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 			PowerOffState state = (PowerOffState)params[1];
 			for(ControllableDevice cd:devices)
 			{
-				mUiHelper.markDirty(cd,true);
+				mHelper.markDirty(cd,true);
 				
 				try 
 				{
 					cd.powerOff(state);
-					Thread.sleep(50);
 				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				this.publishProgress(new Void[]{});
 			}
-			mUiHelper.deselectAll();
+			mHelper.deselectAll();
 			//					startAutoUpdate();
 			//					mUpdateThread.resumeAfterPause();
 			//					for(ControllableDevice cd:selDevs)
@@ -569,24 +578,23 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	
 	public class QueryDevsTask extends AsyncTask<HostList, Void, Void>
 	{
-		
 		@Override
 		protected void onPreExecute() {
-			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, mFragMan, null, new Object[]{mCtx});
+//			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, mFragMan, null, new Object[]{mCtx});
 		}
 
-		@Override
-		protected void onPostExecute(Void result) {
-//			mUi.notifyPMSUpdated();
-			mDevicesLoaded = true;
-			if(null!=mUiHelper)
-			{
-				mUiHelper.notifyDevicesLoaded();				
-			}
-			Log.e(TAG, Arrays.toString((ControllableDevice[]) mAllDevices.toArray(new ControllableDevice[mAllDevices.size()])));
-			startAutoUpdate();
-			PMSDialogFactory.dismissCurrentDialog();
-		}
+//		@Override
+//		protected void onPostExecute(Void result) {
+////			mUi.notifyPMSUpdated();
+//			mDevicesLoaded = true;
+//			if(null!=mUiHelper)
+//			{
+//				mUiHelper.notifyDevicesLoaded();				
+//			}
+////			Log.e(TAG, Arrays.toString((ControllableDevice[]) mAllDevices.toArray(new ControllableDevice[mAllDevices.size()])));
+////			startAutoUpdate();
+////			PMSDialogFactory.dismissCurrentDialog();
+//		}
 
 		@Override
 		protected Void doInBackground(HostList... params) {
@@ -605,7 +613,7 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 	}
 	private void queryControllableDevicesSim() 
 	{
-		Log.i(TAG, "SIMULATION");
+//		Log.i(TAG, "SIMULATION");
 		//		ArrayList<String> macs = PMSProvider.getDeviceList();
 		HashMap<String,String>hosts = new HashMap<String, String>();
 		hosts.put("00:24:81:1C:3D:90", "Topf");
@@ -633,9 +641,9 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 //		mAllDevices = new ArrayList<ControllableDevice>();
 		for(ExtendedPMSStatus exStat:statuses)
 		{
-			Log.e(TAG, "passed mac="+exStat.getMac());
+//			Log.e(TAG, "passed mac="+exStat.getMac());
 			String passedHost = hosts.get(exStat.getMac());
-			Log.e(TAG, "HOST in LIST="+passedHost);
+//			Log.e(TAG, "HOST in LIST="+passedHost);
 			ControllableDevice cd = new ControllableDevice(mCtx, exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
 			//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
 			if(cd.isValid())
@@ -688,15 +696,15 @@ implements IPMSDialogActionHandler, IPMSUpdateListener
 		
 	}
 
-	@Override
-	public void notifyPMSUpdated() 
-	{
-		Log.e(TAG, "%%%%%%%%%%%%%%%notified about pms update");
-		if(null!=mUiHelper)
-		{
-			mUiHelper.notifyPMSUpdated();			
-		}
-//		mUpdateListener.notifyPMSUpdated();
-		
-	}
+//	@Override
+//	public void notifyPMSUpdated() 
+//	{
+//		Log.i(TAG, "notified about pms update");
+//		if(null!=mUiHelper)
+//		{
+//			mUiHelper.notifyPMSUpdated();			
+//		}
+////		mUpdateListener.notifyPMSUpdated();
+//		
+//	}
 }

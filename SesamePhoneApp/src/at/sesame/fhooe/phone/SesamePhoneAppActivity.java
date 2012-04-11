@@ -117,7 +117,7 @@ implements ISesameDataListener, ILoginListener
 		protected Void doInBackground(Void... params) {
 			mRendererProvider = new PhoneChartRendererProvider(getApplicationContext(), false);
 //	        new LoginDialogFragment().show(getSupportFragmentManager(), this);
-	        mDataCache = SesameDataCache.getInstance();
+	        mDataCache = SesameDataCache.getInstance(SesamePhoneAppActivity.this);
 	        ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
 			mEdv1Place = places.get(0);
 			mEdv3Place = places.get(1);

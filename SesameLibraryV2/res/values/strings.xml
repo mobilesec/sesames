@@ -27,5 +27,8 @@
     <string name="global_Room1_name">EDV 1</string>
     <string name="global_Room3_name">EDV 3</string>
     <string name="global_Room6_name">EDV 6</string>
+    <string name="ControllableDevice_idleString_prefix">"inactive since "</string>
+    <string name="ControllableDevice_minuteString">" min"</string>
+    <string name="controllableDevice_hourString">" hrs"</string>
 
 </resources>

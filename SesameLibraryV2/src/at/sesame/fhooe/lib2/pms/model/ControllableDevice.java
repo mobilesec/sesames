@@ -469,15 +469,15 @@ implements Runnable
 		}
 		else if(idleMins<HOUR_FORMAT_THRESHOLD)
 		{
-			return ""+roundShortInterval(idleMins);
-//			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+roundShortInterval(idleMins)+mCtx.getString(R.string.ControllableDevice_minuteString);
+//			return ""+roundShortInterval(idleMins);
+			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+roundShortInterval(idleMins)+mCtx.getString(R.string.ControllableDevice_minuteString);
 		}
 		else
 		{
 			DecimalFormat df = new DecimalFormat("#.#");
 			String idleString = df.format(roundLongInterval(idleMins));
-			return idleString;
-//			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+idleString+mCtx.getString(R.string.controllableDevice_hourString);
+//			return idleString;
+			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+idleString+mCtx.getString(R.string.controllableDevice_hourString);
 		}
 	}
 
