@@ -8,44 +8,42 @@
     <LinearLayout
         android:id="@+id/activeDeviceControllContainer"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/list_item_background"
-        android:paddingLeft="3dp"
-        android:paddingRight="5dp"
-        android:paddingTop="3dp" >
+        android:layout_height="wrap_content" >
 
         <Button
             android:id="@+id/sleepButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
             android:layout_weight="1"
             android:drawableTop="@drawable/ic_action_sleep"
+            android:paddingTop="2dp"
             android:text="@string/mainXML_sleepAllButton_text" />
 
         <Button
             android:id="@+id/shutDownButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
             android:layout_weight="1"
             android:drawableTop="@drawable/ic_action_power"
+            android:paddingTop="2dp"
             android:text="@string/mainXML_shutdownAllButton_text" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/inactiveDeviceControllContainer"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/list_item_background"
-        android:paddingLeft="3dp"
-        android:paddingRight="5dp"
-        android:paddingTop="3dp" >
+        android:layout_height="wrap_content" >
 
         <Button
             android:id="@+id/wakeUpButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
             android:layout_weight="1"
             android:drawableTop="@drawable/ic_action_power"
+            android:paddingTop="2dp"
             android:text="@string/mainXML_wakeUpAllButton_text" />
     </LinearLayout>
 

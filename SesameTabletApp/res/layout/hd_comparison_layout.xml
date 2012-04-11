@@ -15,13 +15,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Tagesvergleich" />
+            android:text="Tagesvergleich"
+            android:textColor="#ffffffff" />
 
         <RadioButton
             android:id="@+id/hd_comparison_layout_weekRadioButt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wochenvergleich" />
+            android:text="Wochenvergleich"
+            android:textColor="#ffffffff" />
     </RadioGroup>
 
     <LinearLayout
