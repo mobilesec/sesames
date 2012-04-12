@@ -36,7 +36,7 @@ extends ArrayAdapter<ComputerRoomInformation>
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) 
 	{
-		Log.e(TAG, "getView");
+//		Log.e(TAG, "getView");
 //		mView = convertView;
 //		if(null==v)
 		{
@@ -44,29 +44,40 @@ extends ArrayAdapter<ComputerRoomInformation>
 		}
 		
 		ComputerRoomInformation info = mInfos.get(position);
-		Log.e(TAG, info.toString());
+//		Log.e(TAG, info.toString());
 		TextView header = (TextView)mView.findViewById(R.id.textView1);
 		header.setText(info.getRoomName());
+		header.setTextColor(0xffffffff);
 
 		TextView idle = (TextView)mView.findViewById(R.id.textView2);
 		idle.setText(mCtx.getString(R.string.pms_room_list_inactive_prefix)+info.getNumIdleComputers());
+		idle.setTextColor(0xffffffff);
 		
 		TextView active = (TextView)mView.findViewById(R.id.textView3);
 		active.setText(mCtx.getString(R.string.pms_room_list_active_prefix)+info.getNumActiveComputers());
+		active.setTextColor(0xffffffff);
+		
 		if(info.isShowNotification())
 		{
-			Log.e(TAG, "notification set....");
+//			Log.e(TAG, "notification set....");
 			ImageView notification = (ImageView)mView.findViewById(R.id.hd_computer_room_info_listentry_notification);
 			notification.setImageResource(R.drawable.ic_pms_list_notification);
 		}
 		else
 		{
-			Log.e(TAG, "notification not set...");
+//			Log.e(TAG, "notification not set...");
 		}
 		
 		return mView;
 	}
 	
+	
+	
+	@Override
+	public int getCount() {
+		return mInfos.size();
+	}
+
 	public View getView()
 	{
 		return mView;

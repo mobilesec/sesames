@@ -10,7 +10,7 @@ import at.sesame.fhooe.lib2.ui.charts.AbstractRendererProvider;
 public class HD_chart_RendererProvider 
 extends AbstractRendererProvider 
 {
-	private int mFillColorAlpha = 180;
+	private int mFillColorAlpha = 60;
 	
 	public HD_chart_RendererProvider(Context _ctx) 
 	{

@@ -15,6 +15,5 @@
     <activity android:label="@string/app_name" android:name=".RealTimeActivity" />
     <activity android:label="@string/app_name" android:name=".ComparisonActivity" />
   </application>
-  ComparisonActivity
 </manifest>
 

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <LinearLayout
         android:id="@+id/controlContainer"
         android:layout_width="fill_parent"
@@ -14,26 +14,26 @@
             android:id="@+id/activeDeviceControllContainer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/list_item_background"
-            android:paddingLeft="3dp"
-            android:paddingRight="5dp"
-            android:paddingTop="3dp" >
+            android:layout_weight="1" >
 
             <Button
                 android:id="@+id/sleepButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_action_sleep"
+                android:paddingTop="10dp"
                 android:text="@string/mainXML_sleepAllButton_text" />
 
             <Button
                 android:id="@+id/shutDownButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_action_power"
+                android:paddingTop="10dp"
                 android:text="@string/mainXML_shutdownAllButton_text" />
         </LinearLayout>
 
@@ -41,18 +41,16 @@
             android:id="@+id/inactiveDeviceControllContainer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/list_item_background"
-            android:paddingLeft="3dp"
-            android:paddingRight="5dp"
-            android:paddingTop="3dp" >
+            android:layout_weight="1" >
 
             <Button
                 android:id="@+id/wakeUpButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:layout_weight="1"
                 android:drawableTop="@drawable/ic_action_power"
+                android:paddingTop="10dp"
                 android:text="@string/mainXML_wakeUpAllButton_text" />
         </LinearLayout>
     </LinearLayout>
@@ -86,15 +84,21 @@
         <ListView
             android:id="@+id/activeDeviceList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" >
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/list_background"
+            android:dividerHeight="0dp"
+            android:divider="#00000000" >
         </ListView>
 
         <ListView
             android:id="@+id/inactiveDeviceList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" >
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/list_background"
+            android:dividerHeight="0dp"
+            android:divider="#00000000" >
         </ListView>
     </LinearLayout>
 

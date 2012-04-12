@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceAdapter;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
 import at.sesame.fhooe.lib2.pms.IListEntry;
@@ -200,29 +201,33 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	private PmsHelper mPMSHelper;
 //	private FragmentManager mFragMan;
 	private Context mCtx;
-	private HostList mHostList;
+//	private HostList mHostList;
 	private Handler mUiHandler;
-
-	public PMSClientFragment(Context _ctx, FragmentManager _fragMan, Handler _handler, HostList _hosts2Load)
+	private String mTitle;
+	public PMSClientFragment(Context _ctx, FragmentManager _fragMan, Handler _handler, String _title, HostList _hosts2Load)
 	{
 		mCtx = _ctx;
 //		mFragMan = _fragMan;
-		mHostList = _hosts2Load;
+//		mHostList = _hosts2Load;
 		mUiHandler = _handler;
+		mTitle = _title;
 		//		mNetworkingDialog = new PMSNetworkingInProgressDialogFragment(_ctx);
 		ErrorForwarder.getInstance().register(this);
+		
 		//		queryControllableDevicesKDF();
 		//		queryControllableDevicesTest(50);
 	}
 
 	private void initializeLists()
 	{
-		Log.e(TAG, "initialize lists");
+		
 		mActiveAdapter = new ControllableDeviceAdapter(mCtx, mActiveListEntries, mPMSHelper);
 		mActiveList.setAdapter(mActiveAdapter);
 
 		mInactiveAdapter = new ControllableDeviceAdapter(mCtx, mInactiveListEntries, mPMSHelper);
 		mInactiveList.setAdapter(mInactiveAdapter);
+//		startSingleUiUpdate();
+		startContinuousUiUpdates();
 	}
 
 
@@ -240,13 +245,13 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		Log.e(TAG, "onCreateView");
+		getDialog().setTitle(mTitle);
 		View v = inflater.inflate(R.layout.pms_2_colums, null);
 
 		ViewGroup activeDeviceControlContainer = (ViewGroup)v.findViewById(R.id.activeDeviceControllContainer);
 		ViewGroup inactiveDeviceControlContainer = (ViewGroup)v.findViewById(R.id.inactiveDeviceControllContainer);
 
-		mPMSHelper = new PmsHelper(mCtx, getFragmentManager(), this, mHostList, activeDeviceControlContainer, inactiveDeviceControlContainer);
+		mPMSHelper = new PmsHelper(mCtx, getFragmentManager(), this, mTitle, activeDeviceControlContainer, inactiveDeviceControlContainer);
 
 		mActiveList = (ListView)v.findViewById(R.id.activeDeviceList);
 		mInactiveList = (ListView)v.findViewById(R.id.inactiveDeviceList);
@@ -278,6 +283,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 		mSelectAllInactiveDevCb.setOnCheckedChangeListener(this);
 		return v;
 	}
+	
+	
 
 	//	private void refreshListEntries() 
 	//	{
@@ -543,6 +550,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	//
 	//	}
 
+
 	/**
 	 * checks if the device currently is connected to the internet
 	 * @return true if the device is connected, false otherwise
@@ -560,8 +568,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	@Override
 	public void onDestroy()
 	{
-		Log.e(TAG, "onDestroy");
-		mPMSHelper.stopUpdates();
+//		mPMSHelper.stopUpdates();
 		stopUiUpdates();
 		super.onDestroy();
 	}
@@ -569,7 +576,6 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	@Override
 	public void onPause()
 	{
-		Log.e(TAG, "onPause");
 		stopUiUpdates();
 		super.onPause();
 	}
@@ -584,18 +590,21 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	}
 
 	public void stopUiUpdates() {
-		mPMSHelper.stopUpdates();
-		mUiUpdateTimer.cancel();
+//		mPMSHelper.stopUpdates();
+		if(null!=mUiUpdateTimer)
+		{
+			mUiUpdateTimer.cancel();
+			mUiUpdateTimer.purge();
+		}
 	}
 
 	@Override
 	public void onResume()
 	{
 		super.onResume();
-		Log.e(TAG, "onResume");
 		if(checkConnectivity())
 		{
-			Log.e(TAG, "starting updates");
+			Log.i(TAG, "starting updates");
 //			startContinuousUiUpdates();
 		}
 		else
@@ -606,7 +615,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 
 	private void startContinuousUiUpdates()
 	{
-		mPMSHelper.startUpdates();
+//		mPMSHelper.startUpdates();
+		stopUiUpdates();
 		mUiUpdateTimer = new Timer();
 		mUiUpdateTimer.schedule(new UiUpdateTask(), 0, UI_UPDATE_PERIOD);
 	}
@@ -960,10 +970,10 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 		if (arg0.getId() == R.id.sleepButton) {
 			mPMSHelper.handleSleepAll();
 		} else if (arg0.getId() == R.id.shutDownButton) {
-			Log.e(TAG, "shut down all");
+			Log.i(TAG, "shut down all");
 			mPMSHelper.handlePowerOffAll();
 		} else if (arg0.getId() == R.id.wakeUpButton) {
-			Log.e(TAG, "wake up all");
+			Log.i(TAG, "wake up all");
 			mPMSHelper.handleWakeUpAll();
 		}
 		if(null!=mSelectAllActiveDevCb)
@@ -1259,8 +1269,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	 */
 	private void removeFromList(String _mac)
 	{
-		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
-		Log.e(TAG, "removed "+cd.toString()+", actual remove has to be implemented yet.");
+//		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
+//		Log.e(TAG, "removed "+cd.toString()+", actual remove has to be implemented yet.");
 	}
 
 	/**
@@ -1269,8 +1279,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	 */
 	private void addToNotAvailableList(String _mac)
 	{
-		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
-		Log.e(TAG, "added "+cd.toString()+" to the not available list, actual add has to be implemented yet.");
+//		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
+//		Log.e(TAG, "added "+cd.toString()+" to the not available list, actual add has to be implemented yet.");
 	}
 
 	/**
@@ -1279,8 +1289,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	 */
 	private void toastComputerNotAvailable(String _mac)
 	{
-		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
-		Toast.makeText(getActivity(), cd.getHostname()+" is currently not available", Toast.LENGTH_LONG).show();
+//		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
+//		Toast.makeText(getActivity(), cd.getHostname()+" is currently not available", Toast.LENGTH_LONG).show();
 	}
 
 	/**
@@ -1289,8 +1299,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	 */
 	private void toastNoInformationAvailable(String _mac)
 	{
-		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
-		Toast.makeText(getActivity(), "no information about "+cd.getHostname()+" available", Toast.LENGTH_LONG).show();
+//		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
+//		Toast.makeText(getActivity(), "no information about "+cd.getHostname()+" available", Toast.LENGTH_LONG).show();
 	}
 
 	/**
@@ -1299,8 +1309,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	 */
 	private void showLoginDialog(String _mac)
 	{
-		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
-		Log.e(TAG, "showing login dialog for "+cd.getHostname());
+//		ControllableDevice cd = mPMSHelper.getDeviceByMac(_mac);
+//		Log.e(TAG, "showing login dialog for "+cd.getHostname());
 	}
 
 	/**
@@ -1311,7 +1321,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	{
 		//		showDialog(CANT_SHUTDOWN_DIALOG, getBundledHostname(_mac));
 		//		new PMSCantShutdownDialogFragment().show(mFragMan, null);+
-		PMSDialogFactory.showDialog(DialogType.CANT_SHUTDONW_DIALOG, getFragmentManager(), mPMSHelper.getController(), new Object[]{_mac});
+//		PMSDialogFactory.showDialog(DialogType.CANT_SHUTDONW_DIALOG, getFragmentManager(), mPMSHelper.getController(), new Object[]{_mac});
 	}
 
 	/**
@@ -1322,7 +1332,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	{
 		//		showDialog(CANT_WAKEUP_DIALOG, getBundledHostname(_mac));
 		//		new PMSCantWakeUpDialogFragment().show(mFragMan, null);
-		PMSDialogFactory.showDialog(DialogType.CANT_WAKEUP_DIALOG, getFragmentManager(), mPMSHelper.getController(), new Object[]{_mac});
+//		PMSDialogFactory.showDialog(DialogType.CANT_WAKEUP_DIALOG, getFragmentManager(), mPMSHelper.getController(), new Object[]{_mac});
 	}
 
 	//	/**
@@ -1369,13 +1379,13 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 		@Override
 		public void run()
 		{
-			Log.e(TAG, "uiUpdateTask");
-			if(mPMSHelper.areDevicesLoaded())
+
+//			if(mPMSHelper.areDevicesLoaded())
 			{
 				final long start = System.currentTimeMillis();
-				Log.e(TAG, "updating ui");
-				final ArrayList<ControllableDevice> activeDevs  = mPMSHelper.getDevices(true);
-				final ArrayList<ControllableDevice> inactiveDevs = mPMSHelper.getDevices(false);
+
+				final ArrayList<ControllableDevice> activeDevs  = SesameDataCache.getInstance(null).getDevices(mTitle, true);
+				final ArrayList<ControllableDevice> inactiveDevs = SesameDataCache.getInstance(null).getDevices(mTitle, false);
 				
 				final ArrayList<ControllableDeviceListEntry> activeEntries = new ArrayList<ControllableDeviceListEntry>();
 				final ArrayList<ControllableDeviceListEntry> inactiveEntries = new ArrayList<ControllableDeviceListEntry>();
@@ -1430,15 +1440,15 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 //						mActiveAdapter.notifyDataSetChanged();
 //						mInactiveAdapter.notifyDataSetChanged();
 						long duration = System.currentTimeMillis()-start;
-						Log.e(TAG, "updating ui done, adapter notified, closing dialog"+duration+"ms");
+						Log.i(TAG, "updating ui done, adapter notified, closing dialog"+duration+"ms");
 //						PMSDialogFactory.dismissCurrentDialog();
 					}
 				});
 			}
-			else
-			{
-				Log.e(TAG, "devices not loaded");
-			}
+//			else
+//			{
+//				Log.e(TAG, "devices not loaded");
+//			}
 
 		}
 	}
@@ -1446,15 +1456,14 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	@Override
 	public void onCheckedChanged(CompoundButton _buttonView, boolean _isChecked) 
 	{
-		Log.e(TAG, "checkedChanged");
 		if(_buttonView.getTag().equals(ACTIVE_CB_TAG))
 		{
-			Log.e(TAG, "handling multiple selection of active devs");
+			Log.i(TAG, "handling multiple selection of active devs");
 			mPMSHelper.handleMultipleSelectionAttempt(ListType.active, _isChecked);
 		}
 		else if(_buttonView.getTag().equals(INACTIVE_CB_TAG))
 		{
-			Log.e(TAG, "handling multiple selection of inactive devs");
+			Log.i(TAG, "handling multiple selection of inactive devs");
 			mPMSHelper.handleMultipleSelectionAttempt(ListType.inactive, _isChecked);
 		}
 		else

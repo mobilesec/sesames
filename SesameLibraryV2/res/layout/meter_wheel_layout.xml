@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffffff" />
 
     <at.sesame.fhooe.lib2.ui.EnergyMeter
         android:id="@+id/energyMeter"
@@ -44,39 +45,43 @@
     <!-- android:textAppearance="?android:attr/textAppearanceLarge" /> -->
     <!-- </LinearLayout> -->
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/wheel_background" >
 
-        <!-- <ImageView -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:adjustViewBounds="true" -->
-        <!-- android:scaleType="centerCrop" -->
-        <!-- android:src="@drawable/wheel_background" /> -->
+    <!-- <FrameLayout -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- > -->
+
+
+    <!-- <ImageView -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:adjustViewBounds="true" -->
+    <!-- android:scaleType="centerCrop" -->
+    <!-- android:src="@drawable/wheel_background" /> -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/wheel_background_bak"
+        android:gravity="center"
+        android:orientation="horizontal" >
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/meter_wheel_layout_wheelContainer"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal" >
-
-            <LinearLayout
-                android:id="@+id/meter_wheel_layout_wheelContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center" >
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/meter_wheel_layout_textViewUnit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" Wh"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:gravity="center" >
         </LinearLayout>
-    </FrameLayout>
+
+        <TextView
+            android:id="@+id/meter_wheel_layout_textViewUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Wh"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
+    <!-- </FrameLayout> -->
 
     <TextView
         android:id="@+id/meter_wheel_layout_bottom_text"
@@ -84,6 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#ffffffff" />
 
 </LinearLayout>
