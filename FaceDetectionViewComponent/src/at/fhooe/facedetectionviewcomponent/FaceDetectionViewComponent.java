@@ -15,11 +15,11 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.view.ViewGroup;
 import at.fhooe.facedetectionview.model.FaceDetector;
+import at.fhooe.facedetectionview.model.FaceDetector.Feature;
 import at.fhooe.facedetectionview.model.FacesDetectedEvent;
+import at.fhooe.facedetectionview.model.ImageNormalizerUtil.Orientation;
 import at.fhooe.facedetectionview.model.ProcessImageTrigger;
 import at.fhooe.facedetectionview.model.VideoRecordUtil;
-import at.fhooe.facedetectionview.model.FaceDetector.Feature;
-import at.fhooe.facedetectionview.model.ImageNormalizerUtil.Orientation;
 import at.fhooe.facedetectionview.view.CameraPreview;
 import at.fhooe.facedetectionview.view.FaceView;
 import at.fhooe.mc.genericobserver.GenericObservable;
@@ -125,8 +125,8 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 		for (GenericObserver<FacesDetectedEvent> o : mListeners) {
 			LOGGER.error("adding observer to faceview...");
 			mFaceview.addObserver(o);
-			mFaceview.addObserver(this);
 		}
+		mFaceview.addObserver(this);
 	}
 
 	/**
@@ -206,6 +206,7 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	@Override
 	public void update(GenericObservable<FacesDetectedEvent> _o, FacesDetectedEvent _arg) {
 		// cache the facedetectedevent
+		LOGGER.debug("caching event");
 		mLastFaceDetectedEvent = _arg;
 	}
 
