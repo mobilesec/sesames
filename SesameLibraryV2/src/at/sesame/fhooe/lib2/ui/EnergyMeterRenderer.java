@@ -39,7 +39,7 @@ public class EnergyMeterRenderer {
 
 	// Parameters for drawing color labels
 	private boolean drawColorLabes = true;
-	private float[] colorLabelRange = { 0.6f, 0.8f, 1.0f };
+	private float[] colorLabelRange = { 0.75f, 0.9f, 1.0f };
 	private int[] colorLabels = { 0xff40c200, 0xffffae00, 0xff9e0e0e };
 	private float colorLabelWidth = 10.0f;
 	

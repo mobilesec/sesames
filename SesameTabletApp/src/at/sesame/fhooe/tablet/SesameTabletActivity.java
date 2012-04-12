@@ -115,7 +115,7 @@ implements INotificationListener
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		setTheme(android.R.style.Theme_Holo);
+		setTheme(android.R.style.Theme_Holo_Light);
 		
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
@@ -236,8 +236,8 @@ implements INotificationListener
 		EnergyMeterRenderer r = new EnergyMeterRenderer();
 		r.setCurrentValueY(0.435f);
 		r.setMaxValue(2000);
-		r.setMajorTickSpacing(500);
-		r.setMinorTickSpacing(100);
+		r.setMajorTickSpacing(750);
+		r.setMinorTickSpacing(150);
 		r.setMinorTickLength(16);
 		r.setMajorTickLength(20);
 		r.setRelativeTickRadius(1.1f);
@@ -246,6 +246,7 @@ implements INotificationListener
 		r.setPointerBaseWidth(10);
 		r.setMajorTickLineWidth(2.0f);
 		r.setMinorTickLineWidth(1.0f);
+		r.setMaxValue(3000.0f);
 
 		String room1Name = getString(R.string.global_Room1_name);
 		String room3Name = getString(R.string.global_Room3_name);

@@ -74,7 +74,7 @@ public class EnergyMeter extends View {
 
 	// Parameters for drawing color labels
 	boolean mDrawColorLabes = true;
-	float[] mColorLabelRange = { 0.6f, 0.8f, 1.0f };
+	float[] mColorLabelRange = { 0.9f, 0.95f, 1.0f };
 	int[] mColorLabels = { 0xff40c200, 0xffffae00, 0xff9e0e0e };
 	float mColorLabelWidth = 10.0f;
 	private double mRadius;

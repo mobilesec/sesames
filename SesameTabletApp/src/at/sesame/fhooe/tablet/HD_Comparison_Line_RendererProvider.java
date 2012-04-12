@@ -11,7 +11,7 @@ import at.sesame.fhooe.lib2.ui.charts.AbstractRendererProvider;
 public class HD_Comparison_Line_RendererProvider 
 extends AbstractRendererProvider 
 {
-	private int mFillColorAlpha = 180;
+	private int mFillColorAlpha = 60;
 
 	public HD_Comparison_Line_RendererProvider(Context _ctx) 
 	{
