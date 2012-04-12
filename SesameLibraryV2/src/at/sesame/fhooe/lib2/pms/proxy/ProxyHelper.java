@@ -97,18 +97,18 @@ public class ProxyHelper
 				@Override
 				public boolean keepAlive(HttpResponse response, HttpContext context) {
 					// TODO Auto-generated method stub
-					return true;
+					return false;
 				}
 			});
 			
-			defClient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
-				
-				@Override
-				public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-					// TODO Auto-generated method stub
-					return 1;
-				}
-			});
+//			defClient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
+//				
+//				@Override
+//				public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+//					// TODO Auto-generated method stub
+//					return 1;
+//				}
+//			});
 	
 			HttpHost proxy = new HttpHost("80.120.3.4", 80);
 

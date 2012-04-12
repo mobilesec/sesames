@@ -1,6 +1,9 @@
 package at.sesame.fhooe.tablet;
 
+import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -10,22 +13,29 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.TabHost;
+import at.fhooe.facedetectionview.model.FacesDetectedEvent;
+import at.fhooe.facedetectionviewcomponent.FaceDetectionViewComponent;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.SesameNotification;
+import at.sesame.fhooe.lib2.logging.SesameLogger;
+import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
+import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter;
+import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter.ExportLocation;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
 import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
@@ -36,8 +46,11 @@ public class SesameTabletActivity
 extends FragmentActivity
 implements INotificationListener
 {
+	private static final SimpleDateFormat LOG_FILENAME_DATE_FORMAT = new SimpleDateFormat("dd_MM_yy_HH_mm");
 	private static final String TAG = "SesameTabletActivity";
 	private static final long METER_WHEEL_UPDATE_TIMEOUT = 1000;
+	private static final long FACE_DETECTION_UPDATE_PERIOD = 5000;
+	private static final long LOG_EXPORT_PERIOD = 10000;
 //	private Context mCtx;
 	private LayoutInflater mLi;
 //	private FragmentManager mFragMan;
@@ -65,6 +78,7 @@ implements INotificationListener
 	private static final String NOTIFICATION_TITLE ="Sesame Notification";
 
 	private static final int WHEEL_TEXT_SIZE = 28;
+	
 
 	private boolean mShowNotifications = true;
 
@@ -75,7 +89,12 @@ implements INotificationListener
 	private SesameMeasurementPlace mEdv6Place;
 	
 	private ArrayList<SesameNotification> mLastNotifications;
+	private FaceDetectionViewComponent mFaceViewComponent = new FaceDetectionViewComponent();
+	
+	private Timer mFaceDetectionTimer;
 
+	private FrameLayout mFaceContainer = null;
+	
 	//	public SesameTabletActivity(Context _ctx, FragmentManager _fm, Handler _uiHandler)
 	//	{
 	//		mCtx = _ctx;
@@ -93,16 +112,17 @@ implements INotificationListener
 	{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 		setTheme(android.R.style.Theme_Holo);
 		
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
+		
 		new CreationTask().execute();
-
 	}
-
+	
 	private class CreationTask extends AsyncTask<Void, Void, Void>
 	{
 
@@ -131,6 +151,9 @@ implements INotificationListener
 				public void run() 
 				{	
 					setContentView(R.layout.hd_layout);
+
+					mFaceContainer = (FrameLayout)findViewById(R.id.faceContainer1);
+					initializeFaceDetectionComponent();
 					addFragments();
 					createTabs();
 				}
@@ -142,6 +165,12 @@ implements INotificationListener
 		protected void onPostExecute(Void result) 
 		{
 			PMSDialogFactory.dismissCurrentDialog();
+			String fileName = "sesameLog"+LOG_FILENAME_DATE_FORMAT.format(new Date())+".csv";
+
+			SesameFileLogExporter exporter = new SesameFileLogExporter(SesameTabletActivity.this,ExportLocation.EXT_PUB_DIR,  fileName);
+			SesameLogger.addExporter(exporter);
+			
+			SesameLogger.startContinuousExport(LOG_EXPORT_PERIOD);
 		}
 
 		@Override
@@ -150,6 +179,18 @@ implements INotificationListener
 			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, getSupportFragmentManager(), null, new Object[]{SesameTabletActivity.this});
 		}
 		
+	}
+	
+	private void initializeFaceDetectionComponent()
+	{
+		
+		if(null!=mFaceContainer)
+		{
+			mFaceViewComponent.onPause();
+		  // CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
+		  mFaceViewComponent.onResume(this, mFaceContainer, true);
+		  startFaceDetection();
+		}
 	}
 	private void createTabs()
 	{
@@ -164,7 +205,7 @@ implements INotificationListener
 		intent = new Intent().setClass(getApplicationContext(), RealTimeActivity.class);
 
 		// Initialize a TabSpec for each tab and add it to the TabHost
-		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("echtzeit")
+		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("Echtzeit")
 				.setContent(intent);
 		th.addTab(spec);
 		intent = new Intent().setClass(getApplicationContext(), ComparisonActivity.class);
@@ -291,6 +332,21 @@ implements INotificationListener
 	//		return v;
 	//	}
 
+	private void stopFaceDetection()
+	{
+		if(null!=mFaceDetectionTimer)
+		{
+			mFaceDetectionTimer.cancel();
+			mFaceDetectionTimer.purge();
+		}
+	}
+	
+	private void startFaceDetection() 
+	{
+		stopFaceDetection();
+		mFaceDetectionTimer = new Timer();
+		mFaceDetectionTimer.schedule(new FaceDetectionQueryTask(), 0, FACE_DETECTION_UPDATE_PERIOD);
+	}
 	public void stopMeterWheelUpdates()
 	{
 		if(null!=mMeterWheelUpdateTimer)
@@ -394,6 +450,7 @@ implements INotificationListener
 	@Override
 	public void onDestroy() 
 	{
+		SesameLogger.stopContinuousExporting();
 		stopMeterWheelUpdates();
 		mLam.dispatchDestroy(isFinishing());
 		mDataCache.cleanUp();
@@ -402,7 +459,10 @@ implements INotificationListener
 	}
 
 	@Override
-	public void onPause() {
+	public void onPause() 
+	{
+		mFaceViewComponent.onPause();
+		stopFaceDetection();
 		stopMeterWheelUpdates();
 		mLam.dispatchPause(isFinishing());
 		Log.e(TAG, "onPause()");
@@ -412,11 +472,35 @@ implements INotificationListener
 	@Override
 	public void onResume() 
 	{
+		initializeFaceDetectionComponent();
 		startMeterWheelUpdates();
 		mLam.dispatchResume();
 		Log.e(TAG, "onResume()");
 		super.onResume();
 	}
 
+
+	private class FaceDetectionQueryTask extends TimerTask
+	{
+		@Override
+		public void run() 
+		{
+			if(null!=mFaceViewComponent)
+			{
+				FacesDetectedEvent event = mFaceViewComponent.getLastFaceDetectedEven();
+				if(null==event)
+				{
+					Log.e(TAG, "event was null");
+				}
+				else
+				{
+					SesameLogger.log(EntryType.FACE_DETECTION, TAG, ""+event.getAmountOfNearFaces());
+				}
+				
+//				Log.e(TAG, "" + event);
+//				System.out.println(event);
+			}
+		}	
+	}
 
 }

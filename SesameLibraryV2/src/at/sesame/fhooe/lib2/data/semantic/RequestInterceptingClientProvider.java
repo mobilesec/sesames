@@ -57,14 +57,14 @@ public class RequestInterceptingClientProvider
 				}
 			});
 
-			client.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
-
-				@Override
-				public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-					// TODO Auto-generated method stub
-					return 1;
-				}
-			});
+//			client.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
+//
+//				@Override
+//				public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+//					// TODO Auto-generated method stub
+//					return 1;
+//				}
+//			});
 			HttpRequestInterceptor headerAdder = new HttpRequestInterceptor() 
 			{
 				@Override
