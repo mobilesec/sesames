@@ -424,18 +424,19 @@ implements INotificationListener
 		Log.i(TAG, "notified about notifications:"+_notifications.size());
 		if(mShowNotifications)
 		{
-			for(SesameNotification sn:_notifications)
-			{
-//				if(null==mLastNotifications||!mLastNotifications.contains(sn))
-				{
-					mRoomListFrag.notifyAboutNotification(sn);
-					
-				}
-//				else
+			mRoomListFrag.notifyAboutNotifications(_notifications);
+//			for(SesameNotification sn:_notifications)
+//			{
+////				if(null==mLastNotifications||!mLastNotifications.contains(sn))
 //				{
-//					Log.i(TAG, "notification already forwarded, discarded");
+//					mRoomListFrag.notifyAboutNotifications(sn);
+//					
 //				}
-			}
+////				else
+////				{
+////					Log.i(TAG, "notification already forwarded, discarded");
+////				}
+//			}
 //			//			mPMSFrag.setShowNotification(true);
 //			showNotification(NOTIFICATION_TITLE, _notifications);			
 		}
@@ -495,6 +496,7 @@ implements INotificationListener
 				}
 				else
 				{
+					Log.e(TAG, event.toString());
 					SesameLogger.log(EntryType.FACE_DETECTION, TAG, ""+event.getAmountOfNearFaces());
 				}
 				

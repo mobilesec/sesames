@@ -227,7 +227,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	}
 
 	public void setShowNotification(boolean _showNotification) {
-		mAdapter.getItem(0).setShowNotification(_showNotification);
+//		mAdapter.getItem(0).setShowNotification(_showNotification);
 		mShowNotification = _showNotification;
 		//		mAdapter.notifyDataSetChanged();
 		//		getListView().invalidate();
@@ -250,7 +250,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) 
 	{
 		ComputerRoomInformation cri = mAdapter.getItem(arg2);
-		cri.setShowNotification(false);
+//		cri.setShowNotification(false);
 //		Log.e(TAG, cri.toString());
 		//		FragmentManager fm = getFragmentManager();
 		//		FragmentTransaction ft = fm.beginTransaction();
@@ -355,7 +355,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		startUpdates();
 	}
 
-	public void notifyAboutNotification(final SesameNotification sn) 
+	public void notifyAboutNotifications(final ArrayList<SesameNotification> _notifications) 
 	{
 //		Log.i(TAG, "notified about notification:"+sn.getMac());
 		//				ControllableDevice cd = mPmsHelper.getDeviceByMac(sn.getMac());
@@ -367,60 +367,104 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		//		Log.i(TAG, Arrays.toString((String[]) mEdv6Hosts.getMacList().toArray(new String[mEdv6Hosts.getMacList().size()])));
 		//		Log.i(TAG, "---------------------------------------");
 		boolean found = false;
-		int idx = -1;
-		for(String mac:mEdv1Hosts.getMacList())
+		int numEdv1Notifications = 0;
+		int numEdv3Notifications = 0;
+		int numEdv6Notifications = 0;
+		
+		for(SesameNotification sn:_notifications)
 		{
-			if(mac.equals(sn.getMac()))
+			if(isMacInList(mEdv1Hosts, sn.getMac()))
 			{
-				idx = 0;
-				found = true;
-				break;
+				numEdv1Notifications++;
+			}
+			else if(isMacInList(mEdv3Hosts, sn.getMac()))
+			{
+				numEdv3Notifications++;
+			}
+			else if(isMacInList(mEdv6Hosts, sn.getMac()))
+			{
+				numEdv6Notifications++;
 			}
 		}
-		if(!found)
-		{
-			for(String mac:mEdv3Hosts.getMacList())
+		
+		final int finalEdv1Notifications = numEdv1Notifications;
+		final int finalEdv3Notifications = numEdv3Notifications;
+		final int finalEdv6Notifications = numEdv6Notifications;
+		mUiHandler.post(new Runnable() 
+		{	
+			@Override
+			public void run() 
 			{
-				if(mac.equals(sn.getMac()))
-				{
-//					cri = mAdapter.getItem(1);
-					idx = 1;
-					found = true;
-					break;
-				}
-			}					
-		}
-		if(!found)
-		{
-			for(String mac:mEdv6Hosts.getMacList())
-			{
-				if(mac.equals(sn.getMac()))
-				{
-//					cri = mAdapter.getItem(2);
-					idx = 2;
-					found = true;
-					break;
-				}
-			}					
-		}
-		if(found)
-		{
-			final int finalIdx = idx;
-			mUiHandler.post(new Runnable() 
-			{	
-				@Override
-				public void run() 
-				{
-					mAdapter.getItem(finalIdx).setShowNotification(true);	
-				}
-			});				
-		}
-		else
-		{
-			Log.e(TAG, sn.getMac()+" not found in list");
-		}
+				mAdapter.getItem(0).setNumNotifications(finalEdv1Notifications);
+				mAdapter.getItem(1).setNumNotifications(finalEdv3Notifications);
+				mAdapter.getItem(2).setNumNotifications(finalEdv6Notifications);
+			}
+		});	
+//		int idx = -1;
+//		for(String mac:mEdv1Hosts.getMacList())
+//		{
+//			if(mac.equals(sn.getMac()))
+//			{
+//				idx = 0;
+//				found = true;
+//				break;
+//			}
+//		}
+//		if(!found)
+//		{
+//			for(String mac:mEdv3Hosts.getMacList())
+//			{
+//				if(mac.equals(sn.getMac()))
+//				{
+////					cri = mAdapter.getItem(1);
+//					idx = 1;
+//					found = true;
+//					break;
+//				}
+//			}					
+//		}
+//		if(!found)
+//		{
+//			for(String mac:mEdv6Hosts.getMacList())
+//			{
+//				if(mac.equals(sn.getMac()))
+//				{
+////					cri = mAdapter.getItem(2);
+//					idx = 2;
+//					found = true;
+//					break;
+//				}
+//			}					
+//		}
+//		if(found)
+//		{
+//			final int finalIdx = idx;
+//			mUiHandler.post(new Runnable() 
+//			{	
+//				@Override
+//				public void run() 
+//				{
+//					mAdapter.getItem(finalIdx).setShowNotification(true);	
+//				}
+//			});				
+//		}
+//		else
+//		{
+//			Log.e(TAG, sn.getMac()+" not found in list");
+//		}
 	}
 
-
+	private boolean isMacInList(HostList _hl, String _mac)
+	{
+		for(String mac:_hl.getMacList())
+		{
+			if(mac.equals(_mac))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 }

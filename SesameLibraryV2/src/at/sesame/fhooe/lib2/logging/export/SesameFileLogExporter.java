@@ -18,7 +18,7 @@ implements ILogExporter
 {
 	private static final String TAG = "SesameFileLogExporter";
 	private static final String BACKUP_EXTENSION = ".bak";
-	private static final String FOLDER_NAME = "sesame/";
+	private static final String FOLDER_NAME = "sesame";
 	private String mExportPath;
 	private String mFileName;
 	private String mBackupFileName;
@@ -71,7 +71,7 @@ implements ILogExporter
 //			}
 			break;
 		case EXT_PUB_DIR:
-			exportPath = Environment.getExternalStoragePublicDirectory("sesame").getAbsolutePath()+"/";
+			exportPath = Environment.getExternalStoragePublicDirectory("").getAbsolutePath()+"/";
 			break;
 		case USB_DIR:
 		default:

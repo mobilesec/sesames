@@ -57,11 +57,14 @@ extends ArrayAdapter<ComputerRoomInformation>
 		active.setText(mCtx.getString(R.string.pms_room_list_active_prefix)+info.getNumActiveComputers());
 		active.setTextColor(0xffffffff);
 		
-		if(info.isShowNotification())
+		TextView notifications = (TextView)mView.findViewById(R.id.notificationLabel);
+		notifications.setText(""+info.getNumNotifications());
+		notifications.setTextColor(Color.WHITE);
+		if(info.getNumNotifications()>0)
 		{
 //			Log.e(TAG, "notification set....");
-			ImageView notification = (ImageView)mView.findViewById(R.id.hd_computer_room_info_listentry_notification);
-			notification.setImageResource(R.drawable.ic_pms_list_notification);
+//			ImageView notification = (ImageView)mView.findViewById(R.id.hd_computer_room_info_listentry_notification);
+			notifications.setBackgroundResource(R.drawable.ic_pms_list_notification);
 		}
 		else
 		{
