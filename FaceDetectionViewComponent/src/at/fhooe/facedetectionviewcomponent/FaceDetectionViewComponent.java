@@ -58,7 +58,7 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	 * the last created face detection event. if null, no face detection has
 	 * been done yet.
 	 */
-	private volatile FacesDetectedEvent							mLastFaceDetectedEvent	= null;
+	private volatile FacesDetectedEvent					mLastFaceDetectedEvent	= null;
 
 	// ================================================================================================================
 	// METHODS
@@ -139,7 +139,7 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	 * @param _markFaces
 	 */
 	public void onResume(Context _context, ViewGroup _viewGroup, boolean _markFaces) {
-		onResume(_context, _viewGroup, 2, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, new ProcessImageTrigger() {
+		onResume(_context, _viewGroup, 1, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, new ProcessImageTrigger() {
 			@Override
 			public boolean processNextImage() {
 				return true;
