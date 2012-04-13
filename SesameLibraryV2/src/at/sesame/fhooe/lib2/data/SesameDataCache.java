@@ -9,7 +9,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.util.Log;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.provider.EsmartDataProvider;
@@ -34,6 +37,21 @@ implements ISesameDataProvider
 		semantic_repo,
 		webservices
 	}
+	
+	private BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) 
+		{
+			// TODO Auto-generated method stub
+			boolean connected = !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+			if(!connected)
+			{
+				notifyConnectionLost();
+			}
+		}
+	};
+	
 	/**
 	 * the tag to identify the logger output of this class
 	 */
@@ -129,6 +147,7 @@ implements ISesameDataProvider
 
 	private SesameDataCache(DataSource _source, Context _ctx)
 	{
+//		_ctx.getSystemService(Context.c)
 		mCtx = _ctx;
 		switch(_source)
 		{
@@ -225,6 +244,12 @@ implements ISesameDataProvider
 		stopNotificationUpdates();
 		mController.stopAutoUpdate();
 		Log.e(TAG, "Sesame datacache cleaned up");
+	}
+	
+	public void notifyConnectionLost()
+	{
+		Log.e(TAG, "notified about connection loss");
+		cleanUp();
 	}
 
 	public void init()

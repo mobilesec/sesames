@@ -48,7 +48,7 @@ implements INotificationListener
 {
 	private static final SimpleDateFormat LOG_FILENAME_DATE_FORMAT = new SimpleDateFormat("dd_MM_yy_HH_mm");
 	private static final String TAG = "SesameTabletActivity";
-	private static final long METER_WHEEL_UPDATE_TIMEOUT = 1000;
+	private static final long METER_WHEEL_UPDATE_TIMEOUT = 10000;
 	private static final long FACE_DETECTION_UPDATE_PERIOD = 5000;
 	private static final long LOG_EXPORT_PERIOD = 10000;
 //	private Context mCtx;
@@ -487,16 +487,29 @@ implements INotificationListener
 		@Override
 		public void run() 
 		{
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					updateFaceDetectionInfo();					
+				}
+			});
+		}
+
+		private void updateFaceDetectionInfo() 
+		{
 			if(null!=mFaceViewComponent)
 			{
-				FacesDetectedEvent event = mFaceViewComponent.getLastFaceDetectedEven();
+				FacesDetectedEvent event = mFaceViewComponent.getLastFaceDetectedEvent();
 				if(null==event)
 				{
 					Log.e(TAG, "event was null");
 				}
 				else
 				{
-					Log.e(TAG, event.toString());
+//					Log.e(TAG, "eventNr=" + FacesDetectedEvent.DEBUG_NUMBERING() + ", " + event.toString());
+					Log.e(TAG, "near faces:"+event.getAmountOfNearFaces());
 					SesameLogger.log(EntryType.FACE_DETECTION, TAG, ""+event.getAmountOfNearFaces());
 				}
 				
