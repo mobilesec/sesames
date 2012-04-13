@@ -58,7 +58,7 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	 * the last created face detection event. if null, no face detection has
 	 * been done yet.
 	 */
-	private FacesDetectedEvent							mLastFaceDetectedEvent	= null;
+	private volatile FacesDetectedEvent							mLastFaceDetectedEvent	= null;
 
 	// ================================================================================================================
 	// METHODS
@@ -206,7 +206,7 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	@Override
 	public void update(GenericObservable<FacesDetectedEvent> _o, FacesDetectedEvent _arg) {
 		// cache the facedetectedevent
-		LOGGER.debug("caching event");
+		LOGGER.debug("caching event, faces=" + _arg.getAmountOfFaces() + ", nearfaces=" + _arg.getAmountOfNearFaces());
 		mLastFaceDetectedEvent = _arg;
 	}
 
@@ -218,7 +218,7 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	 *         the returned value is null, no face detection has been finished
 	 *         yet.
 	 */
-	public FacesDetectedEvent getLastFaceDetectedEven() {
+	public FacesDetectedEvent getLastFaceDetectedEvent() {
 		return mLastFaceDetectedEvent;
 	}
 }

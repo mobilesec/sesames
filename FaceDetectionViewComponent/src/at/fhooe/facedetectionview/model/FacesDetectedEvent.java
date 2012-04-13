@@ -2,10 +2,11 @@ package at.fhooe.facedetectionview.model;
 
 import static com.googlecode.javacv.cpp.opencv_core.cvGetSeqElem;
 
-import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -24,6 +25,7 @@ import com.googlecode.javacv.cpp.opencv_core.CvSeq;
  * @version 1
  */
 public class FacesDetectedEvent extends EventObject {
+	private static final long serialVersionUID = 1L;
 
 	/** faces nearer than this treshold are counted as "near", other as "far". */
 	private static final float		NEAR_FACES_DEFAULT_BORDER_CM	= 60.0f;
@@ -31,7 +33,7 @@ public class FacesDetectedEvent extends EventObject {
 	// MEMBERS
 
 	/** map of facelists found for given opencv cascades. */
-	private HashMap<Feature, CvSeq>	mOpenCvFaces					= null;
+	private volatile Map<Feature, CvSeq>	mOpenCvFaces					= null;
 	/** how much the faces have been made smaller during processing */
 	private float					mSubSamplingFactor				= 1;
 	/** for debugging purposes. can be null. */
@@ -40,6 +42,8 @@ public class FacesDetectedEvent extends EventObject {
 	 * the size of the original camera image the faces have been extracted from.
 	 */
 	private Point					mCameraPictureSize				= null;
+	
+//	private volatile static Integer DEBUG_NUMBERING = 0;
 
 	// ================================================================================================================
 	// METHODS
@@ -55,10 +59,26 @@ public class FacesDetectedEvent extends EventObject {
 		}
 		return false;
 	}
+	
+//	//TODO DEBUG
+//	public static int DEBUG_NUMBERING() {
+//		synchronized (DEBUG_NUMBERING) {
+//			return DEBUG_NUMBERING;
+//		}
+//	}
+//	
+//	//TODO DEBUG
+//	public static void DEBUG_NUMBERING_INCREASE() {
+//		synchronized (DEBUG_NUMBERING) {
+//			DEBUG_NUMBERING++;
+//		}
+//	}
 
-	public FacesDetectedEvent(Object _source, HashMap<Feature, CvSeq> _openCvFaces, float _subSamplingFactor,
+	public FacesDetectedEvent(Object _source, Map<Feature, CvSeq> _openCvFaces, float _subSamplingFactor,
 			Bitmap _screenBitmap, Point _cameraPictureSize) {
 		super(_source);
+		//TODO DEBUG
+//		DEBUG_NUMBERING_INCREASE();
 		mOpenCvFaces = _openCvFaces;
 		mSubSamplingFactor = _subSamplingFactor;
 		mScreenBitmap = _screenBitmap;
@@ -84,7 +104,7 @@ public class FacesDetectedEvent extends EventObject {
 	 *         if the list is empty, not faces have been detected.
 	 */
 	public List<Float> getDistanceMetricList() {
-		List<Float> list = new ArrayList<Float>();
+		List<Float> list = new Vector<Float>();
 		for (CvSeq seq : mOpenCvFaces.values()) {
 			int total = seq.total();
 			for (int i = 0; i < total; i++) {
@@ -148,7 +168,7 @@ public class FacesDetectedEvent extends EventObject {
 	/**
 	 * @return {@link #openCvFaces}.
 	 */
-	public HashMap<Feature, CvSeq> getOpenCvFaces() {
+	public Map<Feature, CvSeq> getOpenCvFaces() {
 		return mOpenCvFaces;
 	}
 

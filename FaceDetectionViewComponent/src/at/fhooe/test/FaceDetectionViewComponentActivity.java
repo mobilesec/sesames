@@ -94,7 +94,6 @@ public class FaceDetectionViewComponentActivity extends Activity implements Gene
 	@Override
 	public void update(GenericObservable<FacesDetectedEvent> _arg0, FacesDetectedEvent _arg1) {
 		// update came from faceviewcomponent
-		FacesDetectedEvent e = (FacesDetectedEvent) _arg1;
 		Log.d("FACES", "faceDistances=" + _arg1.getDistanceMetricList());
 		// debug: show camera image
 		BitmapView bitmapView = (BitmapView) findViewById(R.id.bitmapview);

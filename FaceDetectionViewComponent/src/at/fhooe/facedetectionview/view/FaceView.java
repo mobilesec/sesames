@@ -3,9 +3,10 @@ package at.fhooe.facedetectionview.view;
 import static com.googlecode.javacv.cpp.opencv_core.cvGetSeqElem;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +20,12 @@ import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.view.View;
 import at.fhooe.facedetectionview.model.FaceDetector;
+import at.fhooe.facedetectionview.model.FaceDetector.Feature;
 import at.fhooe.facedetectionview.model.FacesDetectedEvent;
 import at.fhooe.facedetectionview.model.ImageNormalizerUtil;
+import at.fhooe.facedetectionview.model.ImageNormalizerUtil.Orientation;
 import at.fhooe.facedetectionview.model.ImageUtil;
 import at.fhooe.facedetectionview.model.ProcessImageTrigger;
-import at.fhooe.facedetectionview.model.FaceDetector.Feature;
-import at.fhooe.facedetectionview.model.ImageNormalizerUtil.Orientation;
 import at.fhooe.mc.genericobserver.GenericObservable;
 import at.fhooe.mc.genericobserver.GenericObserver;
 
@@ -70,7 +71,7 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	/** the face detector we're using to find faces inside the camview */
 	private FaceDetector							mFaceDetector		= null;
 	/** a list of currently found faces. */
-	private HashMap<Feature, CvSeq>					mFaces				= null;
+	private volatile Map<Feature, CvSeq>					mFaces				= null;
 	/** if true, found faces get marked on the screen with rectangles. */
 	private boolean									mMarkFaces			= false;
 	/** checks if the next image should already be processed. */
@@ -186,7 +187,10 @@ public class FaceView extends View implements Camera.PreviewCallback {
 			float scaleX = (float) getWidth() / (float) grayImage.width();
 			float scaleY = (float) getHeight() / (float) grayImage.height();
 			// LOGGER.debug("factor=" + scaleX + "/" + scaleY);
-			for (Feature f : mFaces.keySet()) {
+			final Set<Feature> keySet = mFaces.keySet();
+			final Feature[] features = keySet.toArray(new Feature[keySet.size()]);
+			for (int featNr = 0; featNr < features.length; featNr++) {
+				Feature f = features[featNr];
 				if (mFaces.get(f) != null) {
 					paint.setColor(featureColor(f));
 					int total = mFaces.get(f).total();

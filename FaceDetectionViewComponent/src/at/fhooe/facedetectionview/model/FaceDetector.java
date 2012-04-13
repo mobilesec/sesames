@@ -6,7 +6,8 @@ import static com.googlecode.javacv.cpp.opencv_objdetect.cvHaarDetectObjects;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +16,10 @@ import android.content.Context;
 
 import com.googlecode.javacpp.Loader;
 import com.googlecode.javacv.cpp.opencv_core;
-import com.googlecode.javacv.cpp.opencv_objdetect;
 import com.googlecode.javacv.cpp.opencv_core.CvMemStorage;
 import com.googlecode.javacv.cpp.opencv_core.CvSeq;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
+import com.googlecode.javacv.cpp.opencv_objdetect;
 import com.googlecode.javacv.cpp.opencv_objdetect.CvHaarClassifierCascade;
 
 /**
@@ -47,7 +48,7 @@ public class FaceDetector {
 
 	private static String								mClassifierPrefix	= "/at/fhooe/facedetectionview/cascades/";
 	/** contains the haarcascade files for each haarcascade */
-	private static HashMap<Feature, String>				mClassifierFiles	= new HashMap<Feature, String>();
+	private static Map<Feature, String>				mClassifierFiles	= new Hashtable<Feature, String>();
 	static {
 		mClassifierFiles.put(Feature.FRONTALFACE_DEFAULT, mClassifierPrefix + "haarcascade_frontalface_default.xml");
 		mClassifierFiles.put(Feature.FRONTALFACE_ALT, mClassifierPrefix + "haarcascade_frontalface_alt.xml");
@@ -60,9 +61,9 @@ public class FaceDetector {
 	// MEMBERS
 
 	/** needed for doing facedetection */
-	private HashMap<Feature, CvMemStorage>				mStorages			= new HashMap<Feature, CvMemStorage>();
+	private Map<Feature, CvMemStorage>				mStorages			= new Hashtable<Feature, CvMemStorage>();
 	/** needed for doing facedetection */
-	private HashMap<Feature, CvHaarClassifierCascade>	mClassifiers		= new HashMap<Feature, CvHaarClassifierCascade>();
+	private Map<Feature, CvHaarClassifierCascade>	mClassifiers		= new Hashtable<Feature, CvHaarClassifierCascade>();
 
 	// ================================================================================================================
 	// METHODS
@@ -96,8 +97,8 @@ public class FaceDetector {
 	 * @param _view
 	 * @return
 	 */
-	public HashMap<FaceDetector.Feature, CvSeq> detectFaces(IplImage _grayImage, float _subsamplingFactor) {
-		HashMap<FaceDetector.Feature, CvSeq> facesMap = new HashMap<FaceDetector.Feature, CvSeq>();
+	public Map<FaceDetector.Feature, CvSeq> detectFaces(IplImage _grayImage, float _subsamplingFactor) {
+		Map<FaceDetector.Feature, CvSeq> facesMap = new Hashtable<FaceDetector.Feature, CvSeq>();
 		// for each haarcascade...
 		for (Feature feat : mClassifiers.keySet()) {
 			// do facedetection
