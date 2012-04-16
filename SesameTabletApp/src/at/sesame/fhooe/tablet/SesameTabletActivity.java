@@ -433,7 +433,10 @@ implements INotificationListener
 		Log.i(TAG, "notified about notifications:"+_notifications.size());
 		if(mShowNotifications)
 		{
-			mRoomListFrag.notifyAboutNotifications(_notifications);
+			if(null!=mRoomListFrag)
+			{
+				mRoomListFrag.notifyAboutNotifications(_notifications);				
+			}
 			
 			for(SesameNotification sn:_notifications)
 			{

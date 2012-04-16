@@ -35,6 +35,9 @@ implements Runnable
 	private static final int HOUR_FORMAT_THRESHOLD = 180;
 	private static final int SHORT_INACTIVITY_INTERVAL = 10;
 	private static final int LONG_INACTIVITY_INTERVAL = 30; 
+	
+	private static final int NUM_UPDATES_BEFORE_DIRTY_RESET = 3;
+	
 
 	/**
 	 * enumeration of possible power-off commands
@@ -101,6 +104,10 @@ implements Runnable
 	private int mIdleSince;
 
 	private Context mCtx;
+	
+	private int mNumDirtyUpdates = 0;
+	
+	private boolean mDesiredAlive;
 
 	//	private boolean mConsumerThreadRunning = true;
 	//	
@@ -161,9 +168,15 @@ implements Runnable
 			mHostname = _hostName;
 		}
 		mPms = PMSProvider.getPMS(mBasicAuthName, mBasicAuthPass);
+		setDesiredStatus(_status.getAlive().equals("1")?true:false);
 		setExtendedPMSStatus(_status);
 	}
 
+	private void setDesiredStatus(boolean _alive)
+	{
+		Log.e(TAG, "desired status set to:"+_alive);
+		mDesiredAlive = _alive;
+	}
 	public void setExtendedPMSStatus(ExtendedPMSStatus _status)
 	{
 		if(null==mMac||mMac.isEmpty())
@@ -194,6 +207,17 @@ implements Runnable
 		mOs = OS.valueOf(_status.getOs());
 		mAlive = _status.getAlive().equals("1")?true:false;
 		mValid = true;
+		
+		if(isAlive()!=mDesiredAlive)
+		{
+			mNumDirtyUpdates++;
+		}
+		if(mNumDirtyUpdates>=NUM_UPDATES_BEFORE_DIRTY_RESET)
+		{
+			Log.e(TAG, "dirty flag reset after "+NUM_UPDATES_BEFORE_DIRTY_RESET+" dirty updates");
+			mNumDirtyUpdates = 0;
+			setDesiredStatus(isAlive());
+		}
 //		Log.e(TAG, toString());
 	}
 
@@ -203,6 +227,7 @@ implements Runnable
 	 */
 	public boolean wakeUp()
 	{
+		setDesiredStatus(true);
 		Log.e(TAG, "waking up "+getHostname());
 //		try
 //		{
@@ -228,6 +253,7 @@ implements Runnable
 	 */
 	public boolean powerOff(PowerOffState _state)
 	{
+		setDesiredStatus(false);
 		System.out.println("--------------------------------------------------");
 		System.out.println("controllable device poweroff");
 		if(null==mPms)
@@ -536,6 +562,11 @@ implements Runnable
 		sb.append("\n------------------------");
 
 		return sb.toString();
+	}
+	
+	public boolean isDirty()
+	{
+		return mDesiredAlive != isAlive();
 	}
 
 	public boolean equals(ControllableDevice _cd)

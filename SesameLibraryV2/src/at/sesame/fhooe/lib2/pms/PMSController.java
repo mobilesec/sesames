@@ -163,7 +163,7 @@ implements IPMSDialogActionHandler
 			for(ControllableDevice cd:selDevs)
 			{
 //				ControllableDevice cd = selDevs.get(i);
-				mHelper.markDirty(cd, true);
+//				mHelper.markDirty(cd, true);
 				try {
 				cd.wakeUp();
 //				aipdf.incrementProgressBy(1);
@@ -545,7 +545,7 @@ implements IPMSDialogActionHandler
 			PowerOffState state = (PowerOffState)params[1];
 			for(ControllableDevice cd:devices)
 			{
-				mHelper.markDirty(cd,true);
+//				mHelper.markDirty(cd,true);
 				
 				try 
 				{

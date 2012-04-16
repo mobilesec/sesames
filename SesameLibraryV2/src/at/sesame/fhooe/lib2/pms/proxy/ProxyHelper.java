@@ -97,7 +97,7 @@ public class ProxyHelper
 				@Override
 				public boolean keepAlive(HttpResponse response, HttpContext context) {
 					// TODO Auto-generated method stub
-					return false;
+					return true;
 				}
 			});
 			

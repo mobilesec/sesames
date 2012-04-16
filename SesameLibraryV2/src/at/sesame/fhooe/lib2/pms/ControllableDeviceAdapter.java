@@ -229,7 +229,7 @@ implements OnClickListener, OnCheckedChangeListener
 //						rowView.setBackgroundDrawable(NOT_SELECTED_BG);
 //					}
 				
-					if(!cdle.isDirty())
+					if(!cd.isDirty())
 					{
 //						ImageButton powerView = (ImageButton)v.findViewById(R.id.controllable_device_list_item_powerIconView);
 

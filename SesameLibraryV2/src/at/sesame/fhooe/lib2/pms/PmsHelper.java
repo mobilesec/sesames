@@ -46,7 +46,7 @@ public class PmsHelper
 	//	private ArrayList<IListEntry> mInactiveEntries;
 
 	private HashMap<String, Boolean> mSelectionMap = new HashMap<String, Boolean>();
-	private HashMap<String, Boolean> mDirtyMap = new HashMap<String, Boolean>();
+//	private HashMap<String, Boolean> mDirtyMap = new HashMap<String, Boolean>();
 
 	//	private IPmsUi mUi;
 
@@ -87,7 +87,7 @@ public class PmsHelper
 		mInactiveDeviceControlContainer = _inactiveDeviceControl;
 
 		initializeSelectionMap();
-		initializeDirtyMap();
+//		initializeDirtyMap();
 		//		resetDirtyMap();
 		setSelectedType(SelectedType.none);
 	}
@@ -337,24 +337,24 @@ public class PmsHelper
 		{
 			Log.e(TAG, "selection map was null");
 		}
-		if(null==mDirtyMap)
-		{
-			Log.e(TAG, "dirty map was null");
-		}
+//		if(null==mDirtyMap)
+//		{
+//			Log.e(TAG, "dirty map was null");
+//		}
 		Boolean selected = mSelectionMap.get(cd.getMac());
 		//			Log.i(TAG, "selected:"+selected);
 		//			_cdle.setSelection(selected);
-
-		if(null==mDirtyMap)
-		{
-			Log.e(TAG, "dirty map was null");
-		}
-		Boolean dirty = mDirtyMap.get(cd.getMac());
+//
+//		if(null==mDirtyMap)
+//		{
+//			Log.e(TAG, "dirty map was null");
+//		}
+//		Boolean dirty = mDirtyMap.get(cd.getMac());
 		try
 		{
 			//			Log.i(TAG, "dirty:"+dirty);
 			_cdle.setSelection(selected);
-			_cdle.setDirty(dirty);
+//			_cdle.setDirty(dirty);
 			//			_cdle.setDirty(dirty);		
 			//			return new PmsUiInfo(selected, dirty);
 			return _cdle;
@@ -366,10 +366,10 @@ public class PmsHelper
 			{
 				prefix += "selected";
 			}
-			if(null==dirty)
-			{
-				prefix+=" dirty";
-			}
+//			if(null==dirty)
+//			{
+//				prefix+=" dirty";
+//			}
 			Log.e(TAG, prefix+" failed for:"+_cdle.getControllableDevice().getHostname());
 		}
 		return null;
@@ -570,19 +570,19 @@ public class PmsHelper
 		updateMultipleSelectionWidgets();
 	}
 
-	/**
-	 * marks the passed device as dirty (information currently not consistent ==> progress bar is shown)
-	 * @param _cd the ControllableDevice to mark as dirty
-	 */
-	public void markDirty(final ControllableDevice _cd, boolean _dirty)
-	{
-		//		ControllableDeviceListEntry entry = getListEntryFromDevice(_cd);
-		//		entry.setDirty(true);
-		//		mUi.notifyPMSUpdated();
-		mDirtyMap.put(_cd.getMac(), _dirty);
-		mUpdateListener.notifyPMSUpdated();
-//		Log.e(TAG, "marked dirty:"+_cd.getHostname());
-	}
+//	/**
+//	 * marks the passed device as dirty (information currently not consistent ==> progress bar is shown)
+//	 * @param _cd the ControllableDevice to mark as dirty
+//	 */
+//	public void markDirty(final ControllableDevice _cd, boolean _dirty)
+//	{
+//		//		ControllableDeviceListEntry entry = getListEntryFromDevice(_cd);
+//		//		entry.setDirty(true);
+//		//		mUi.notifyPMSUpdated();
+//		mDirtyMap.put(_cd.getMac(), _dirty);
+//		mUpdateListener.notifyPMSUpdated();
+////		Log.e(TAG, "marked dirty:"+_cd.getHostname());
+//	}
 
 	/**
 	 * shows/hides the containers for actions on multiple selected ControllableDevices
@@ -773,7 +773,7 @@ public class PmsHelper
 	{
 		mDevicesLoaded = true;
 		initializeSelectionMap();
-		initializeDirtyMap();
+//		initializeDirtyMap();
 		setSelectedType(SelectedType.none);
 		mUpdateListener.notifyPMSUpdated();
 		//		mUpdateListener.notifyPMSUpdated();
@@ -789,13 +789,13 @@ public class PmsHelper
 		}
 	}
 
-	public void initializeDirtyMap()
-	{
-		for(ControllableDevice cd:mCache.getDevicesForRoom(mRoomName))
-		{
-			mDirtyMap.put(cd.getMac(), false);
-		}
-	}
+//	public void initializeDirtyMap()
+//	{
+//		for(ControllableDevice cd:mCache.getDevicesForRoom(mRoomName))
+//		{
+//			mDirtyMap.put(cd.getMac(), false);
+//		}
+//	}
 
 	public boolean areDevicesLoaded()
 	{
@@ -819,7 +819,7 @@ public class PmsHelper
 
 	public void notifyPMSUpdated() {
 //		deselectAll();
-		initializeDirtyMap();
+//		initializeDirtyMap();
 		mUpdateListener.notifyPMSUpdated();
 		
 	}
