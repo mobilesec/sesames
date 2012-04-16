@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.opengl.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,11 +65,13 @@ extends ArrayAdapter<ComputerRoomInformation>
 		{
 //			Log.e(TAG, "notification set....");
 //			ImageView notification = (ImageView)mView.findViewById(R.id.hd_computer_room_info_listentry_notification);
-			notifications.setBackgroundResource(R.drawable.ic_pms_list_notification);
+			//notifications.setBackgroundResource(R.drawable.ic_pms_list_notification);
+			notifications.setVisibility(View.VISIBLE);
 		}
 		else
 		{
 //			Log.e(TAG, "notification not set...");
+			notifications.setVisibility(View.INVISIBLE);
 		}
 		
 		return mView;
