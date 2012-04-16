@@ -4,8 +4,8 @@
     <string name="hello">Hello World, SesameLibraryV2Activity!</string>
     <string name="app_name">SesameLibraryV2</string>
     <string name="mainXML_separatorSelectionText">Alle wählen</string>
-    <string name="pms_activeDeviceSeparatorText">Aktiv (</string>
-    <string name="pms_inactiveDeviceSeparatorText">Inaktiv (</string>
+    <string name="pms_activeDeviceSeparatorText">Eingeschalten (</string>
+    <string name="pms_inactiveDeviceSeparatorText">Ausgeschalten (</string>
     <string name="mainXML_sleepAllButton_text">Ruhezustand</string>
     <string name="mainXML_shutdownAllButton_text">Herunterfahren</string>
     <string name="mainXML_wakeUpAllButton_text">Starten</string>
@@ -22,12 +22,12 @@
     <string name="login_dialog_layout_password_label_text">Kennwort</string>
     <string name="login_dialog_login_butt_text">Anmelden</string>
     <string name="MeterWheelFrag_bottom_text">"Verbrauch seit: "</string>
-    <string name="pms_room_list_inactive_prefix">"Inaktive Computer: "</string>
-    <string name="pms_room_list_active_prefix">"Aktive Computer: "</string>
+    <string name="pms_room_list_inactive_prefix">"Ausgeschalten: "</string>
+    <string name="pms_room_list_active_prefix">"Eingeschalten: "</string>
     <string name="global_Room1_name">EDV 1</string>
     <string name="global_Room3_name">EDV 3</string>
     <string name="global_Room6_name">EDV 6</string>
-    <string name="ControllableDevice_idleString_prefix">"Inaktiv seit "</string>
+    <string name="ControllableDevice_idleString_prefix">"Unbenutzt seit "</string>
     <string name="ControllableDevice_minuteString">" Min."</string>
     <string name="controllableDevice_hourString">" Std."</string>
 

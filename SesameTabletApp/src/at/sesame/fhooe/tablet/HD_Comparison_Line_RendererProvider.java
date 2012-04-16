@@ -57,9 +57,9 @@ extends AbstractRendererProvider
 		mRenderer.setLabelsColor(0xffffffff);
 		mRenderer.setMarginsColor(0x00ffffff);
 		mRenderer.setClickEnabled(false);
-		mRenderer.setPanEnabled(true, true);
+		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
-		mRenderer.setZoomEnabled(true, true);
+		mRenderer.setZoomEnabled(false, false);
 		mRenderer.setYTitle("Watt");
 		setTimeLabels();
 	}
