@@ -2,5 +2,6 @@
 <resources>
 
     <color name="notification">#ffdd0000</color>
+    <color name="waiting">#ff0000dd</color>
 
 </resources>

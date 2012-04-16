@@ -182,14 +182,14 @@ implements OnClickListener, OnCheckedChangeListener
 //					vh.CONTROLLABLE_DEV = ((ControllableDeviceListEntry)item).getControllableDevice();
 					
 //				System.out.println("adapter found device:"+cdle.isSelected());
-					if(cdle.isSelected())
-					{
-						rowView = mLi.inflate(R.layout.controllable_device_listitem_selected, null);
-					}
-					else
-					{
+//					if(cdle.isSelected())
+//					{
+//						rowView = mLi.inflate(R.layout.controllable_device_listitem_selected, null);
+//					}
+//					else
+//					{
 						rowView = mLi.inflate(R.layout.controllable_device_listitem_not_selected, null);
-					}
+//					}
 					vh.OS_VIEW = (ImageView)rowView.findViewById(R.id.osIconView);
 					vh.CONTAINER = (FrameLayout)rowView.findViewById(R.id.controllable_device_list_item_placeholder);
 					vh.DIRTY_BAR = (ProgressBar)mLi.inflate(R.layout.dirty_progressbar, null);
@@ -228,9 +228,7 @@ implements OnClickListener, OnCheckedChangeListener
 //					{
 //						rowView.setBackgroundDrawable(NOT_SELECTED_BG);
 //					}
-					
-
-					
+				
 					if(!cdle.isDirty())
 					{
 //						ImageButton powerView = (ImageButton)v.findViewById(R.id.controllable_device_list_item_powerIconView);
