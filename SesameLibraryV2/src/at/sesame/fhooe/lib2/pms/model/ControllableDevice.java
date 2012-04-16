@@ -30,10 +30,11 @@ implements Runnable
 {	
 	private static final String TAG = "ControllableDevice";
 
-	private static final int NOTIFICATION_THRESHOLD = 1;
+	private static final int IDLE_DISPLAY_THRESHOLD = 5;
+	public static final int IDLE_NOTIFICATION_THRESHOLD = 40;
 	private static final int HOUR_FORMAT_THRESHOLD = 180;
 	private static final int SHORT_INACTIVITY_INTERVAL = 10;
-	private static final int LONG_INACTIVITY_INTERVAL = 30;
+	private static final int LONG_INACTIVITY_INTERVAL = 30; 
 
 	/**
 	 * enumeration of possible power-off commands
@@ -463,7 +464,7 @@ implements Runnable
 	public String getIdleString()
 	{
 		int idleMins = getIdleSinceMinutes(); 
-		if(idleMins<NOTIFICATION_THRESHOLD)
+		if(idleMins<IDLE_DISPLAY_THRESHOLD)
 		{
 			return "";
 		}

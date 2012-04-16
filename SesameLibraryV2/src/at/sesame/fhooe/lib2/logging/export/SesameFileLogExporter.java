@@ -203,7 +203,7 @@ implements ILogExporter
 	private static boolean writeArffFile(String _path, String _content)
 	{
 		File f = new File(_path);
-		logAndToast("exporting to:"+f.getAbsolutePath(), false);
+//		logAndToast("exporting to:"+f.getAbsolutePath(), false);
 //		if(!f.exists())
 //		{
 //			boolean created = f.getParentFile().mkdirs();

@@ -2,16 +2,17 @@ package at.sesame.fhooe.lib2.ui;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ public class MeterWheelFragment
 extends Fragment
 {
 	private static final String TAG = "MeterWheelFragment";
+	private static final SimpleDateFormat LAST_MEASUREMENT_FORMAT = new SimpleDateFormat(" (HH:mm)");
 	private Context mCtx;
 //	private static final int NO_WHEEL_DIGITS = 5;
 	private static final long SIMULATION_TIMEOUT = 5000;
@@ -64,6 +66,9 @@ extends Fragment
 	private double mCurMeterValue;
 	
 	private EnergyMeterRenderer mRenderer;
+	
+	private Date mLastUpdate;
+	private TextView mHeaderLabel;
 
 	public MeterWheelFragment()
 	{
@@ -114,9 +119,10 @@ extends Fragment
 			Bundle savedInstanceState) {
 		Log.e(TAG, "onCreateView");
 		View v = inflater.inflate(R.layout.meter_wheel_layout, container, false);
-		TextView header = (TextView)v.findViewById(R.id.meter_wheel_layout_header_text);
-		header.setText(mHeaderText);
-		header.setTextSize(mHeaderTextSize);
+		mHeaderLabel = (TextView)v.findViewById(R.id.meter_wheel_layout_header_text);
+		
+		mHeaderLabel.setText(mHeaderText);
+		mHeaderLabel.setTextSize(mHeaderTextSize);
 		
 		TextView bottom = (TextView)v.findViewById(R.id.meter_wheel_layout_bottom_text);
 		bottom.setText(mBottomText);
@@ -381,6 +387,23 @@ extends Fragment
 	{
 //		Log.e(TAG, "wheel value set to:"+_val);
 		displayWheelValue(_val);
+	}
+	
+	public void setLastMeasurementDate(Date _lastMeasurement)
+	{
+		mLastUpdate = _lastMeasurement;
+		final String headerString = mLastUpdate!=null?mHeaderText+LAST_MEASUREMENT_FORMAT.format(mLastUpdate):mHeaderText;
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			
+			@Override
+			public void run() {
+				if(null!=mHeaderLabel&&null!=headerString)
+				{
+					mHeaderLabel.setText(headerString);					
+				}
+				
+			}
+		});
 	}
 
 	private void startSimulation()

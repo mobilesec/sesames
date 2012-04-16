@@ -528,13 +528,13 @@ implements ISesameDataProvider
 		return mEnergyData.get(_smp);
 	}
 
-	public SesameDataContainer getEnergyReadings(SesameMeasurementPlace _smp, Date _from, Date _to)
+	public SesameDataContainer getEnergyReadings(SesameMeasurementPlace _smp, Date _from, Date _to, boolean _pad)
 	{
 		if(null==_smp)
 		{
 			return null;
 		}
-		return new SesameDataContainer(_smp, SesameDataContainer.filterByDate(mEnergyData.get(_smp).getMeasurements(),_from, _to));
+		return new SesameDataContainer(_smp, SesameDataContainer.filterByDate(mEnergyData.get(_smp).getMeasurements(),_from, _to, _pad));
 	}
 
 	public synchronized SesameMeasurement getLastEnergyReading(SesameMeasurementPlace _smp) throws Exception

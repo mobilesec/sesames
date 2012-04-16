@@ -30,6 +30,7 @@ import at.fhooe.facedetectionview.model.FacesDetectedEvent;
 import at.fhooe.facedetectionviewcomponent.FaceDetectionViewComponent;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
+import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.SesameNotification;
 import at.sesame.fhooe.lib2.logging.SesameLogger;
@@ -51,6 +52,7 @@ implements INotificationListener
 	private static final long METER_WHEEL_UPDATE_TIMEOUT = 10000;
 	private static final long FACE_DETECTION_UPDATE_PERIOD = 5000;
 	private static final long LOG_EXPORT_PERIOD = 10000;
+	private static int mNotificationId;
 //	private Context mCtx;
 	private LayoutInflater mLi;
 //	private FragmentManager mFragMan;
@@ -372,27 +374,33 @@ implements INotificationListener
 
 			try 
 			{
-				double currentAtPlace1 = mDataCache.getLastEnergyReading(mEdv1Place).getVal();
+				SesameMeasurement lastEdv1Measurement = mDataCache.getLastEnergyReading(mEdv1Place);
 				double overallAtPlace1 = mDataCache.getOverallEnergyConsumtion(mEdv1Place);
-//				Log.i(TAG, "place1:"+currentAtPlace1+"/"+overallAtPlace1);
-
-				double currentAtPlace3 = mDataCache.getLastEnergyReading(mEdv3Place).getVal();
+				
+				SesameMeasurement lastEdv3Measurement = mDataCache.getLastEnergyReading(mEdv3Place);
 				double overallAtPlace3 = mDataCache.getOverallEnergyConsumtion(mEdv3Place);
-//				Log.i(TAG, "place3:"+currentAtPlace3+"/"+overallAtPlace3);
-
-				double currentAtPlace6 = mDataCache.getLastEnergyReading(mEdv6Place).getVal();
+				
+				SesameMeasurement lastEdv6Measurement = mDataCache.getLastEnergyReading(mEdv6Place);
 				double overallAtPlace6 = mDataCache.getOverallEnergyConsumtion(mEdv6Place);
-//				Log.i(TAG, "place6:"+currentAtPlace6+"/"+overallAtPlace6);
-
-				//			Log.e(TAG, "MeterWheelUpdate:"+currentAtPlace1+", "+currentAtPlace3+", "+currentAtPlace6);
-				mEdv1Frag.setMeterValue(currentAtPlace1);
+				
+				mEdv1Frag.setLastMeasurementDate(lastEdv1Measurement.getTimeStamp());
+				mEdv1Frag.setMeterValue(lastEdv1Measurement.getVal());
 				mEdv1Frag.setWheelValue(overallAtPlace1);
-
-				mEdv3Frag.setMeterValue(currentAtPlace3);
+				
+				mEdv3Frag.setLastMeasurementDate(lastEdv3Measurement.getTimeStamp());
+				mEdv3Frag.setMeterValue(lastEdv3Measurement.getVal());
 				mEdv3Frag.setWheelValue(overallAtPlace3);
-
-				mEdv6Frag.setMeterValue(currentAtPlace6);
+				
+				mEdv6Frag.setLastMeasurementDate(lastEdv6Measurement.getTimeStamp());
+				mEdv6Frag.setMeterValue(lastEdv6Measurement.getVal());
 				mEdv6Frag.setWheelValue(overallAtPlace6);
+				
+
+//				mEdv3Frag.setMeterValue(currentAtPlace3);
+//				mEdv3Frag.setWheelValue(overallAtPlace3);
+//
+//				mEdv6Frag.setMeterValue(currentAtPlace6);
+//				mEdv6Frag.setWheelValue(overallAtPlace6);
 			} 
 			catch (Exception e) 
 			{
@@ -409,13 +417,14 @@ implements INotificationListener
 //		_text =  "Computer 'EDV1-CLIENT-02' in Raum EDV1 seit 3h inaktiv";
 
 		Intent notificationIntent = new Intent(getApplicationContext(), SesameTabletActivity.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), mNotificationId, notificationIntent, 0);
 		mNotification.tickerText = _text;
 		mNotification.setLatestEventInfo(getApplicationContext(), _title, _text, contentIntent);
 
 
 
-		mNotificationMan.notify(1, mNotification);
+		mNotificationMan.notify(mNotificationId, mNotification);
+		mNotificationId++;
 	}
 
 	@Override
@@ -425,20 +434,21 @@ implements INotificationListener
 		if(mShowNotifications)
 		{
 			mRoomListFrag.notifyAboutNotifications(_notifications);
-//			for(SesameNotification sn:_notifications)
-//			{
-////				if(null==mLastNotifications||!mLastNotifications.contains(sn))
-//				{
+			
+			for(SesameNotification sn:_notifications)
+			{
+//				showNotification(NOTIFICATION_TITLE, sn.toString());			
+//				if(null==mLastNotifications||!mLastNotifications.contains(sn))
+				{
 //					mRoomListFrag.notifyAboutNotifications(sn);
-//					
+					
+				}
+//				else
+//				{
+//					Log.i(TAG, "notification already forwarded, discarded");
 //				}
-////				else
-////				{
-////					Log.i(TAG, "notification already forwarded, discarded");
-////				}
-//			}
+			}
 //			//			mPMSFrag.setShowNotification(true);
-//			showNotification(NOTIFICATION_TITLE, _notifications);			
 		}
 
 	}
@@ -456,7 +466,6 @@ implements INotificationListener
 		stopMeterWheelUpdates();
 		mLam.dispatchDestroy(isFinishing());
 		mDataCache.cleanUp();
-		Log.e(TAG, "onDestroy()");
 		super.onDestroy();
 	}
 
@@ -467,7 +476,6 @@ implements INotificationListener
 		stopFaceDetection();
 		stopMeterWheelUpdates();
 		mLam.dispatchPause(isFinishing());
-		Log.e(TAG, "onPause()");
 		super.onPause();
 	}
 
@@ -477,7 +485,6 @@ implements INotificationListener
 		initializeFaceDetectionComponent();
 		startMeterWheelUpdates();
 		mLam.dispatchResume();
-		Log.e(TAG, "onResume()");
 		super.onResume();
 	}
 

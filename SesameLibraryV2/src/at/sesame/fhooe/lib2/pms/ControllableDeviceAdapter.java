@@ -282,6 +282,10 @@ implements OnClickListener, OnCheckedChangeListener
 
 //					idleLabel.setText(mContext.getString(R.string.ControllableDeviceAdapter_idleLabel_text)+cd.getIdleSince());
 					holder.IDLE_LABEL.setText(cd.getIdleString());
+					if(cd.getIdleSinceMinutes()>=ControllableDevice.IDLE_NOTIFICATION_THRESHOLD)
+					{
+						holder.IDLE_LABEL.setTextColor(Color.RED);
+					}
 					long duration = System.currentTimeMillis()-start;
 //					Log.e(TAG, "view generation took:"+duration+"ms");
 				}

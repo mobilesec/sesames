@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.codehaus.jackson.map.ser.FilterProvider;
+
 import android.util.Log;
 //import at.sesame.fhooe.lib.esmart.model.EsmartDataRow;
 
@@ -107,57 +109,15 @@ public class SesameDataContainer
 		return true;
 	}
 
-	public synchronized static ArrayList<SesameMeasurement> filterByDate(ArrayList<SesameMeasurement> _measurements, Date _from, Date _to)
+	public synchronized static ArrayList<SesameMeasurement> filterByDate(ArrayList<SesameMeasurement> _measurements, Date _from, Date _to, boolean _pad)
 	{
-//		synchronized (this)
+		if(_pad)
 		{
-			ArrayList<SesameMeasurement> res = new ArrayList<SesameMeasurement>();
-//			Log.d(TAG, "num measurments to filter:"+_measurements.size());
-//			Log.d(TAG, "filtering between:"+_from.toString()+" and "+_to.toString());
-			GregorianCalendar cal = new GregorianCalendar();
-			cal.setTimeInMillis(_from.getTime());
-//			new G
-			
-			GregorianCalendar toCal = new GregorianCalendar();
-			toCal.setTimeInMillis(_to.getTime());
-//			toCal.add(Calendar.MINUTE, -1*MEASUREMENT_INTERVAL);
-//			for(SesameMeasurement sm:_measurements)
-//			{
-//				Log.d(TAG, sm.toString());
-//			}
-			int i =0;
-			while(cal.getTime().before(toCal.getTime()))
-			{
-				Integer idx = containsDate(_measurements, cal.getTime());
-				if(null!=idx)
-				{
-					res.add(_measurements.get(idx));
-//					Log.d(TAG, "added:"+_measurements.get(i).toString());
-				}
-				else
-				{
-					SesameMeasurement sm = new SesameMeasurement(cal.getTime(), MEASUREMENT_PADDING_VALUE);
-//					Log.e(TAG, "added padding:"+sm.toString());
-					res.add(sm);
-				}
-				cal.add(Calendar.MINUTE, MEASUREMENT_INTERVAL);
-				i++;
-			}
-//			for(int i = 0;i<_measurements.size();i++)
-//			{
-//				SesameMeasurement sm = _measurements.get(i);
-//				Log.d(TAG, sm.toString());
-//				if(sm.getTimeStamp().after(_from)&&sm.getTimeStamp().before(_to))
-//				{
-////					Log.d(TAG, "added:"+sm.toString());
-//					res.add(sm);
-//				}
-//				else
-//				{
-////					Log.d(TAG, "did not add:"+sm.toString());
-//				}
-//			}
-			return res;
+			return filterPadded(_measurements, _from, _to);
+		}
+		else
+		{
+			return filterNotPadded(_measurements, _from, _to);
 		}
 
 		//		double[] values = getValuesBetweenDates(_from, _to);
@@ -172,6 +132,71 @@ public class SesameDataContainer
 		//		}
 		//		
 		//		return new SesameDataContainer(mPlace, dateList, valueList);
+	}
+	
+	private static ArrayList<SesameMeasurement> filterNotPadded(ArrayList<SesameMeasurement> _measurements, Date _from, Date _to)
+	{
+		ArrayList<SesameMeasurement> res = new ArrayList<SesameMeasurement>();
+		for(SesameMeasurement sm:_measurements)
+		{
+			Date ts = sm.getTimeStamp();
+			if(ts.equals(_from)||ts.after(_from) && ts.before(_to))
+			{
+				res.add(sm);
+			}
+		}
+		return res;
+	}
+	
+	private static ArrayList<SesameMeasurement> filterPadded(ArrayList<SesameMeasurement> _measurements, Date _from, Date _to)
+	{
+		ArrayList<SesameMeasurement> res = new ArrayList<SesameMeasurement>();
+//		Log.d(TAG, "num measurments to filter:"+_measurements.size());
+//		Log.d(TAG, "filtering between:"+_from.toString()+" and "+_to.toString());
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(_from.getTime());
+//		new G
+		
+		GregorianCalendar toCal = new GregorianCalendar();
+		toCal.setTimeInMillis(_to.getTime());
+//		toCal.add(Calendar.MINUTE, -1*MEASUREMENT_INTERVAL);
+//		for(SesameMeasurement sm:_measurements)
+//		{
+//			Log.d(TAG, sm.toString());
+//		}
+		int i =0;
+		while(cal.getTime().before(toCal.getTime()))
+		{
+			Integer idx = containsDate(_measurements, cal.getTime());
+			if(null!=idx)
+			{
+				res.add(_measurements.get(idx));
+//				Log.d(TAG, "added:"+_measurements.get(i).toString());
+			}
+			else
+			{
+				SesameMeasurement sm = new SesameMeasurement(cal.getTime(), MEASUREMENT_PADDING_VALUE);
+//				Log.e(TAG, "added padding:"+sm.toString());
+				res.add(sm);
+			}
+			cal.add(Calendar.MINUTE, MEASUREMENT_INTERVAL);
+			i++;
+		}
+//		for(int i = 0;i<_measurements.size();i++)
+//		{
+//			SesameMeasurement sm = _measurements.get(i);
+//			Log.d(TAG, sm.toString());
+//			if(sm.getTimeStamp().after(_from)&&sm.getTimeStamp().before(_to))
+//			{
+////				Log.d(TAG, "added:"+sm.toString());
+//				res.add(sm);
+//			}
+//			else
+//			{
+////				Log.d(TAG, "did not add:"+sm.toString());
+//			}
+//		}
+		return res;
 	}
 	
 	private synchronized static Integer containsDate(ArrayList<SesameMeasurement> _measurements, Date _d)

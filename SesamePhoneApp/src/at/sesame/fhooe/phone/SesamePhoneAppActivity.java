@@ -238,7 +238,7 @@ implements ISesameDataListener, ILoginListener
 		
 //		Log.e(TAG, "################today Start = "+today.toGMTString());
 //		ArrayList<SesameMeasurement> todayMeasurements = _data.filterByDate(DateHelper.getFirstDateXDaysAgo(38), DateHelper.getFirstDateXDaysAgo(37));
-		ArrayList<SesameMeasurement> todayMeasurements = mDataCache.getEnergyReadings(_smp, DateHelper.getFirstDateXDaysAgo(2), new Date()).getMeasurements();
+		ArrayList<SesameMeasurement> todayMeasurements = mDataCache.getEnergyReadings(_smp, DateHelper.getFirstDateXDaysAgo(2), new Date(), false).getMeasurements();
 		double[] todayData = SesameDataContainer.getValueArray(todayMeasurements);
 //		double[] todayData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
 		

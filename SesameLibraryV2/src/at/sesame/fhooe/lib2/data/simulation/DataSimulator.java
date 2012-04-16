@@ -167,7 +167,7 @@ implements IEnergyDataSource, ITemperatureDataSource, IHumidityDataSource, ILigh
 	@Override
 	public SesameDataContainer getEnergyData(SesameMeasurementPlace _smp, Date _from, Date _to) 
 	{
-		ArrayList<SesameMeasurement> res = SesameDataContainer.filterByDate(mEnergyData.getMeasurements(), _from, _to);
+		ArrayList<SesameMeasurement> res = SesameDataContainer.filterByDate(mEnergyData.getMeasurements(), _from, _to, false);
 //		res.setMeasurementPlace(_smp);
 		return new SesameDataContainer(_smp, res);
 //		return mEnergyData.

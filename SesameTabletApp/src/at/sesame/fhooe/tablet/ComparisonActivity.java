@@ -164,7 +164,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		List<double[]> values = new ArrayList<double[]>();
 		titles.add(mRoomName + getString(R.string.global_current));
 
-		ArrayList<SesameMeasurement> currentMeasurements = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0));
+		ArrayList<SesameMeasurement> currentMeasurements = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0), false);
 		Log.d(TAG, "current:"+Arrays.toString((SesameMeasurement[]) currentMeasurements.toArray(new SesameMeasurement[currentMeasurements.size()])));
 		Date[] currentDates = SesameDataContainer.getTimeStampArray(currentMeasurements);
 		dates.add(currentDates);
@@ -175,7 +175,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		{
 			//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb1_text), new Date(), 100));
 			titles.add(mRoomName + getString(R.string.hd_comparison_day_cb1_text));
-			ArrayList<SesameMeasurement> oneWeekAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(7), DateHelper.getSchoolEndXDaysAgo(7));
+			ArrayList<SesameMeasurement> oneWeekAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(7), DateHelper.getSchoolEndXDaysAgo(7), false);
 			Log.d(TAG, "one week ago:"+Arrays.toString((SesameMeasurement[]) oneWeekAgo.toArray(new SesameMeasurement[oneWeekAgo.size()])));
 			dates.add(currentDates);
 			values.add(SesameDataContainer.getValueArray(oneWeekAgo));
@@ -184,7 +184,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		{
 			//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb2_text), new Date(), 100));
 			titles.add(mRoomName + getString(R.string.hd_comparison_day_cb2_text));
-			ArrayList<SesameMeasurement> twoWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14));
+			ArrayList<SesameMeasurement> twoWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14), false);
 			Log.d(TAG, "two weeks ago:"+Arrays.toString((SesameMeasurement[]) twoWeeksAgo.toArray(new SesameMeasurement[twoWeeksAgo.size()])));
 			dates.add(currentDates);
 			values.add(SesameDataContainer.getValueArray(twoWeeksAgo));
@@ -193,7 +193,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		{
 			//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb3_text), new Date(), 100));
 			titles.add(mRoomName + getString(R.string.hd_comparison_day_cb3_text));
-			ArrayList<SesameMeasurement> threeWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(21), DateHelper.getSchoolEndXDaysAgo(21));
+			ArrayList<SesameMeasurement> threeWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(21), DateHelper.getSchoolEndXDaysAgo(21), false);
 			Log.d(TAG, "three weeks ago:"+Arrays.toString((SesameMeasurement[]) threeWeeksAgo.toArray(new SesameMeasurement[threeWeeksAgo.size()])));
 			dates.add(currentDates);
 			values.add(SesameDataContainer.getValueArray(threeWeeksAgo));
@@ -202,7 +202,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		{
 			//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb4_text), new Date(), 100));
 			titles.add(mRoomName + getString(R.string.hd_comparison_day_cb4_text));
-			ArrayList<SesameMeasurement> fourWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(28), DateHelper.getSchoolEndXDaysAgo(28));
+			ArrayList<SesameMeasurement> fourWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(28), DateHelper.getSchoolEndXDaysAgo(28), false);
 			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) fourWeeksAgo.toArray(new SesameMeasurement[fourWeeksAgo.size()])));
 			dates.add(currentDates);
 			values.add(SesameDataContainer.getValueArray(fourWeeksAgo));
@@ -284,25 +284,25 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		Date saturday = DateHelper.getWeekDayXWeeksAgo(Calendar.SATURDAY, _numWeeksAgo);
 		Date sunday = DateHelper.getWeekDayXWeeksAgo(Calendar.SUNDAY, _numWeeksAgo);
 		
-		ArrayList<SesameMeasurement> mondayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(monday), DateHelper.getDayEnd(monday));
+		ArrayList<SesameMeasurement> mondayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(monday), DateHelper.getDayEnd(monday), true);
 		res[0] = SesameDataContainer.sumValues(mondayMeasurements);
 		
-		ArrayList<SesameMeasurement> tuesdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(tuesday), DateHelper.getDayEnd(tuesday));
+		ArrayList<SesameMeasurement> tuesdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(tuesday), DateHelper.getDayEnd(tuesday), true);
 		res[1] = SesameDataContainer.sumValues(tuesdayMeasurements);
 		
-		ArrayList<SesameMeasurement> wednesdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(wednesday), DateHelper.getDayEnd(wednesday));
+		ArrayList<SesameMeasurement> wednesdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(wednesday), DateHelper.getDayEnd(wednesday), true);
 		res[2] = SesameDataContainer.sumValues(wednesdayMeasurements);
 		
-		ArrayList<SesameMeasurement> thursdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(thursday), DateHelper.getDayEnd(thursday));
+		ArrayList<SesameMeasurement> thursdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(thursday), DateHelper.getDayEnd(thursday), true);
 		res[3] = SesameDataContainer.sumValues(thursdayMeasurements);
 		
-		ArrayList<SesameMeasurement> fridayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(friday), DateHelper.getDayEnd(friday));
+		ArrayList<SesameMeasurement> fridayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(friday), DateHelper.getDayEnd(friday), true);
 		res[4] = SesameDataContainer.sumValues(fridayMeasurements);
 		
-		ArrayList<SesameMeasurement> saturdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(saturday), DateHelper.getDayEnd(saturday));
+		ArrayList<SesameMeasurement> saturdayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(saturday), DateHelper.getDayEnd(saturday), true);
 		res[5] = SesameDataContainer.sumValues(saturdayMeasurements);
 		
-		ArrayList<SesameMeasurement> sundayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(sunday), DateHelper.getDayEnd(sunday));
+		ArrayList<SesameMeasurement> sundayMeasurements = SesameDataContainer.filterByDate(_data.getMeasurements(), DateHelper.getDayStart(sunday), DateHelper.getDayEnd(sunday), true);
 		res[6] = SesameDataContainer.sumValues(sundayMeasurements);
 		
 		return res;
