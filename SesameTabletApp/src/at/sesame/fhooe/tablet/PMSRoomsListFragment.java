@@ -61,9 +61,9 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		mCtx = _ctx;
 
 		mUiHandler = _uiHandler;
-		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 0, 0));
-		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 0, 0));
-		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 0, 0));
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 0, 0, false));
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 0, 0, false));
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 0, 0, false));
 		//		mInfos = createDummyInfos();
 		mFragMan = _fm;
 		//		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
@@ -105,6 +105,15 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		final int[] activeInactive1 = getActiveAndInactiveDevCount(mEdv1Hosts);
 		final int[] activeInactive3 = getActiveAndInactiveDevCount(mEdv3Hosts);
 		final int[] activeInactive6 = getActiveAndInactiveDevCount(mEdv6Hosts);
+		
+		final boolean dirty1 = containsDirtyDevices(mEdv1Hosts);
+		final boolean dirty3 = containsDirtyDevices(mEdv3Hosts);
+		final boolean dirty6 = containsDirtyDevices(mEdv6Hosts);
+		
+		final int num1Notifications = getNumNotifications(mEdv1Hosts);
+		final int num3Notifications = getNumNotifications(mEdv3Hosts);
+		final int num6Notifications = getNumNotifications(mEdv6Hosts);
+		
 		mUiHandler.post(new Runnable() 
 		{	
 			@Override
@@ -114,9 +123,9 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 				if(mInfos.size()!=3)
 				{
 //					Log.i(TAG, "size of list not 3 ==> creating new");
-					ComputerRoomInformation cri1 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), activeInactive1[1], activeInactive1[0]);
-					ComputerRoomInformation cri3 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), activeInactive3[1], activeInactive3[0]);
-					ComputerRoomInformation cri6 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), activeInactive6[1], activeInactive6[0]);
+					ComputerRoomInformation cri1 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), activeInactive1[1], activeInactive1[0], false);
+					ComputerRoomInformation cri3 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), activeInactive3[1], activeInactive3[0], false);
+					ComputerRoomInformation cri6 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), activeInactive6[1], activeInactive6[0], false);
 					mInfos.add(cri1);
 					mInfos.add(cri3);
 					mInfos.add(cri6);
@@ -127,19 +136,59 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 					ComputerRoomInformation cri1 = mInfos.get(0);
 					cri1.setNumActiveComputers(activeInactive1[0]);
 					cri1.setNumIdleComputers(activeInactive1[1]);
+					cri1.setDirty(dirty1);
+					cri1.setNumNotifications(num1Notifications);
 
 					ComputerRoomInformation cri3 = mInfos.get(1);
 					cri3.setNumActiveComputers(activeInactive3[0]);
 					cri3.setNumIdleComputers(activeInactive3[1]);
+					cri3.setDirty(dirty3);
+					cri3.setNumNotifications(num3Notifications);
 
 					ComputerRoomInformation cri6 = mInfos.get(2);
 					cri6.setNumActiveComputers(activeInactive6[0]);
 					cri6.setNumIdleComputers(activeInactive6[1]);
+					cri6.setDirty(dirty6);
+					cri6.setNumNotifications(num6Notifications);
 				}
 				mAdapter.notifyDataSetChanged();
 			}
 		});
 
+	}
+	
+	private int getNumNotifications(HostList _hosts)
+	{
+		int res = 0;
+	
+		for(String mac:_hosts.getMacList())
+		{
+			ControllableDevice cd = SesameDataCache.getInstance(null).getDeviceByMac(mac);
+			if(null!=cd)
+			{
+				if(cd.getIdleSinceMinutes()>=ControllableDevice.IDLE_NOTIFICATION_THRESHOLD)
+				{
+					res++;
+				}
+			}
+		}
+		return res;
+	}
+	
+	private boolean containsDirtyDevices(HostList _hosts)
+	{
+		for(String mac:_hosts.getMacList())
+		{
+			ControllableDevice cd = SesameDataCache.getInstance(null).getDeviceByMac(mac);
+			if(null!=cd)
+			{
+				if(cd.isDirty())
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private int[]getActiveAndInactiveDevCount(HostList _hosts)
@@ -170,9 +219,9 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	private ArrayList<ComputerRoomInformation> createDummyInfos()
 	{
 		ArrayList<ComputerRoomInformation> infos = new ArrayList<ComputerRoomInformation>();
-		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 10, 5));
-		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 5, 12));
-		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 6, 15));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 10, 5, false));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 5, 12, false));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 6, 15, false));
 		return infos;
 	}
 
@@ -330,7 +379,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	{
 		stopUpdates();
 		mUpdateTimer = new Timer();
-		mUpdateTimer.scheduleAtFixedRate(new UpdateTask(), 0, UPDATE_PERIOD);
+		mUpdateTimer.schedule(new UpdateTask(), 0, UPDATE_PERIOD);
 	}
 
 	@Override
