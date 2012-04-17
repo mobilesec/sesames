@@ -207,7 +207,7 @@ implements INotificationListener
 		intent = new Intent().setClass(getApplicationContext(), RealTimeActivity.class);
 
 		// Initialize a TabSpec for each tab and add it to the TabHost
-		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("Echtzeit")
+		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("Heute")
 				.setContent(intent);
 		th.addTab(spec);
 		intent = new Intent().setClass(getApplicationContext(), ComparisonActivity.class);

@@ -1,5 +1,6 @@
 package at.sesame.fhooe.lib2.util;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -177,6 +178,19 @@ public class DateHelper
 			gc.add(Calendar.DAY_OF_WEEK, 1);
 		}
 		return null;
+	}
+	
+	public static Date[] getDatesBetweenDates(Date _start, Date _end, int _fieldToIncrement, int _incrementationStep)
+	{
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.setTimeInMillis(_start.getTime());
+		ArrayList<Date> res  = new ArrayList<Date>();
+		while(gc.getTimeInMillis()<=_end.getTime())
+		{
+			res.add(gc.getTime());
+			gc.add(_fieldToIncrement, _incrementationStep);
+		}
+		return (Date[]) res.toArray(new Date[res.size()]);
 	}
 	
 	

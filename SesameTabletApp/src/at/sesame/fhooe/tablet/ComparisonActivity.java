@@ -158,7 +158,9 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		//		SesameDataContainer edv3Readings = mDataCache.getEnergyReadings(mEdv3Place, DateHelper.getFirstDateToday(), new Date());
 		//		SesameDataContainer edv6Readings = mDataCache.getEnergyReadings(mEdv6Place, DateHelper.getFirstDateToday(), new Date());
 		SesameDataContainer readings = mDataCache.getAllEnergyReadings(mCurRoom);
+//		Log.e(TAG, "data to filter:"+Arrays.toString((SesameMeasurement[]) readings.getMeasurements().toArray(new SesameMeasurement[readings.getMeasurements().size()])));
 		//		XYMultipleSeriesDataset data = new XYMultipleSeriesDataset();
+		Date[] todayDates = DateHelper.getDatesBetweenDates(DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0), Calendar.MINUTE, 15);
 		ArrayList<String> titles = new ArrayList<String>();
 		List<Date[]> dates = new ArrayList<Date[]>();
 		List<double[]> values = new ArrayList<double[]>();
@@ -176,8 +178,9 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 			//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb1_text), new Date(), 100));
 			titles.add(mRoomName + getString(R.string.hd_comparison_day_cb1_text));
 			ArrayList<SesameMeasurement> oneWeekAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(7), DateHelper.getSchoolEndXDaysAgo(7), false);
-			Log.d(TAG, "one week ago:"+Arrays.toString((SesameMeasurement[]) oneWeekAgo.toArray(new SesameMeasurement[oneWeekAgo.size()])));
-			dates.add(currentDates);
+//			Log.d(TAG, "one week ago:"+Arrays.toString((SesameMeasurement[]) oneWeekAgo.toArray(new SesameMeasurement[oneWeekAgo.size()])));
+//			dates.add(moveToCurrentDay(SesameDataContainer.getTimeStampArray(oneWeekAgo)));
+			dates.add(todayDates);
 			values.add(SesameDataContainer.getValueArray(oneWeekAgo));
 		}
 		if(mSelectedFilters[1])
@@ -185,8 +188,9 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 			//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb2_text), new Date(), 100));
 			titles.add(mRoomName + getString(R.string.hd_comparison_day_cb2_text));
 			ArrayList<SesameMeasurement> twoWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(14), DateHelper.getSchoolEndXDaysAgo(14), false);
-			Log.d(TAG, "two weeks ago:"+Arrays.toString((SesameMeasurement[]) twoWeeksAgo.toArray(new SesameMeasurement[twoWeeksAgo.size()])));
-			dates.add(currentDates);
+//			Log.d(TAG, "two weeks ago:"+Arrays.toString((SesameMeasurement[]) twoWeeksAgo.toArray(new SesameMeasurement[twoWeeksAgo.size()])));
+//			dates.add(moveToCurrentDay(SesameDataContainer.getTimeStampArray(twoWeeksAgo)));
+			dates.add(todayDates);
 			values.add(SesameDataContainer.getValueArray(twoWeeksAgo));
 		}
 		if(mSelectedFilters[2])
@@ -194,8 +198,9 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 			//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb3_text), new Date(), 100));
 			titles.add(mRoomName + getString(R.string.hd_comparison_day_cb3_text));
 			ArrayList<SesameMeasurement> threeWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(21), DateHelper.getSchoolEndXDaysAgo(21), false);
-			Log.d(TAG, "three weeks ago:"+Arrays.toString((SesameMeasurement[]) threeWeeksAgo.toArray(new SesameMeasurement[threeWeeksAgo.size()])));
-			dates.add(currentDates);
+//			Log.d(TAG, "three weeks ago:"+Arrays.toString((SesameMeasurement[]) threeWeeksAgo.toArray(new SesameMeasurement[threeWeeksAgo.size()])));
+//			dates.add(moveToCurrentDay(SesameDataContainer.getTimeStampArray(threeWeeksAgo)));
+			dates.add(todayDates);
 			values.add(SesameDataContainer.getValueArray(threeWeeksAgo));
 		}
 		if(mSelectedFilters[3])
@@ -203,8 +208,9 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 			//			data.addSeries(DataSimulator.createTimeSeries(mRoomName + mCtx.getString(R.string.hd_comparison_day_cb4_text), new Date(), 100));
 			titles.add(mRoomName + getString(R.string.hd_comparison_day_cb4_text));
 			ArrayList<SesameMeasurement> fourWeeksAgo = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(28), DateHelper.getSchoolEndXDaysAgo(28), false);
-			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) fourWeeksAgo.toArray(new SesameMeasurement[fourWeeksAgo.size()])));
-			dates.add(currentDates);
+//			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) fourWeeksAgo.toArray(new SesameMeasurement[fourWeeksAgo.size()])));
+//			dates.add(moveToCurrentDay(SesameDataContainer.getTimeStampArray(fourWeeksAgo)));
+			dates.add(todayDates);
 			values.add(SesameDataContainer.getValueArray(fourWeeksAgo));
 		}
 		try {
@@ -218,6 +224,22 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private Date[] moveToCurrentDay(Date[] _dates)
+	{
+		Date now = new Date();
+		int nowDay = now.getDate();
+		int nowMonth = now.getMonth();
+		int nowYear = now.getYear();
+		for(int i = 0;i<_dates.length;i++)
+		{
+			Date d = _dates[i];
+			d.setDate(nowDay);
+			d.setMonth(nowMonth);
+			d.setYear(nowYear);
+		}
+		return _dates;
 	}
 
 	private void updateWeekChart()

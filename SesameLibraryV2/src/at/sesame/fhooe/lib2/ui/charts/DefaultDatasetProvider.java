@@ -122,6 +122,19 @@ extends AbstractDatasetProvider
 				throw new DatasetCreationException("length of titles and x values does not match...");
 			}
 		}
+		if(xValues.size()!= yValues.size())
+		{
+			throw new DatasetCreationException("x- and y- sizes dont match (x="+xValues.size()+", y="+yValues.size()+")");
+		}
+		for(int i = 0;i<xValues.size();i++)
+		{
+			int xLen = xValues.get(i).length;
+			int yLen = yValues.get(i).length;
+			if(xLen!=yLen)
+			{
+				throw new DatasetCreationException("lenghts of x- and y-values don't match (x="+xLen+", y="+yValues.get(i).length+").");							
+			}
+		}
 		mDataset = new XYMultipleSeriesDataset();
 //		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		int length = titles.length;
