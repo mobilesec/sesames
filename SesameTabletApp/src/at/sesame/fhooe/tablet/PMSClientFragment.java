@@ -8,6 +8,7 @@
 package at.sesame.fhooe.tablet;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,6 +37,7 @@ import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceAdapter;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
+import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntryComparator;
 import at.sesame.fhooe.lib2.pms.IListEntry;
 import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
 import at.sesame.fhooe.lib2.pms.PmsHelper;
@@ -1406,6 +1408,10 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 					mPMSHelper.setUiInfo(cdle);
 					inactiveEntries.add(cdle);
 				}
+				ControllableDeviceListEntryComparator cdlec = new ControllableDeviceListEntryComparator();
+				Collections.sort(activeEntries, cdlec);
+				Collections.sort(inactiveEntries, cdlec);
+				
 				if(!isAdded())
 				{
 					return;
@@ -1475,7 +1481,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 
 	@Override
 	public void notifyPMSUpdated() {
-//		startSingleUiUpdate();
+		startSingleUiUpdate();
 		
 	}
 

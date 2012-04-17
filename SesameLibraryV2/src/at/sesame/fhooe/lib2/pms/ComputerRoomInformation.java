@@ -6,12 +6,14 @@ public class ComputerRoomInformation
 	private int mNumIdleComputers;
 	private int mNumActiveComputers;
 	private int mNumNotifications;
+	private boolean mDirty;
 	
-	public ComputerRoomInformation(String _name, int _numIdleComputers,int _numActiveComputers) 
+	public ComputerRoomInformation(String _name, int _numIdleComputers,int _numActiveComputers, boolean _dirty) 
 	{
 		this.mRoomName = _name;
 		this.mNumIdleComputers = _numIdleComputers;
 		this.mNumActiveComputers = _numActiveComputers;
+		this.mDirty = _dirty;
 	}
 
 	public int getNumIdleComputers() {
@@ -35,14 +37,22 @@ public class ComputerRoomInformation
 		return mRoomName;
 	}
 	
-	
-
 	public int getNumNotifications() {
 		return mNumNotifications;
 	}
 
 	public void setNumNotifications(int _numNotifications) {
 		this.mNumNotifications = _numNotifications;
+	}
+	
+	public boolean isDirty()
+	{
+		return mDirty;
+	}
+	
+	public void setDirty(boolean _dirty)
+	{
+		mDirty = _dirty;
 	}
 
 	@Override
