@@ -13,6 +13,8 @@ import java.util.concurrent.ExecutionException;
 import android.content.Context;
 import android.util.Log;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.logging.SesameLogger;
+import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
 import at.sesame.fhooe.lib2.pms.PMSProvider;
 import at.sesame.fhooe.lib2.pms.asynctasks.ExtendedStatusTask;
 import at.sesame.fhooe.lib2.pms.asynctasks.PowerOffTask;
@@ -174,7 +176,7 @@ implements Runnable
 
 	private void setDesiredStatus(boolean _alive)
 	{
-		Log.e(TAG, "desired status set to:"+_alive);
+//		Log.e(TAG, "desired status set to:"+_alive);
 		mDesiredAlive = _alive;
 	}
 	public void setExtendedPMSStatus(ExtendedPMSStatus _status)
@@ -227,6 +229,7 @@ implements Runnable
 	 */
 	public boolean wakeUp()
 	{
+		SesameLogger.log(EntryType.PMS, getMac(), "wake-up");
 		setDesiredStatus(true);
 		Log.e(TAG, "waking up "+getHostname());
 //		try
@@ -253,9 +256,8 @@ implements Runnable
 	 */
 	public boolean powerOff(PowerOffState _state)
 	{
+		SesameLogger.log(EntryType.PMS, getMac(), _state.name());
 		setDesiredStatus(false);
-		System.out.println("--------------------------------------------------");
-		System.out.println("controllable device poweroff");
 		if(null==mPms)
 		{
 			System.out.println("pms was null");

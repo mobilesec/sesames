@@ -73,9 +73,9 @@ implements ISesameDataListener, ILoginListener
 	
 	private String mUser = "peter";
 	private String mPass = "thatpeter";
-	private SesameMeasurementPlace mEdv1Place;
-	private SesameMeasurementPlace mEdv3Place;
-	private SesameMeasurementPlace mEdv6Place;
+//	private SesameMeasurementPlace mEdv1Place;
+//	private SesameMeasurementPlace mEdv3Place;
+//	private SesameMeasurementPlace mEdv6Place;
 	static
 	{
 		Log.e(TAG, "static log");
@@ -118,10 +118,10 @@ implements ISesameDataListener, ILoginListener
 			mRendererProvider = new PhoneChartRendererProvider(getApplicationContext(), false);
 //	        new LoginDialogFragment().show(getSupportFragmentManager(), this);
 	        mDataCache = SesameDataCache.getInstance(SesamePhoneAppActivity.this);
-	        ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-			mEdv1Place = places.get(0);
-			mEdv3Place = places.get(1);
-			mEdv6Place = places.get(2);
+//	        ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
+//			mEdv1Place = places.get(0);
+//			mEdv3Place = places.get(1);
+//			mEdv6Place = places.get(2);
 	        mEnergyMeterRoom1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room1_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
 			mEnergyMeterRoom3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room3_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
 			mEnergyMeterRoom6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, getString(R.string.global_Room6_name), 50.0f, 0.0f, WHEEL_TEXT_SIZE, 6, false, new EnergyMeterRenderer());
@@ -409,14 +409,14 @@ implements ISesameDataListener, ILoginListener
 //			}
 //			Log.d(TAG, "updating edv1 from "+smp.getName());
 			try {
-				updateChartFragment(mEdv1Chart, mEdv1Place);
-				updateMeterWheelFragment(mEnergyMeterRoom1Frag, mDataCache.getLastEnergyReading(mEdv1Place).getVal(), mDataCache.getOverallEnergyConsumtion(mEdv1Place));
+				updateChartFragment(mEdv1Chart, SesameDataCache.EDV1_PLACE);
+				updateMeterWheelFragment(mEnergyMeterRoom1Frag, mDataCache.getLastEnergyReading(SesameDataCache.EDV1_PLACE).getVal(), mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV1_PLACE));
 				
-				updateChartFragment(mEdv3Chart, mEdv3Place);
-				updateMeterWheelFragment(mEnergyMeterRoom3Frag, mDataCache.getLastEnergyReading(mEdv3Place).getVal(), mDataCache.getOverallEnergyConsumtion(mEdv3Place));
+				updateChartFragment(mEdv3Chart, SesameDataCache.EDV3_PLACE);
+				updateMeterWheelFragment(mEnergyMeterRoom3Frag, mDataCache.getLastEnergyReading(SesameDataCache.EDV3_PLACE).getVal(), mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV3_PLACE));
 				
-				updateChartFragment(mEdv6Chart,mEdv6Place);
-				updateMeterWheelFragment(mEnergyMeterRoom6Frag, mDataCache.getLastEnergyReading(mEdv6Place).getVal(), mDataCache.getOverallEnergyConsumtion(mEdv6Place));
+				updateChartFragment(mEdv6Chart,SesameDataCache.EDV6_PLACE);
+				updateMeterWheelFragment(mEnergyMeterRoom6Frag, mDataCache.getLastEnergyReading(SesameDataCache.EDV6_PLACE).getVal(), mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV6_PLACE));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

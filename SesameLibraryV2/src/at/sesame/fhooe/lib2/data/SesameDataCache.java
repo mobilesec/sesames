@@ -111,9 +111,9 @@ implements ISesameDataProvider
 
 	private static PMSController mController;
 
-	//	public SesameMeasurementPlace EDV1_PLACE;
-	//	public SesameMeasurementPlace EDV3_PLACE;
-	//	public SesameMeasurementPlace EDV6_PLACE;
+		public static SesameMeasurementPlace EDV1_PLACE;
+		public static SesameMeasurementPlace EDV3_PLACE;
+		public static SesameMeasurementPlace EDV6_PLACE;
 
 	//	private static ArrayList<EsmartMeasurementPlace> mEsmartMeasurementPlaces = new ArrayList<EsmartMeasurementPlace>();
 
@@ -130,12 +130,12 @@ implements ISesameDataProvider
 	private static SesameDataCache mInstance;
 
 	private Timer mEnergyUpdateTimer;
-	private static final long ENERGY_DATA_UPDATE_INTERVAL = 20000; //every 10 minutes
+	private static final long ENERGY_DATA_UPDATE_INTERVAL = 20000; //every 20 seconds
 
 
 	private Timer mNotificationUpdateTimer;
 
-	private static final long NOTIFICATION_UPDATE_INTERVAL = 5000;//every 20 seconds
+	private static final long NOTIFICATION_UPDATE_INTERVAL = 20000;//every 20 seconds
 
 	private Context mCtx;
 
@@ -370,10 +370,27 @@ implements ISesameDataProvider
 		mTemperatureMeasurementPlaces = mTemperatureDataSource.getTemperatureMeasurementPlaces();
 		mHumidityMeasurementPlaces = mHumidityDataSource.getHumidityMeasurementPlaces();
 		mLightMeasurementPlaces = mLightDataSource.getLightMeasurementPlaces();
-		Collections.sort(mEnergyMeasurementPlaces, new SesameMeasurementPlaceComparator());
-		for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+		switch(mDataSource)
 		{
-			Log.i(TAG, smp.toString());
+		case mock:
+			EDV1_PLACE = mEnergyMeasurementPlaces.get(0);
+			EDV3_PLACE = mEnergyMeasurementPlaces.get(1);
+			EDV6_PLACE = mEnergyMeasurementPlaces.get(2);
+			break;
+		case webservices:
+			break;
+		case semantic_repo:
+			Collections.sort(mEnergyMeasurementPlaces, new SesameMeasurementPlaceComparator());
+			
+			EDV1_PLACE = mEnergyMeasurementPlaces.get(4);
+			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
+			EDV6_PLACE = mEnergyMeasurementPlaces.get(5);
+			
+			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+			{
+				Log.i(TAG, smp.toString());
+			}
+			break;
 		}
 		resetAllUpdateTables();
 	}

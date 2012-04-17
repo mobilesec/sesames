@@ -86,9 +86,9 @@ implements INotificationListener
 
 	private Handler mUiHandler = new Handler();
 	
-	private SesameMeasurementPlace mEdv1Place;
-	private SesameMeasurementPlace mEdv3Place;
-	private SesameMeasurementPlace mEdv6Place;
+//	private SesameMeasurementPlace mEdv1Place;
+//	private SesameMeasurementPlace mEdv3Place;
+//	private SesameMeasurementPlace mEdv6Place;
 	
 	private ArrayList<SesameNotification> mLastNotifications;
 	private FaceDetectionViewComponent mFaceViewComponent = new FaceDetectionViewComponent();
@@ -136,14 +136,14 @@ implements INotificationListener
 			mDataCache.registerNotificationListener(SesameTabletActivity.this);
 			mDataCache.startEnergyDataUpdates();
 			mDataCache.startNotificationUpdates();
-			ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-			mEdv1Place = places.get(4);
-			mEdv3Place = places.get(3);
-			mEdv6Place = places.get(5);
+//			ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
+//			mEdv1Place = places.get(4);
+//			mEdv3Place = places.get(3);
+//			mEdv6Place = places.get(5);
 			
-			Log.e(TAG, "EDV1:"+mEdv1Place.toString());
-			Log.e(TAG, "EDV3:"+mEdv3Place.toString());
-			Log.e(TAG, "EDV6:"+mEdv6Place.toString());
+//			Log.e(TAG, "EDV1:"+mEdv1Place.toString());
+//			Log.e(TAG, "EDV3:"+mEdv3Place.toString());
+//			Log.e(TAG, "EDV6:"+mEdv6Place.toString());
 
 			initializeNotification();
 			initializeFragments();
@@ -374,14 +374,14 @@ implements INotificationListener
 
 			try 
 			{
-				SesameMeasurement lastEdv1Measurement = mDataCache.getLastEnergyReading(mEdv1Place);
-				double overallAtPlace1 = mDataCache.getOverallEnergyConsumtion(mEdv1Place);
+				SesameMeasurement lastEdv1Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV1_PLACE);
+				double overallAtPlace1 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV1_PLACE);
 				
-				SesameMeasurement lastEdv3Measurement = mDataCache.getLastEnergyReading(mEdv3Place);
-				double overallAtPlace3 = mDataCache.getOverallEnergyConsumtion(mEdv3Place);
+				SesameMeasurement lastEdv3Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV3_PLACE);
+				double overallAtPlace3 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV3_PLACE);
 				
-				SesameMeasurement lastEdv6Measurement = mDataCache.getLastEnergyReading(mEdv6Place);
-				double overallAtPlace6 = mDataCache.getOverallEnergyConsumtion(mEdv6Place);
+				SesameMeasurement lastEdv6Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV6_PLACE);
+				double overallAtPlace6 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV6_PLACE);
 				
 				mEdv1Frag.setLastMeasurementDate(lastEdv1Measurement.getTimeStamp());
 				mEdv1Frag.setMeterValue(lastEdv1Measurement.getVal());
@@ -519,7 +519,7 @@ implements INotificationListener
 				else
 				{
 //					Log.e(TAG, "eventNr=" + FacesDetectedEvent.DEBUG_NUMBERING() + ", " + event.toString());
-					Log.e(TAG, "near faces:"+event.getAmountOfNearFaces());
+//					Log.e(TAG, "near faces:"+event.getAmountOfNearFaces());
 					SesameLogger.log(EntryType.FACE_DETECTION, TAG, ""+event.getAmountOfNearFaces());
 				}
 				

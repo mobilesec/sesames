@@ -101,7 +101,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 
 	private void updateComputerRoomInfos()
 	{
-		Log.i(TAG, "updating computer room infos");
+//		Log.i(TAG, "updating computer room infos");
 		final int[] activeInactive1 = getActiveAndInactiveDevCount(mEdv1Hosts);
 		final int[] activeInactive3 = getActiveAndInactiveDevCount(mEdv3Hosts);
 		final int[] activeInactive6 = getActiveAndInactiveDevCount(mEdv6Hosts);
@@ -110,10 +110,10 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 			@Override
 			public void run() 
 			{
-				Log.i(TAG, "onUiThread");
+//				Log.i(TAG, "onUiThread");
 				if(mInfos.size()!=3)
 				{
-					Log.i(TAG, "size of list not 3 ==> creating new");
+//					Log.i(TAG, "size of list not 3 ==> creating new");
 					ComputerRoomInformation cri1 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), activeInactive1[1], activeInactive1[0]);
 					ComputerRoomInformation cri3 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), activeInactive3[1], activeInactive3[0]);
 					ComputerRoomInformation cri6 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), activeInactive6[1], activeInactive6[0]);
@@ -123,7 +123,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 				}
 				else
 				{
-					Log.i(TAG, "size of list == 3 ==> updating values");
+//					Log.i(TAG, "size of list == 3 ==> updating values");
 					ComputerRoomInformation cri1 = mInfos.get(0);
 					cri1.setNumActiveComputers(activeInactive1[0]);
 					cri1.setNumIdleComputers(activeInactive1[1]);
@@ -260,16 +260,16 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		{
 			//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
 			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room1_name), new EDV1Hosts()).show(mFragMan, null);
-			if(mShowNotification)
-			{
-				Log.e(TAG, "notification");
-				//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_notification).show(getFragmentManager(), roomName);
-			}
-			else
-			{
-				Log.e(TAG, "no notification");
-				//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_no_notification).show(getFragmentManager(), roomName);
-			}
+//			if(mShowNotification)
+//			{
+//				Log.e(TAG, "notification");
+//				//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_notification).show(getFragmentManager(), roomName);
+//			}
+//			else
+//			{
+//				Log.e(TAG, "no notification");
+//				//				new PMS_MockDetailFragment(R.drawable.ic_edv1_pms_detail_no_notification).show(getFragmentManager(), roomName);
+//			}
 			//			new PMS_DetailFragment(mCtx, new EDV1Hosts()).show(getFragmentManager(), roomName);
 			//			tag = RoomName.EDV_1.name();
 			//			ft.remove(fm.findFragmentByTag(tag));
@@ -304,7 +304,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	@Override
 	public void notifyPMSUpdated() 
 	{
-		Log.i(TAG, "notified about pms update");
+//		Log.i(TAG, "notified about pms update");
 		updateComputerRoomInfos();	
 	}
 	

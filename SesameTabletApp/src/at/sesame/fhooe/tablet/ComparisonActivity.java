@@ -56,9 +56,9 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 
 	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
 	
-	private SesameMeasurementPlace mEdv1Place;
-	private SesameMeasurementPlace mEdv3Place;
-	private SesameMeasurementPlace mEdv6Place;
+//	private SesameMeasurementPlace mEdv1Place;
+//	private SesameMeasurementPlace mEdv3Place;
+//	private SesameMeasurementPlace mEdv6Place;
 
 	private ComparisonSelectionFragment mCsf;
 	@Override
@@ -70,11 +70,11 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		mChartRendererProvider = new HD_Comparison_Line_RendererProvider(getApplicationContext(), true);
 		mBarRendererProvider = new HD_Comparison_Bar_RendererProvider(getApplicationContext());
 
-		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-		mEdv1Place = places.get(4);
-		mEdv3Place = places.get(3);
-		mEdv6Place = places.get(5);
-		mCurRoom = mEdv1Place;
+//		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
+//		mEdv1Place = places.get(4);
+//		mEdv3Place = places.get(3);
+//		mEdv6Place = places.get(5);
+		mCurRoom = SesameDataCache.EDV1_PLACE;
 		initializeView();
 	}
 	
@@ -366,15 +366,15 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		mRoomName = _room;
 		if(_room.equals(getString(R.string.global_Room1_name)))
 		{
-			mCurRoom = mEdv1Place;
+			mCurRoom = SesameDataCache.EDV1_PLACE;
 		}
 		else if(_room.equals(getString(R.string.global_Room3_name)))
 		{
-			mCurRoom = mEdv3Place;
+			mCurRoom = SesameDataCache.EDV3_PLACE;
 		}
 		else if(_room.equals(getString(R.string.global_Room6_name)))
 		{
-			mCurRoom = mEdv6Place;
+			mCurRoom = SesameDataCache.EDV6_PLACE;
 		}
 		updateChart();
 		//		initializeView();

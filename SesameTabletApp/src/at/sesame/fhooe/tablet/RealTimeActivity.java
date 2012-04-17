@@ -40,18 +40,18 @@ extends Activity implements OnCheckedChangeListener
 	private HD_chart_RendererProvider mRendererProvider;
 	
 	private FrameLayout mChartFrame;
-	private SesameMeasurementPlace mEdv1Place;
-	private SesameMeasurementPlace mEdv3Place;
-	private SesameMeasurementPlace mEdv6Place;
+//	private SesameMeasurementPlace mEdv1Place;
+//	private SesameMeasurementPlace mEdv3Place;
+//	private SesameMeasurementPlace mEdv6Place;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-		mEdv1Place = places.get(4);
-		mEdv3Place = places.get(3);
-		mEdv6Place = places.get(5);
+//		ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
+//		mEdv1Place = places.get(4);
+//		mEdv3Place = places.get(3);
+//		mEdv6Place = places.get(5);
 		initializeView();
 	}
 	
@@ -129,7 +129,7 @@ extends Activity implements OnCheckedChangeListener
 		{
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room1_name), yesterday.getTime(), 100));
 			titles.add(getString(R.string.global_Room1_name));
-			SesameDataContainer edv1Raw = mDataCache.getAllEnergyReadings(mEdv1Place);
+			SesameDataContainer edv1Raw = mDataCache.getAllEnergyReadings(SesameDataCache.EDV1_PLACE);
 			if(null==edv1Raw)
 			{
 				Log.e(TAG, "edv1Raw was null");
@@ -143,7 +143,7 @@ extends Activity implements OnCheckedChangeListener
 		{
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room3_name), yesterday.getTime(), 100));
 			titles.add(getString(R.string.global_Room3_name));
-			SesameDataContainer edv3Raw = mDataCache.getAllEnergyReadings(mEdv3Place);
+			SesameDataContainer edv3Raw = mDataCache.getAllEnergyReadings(SesameDataCache.EDV3_PLACE);
 			ArrayList<SesameMeasurement> edv3 = SesameDataContainer.filterByDate(edv3Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0), false);
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
 			dates.add(SesameDataContainer.getTimeStampArray(edv3));
@@ -153,7 +153,7 @@ extends Activity implements OnCheckedChangeListener
 		{
 //			data.addSeries(DataSimulator.createTimeSeries(mCtx.getString(R.string.global_Room6_name), yesterday.getTime(), 100));
 			titles.add(getString(R.string.global_Room6_name));
-			SesameDataContainer edv6Raw = mDataCache.getAllEnergyReadings(mEdv6Place);
+			SesameDataContainer edv6Raw = mDataCache.getAllEnergyReadings(SesameDataCache.EDV6_PLACE);
 			ArrayList<SesameMeasurement> edv6 = SesameDataContainer.filterByDate(edv6Raw.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0), false);
 //			Log.d(TAG, "four weeks ago:"+Arrays.toString((SesameMeasurement[]) edv1.toArray(new SesameMeasurement[edv1.size()])));
 			dates.add(SesameDataContainer.getTimeStampArray(edv6));
