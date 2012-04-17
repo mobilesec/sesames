@@ -71,7 +71,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	private static final String ACTIVE_CB_TAG = "active";
 	private static final String INACTIVE_CB_TAG = "inactive";
 
-	private static final long UI_UPDATE_PERIOD = 5000;
+	private static final long UI_UPDATE_PERIOD = 10000;
 
 	private Timer mUiUpdateTimer = new Timer();
 
@@ -212,7 +212,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 		mUiHandler = _handler;
 		mTitle = _title;
 		//		mNetworkingDialog = new PMSNetworkingInProgressDialogFragment(_ctx);
-		ErrorForwarder.getInstance().register(this);
+//		ErrorForwarder.getInstance().register(this);
 		
 		//		queryControllableDevicesKDF();
 		//		queryControllableDevicesTest(50);
@@ -1421,16 +1421,16 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 						mInactiveDevIndicatorLabel.setText(getString(R.string.pms_inactiveDeviceSeparatorText)+inactiveDevs.size()+")");
 
 
-						mActiveAdapter.setNotifyOnChange(false);
+//						mActiveAdapter.setNotifyOnChange(false);
 						mActiveAdapter.clear();
-						mActiveAdapter.setNotifyOnChange(true);
+//						mActiveAdapter.setNotifyOnChange(true);
 						mActiveAdapter.addAll(activeEntries);
 //						//		mActiveListEntries.add(new SeparatorListEntry(mCtx, ListType.active, activeDevs.size()));
 //
 						
-						mInactiveAdapter.setNotifyOnChange(false);
+//						mInactiveAdapter.setNotifyOnChange(false);
 						mInactiveAdapter.clear();
-						mInactiveAdapter.setNotifyOnChange(true);
+//						mInactiveAdapter.setNotifyOnChange(true);
 						mInactiveAdapter.addAll(inactiveEntries);
 //						//		mInactiveListEntries.add(new SeparatorListEntry(mCtx, ListType.inactive, inactiveDevs.size()));
 //
@@ -1440,7 +1440,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 //						mActiveAdapter.notifyDataSetChanged();
 //						mInactiveAdapter.notifyDataSetChanged();
 						long duration = System.currentTimeMillis()-start;
-						Log.i(TAG, "updating ui done, adapter notified, closing dialog"+duration+"ms");
+						Log.i(TAG, "updating ui done, adapter notified"+duration+"ms");
 //						PMSDialogFactory.dismissCurrentDialog();
 					}
 				});
@@ -1475,7 +1475,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 
 	@Override
 	public void notifyPMSUpdated() {
-		startSingleUiUpdate();
+//		startSingleUiUpdate();
 		
 	}
 
