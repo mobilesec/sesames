@@ -624,7 +624,7 @@ implements ISesameDataProvider
 			{
 				overall += energyData.getMeasurements().get(i).getVal();
 			}
-			return overall;			
+			return overall/4000; //sum of all measurements (every 15 min) division by 4==> 15 min->1 h, division by 1000==>Wh->kWh			
 		}
 	}
 

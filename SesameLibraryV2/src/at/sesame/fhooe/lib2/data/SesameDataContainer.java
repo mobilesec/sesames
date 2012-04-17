@@ -140,7 +140,7 @@ public class SesameDataContainer
 		for(SesameMeasurement sm:_measurements)
 		{
 			Date ts = sm.getTimeStamp();
-			if(ts.equals(_from)||ts.after(_from) && ts.before(_to))
+			if(ts.equals(_from)||ts.after(_from) && ts.before(_to)||ts.equals(_to))
 			{
 				res.add(sm);
 			}

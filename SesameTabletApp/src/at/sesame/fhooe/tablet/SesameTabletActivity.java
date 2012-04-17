@@ -91,7 +91,7 @@ implements INotificationListener
 //	private SesameMeasurementPlace mEdv6Place;
 	
 	private ArrayList<SesameNotification> mLastNotifications;
-	private FaceDetectionViewComponent mFaceViewComponent = new FaceDetectionViewComponent();
+//	private FaceDetectionViewComponent mFaceViewComponent = new FaceDetectionViewComponent();
 	
 	private Timer mFaceDetectionTimer;
 
@@ -188,9 +188,9 @@ implements INotificationListener
 		
 		if(null!=mFaceContainer)
 		{
-			mFaceViewComponent.onPause();
-		  // CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
-		  mFaceViewComponent.onResume(this, mFaceContainer, true);
+//			mFaceViewComponent.onPause();
+//		  // CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
+//		  mFaceViewComponent.onResume(this, mFaceContainer, true);
 		  startFaceDetection();
 		}
 	}
@@ -207,7 +207,7 @@ implements INotificationListener
 		intent = new Intent().setClass(getApplicationContext(), RealTimeActivity.class);
 
 		// Initialize a TabSpec for each tab and add it to the TabHost
-		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("Echtzeit")
+		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("Heute")
 				.setContent(intent);
 		th.addTab(spec);
 		intent = new Intent().setClass(getApplicationContext(), ComparisonActivity.class);
@@ -435,7 +435,7 @@ implements INotificationListener
 		{
 			if(null!=mRoomListFrag)
 			{
-				mRoomListFrag.notifyAboutNotifications(_notifications);				
+//				mRoomListFrag.notifyAboutNotifications(_notifications);				
 			}
 			
 			for(SesameNotification sn:_notifications)
@@ -475,7 +475,7 @@ implements INotificationListener
 	@Override
 	public void onPause() 
 	{
-		mFaceViewComponent.onPause();
+//		mFaceViewComponent.onPause();
 		stopFaceDetection();
 		stopMeterWheelUpdates();
 		mLam.dispatchPause(isFinishing());
@@ -497,36 +497,36 @@ implements INotificationListener
 		@Override
 		public void run() 
 		{
+//					updateFaceDetectionInfo();					
 //			runOnUiThread(new Runnable() {
 //				
 //				@Override
 //				public void run() {
 //					// TODO Auto-generated method stub
-//					updateFaceDetectionInfo();					
 //				}
 //			});
 		}
 
-		private void updateFaceDetectionInfo() 
-		{
-			if(null!=mFaceViewComponent)
-			{
-				FacesDetectedEvent event = mFaceViewComponent.getLastFaceDetectedEvent();
-				if(null==event)
-				{
-					Log.e(TAG, "event was null");
-				}
-				else
-				{
-//					Log.e(TAG, "eventNr=" + FacesDetectedEvent.DEBUG_NUMBERING() + ", " + event.toString());
+//		private void updateFaceDetectionInfo() 
+//		{
+//			if(null!=mFaceViewComponent)
+//			{
+//				FacesDetectedEvent event = mFaceViewComponent.getLastFaceDetectedEvent();
+//				if(null==event)
+//				{
+//					Log.e(TAG, "event was null");
+//				}
+//				else
+//				{
+////					Log.e(TAG, "eventNr=" + FacesDetectedEvent.DEBUG_NUMBERING() + ", " + event.toString());
 //					Log.e(TAG, "near faces:"+event.getAmountOfNearFaces());
-					SesameLogger.log(EntryType.FACE_DETECTION, TAG, ""+event.getAmountOfNearFaces());
-				}
-				
-//				Log.e(TAG, "" + event);
-//				System.out.println(event);
-			}
-		}	
+//					SesameLogger.log(EntryType.FACE_DETECTION, TAG, ""+event.getAmountOfNearFaces());
+//				}
+//				
+////				Log.e(TAG, "" + event);
+////				System.out.println(event);
+//			}
+//		}	
 	}
 
 }
