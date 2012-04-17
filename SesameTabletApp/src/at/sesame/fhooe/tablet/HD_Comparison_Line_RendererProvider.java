@@ -21,6 +21,23 @@ extends AbstractRendererProvider
 	{
 		super(_ctx, _createFixedLabels);
 	}
+	
+	private int getIndexForTitle(String title) {
+		if (title.contains(mCtx.getString(R.string.global_current))) {
+			return 0;
+		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb1_text))) {
+			return 1;
+		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb2_text))) {
+			return 2;
+		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb3_text))) {
+			return 3;
+		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb4_text))) {
+			return 4;
+		} else {
+			return -1;
+		}	
+	}
+	
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();
@@ -29,25 +46,18 @@ extends AbstractRendererProvider
 		xysr.setLineWidth(3.0f);
 		xysr.setFillBelowLine(true);
 		xysr.setFillBelowLineColor(applyAlphaForColor(mFillColorAlpha, color));
+		xysr.setPointStyle(getHistoricalPointStyle(getIndexForTitle(arg0.getTitle())));
 		return xysr;
 	}
 
 	private int getColorForSeries(XYSeries _series) {
 		String title = _series.getTitle();
 		int color = getColorForRoom(title);
-		if (title.contains(mCtx.getString(R.string.global_current))) {
-			return color;
-		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb1_text))) {
-			return getHistoricalColor(color, 1);
-		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb2_text))) {
-			return getHistoricalColor(color, 2);
-		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb3_text))) {
-			return getHistoricalColor(color, 3);
-		} else if (title.contains(mCtx.getString(R.string.hd_comparison_day_cb4_text))) {
-			return getHistoricalColor(color, 4);
-		} else {
-			return Color.GRAY;
-		}	
+		//if (title.contains(mCtx.getString(R.string.global_current))) {
+		//	return color;
+		//} else {
+			return getHistoricalColor(color, getIndexForTitle(title));
+		//}
 	}
 
 	@Override

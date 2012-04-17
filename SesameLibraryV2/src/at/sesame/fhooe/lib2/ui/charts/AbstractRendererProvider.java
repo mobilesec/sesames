@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.achartengine.chart.PointStyle;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
@@ -13,7 +14,6 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
-import android.util.Log;
 import at.sesame.fhooe.lib2.Constants;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
@@ -181,9 +181,31 @@ implements IRendererProvider
 	}
 	
 	/**
+	 * Get point style for historical charts.
+	 * @param steps
+	 * @return PointStyle
+	 */
+	public PointStyle getHistoricalPointStyle(int steps) {
+		switch (steps) {
+		case 0:
+			return PointStyle.CIRCLE;
+		case 1:
+			return PointStyle.DIAMOND;
+		case 2:
+			return PointStyle.SQUARE;
+		case 3:
+			return PointStyle.TRIANGLE;
+		case 4:
+			return PointStyle.X;
+		default:
+			return PointStyle.X;
+		}
+	}
+	
+	/**
 	 * Get color for a specific room.
 	 * @param room
-	 * @return
+	 * @return Color
 	 */
 	public int getColorForRoom(String room) {
 		if (room.contains(mCtx.getString(R.string.global_Room1_name))) {
@@ -194,6 +216,23 @@ implements IRendererProvider
 			return Constants.COLOR_EDV6;
 		} else {
 			return Color.GRAY;
+		}
+	}
+	
+	/**
+	 * Get point style for a specific room.
+	 * @param room
+	 * @return PointStyle
+	 */
+	public PointStyle getPointStyleForRoom(String room) {
+		if (room.contains(mCtx.getString(R.string.global_Room1_name))) {
+			return PointStyle.CIRCLE;
+		} else if (room.contains(mCtx.getString(R.string.global_Room3_name))) {
+			return PointStyle.DIAMOND;
+		} else if (room.contains(mCtx.getString(R.string.global_Room6_name))) {
+			return PointStyle.SQUARE;
+		} else {
+			return PointStyle.X;
 		}
 	}
 
