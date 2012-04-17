@@ -137,7 +137,7 @@ implements OnClickListener, OnCheckedChangeListener
 	@Override
 	public View getView(int _pos, View _convertView, ViewGroup _parent)
 	{
-//		Log.e(TAG, "getView "+_pos);
+		Log.e(TAG, "getView "+_pos);
 		View rowView = _convertView;
 		if(null==mDevs||(mDevs.size()-1)<_pos)
 		{

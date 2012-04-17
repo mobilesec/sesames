@@ -10,8 +10,8 @@ import android.util.Log;
 public class DateHelper 
 {
 	private static final String TAG = "DateHelper";
-	private static final int SCHOOL_START_HOUR = 8;
-	private static final int SCHOOL_END_HOUR = 18;
+	private static final int SCHOOL_START_HOUR = 7;
+	private static final int SCHOOL_END_HOUR = 19;
 	
 	public static String convertMStoReadableString(double _millis, boolean _addMillis)
 	{
