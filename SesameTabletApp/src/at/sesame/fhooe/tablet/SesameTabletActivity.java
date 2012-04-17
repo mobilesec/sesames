@@ -497,14 +497,14 @@ implements INotificationListener
 		@Override
 		public void run() 
 		{
-			runOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					updateFaceDetectionInfo();					
-				}
-			});
+//			runOnUiThread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					// TODO Auto-generated method stub
+//					updateFaceDetectionInfo();					
+//				}
+//			});
 		}
 
 		private void updateFaceDetectionInfo() 
