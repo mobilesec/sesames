@@ -71,7 +71,7 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	/** the face detector we're using to find faces inside the camview */
 	private FaceDetector							mFaceDetector		= null;
 	/** a list of currently found faces. */
-	private volatile Map<Feature, CvSeq>					mFaces				= null;
+	private volatile Map<Feature, CvSeq>			mFaces				= null;
 	/** if true, found faces get marked on the screen with rectangles. */
 	private boolean									mMarkFaces			= false;
 	/** checks if the next image should already be processed. */
@@ -156,6 +156,11 @@ public class FaceView extends View implements Camera.PreviewCallback {
 			// mFaces.get(Feature.FRONTALFACE_ALT2).total() + " faces.");
 			// inform listener
 			FacesDetectedEvent e = new FacesDetectedEvent(this, mFaces, mSubsamplingFactor, null, new Point(width, height));
+			// bugfix: access to opencv-memory is denied when calling from false
+			// threads
+			// cache needed data therefore
+			e.cacheData();
+			e.setUseCachedData(true);
 			// e.setScreenBitmap(ImageUtil.createBitmapOutOf1ChannelIplImage(grayImage));
 			mObservable.notifyObservers(e);
 			// gui update
@@ -197,7 +202,9 @@ public class FaceView extends View implements Camera.PreviewCallback {
 					for (int i = 0; i < total; i++) {
 						CvRect r = new CvRect(cvGetSeqElem(mFaces.get(f), i));
 						int x = r.x(), y = r.y(), w = r.width(), h = r.height();
-						LOGGER.debug("face=" + x + "/" + y + ", " + w + "/" + h);
+						// LOGGER.debug("face=" + x + "/" + y + ", " + w +
+						// "/" +
+						// h);
 						canvas.drawRect(x * scaleX, y * scaleY, (x + w) * scaleX, (y + h) * scaleY, paint);
 					}
 				}

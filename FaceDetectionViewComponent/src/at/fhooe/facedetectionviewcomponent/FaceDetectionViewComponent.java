@@ -206,7 +206,8 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	@Override
 	public void update(GenericObservable<FacesDetectedEvent> _o, FacesDetectedEvent _arg) {
 		// cache the facedetectedevent
-		LOGGER.debug("caching event, faces=" + _arg.getAmountOfFaces() + ", nearfaces=" + _arg.getAmountOfNearFaces());
+		// LOGGER.debug("caching event, #faces=" + _arg.getAmountOfNearFaces() +
+		// ", faces=" + _arg);
 		mLastFaceDetectedEvent = _arg;
 	}
 

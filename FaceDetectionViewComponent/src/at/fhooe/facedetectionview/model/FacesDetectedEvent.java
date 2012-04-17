@@ -25,60 +25,39 @@ import com.googlecode.javacv.cpp.opencv_core.CvSeq;
  * @version 1
  */
 public class FacesDetectedEvent extends EventObject {
-	private static final long serialVersionUID = 1L;
+	private static final long				serialVersionUID				= 1L;
 
 	/** faces nearer than this treshold are counted as "near", other as "far". */
-	private static final float		NEAR_FACES_DEFAULT_BORDER_CM	= 60.0f;
+	private static final float				NEAR_FACES_DEFAULT_BORDER_CM	= 60.0f;
 	// ================================================================================================================
 	// MEMBERS
 
 	/** map of facelists found for given opencv cascades. */
 	private volatile Map<Feature, CvSeq>	mOpenCvFaces					= null;
 	/** how much the faces have been made smaller during processing */
-	private float					mSubSamplingFactor				= 1;
+	private float							mSubSamplingFactor				= 1;
 	/** for debugging purposes. can be null. */
-	private Bitmap					mScreenBitmap					= null;
+	private Bitmap							mScreenBitmap					= null;
 	/**
 	 * the size of the original camera image the faces have been extracted from.
 	 */
-	private Point					mCameraPictureSize				= null;
-	
-//	private volatile static Integer DEBUG_NUMBERING = 0;
+	private Point							mCameraPictureSize				= null;
+	/**
+	 * true: data accessed via getter/setters is cached data. false: data
+	 * accessed via getter/setters will be calculated each time new. resolves
+	 * javacv-multithreading problem (access to opencv-memory is denied when
+	 * calling from wrong thread).
+	 */
+	private boolean							mUseCachedData					= false;
+	/** cached distance metric list from {@link #getDistanceMetricList()}. */
+	private List<Float>						mCachedDistanceMetricList		= null;
 
 	// ================================================================================================================
 	// METHODS
 
-	/**
-	 * @return true if at least 1 face has been found.
-	 */
-	public boolean areFacesFound() {
-		for (CvSeq l : mOpenCvFaces.values()) {
-			if (l.total() > 0) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-//	//TODO DEBUG
-//	public static int DEBUG_NUMBERING() {
-//		synchronized (DEBUG_NUMBERING) {
-//			return DEBUG_NUMBERING;
-//		}
-//	}
-//	
-//	//TODO DEBUG
-//	public static void DEBUG_NUMBERING_INCREASE() {
-//		synchronized (DEBUG_NUMBERING) {
-//			DEBUG_NUMBERING++;
-//		}
-//	}
-
-	public FacesDetectedEvent(Object _source, Map<Feature, CvSeq> _openCvFaces, float _subSamplingFactor,
-			Bitmap _screenBitmap, Point _cameraPictureSize) {
+	public FacesDetectedEvent(Object _source, Map<Feature, CvSeq> _openCvFaces, float _subSamplingFactor, Bitmap _screenBitmap,
+			Point _cameraPictureSize) {
 		super(_source);
-		//TODO DEBUG
-//		DEBUG_NUMBERING_INCREASE();
 		mOpenCvFaces = _openCvFaces;
 		mSubSamplingFactor = _subSamplingFactor;
 		mScreenBitmap = _screenBitmap;
@@ -86,14 +65,24 @@ public class FacesDetectedEvent extends EventObject {
 	}
 
 	/**
+	 * Caches data from opencv memory to the event now.
+	 */
+	public void cacheData() {
+		mCachedDistanceMetricList = getDistanceMetricList();
+	}
+
+	/**
+	 * @return true if at least 1 face has been found.
+	 */
+	public boolean areFacesFound() {
+		return getAmountOfFaces() != 0;
+	}
+
+	/**
 	 * @return the amount of total found faces.
 	 */
 	public int getAmountOfFaces() {
-		int amount = 0;
-		for (CvSeq l : mOpenCvFaces.values()) {
-			amount += l.total();
-		}
-		return amount;
+		return getDistanceMetricList().size();
 	}
 
 	/**
@@ -105,6 +94,12 @@ public class FacesDetectedEvent extends EventObject {
 	 */
 	public List<Float> getDistanceMetricList() {
 		List<Float> list = new Vector<Float>();
+		if (mUseCachedData) {
+			if (mCachedDistanceMetricList == null) {
+				throw new RuntimeException("mCachedDistanceMetricList not initialized via cacheData().");
+			}
+			return mCachedDistanceMetricList;
+		}
 		for (CvSeq seq : mOpenCvFaces.values()) {
 			int total = seq.total();
 			for (int i = 0; i < total; i++) {
@@ -209,4 +204,39 @@ public class FacesDetectedEvent extends EventObject {
 	public void setScreenBitmap(Bitmap _screenBitmap) {
 		mScreenBitmap = _screenBitmap;
 	}
+
+	/**
+	 * @return {@link #cachedDistanceMetricList}.
+	 */
+	public List<Float> getCachedDistanceMetricList() {
+		return mCachedDistanceMetricList;
+	}
+
+	/**
+	 * @param _cachedDistanceMetricList
+	 *            sets {@link #cachedDistanceMetricList} to
+	 *            _cachedDistanceMetricList.
+	 */
+	public void setCachedDistanceMetricList(List<Float> _cachedDistanceMetricList) {
+		mCachedDistanceMetricList = _cachedDistanceMetricList;
+	}
+
+	/**
+	 * @return {@link #useCachedData}.
+	 */
+	public boolean isUseCachedData() {
+		return mUseCachedData;
+	}
+
+	/**
+	 * Before setting to true, you should call {@link #cacheData()} - otherwise
+	 * you are going to work with uninitialized cached data.
+	 * 
+	 * @param _useCachedData
+	 *            sets {@link #useCachedData} to _useCachedData.
+	 */
+	public void setUseCachedData(boolean _useCachedData) {
+		mUseCachedData = _useCachedData;
+	}
+
 }

@@ -46,7 +46,7 @@ public class FaceDetector {
 	// ================================================================================================================
 	// STATIC REFERENCE TO HAARCASCADE CLASSIFIER FILES
 
-	private static String								mClassifierPrefix	= "/at/fhooe/facedetectionview/cascades/";
+	private static String							mClassifierPrefix	= "/at/fhooe/facedetectionview/cascades/";
 	/** contains the haarcascade files for each haarcascade */
 	private static Map<Feature, String>				mClassifierFiles	= new Hashtable<Feature, String>();
 	static {
@@ -104,6 +104,7 @@ public class FaceDetector {
 			// do facedetection
 			CvSeq faces = cvHaarDetectObjects(_grayImage, mClassifiers.get(feat), mStorages.get(feat), 1.1, 3,
 					CV_HAAR_DO_CANNY_PRUNING);
+			faces = new CvSeq(faces);
 			facesMap.put(feat, faces);
 			opencv_core.cvClearMemStorage(mStorages.get(feat));
 		}
