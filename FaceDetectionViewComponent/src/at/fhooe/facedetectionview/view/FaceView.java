@@ -4,8 +4,6 @@ import static com.googlecode.javacv.cpp.opencv_core.cvGetSeqElem;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -41,7 +39,7 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
  * @version 1
  */
 public class FaceView extends View implements Camera.PreviewCallback {
-	private static final Logger						LOGGER				= LoggerFactory.getLogger(FaceView.class);
+	private static final Logger						LOGGER						= LoggerFactory.getLogger(FaceView.class);
 
 	// ================================================================================================================
 	// MEMBERS
@@ -49,7 +47,7 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	/**
 	 * factor by which {@link #grayImage} is smaller than the real camera image.
 	 */
-	private int										mSubsamplingFactor	= 4;
+	private int										mSubsamplingFactor			= 4;
 	/**
 	 * this image gets used for finding faces in it. it reduces the needed
 	 * processing power as it is {@link #mSubsamplingFactor} times smaller than
@@ -60,35 +58,69 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	 * gives updates about the least recently found faces. the parameter
 	 * <code>_data</code> is an instance of {@link FacesDetectedEvent}.
 	 */
-	private GenericObservable<FacesDetectedEvent>	mObservable			= new GenericObservable<FacesDetectedEvent>() {
-																			@Override
-																			public void notifyObservers(FacesDetectedEvent _arg) {
-																				setChanged();
-																				super.notifyObservers(_arg);
-																			}
-																		};
-
+	private GenericObservable<FacesDetectedEvent>	mFaceDetectionObservable	= new GenericObservable<FacesDetectedEvent>() {
+																					@Override
+																					public void notifyObservers(
+																							FacesDetectedEvent _arg) {
+																						setChanged();
+																						super.notifyObservers(_arg);
+																					}
+																				};
+	//
+	// /**
+	// * gives updates about the least recently found faces. the parameter
+	// * <code>_data</code> is an instance of {@link FacesDetectedEvent}.
+	// */
+	// private GenericObservable<YuvImageEvent> mYuvImageObservable = new
+	// GenericObservable<YuvImageEvent>() {
+	// @Override
+	// public void notifyObservers(YuvImageEvent _arg) {
+	// setChanged();
+	// super.notifyObservers(_arg);
+	// }
+	// };
+	//
+	// /**
+	// * if true, face detection is done and their resulst are distributed via
+	// * {@link #mFaceDetectionObservable}. if false, the ram yuv-images are
+	// * distributed instead via {@link #mYuvImageObservable}.
+	// */
+	// private boolean mDoFaceDetection = true;
 	/** the face detector we're using to find faces inside the camview */
-	private FaceDetector							mFaceDetector		= null;
+	private FaceDetector							mFaceDetector				= null;
 	/** a list of currently found faces. */
-	private volatile Map<Feature, CvSeq>			mFaces				= null;
+	private volatile Map<Feature, CvSeq>			mFaces						= null;
 	/** if true, found faces get marked on the screen with rectangles. */
-	private boolean									mMarkFaces			= false;
+	private boolean									mMarkFaces					= false;
 	/** checks if the next image should already be processed. */
-	private ProcessImageTrigger						mTrigger			= null;
+	private ProcessImageTrigger						mTrigger					= null;
 	/** the current device orientation */
-	private Orientation								mOrientation		= Orientation.Landscape;
+	private Orientation								mOrientation				= Orientation.Landscape;
+	/** async face detection thread */
+	private Thread									mFaceDetectionThread		= null;
 
 	// ================================================================================================================
 	// CONSTRUCTORS
 
+	/**
+	 * @param context
+	 * @param _subsamplingFactor
+	 * @param haarcascadeFeatures
+	 * @param _trigger
+	 * @param _doFaceDetection
+	 *            see {@link #mDoFaceDetection}.
+	 * @param _markFaces
+	 *            see {@link #mMarkFaces}
+	 * @throws IOException
+	 */
 	public FaceView(Context context, int _subsamplingFactor, Feature[] haarcascadeFeatures, ProcessImageTrigger _trigger,
-			boolean _markFaces) throws IOException {
+			boolean _doFaceDetection, boolean _markFaces) throws IOException {
 		super(context);
 		mFaceDetector = new FaceDetector(context, haarcascadeFeatures);
 		mSubsamplingFactor = _subsamplingFactor;
 		mTrigger = _trigger;
 		mMarkFaces = _markFaces;
+		// mDoFaceDetection = _doFaceDetection;
 	}
 
 	public FaceView(Context _context, AttributeSet _attrs, int _defStyle) {
@@ -124,48 +156,74 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	 * @param width
 	 * @param height
 	 */
-	protected void processImage(byte[] data, int width, int height) {
-		if (mTrigger.processNextImage()) {
-			// create iplimage out of yuv image
-			grayImage = ImageUtil.writeGrayPartOfYuvTo1ChannelIplimageHorizontal(grayImage, data, width, height,
-					mSubsamplingFactor);
-			// normalize image due to device orientation and cam mirroring
-			grayImage = ImageNormalizerUtil.normalizeImageFromOrientation(grayImage, mOrientation, true);
-
-			// LOGGER.debug("cam=" + width + "/" + height + ", resized=" +
-			// grayImage.width() + "/" + grayImage.height() + ", view="
-			// + getWidth() + "/" + getHeight());
-
-			// // DEBUG
-			// if (FaceDetectionViewComponentActivity.WILD_HACK == null) {
-			// LOGGER.error("wild hack is null!");
-			// return;
-			// }
-			// // VARIANT 1: FAST BUT WRONG
-			// //
-			// FaceDetectionViewComponentActivity.WILD_HACK.setBitmapViewBitmap(ImageUtil
-			// //
-			// .createBitmapOutOf4ChannelIplImages(ImageUtil.create4ChannelIplImageOutOf1ChannelIplImage(grayImage)));
-			// // VARIANT 2: SLOW BUT CORRECT
-			// FaceDetectionViewComponentActivity.WILD_HACK.setBitmapViewBitmap(ImageUtil
-			// .createBitmapOutOf1ChannelIplImage(grayImage));
-
-			// detect and remember faces to mark them in overlay
-			mFaces = mFaceDetector.detectFaces(grayImage, mSubsamplingFactor);
-			// LOGGER.debug("we have " +
-			// mFaces.get(Feature.FRONTALFACE_ALT2).total() + " faces.");
-			// inform listener
-			FacesDetectedEvent e = new FacesDetectedEvent(this, mFaces, mSubsamplingFactor, null, new Point(width, height));
-			// bugfix: access to opencv-memory is denied when calling from false
-			// threads
-			// cache needed data therefore
-			e.cacheData();
-			e.setUseCachedData(true);
-			// e.setScreenBitmap(ImageUtil.createBitmapOutOf1ChannelIplImage(grayImage));
-			mObservable.notifyObservers(e);
-			// gui update
-			postInvalidate();
+	protected void processImage(byte[] data, final int width, final int height) {
+		if (!mTrigger.processNextImage()) {
+			return;
 		}
+
+		// if (!mDoFaceDetection) {
+		// // don't do face detection
+		// // just distribute yuv-image
+		// mYuvImageObservable.notifyObservers(new YuvImageEvent(this, data,
+		// width, height)); // detector!
+		// return;
+		// }
+
+		// if there is currently a face detection done - abort
+		if (mFaceDetectionThread != null) {
+			return;
+		}
+		// copy array content
+		final byte[] clone = new byte[data.length];
+		System.arraycopy(data, 0, clone, 0, data.length);
+		mFaceDetectionThread = new Thread() {
+			@Override
+			public void run() {
+				// create iplimage out of yuv image
+				grayImage = ImageUtil.writeGrayPartOfYuvTo1ChannelIplimageHorizontal(grayImage, clone, width, height,
+						mSubsamplingFactor);
+				// normalize image due to device orientation and cam mirroring
+				grayImage = ImageNormalizerUtil.normalizeImageFromOrientation(grayImage, mOrientation, true);
+
+				// LOGGER.debug("cam=" + width + "/" + height + ", resized=" +
+				// grayImage.width() + "/" + grayImage.height() + ", view="
+				// + getWidth() + "/" + getHeight());
+
+				// // DEBUG
+				// if (FaceDetectionViewComponentActivity.WILD_HACK == null) {
+				// LOGGER.error("wild hack is null!");
+				// return;
+				// }
+				// // VARIANT 1: FAST BUT WRONG
+				// //
+				// FaceDetectionViewComponentActivity.WILD_HACK.setBitmapViewBitmap(ImageUtil
+				// //
+				// .createBitmapOutOf4ChannelIplImages(ImageUtil.create4ChannelIplImageOutOf1ChannelIplImage(grayImage)));
+				// // VARIANT 2: SLOW BUT CORRECT
+				// FaceDetectionViewComponentActivity.WILD_HACK.setBitmapViewBitmap(ImageUtil
+				// .createBitmapOutOf1ChannelIplImage(grayImage));
+
+				// detect and remember faces to mark them in overlay
+				mFaces = mFaceDetector.detectFaces(grayImage, mSubsamplingFactor);
+				// LOGGER.debug("we have " +
+				// mFaces.get(Feature.FRONTALFACE_ALT2).total() + " faces.");
+				// inform listener
+				FacesDetectedEvent e = new FacesDetectedEvent(this, mFaces, mSubsamplingFactor, null, new Point(width, height));
+				// bugfix: access to opencv-memory is denied when calling from
+				// false
+				// threads
+				// cache needed data therefore
+				e.cacheData();
+				e.setUseCachedData(true);
+				// e.setScreenBitmap(ImageUtil.createBitmapOutOf1ChannelIplImage(grayImage));
+				mFaceDetectionObservable.notifyObservers(e);
+				// gui update
+				postInvalidate();
+				// reset member
+				mFaceDetectionThread = null;
+			}
+		};
+		mFaceDetectionThread.start();
 	}
 
 	@Override
@@ -236,18 +294,32 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	}
 
 	/**
-	 * {@link Observable#addObserver(Observer)}.
+	 * See {@link #mDoFaceDetection}.
 	 */
-	public void addObserver(GenericObserver<FacesDetectedEvent> _o) {
-		mObservable.addObserver(_o);
+	public void addFaceDetectionObserver(GenericObserver<FacesDetectedEvent> _o) {
+		mFaceDetectionObservable.addObserver(_o);
 	}
 
 	/**
-	 * {@link Observable#deleteObserver(Observer)}.
+	 * See {@link #mDoFaceDetection}.
 	 */
-	public void deleteObserver(GenericObserver<FacesDetectedEvent> _o) {
-		mObservable.deleteObserver(_o);
+	public void deleteFaceDetectionObserver(GenericObserver<FacesDetectedEvent> _o) {
+		mFaceDetectionObservable.deleteObserver(_o);
 	}
+
+	// /**
+	// * See {@link #mDoFaceDetection}.
+	// */
+	// public void addYuvImageObserver(GenericObserver<YuvImageEvent> _o) {
+	// mYuvImageObservable.addObserver(_o);
+	// }
+	//
+	// /**
+	// * See {@link #mDoFaceDetection}.
+	// */
+	// public void deleteYuvImageObserver(GenericObserver<YuvImageEvent> _o) {
+	// mYuvImageObservable.deleteObserver(_o);
+	// }
 
 	/**
 	 * @return {@link #paintFaces}.
@@ -278,4 +350,20 @@ public class FaceView extends View implements Camera.PreviewCallback {
 	public void setOrientation(Orientation _orientation) {
 		mOrientation = _orientation;
 	}
+
+	// /**
+	// * @return {@link #mDoFaceDetection}.
+	// */
+	// public boolean isDoFaceDetection() {
+	// return mDoFaceDetection;
+	// }
+	//
+	// /**
+	// * @param _doFaceDetection
+	// * sets {@link #mDoFaceDetection} to _doFaceDetection.
+	// */
+	// public void setDoFaceDetection(boolean _doFaceDetection) {
+	// mDoFaceDetection = _doFaceDetection;
+	// }
+
 }

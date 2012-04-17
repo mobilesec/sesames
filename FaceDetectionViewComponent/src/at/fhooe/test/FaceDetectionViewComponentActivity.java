@@ -28,7 +28,7 @@ public class FaceDetectionViewComponentActivity extends Activity implements Gene
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		mFaceViewComponent.addObserver(this);
+		mFaceViewComponent.addFaceDetectionObserver(this);
 	}
 
 	@Override
@@ -71,24 +71,18 @@ public class FaceDetectionViewComponentActivity extends Activity implements Gene
 		FrameLayout preview = (FrameLayout) o;
 
 		// CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
-		mFaceViewComponent.onResume(this, preview, true);
+		mFaceViewComponent.resume(this, preview, false);
 
 		// CHOICE 2: SPECIFIC SETTINGS FOR DEBUGGING
-		// mFaceViewComponent.onResume(this, preview, 2, new
-		// FaceDetector.Feature[] { FaceDetector.Feature.FRONTALFACE_ALT2 },
-		// new ProcessImageTrigger() {
-		// @Override
-		// public boolean processNextImage() {
-		// return true;
-		// }
-		// }, true);
+		// mFaceViewComponent.onResume(this, preview, 1, false, false,
+		// Feature.FRONTALFACE_ALT2);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		// remove faceview from viewgroup
-		mFaceViewComponent.onPause();
+		mFaceViewComponent.pause();
 	}
 
 	@Override
@@ -116,7 +110,7 @@ public class FaceDetectionViewComponentActivity extends Activity implements Gene
 
 	private void setProcessingOrientation(int _orientation) {
 		setContentView(R.layout.main);
-		mFaceViewComponent.onPause();
+		mFaceViewComponent.pause();
 		configureFaceViewComponent();
 		switch (_orientation) {
 			case Configuration.ORIENTATION_PORTRAIT:

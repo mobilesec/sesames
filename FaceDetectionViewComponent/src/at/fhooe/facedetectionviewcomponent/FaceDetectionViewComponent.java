@@ -32,7 +32,7 @@ import at.fhooe.mc.genericobserver.GenericObserver;
  * @date 17.02.2012
  * @version 1
  */
-public class FaceDetectionViewComponent implements GenericObserver<FacesDetectedEvent> {
+public class FaceDetectionViewComponent {
 	private static final Logger							LOGGER					= LoggerFactory
 																						.getLogger(FaceDetectionViewComponent.class);
 
@@ -46,10 +46,16 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	/** where android automatically projects the current cam image onto */
 	private CameraPreview								mPreview;
 	/**
-	 * observers of the facedetectioncomponent. get added to the TODO each time
-	 * {@link #onResume(Context, ViewGroup, boolean)} is called.
+	 * facedetection observers of the facedetectioncomponent. get added to the
+	 * FaceView each time {@link #resume(Context, ViewGroup)} is called.
 	 */
-	private List<GenericObserver<FacesDetectedEvent>>	mListeners				= new ArrayList<GenericObserver<FacesDetectedEvent>>();
+	private List<GenericObserver<FacesDetectedEvent>>	mFaceDetectionListeners	= new ArrayList<GenericObserver<FacesDetectedEvent>>();
+	// /**
+	// * yuv-image observers of the facedetectioncomponent. get added to the
+	// * FaceView each time {@link #resume(Context, ViewGroup)} is called.
+	// */
+	// private List<GenericObserver<YuvImageEvent>> mYuvImageListeners = new
+	// ArrayList<GenericObserver<YuvImageEvent>>();
 	/**
 	 * viewgroup the view has to be removed from in {@link #onPause(ViewGroup)}.
 	 */
@@ -60,14 +66,20 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	 */
 	private volatile FacesDetectedEvent					mLastFaceDetectedEvent	= null;
 
+	// /**
+	// * the last created yuv-image event from {@link #mFaceview}. if null, no
+	// * yuv-image has been broadcastet yet.
+	// */
+	// private volatile YuvImageEvent mLastYuvImageEvent = null;
+
 	// ================================================================================================================
 	// METHODS
 
 	/**
 	 * Call this method in your Activity's {@link Activity#onResume()} method.
-	 * Only call {@link #addObserver(Observer)} after calling this method, and
-	 * before calling {@link #onPause(ViewGroup)} if you want to receive
-	 * updates.
+	 * Only call {@link #addFaceDetectionObserver(Observer)} after calling this
+	 * method, and before calling {@link #onPause(ViewGroup)} if you want to
+	 * receive updates.
 	 * 
 	 * @param _context
 	 *            the calling activity
@@ -95,8 +107,8 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	 * @param _markFaces
 	 *            if true, found faces get marked with rectangles.
 	 */
-	public void onResume(Context _context, ViewGroup _viewGroup, int _subsamplingFactor, Feature[] _haarcascadeFeatures,
-			ProcessImageTrigger _trigger, boolean _markFaces) {
+	public void resume(Context _context, ViewGroup _viewGroup, int _subsamplingFactor, Feature[] _haarcascadeFeatures,
+			ProcessImageTrigger _trigger, boolean _doFaceDetection, boolean _markFaces) {
 		// remember viewgroup
 		mViewGroup = _viewGroup;
 
@@ -110,7 +122,7 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 
 		// Create preview view and set it as the content of our activity.
 		try {
-			mFaceview = new FaceView(_context, _subsamplingFactor, _haarcascadeFeatures, _trigger, _markFaces);
+			mFaceview = new FaceView(_context, _subsamplingFactor, _haarcascadeFeatures, _trigger, _doFaceDetection, _markFaces);
 		} catch (IOException e) {
 			LOGGER.error("cannot work without a faceview, terminating.");
 			throw new RuntimeException("cannot work without a faceview, terminating.");
@@ -122,34 +134,56 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 		_viewGroup.addView(mFaceview);
 
 		// add listeners
-		for (GenericObserver<FacesDetectedEvent> o : mListeners) {
+		for (GenericObserver<FacesDetectedEvent> o : mFaceDetectionListeners) {
 			LOGGER.error("adding observer to faceview...");
-			mFaceview.addObserver(o);
+			mFaceview.addFaceDetectionObserver(o);
 		}
-		mFaceview.addObserver(this);
+		mFaceview.addFaceDetectionObserver(new GenericObserver<FacesDetectedEvent>() {
+			@Override
+			public void update(GenericObservable<FacesDetectedEvent> _o, FacesDetectedEvent _arg) {
+				// cache the facedetectedevent
+				// LOGGER.debug("caching event, #faces=" +
+				// _arg.getAmountOfNearFaces() + ", faces=" + _arg);
+				mLastFaceDetectedEvent = _arg;
+			}
+		});
+		// for (GenericObserver<YuvImageEvent> o : mYuvImageListeners) {
+		// LOGGER.error("adding observer to faceview...");
+		// mFaceview.addYuvImageObserver(o);
+		// }
+		// mFaceview.addYuvImageObserver(new GenericObserver<YuvImageEvent>() {
+		// @Override
+		// public void update(GenericObservable<YuvImageEvent> _o, YuvImageEvent
+		// _arg) {
+		// // can't be more than once directly in this class: would cause
+		// // method signature duplication as java doesn't differentiate
+		// // between methods with different template types.
+		// mLastYuvImageEvent = _arg;
+		// }
+		// });
 	}
 
 	/**
 	 * See
-	 * {@link #onResume(Context, ViewGroup, int, Feature[], ProcessImageTrigger, boolean)}
+	 * {@link #resume(Context, ViewGroup, int, Feature[], ProcessImageTrigger, boolean)}
 	 * 
 	 * 
 	 * @param _context
 	 * @param _viewGroup
 	 * @param _markFaces
 	 */
-	public void onResume(Context _context, ViewGroup _viewGroup, boolean _markFaces) {
-		onResume(_context, _viewGroup, 1, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, new ProcessImageTrigger() {
+	public void resume(Context _context, ViewGroup _viewGroup, boolean _markFacesInUi) {
+		resume(_context, _viewGroup, 1, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, new ProcessImageTrigger() {
 			@Override
 			public boolean processNextImage() {
 				return true;
 			}
-		}, _markFaces);
+		}, true, _markFacesInUi);
 	}
 
 	/**
 	 * See
-	 * {@link #onResume(Context, ViewGroup, int, Feature[], ProcessImageTrigger, boolean)}
+	 * {@link #resume(Context, ViewGroup, int, Feature[], ProcessImageTrigger, boolean)}
 	 * 
 	 * 
 	 * @param _context
@@ -157,22 +191,28 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	 * @param _markFaces
 	 * @param _trigger
 	 */
-	public void onResume(Context _context, ViewGroup _viewGroup, ProcessImageTrigger _trigger, boolean _markFaces) {
-		onResume(_context, _viewGroup, 2, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, _trigger, _markFaces);
+	public void resume(Context _context, ViewGroup _viewGroup, int _subSamplingFactor, boolean _doFaceDetection,
+			boolean _markFaces, Feature... _features) {
+		resume(_context, _viewGroup, _subSamplingFactor, _features, new ProcessImageTrigger() {
+			@Override
+			public boolean processNextImage() {
+				return true;
+			}
+		}, _doFaceDetection, _markFaces);
 	}
 
 	/**
 	 * Call this in your Activitie's {@link Activity#onPause()} method. All
 	 * listeners to the internal {@link FaceView} get forgotten - so you have to
 	 * add them again after calling
-	 * {@link #onResume(Context, ViewGroup, int, Feature[], ProcessImageTrigger, boolean)}
+	 * {@link #resume(Context, ViewGroup, int, Feature[], ProcessImageTrigger, boolean)}
 	 * if you want to receive updates again.
 	 * 
 	 * @param _viewGroup
 	 *            the view object this {@link FaceDetectionViewComponent} uses
 	 *            to show the camera images + the detected faces.
 	 */
-	public void onPause() {
+	public void pause() {
 		VideoRecordUtil.releaseCamera(mCamera);
 		mCamera = null;
 
@@ -188,27 +228,19 @@ public class FaceDetectionViewComponent implements GenericObserver<FacesDetected
 	/**
 	 * {@link Observable#addObserver(Observer)}.
 	 */
-	public void addObserver(GenericObserver<FacesDetectedEvent> _o) {
-		mListeners.add(_o);
+	public void addFaceDetectionObserver(GenericObserver<FacesDetectedEvent> _o) {
+		mFaceDetectionListeners.add(_o);
 	}
 
 	/**
 	 * {@link Observable#deleteObserver(Observer)}.
 	 */
-	public void deleteObserver(GenericObserver<FacesDetectedEvent> _o) {
-		mListeners.remove(_o);
+	public void deleteFaceDetectionObserver(GenericObserver<FacesDetectedEvent> _o) {
+		mFaceDetectionListeners.remove(_o);
 	}
 
 	public void setOrientation(Orientation _orientation) {
 		mFaceview.setOrientation(_orientation);
-	}
-
-	@Override
-	public void update(GenericObservable<FacesDetectedEvent> _o, FacesDetectedEvent _arg) {
-		// cache the facedetectedevent
-		// LOGGER.debug("caching event, #faces=" + _arg.getAmountOfNearFaces() +
-		// ", faces=" + _arg);
-		mLastFaceDetectedEvent = _arg;
 	}
 
 	/**
