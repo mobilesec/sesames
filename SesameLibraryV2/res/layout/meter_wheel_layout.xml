@@ -77,7 +77,7 @@
             android:id="@+id/meter_wheel_layout_textViewUnit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" Wh"
+            android:text=" kWh"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#ffffffff" />
     </LinearLayout>
