@@ -137,7 +137,7 @@ implements OnClickListener, OnCheckedChangeListener
 	@Override
 	public View getView(int _pos, View _convertView, ViewGroup _parent)
 	{
-//		Log.e(TAG, "getView "+_pos);
+		Log.e(TAG, "getView "+_pos);
 		View rowView = _convertView;
 		if(null==mDevs||(mDevs.size()-1)<_pos)
 		{
@@ -155,7 +155,7 @@ implements OnClickListener, OnCheckedChangeListener
 		IListEntry item = mDevs.get(_pos);
 		if(null!=item)
 		{
-			long start = System.currentTimeMillis();
+//			long start = System.currentTimeMillis();
 			ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
 			ControllableDevice cd = cdle.getControllableDevice();
 			if(item.isSeparator())
@@ -284,7 +284,7 @@ implements OnClickListener, OnCheckedChangeListener
 					{
 						holder.IDLE_LABEL.setTextColor(Color.RED);
 					}
-					long duration = System.currentTimeMillis()-start;
+//					long duration = System.currentTimeMillis()-start;
 //					Log.e(TAG, "view generation took:"+duration+"ms");
 				}
 				else
