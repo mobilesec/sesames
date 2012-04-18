@@ -72,18 +72,27 @@ public class SesameLogger
 		mExporters.add(_exporter);
 	}
 	
+	public static void setExporter(ILogExporter _exporter)
+	{
+		mExporters.clear();
+		mExporters.add(_exporter);
+	}
+	
 	public static void removeExporter(ILogExporter _exporter)
 	{
 		mExporters.remove(_exporter);
 	}
 	
-	private synchronized static String getLogAsString()
+	private static String getLogAsString()
 	{
 		StringBuilder sb = new StringBuilder();
-		for(String log:mLog)
+		synchronized(mLog)
 		{
-			sb.append(log);
-			sb.append("\n");
+			for(String log:mLog)
+			{
+				sb.append(log);
+				sb.append("\n");
+			}			
 		}
 		return sb.toString();
 	}

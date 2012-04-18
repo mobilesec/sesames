@@ -36,7 +36,7 @@ extends AbstractRendererProvider
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
-		mRenderer.setYTitle("Watt");
+		mRenderer.setYTitle(mCtx.getString(R.string.energy_graph_y_title));
 		mRenderer.setBarSpacing(1.5f);
 		mRenderer.setXAxisMin(0.5);
 		mRenderer.setXAxisMax(7.5);

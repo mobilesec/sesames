@@ -70,7 +70,7 @@ extends AbstractRendererProvider
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
-		mRenderer.setYTitle("Watt");
+		mRenderer.setYTitle(mCtx.getString(R.string.energy_graph_y_title));
 		setTimeLabels();
 	}
 	

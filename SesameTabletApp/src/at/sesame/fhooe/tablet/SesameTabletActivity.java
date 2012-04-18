@@ -29,6 +29,7 @@ import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameNotification;
+import at.sesame.fhooe.lib2.esmart.service.response.GetServicesResponseHandler;
 import at.sesame.fhooe.lib2.logging.SesameLogger;
 import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
 import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter;
@@ -39,7 +40,10 @@ import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
 
 @SuppressWarnings("unused")
-public class SesameTabletActivity extends FragmentActivity implements INotificationListener {
+public class SesameTabletActivity 
+extends FragmentActivity 
+implements INotificationListener 
+{
 	private static final SimpleDateFormat	LOG_FILENAME_DATE_FORMAT		= new SimpleDateFormat("dd_MM_yy_HH_mm");
 	private static final String				TAG								= "SesameTabletActivity";
 	private static final long				METER_WHEEL_UPDATE_TIMEOUT		= 10000;
@@ -70,7 +74,7 @@ public class SesameTabletActivity extends FragmentActivity implements INotificat
 
 	private Notification					mNotification;
 	private NotificationManager				mNotificationMan;
-	private static final String				NOTIFICATION_TITLE				= "Sesame Notification";
+//	private static final String				NOTIFICATION_TITLE				= R.string.sesame_notification_title;
 
 	private static final int				WHEEL_TEXT_SIZE					= 28;
 
@@ -123,9 +127,9 @@ public class SesameTabletActivity extends FragmentActivity implements INotificat
 		protected Void doInBackground(Void... params) {
 
 			mDataCache = SesameDataCache.getInstance(SesameTabletActivity.this);
-			mDataCache.registerNotificationListener(SesameTabletActivity.this);
+//			mDataCache.registerNotificationListener(SesameTabletActivity.this);
 			mDataCache.startEnergyDataUpdates();
-			mDataCache.startNotificationUpdates();
+//			mDataCache.startNotificationUpdates();
 			// ArrayList<SesameMeasurementPlace> places =
 			// mDataCache.getEnergyMeasurementPlaces();
 			// mEdv1Place = places.get(4);
@@ -136,7 +140,7 @@ public class SesameTabletActivity extends FragmentActivity implements INotificat
 			// Log.e(TAG, "EDV3:"+mEdv3Place.toString());
 			// Log.e(TAG, "EDV6:"+mEdv6Place.toString());
 
-			initializeNotification();
+//			initializeNotification();
 			initializeFragments();
 			runOnUiThread(new Runnable() {
 
@@ -160,7 +164,7 @@ public class SesameTabletActivity extends FragmentActivity implements INotificat
 
 			SesameFileLogExporter exporter = new SesameFileLogExporter(SesameTabletActivity.this, ExportLocation.EXT_PUB_DIR,
 					fileName);
-			SesameLogger.addExporter(exporter);
+			SesameLogger.setExporter(exporter);
 
 			SesameLogger.startContinuousExport(LOG_EXPORT_PERIOD);
 		}
@@ -194,10 +198,10 @@ public class SesameTabletActivity extends FragmentActivity implements INotificat
 		intent = new Intent().setClass(getApplicationContext(), RealTimeActivity.class);
 
 		// Initialize a TabSpec for each tab and add it to the TabHost
-		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("Heute").setContent(intent);
+		TabHost.TabSpec spec = th.newTabSpec("today").setIndicator(getString(R.string.today_tab_title)).setContent(intent);
 		th.addTab(spec);
 		intent = new Intent().setClass(getApplicationContext(), ComparisonActivity.class);
-		TabHost.TabSpec spec2 = th.newTabSpec("comparison").setIndicator("Vergleich").setContent(intent);
+		TabHost.TabSpec spec2 = th.newTabSpec("comparison").setIndicator(getString(R.string.comparison_tab_title)).setContent(intent);
 		th.addTab(spec2);
 		th.setCurrentTab(0);
 	}

@@ -386,10 +386,10 @@ implements ISesameDataProvider
 			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
 			EDV6_PLACE = mEnergyMeasurementPlaces.get(5);
 			
-			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
-			{
-				Log.i(TAG, smp.toString());
-			}
+//			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+//			{
+//				Log.i(TAG, smp.toString());
+//			}
 			break;
 		}
 		resetAllUpdateTables();
@@ -430,7 +430,7 @@ implements ISesameDataProvider
 
 	private void addEnergyData(SesameMeasurementPlace _smp, SesameDataContainer _data)
 	{
-		Log.i(TAG, "adding energy data for smp:"+_smp);
+//		Log.i(TAG, "adding energy data for smp:"+_smp);
 		SesameDataContainer storedData = mEnergyData.get(_smp);
 		if(null==storedData)
 		{
@@ -440,7 +440,7 @@ implements ISesameDataProvider
 		}
 		else
 		{
-			Log.i(TAG, "number of measurements in container:"+_data.getMeasurements().size());
+//			Log.i(TAG, "number of measurements in container:"+_data.getMeasurements().size());
 			for(int i = 0;i<_data.getMeasurements().size();i++)
 			{
 				boolean alreadyStored = false;
@@ -457,7 +457,7 @@ implements ISesameDataProvider
 				if(!alreadyStored)
 				{
 					storedData.addData(sm);
-					Log.i(TAG, "added measurement:"+sm.toString());
+//					Log.i(TAG, "added measurement:"+sm.toString());
 				}
 				//				else
 				//				{
@@ -609,7 +609,7 @@ implements ISesameDataProvider
 			throw new Exception("no last reading available");
 		}
 		SesameMeasurement sm = energyData.getMeasurements().get(idx);
-		Log.i(TAG, "last measurement:"+sm.toString());
+//		Log.i(TAG, "last measurement:"+sm.toString());
 		return sm;
 	}
 
@@ -664,7 +664,7 @@ implements ISesameDataProvider
 		@Override
 		public void run() 
 		{
-			Log.i(TAG, "updating energy data");
+//			Log.i(TAG, "updating energy data");
 			if(null==mEnergyMeasurementPlaces)
 			{
 				return;

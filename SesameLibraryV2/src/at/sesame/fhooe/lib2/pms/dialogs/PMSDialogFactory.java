@@ -127,10 +127,10 @@ public class PMSDialogFactory
 		{
 			return false;
 		}
-		System.out.println("size of params:"+_params.length);
-		System.out.println("size of types:"+_expectedTypes.length);
-		System.out.println("params null:"+(null==_params));
-		System.out.println("types null:"+(null==_expectedTypes));
+//		System.out.println("size of params:"+_params.length);
+//		System.out.println("size of types:"+_expectedTypes.length);
+//		System.out.println("params null:"+(null==_params));
+//		System.out.println("types null:"+(null==_expectedTypes));
 		//		System.out.println("size of params:"+_params.length);
 		for(int i = 0;i<_params.length; i++)
 		{
@@ -138,7 +138,7 @@ public class PMSDialogFactory
 			{
 				Class expectedType = _expectedTypes[i];
 				Class param = _params[i].getClass();
-				System.out.println("checking:"+expectedType.getSimpleName()+" and "+param.getSimpleName());
+//				System.out.println("checking:"+expectedType.getSimpleName()+" and "+param.getSimpleName());
 				if(!expectedType.isAssignableFrom(param))
 				{
 					return false;
