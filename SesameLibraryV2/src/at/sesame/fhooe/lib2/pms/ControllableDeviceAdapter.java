@@ -284,6 +284,10 @@ implements OnClickListener, OnCheckedChangeListener
 					{
 						holder.IDLE_LABEL.setTextColor(Color.RED);
 					}
+					else
+					{
+						holder.IDLE_LABEL.setTextColor(Color.WHITE);
+					}
 //					long duration = System.currentTimeMillis()-start;
 //					Log.e(TAG, "view generation took:"+duration+"ms");
 				}

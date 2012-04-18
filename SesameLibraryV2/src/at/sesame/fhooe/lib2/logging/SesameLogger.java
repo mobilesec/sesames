@@ -2,9 +2,12 @@ package at.sesame.fhooe.lib2.logging;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import org.codegist.common.log.LogCatLogger;
 
 import android.util.Log;
 import at.sesame.fhooe.lib2.logging.export.ILogExporter;
@@ -85,15 +88,24 @@ public class SesameLogger
 	
 	private static String getLogAsString()
 	{
-		StringBuilder sb = new StringBuilder();
+		ArrayList<String> logCopy = null;
 		synchronized(mLog)
 		{
-			for(String log:mLog)
+			try
 			{
-				sb.append(log);
-				sb.append("\n");
-			}			
+				logCopy = (ArrayList<String>) mLog.clone();	
+			}
+			catch(ConcurrentModificationException _cme)
+			{
+				return null;
+			}
 		}
+		StringBuilder sb = new StringBuilder();
+		for(String log:logCopy)
+		{
+			sb.append(log);
+			sb.append("\n");
+		}			
 		return sb.toString();
 	}
 	
@@ -102,7 +114,7 @@ public class SesameLogger
 		@Override
 		public void run() 
 		{
-			Log.e(TAG, "exporting");
+			Log.i(TAG, "exporting");
 			String log = getLogAsString();
 			if(null==log||log.isEmpty())
 			{

@@ -15,12 +15,15 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.util.Log;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.config.ConfigLoader;
+import at.sesame.fhooe.lib2.config.SesameConfigData;
 import at.sesame.fhooe.lib2.data.provider.EsmartDataProvider;
 import at.sesame.fhooe.lib2.data.provider.EzanDataProvider;
 import at.sesame.fhooe.lib2.data.semantic.SemanticSesameDataSource;
 import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
 import at.sesame.fhooe.lib2.data.simulation.NotificationSimulator;
 import at.sesame.fhooe.lib2.pms.PMSController;
+import at.sesame.fhooe.lib2.pms.PMSProvider;
 import at.sesame.fhooe.lib2.pms.hosts.EDV1Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV3Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV6Hosts;
@@ -142,6 +145,8 @@ implements ISesameDataProvider
 	private HostList mEdv1Hosts = new EDV1Hosts();
 	private HostList mEdv3Hosts = new EDV3Hosts();
 	private HostList mEdv6Hosts = new EDV6Hosts();
+	
+	private SesameConfigData mConfigData;
 
 	//	private NotificationSimulator mEventSim;
 
@@ -255,7 +260,8 @@ implements ISesameDataProvider
 	public void init()
 	{
 		long start = System.currentTimeMillis();
-
+		mConfigData = ConfigLoader.loadConfig();
+		PMSProvider.createPMS(mConfigData.getUser(), mConfigData.getPass());
 		//		mEventSim = new NotificationSimulator();
 		//		startNotificationUpdates();
 		HostList allHosts = new HostList();

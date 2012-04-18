@@ -41,8 +41,8 @@ implements IPMSDialogActionHandler
 	 */
 	private DeviceStateUpdater mUpdater;
 
-	private String mUser = "peter";
-	private String mPass = "thatpeter";
+//	private String mUser = "peter";
+//	private String mPass = "thatpeter";
 
 //	private IPmsUi mUi;
 //	private PmsHelper mUiHelper;
@@ -92,7 +92,7 @@ implements IPMSDialogActionHandler
 		stopAutoUpdate();
 //		if(mDevicesLoaded)
 		{
-			mUpdater = new DeviceStateUpdater(mAllDevices, mUser, mPass);
+			mUpdater = new DeviceStateUpdater(mAllDevices);
 			mUpdater.startUpdating();
 //			mUpdateThread.start();			
 		}
@@ -297,7 +297,7 @@ implements IPMSDialogActionHandler
 //		});
 		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(macs);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");
@@ -338,7 +338,7 @@ implements IPMSDialogActionHandler
 	private void loadDevices(HostList _hl)
 	{
 //		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(_hl.getMacList());
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(_hl.getMacList());
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");
@@ -631,7 +631,7 @@ implements IPMSDialogActionHandler
 		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
 		
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(macs);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");

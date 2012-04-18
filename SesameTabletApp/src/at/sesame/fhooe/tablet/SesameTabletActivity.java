@@ -25,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.TabHost;
 import at.fhooe.facedetectionview.model.FacesDetectedEvent;
 import at.fhooe.facedetectionviewcomponent.FaceDetectionViewComponent;
+import at.sesame.fhooe.lib2.config.ConfigLoader;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
@@ -117,7 +118,7 @@ implements INotificationListener
 
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
-
+//		Log.i(TAG, ConfigLoader.loadConfig().toString());
 		new CreationTask().execute();
 	}
 
@@ -438,8 +439,14 @@ implements INotificationListener
 	public void onDestroy() {
 		SesameLogger.stopContinuousExporting();
 		stopMeterWheelUpdates();
-		mLam.dispatchDestroy(isFinishing());
-		mDataCache.cleanUp();
+		if(null!=mLam)
+		{
+			mLam.dispatchDestroy(isFinishing());			
+		}
+		if(null!=mDataCache)
+		{
+			mDataCache.cleanUp();			
+		}
 		super.onDestroy();
 	}
 

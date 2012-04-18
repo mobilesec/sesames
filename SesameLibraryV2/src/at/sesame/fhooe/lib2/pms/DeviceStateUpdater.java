@@ -28,14 +28,14 @@ public class DeviceStateUpdater
 
 	private Timer mUpdateTimer = new Timer();
 
-	private String mUser;
-	private String mPass;
+//	private String mUser;
+//	private String mPass;
 
 //	private PmsHelper mUiHelper;
-	public DeviceStateUpdater(ArrayList<ControllableDevice> _devs, String _user, String _pass)
+	public DeviceStateUpdater(ArrayList<ControllableDevice> _devs)
 	{
-		mUser = _user;
-		mPass = _pass;
+//		mUser = _user;
+//		mPass = _pass;
 //		mUpdateListener = _updateListener;
 //		mUiHelper = _uiHelper;
 		mDevs = _devs;
@@ -56,7 +56,7 @@ public class DeviceStateUpdater
 				Log.i(TAG, "updating");
 
 				long begin = System.currentTimeMillis();
-				ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(mMacs);
+				ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(mMacs);
 
 				if(null==statuses)
 				{

@@ -46,19 +46,19 @@ public class PMSProvider
 	 * initializes the crest library and provides the implementation of the service interface
 	 * @return the implementation of the PMS interface
 	 */
-	public static IPMSService getPMS(String _user, String _pwd)
+	public static IPMSService getPMS()
 	{
-		if(null==mPMSService)
-		{
-//			String username = "peter";
-//			String password = "thatpeter";
-//			String basicAuthDigest = Base64.encodeToString((username + ":" + password).getBytes());
-			createPMS(_user, _pwd);
-		}
+//		if(null==mPMSService)
+//		{
+////			String username = "peter";
+////			String password = "thatpeter";
+////			String basicAuthDigest = Base64.encodeToString((username + ":" + password).getBytes());
+//			createPMS(_user, _pwd);
+//		}
 		return mPMSService;
 	}
 
-	private static void createPMS(String _user, String _pwd) {
+	public static void createPMS(String _user, String _pwd) {
 		CRest crest = new  CRestBuilder().bindDeserializer(JacksonDeserializer.class,PMSStatus.class, ExtendedPMSStatus.class)
 										.setHttpChannelFactory(new HttpClientHttpChannelFactory(ProxyHelper.getProxiedAllAcceptingHttpsClient()))
 										.basicAuth(_user, _pwd)
@@ -70,42 +70,43 @@ public class PMSProvider
 	 * retrieves the list of controllable devices from the PMS
 	 * @return a list containing mac addresses of all controllable devices
 	 */
-	public static ArrayList<String> getDeviceList(String _user, String _pass)
-	{
-		if(null==mPMSService)
-		{
-			mPMSService = getPMS(_user, _pass);
-		}
-		ArrayList<String> macs = new ArrayList<String>();
-		try {
-			String macString = new DeviceListTask().execute(new Void[0]).get();
-			if(macString.equals(Boolean.toString(false)))
-			{
-				return null;
-			}
-//			String macString = mPMSService.getClients();
-			Log.e(TAG, macString);
-			JSONObject json = new JSONObject(macString);
-			JSONArray jsonArr = json.getJSONArray("clients");
-			for(int i = 0;i<jsonArr.length();i++)
-			{
-				JSONObject mac=(JSONObject) jsonArr.get(i);
-				macs.add(mac.getString("mac"));
-			}
-			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ExecutionException e)
-		{
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return macs;
-	}
+//	public static ArrayList<String> getDeviceList(String _user, String _pass)
+//	{
+//		if(null==mPMSService)
+//		{
+////			mPMSService = getPMS(_user, _pass);
+//			createPMS(_user, _pass);
+//		}
+//		ArrayList<String> macs = new ArrayList<String>();
+//		try {
+//			String macString = new DeviceListTask().execute(new Void[0]).get();
+//			if(macString.equals(Boolean.toString(false)))
+//			{
+//				return null;
+//			}
+////			String macString = mPMSService.getClients();
+//			Log.e(TAG, macString);
+//			JSONObject json = new JSONObject(macString);
+//			JSONArray jsonArr = json.getJSONArray("clients");
+//			for(int i = 0;i<jsonArr.length();i++)
+//			{
+//				JSONObject mac=(JSONObject) jsonArr.get(i);
+//				macs.add(mac.getString("mac"));
+//			}
+//			
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		catch (ExecutionException e)
+//		{
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return macs;
+//	}
 	
 	public static boolean checkCredentials(String _user, String _pass)
 	{
