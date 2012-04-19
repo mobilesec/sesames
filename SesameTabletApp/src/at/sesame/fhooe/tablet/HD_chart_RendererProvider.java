@@ -36,18 +36,6 @@ extends AbstractRendererProvider
 		return xysr;
 	}
 
-//	private int getColorForSeries(XYSeries _series) {
-//		if (_series.getTitle().equals(mCtx.getString(R.string.global_Room1_name))) {
-//			return Constants.COLOR_EDV1;
-//		} else if (_series.getTitle().equals(mCtx.getString(R.string.global_Room3_name))) {
-//			return Constants.COLOR_EDV3;
-//		} else if (_series.getTitle().equals(mCtx.getString(R.string.global_Room6_name))) {
-//			return Constants.COLOR_EDV6;
-//		} else {
-//			return Color.GRAY;
-//		}
-//	}
-
 	@Override
 	protected void setupRenderer() {
 		super.setupRenderer();
@@ -59,6 +47,8 @@ extends AbstractRendererProvider
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
+		mRenderer.setYAxisMin(0);
+		//mRenderer.setYAxisMax(2500);
 		mRenderer.setYTitle(mCtx.getString(R.string.energy_graph_y_title));
 //		setTimeLabels();
 	}

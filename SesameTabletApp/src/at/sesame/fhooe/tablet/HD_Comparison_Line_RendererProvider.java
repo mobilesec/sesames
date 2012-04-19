@@ -53,11 +53,7 @@ extends AbstractRendererProvider
 	private int getColorForSeries(XYSeries _series) {
 		String title = _series.getTitle();
 		int color = getColorForRoom(title);
-		//if (title.contains(mCtx.getString(R.string.global_current))) {
-		//	return color;
-		//} else {
-			return getHistoricalColor(color, getIndexForTitle(title));
-		//}
+		return getHistoricalColor(color, getIndexForTitle(title));
 	}
 
 	@Override
@@ -70,25 +66,8 @@ extends AbstractRendererProvider
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
+		mRenderer.setYAxisMin(0);
+		//mRenderer.setYAxisMax(2500);
 		mRenderer.setYTitle(mCtx.getString(R.string.energy_graph_y_title));
-		setTimeLabels();
-	}
-	
-	private void setTimeLabels() {
-		mRenderer.setXLabels(13);
-		mRenderer.clearXTextLabels();
-		mRenderer.addXTextLabel(0, "7:00");
-		mRenderer.addXTextLabel(1, "8:00");
-		mRenderer.addXTextLabel(2, "9:00");
-		mRenderer.addXTextLabel(3, "10:00");
-		mRenderer.addXTextLabel(4, "11:00");
-		mRenderer.addXTextLabel(5, "12:00");
-		mRenderer.addXTextLabel(6, "13:00");
-		mRenderer.addXTextLabel(7, "14:00");
-		mRenderer.addXTextLabel(8, "15:00");
-		mRenderer.addXTextLabel(9, "16:00");
-		mRenderer.addXTextLabel(10, "17:00");
-		mRenderer.addXTextLabel(11, "18:00");
-		mRenderer.addXTextLabel(12, "19:00");
 	}
 }
