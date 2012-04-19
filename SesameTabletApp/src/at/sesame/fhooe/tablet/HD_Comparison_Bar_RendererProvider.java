@@ -36,10 +36,12 @@ extends AbstractRendererProvider
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
-		mRenderer.setYTitle(mCtx.getString(R.string.energy_graph_y_title));
+		mRenderer.setYTitle(mCtx.getString(R.string.energy_bar_y_title));
 		mRenderer.setBarSpacing(1.5f);
 		mRenderer.setXAxisMin(0.5);
 		mRenderer.setXAxisMax(7.5);
+		mRenderer.setYAxisMin(0);
+		//mRenderer.setYAxisMax(2500);
 		mRenderer.clearXTextLabels();
 		for(int i = 0 ;i<DataSimulator.BAR_TITLES.length;i++)
 		{

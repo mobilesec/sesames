@@ -13,7 +13,8 @@
     <string name="hd_comparison_week_cb3_text">" vor 3 Wochen"</string>
     <string name="hd_comparison_week_cb4_text">" vor 4 Wochen"</string>
     <string name="energy_graph_y_title">Watt</string>
-    <string name="sesame_notification_title">Sesame Notification</string>
+    <string name="energy_bar_y_title">kWh</string>
+    <string name="sesame_notification_title">Hinweis</string>
     <string name="today_tab_title">Heute</string>
     <string name="comparison_tab_title">Vergleich</string>
 
