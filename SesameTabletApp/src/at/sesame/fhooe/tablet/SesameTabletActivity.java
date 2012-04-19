@@ -2,7 +2,9 @@ package at.sesame.fhooe.tablet;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,6 +25,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TabHost;
+import android.widget.Toast;
 import at.fhooe.facedetectionview.model.FacesDetectedEvent;
 import at.fhooe.facedetectionviewcomponent.FaceDetectionViewComponent;
 import at.sesame.fhooe.lib2.config.ConfigLoader;
@@ -39,11 +42,12 @@ import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
 import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
+import at.sesame.fhooe.lib2.data.ISesameUpdateListener;
 
-@SuppressWarnings("unused")
+
 public class SesameTabletActivity 
 extends FragmentActivity 
-implements INotificationListener 
+implements INotificationListener, ISesameUpdateListener 
 {
 	private static final SimpleDateFormat	LOG_FILENAME_DATE_FORMAT		= new SimpleDateFormat("dd_MM_yy_HH_mm");
 	private static final String				TAG								= "SesameTabletActivity";
@@ -93,6 +97,20 @@ implements INotificationListener
 	private Timer							mFaceDetectionTimer;
 
 	private FrameLayout						mFaceContainer					= null;
+	
+//	private Date mLastEnergyUpdate;
+//	private Date mLastEnergyUpdateTimeStamp;
+//	private Date mLastPmsUpdate;
+	
+	private int mNumHoursBeforeRepoFailNotification = 1;
+//	private int mNumMinutesBeforePmsFailNotification = 5;
+	
+	private int mPmsUpdateFailCount = 0;
+	private int mMaxPmsUpdateFailCount = 5;
+	
+	private int mEnergyUpdateFailCount = 0;
+	private int mMaxEnergyUpdateFailCount = 5;
+
 
 	// public SesameTabletActivity(Context _ctx, FragmentManager _fm, Handler
 	// _uiHandler)
@@ -128,8 +146,9 @@ implements INotificationListener
 		protected Void doInBackground(Void... params) {
 
 			mDataCache = SesameDataCache.getInstance(SesameTabletActivity.this);
+			mDataCache.registerSesameUpdateListener(SesameTabletActivity.this);
 //			mDataCache.registerNotificationListener(SesameTabletActivity.this);
-			mDataCache.startEnergyDataUpdates();
+//			mDataCache.startEnergyDataUpdates();
 //			mDataCache.startNotificationUpdates();
 			// ArrayList<SesameMeasurementPlace> places =
 			// mDataCache.getEnergyMeasurementPlaces();
@@ -493,6 +512,73 @@ implements INotificationListener
 				// System.out.println(event);
 			}
 		}
+	}
+
+	@Override
+	public void notifyPmsUpdate(boolean _success) 
+	{
+		Log.e(TAG, "notified about pms update");
+		if(_success)
+		{
+			mPmsUpdateFailCount = 0;
+		}
+		else
+		{
+			mPmsUpdateFailCount++;
+		}
+		if(mPmsUpdateFailCount>=mMaxPmsUpdateFailCount)
+		{
+			Log.e(TAG, "connection to pms potentially lost...");
+		}
+	}
+
+	@Override
+	public void notifyEnergyUpdate(boolean _success)
+	{
+		Log.e(TAG, "notified about energy update");
+		if(_success)
+		{
+			mEnergyUpdateFailCount = 0;
+		}
+		else
+		{
+			mEnergyUpdateFailCount++;
+		}
+		
+		if(mEnergyUpdateFailCount>=mMaxEnergyUpdateFailCount)
+		{
+			Log.e(TAG, "connection to repository lost");
+		}
+		
+		long lastUpdateMillis = mDataCache.getLastEnergyDataTimeStamp().getTime();
+		long nowMillis = new Date().getTime();
+		long diff = nowMillis-lastUpdateMillis;
+		if(diff<0)
+		{
+			Log.e(TAG, "error computing diff for energy update times");
+		}
+		
+		if(diff>3600000*mNumHoursBeforeRepoFailNotification)
+		{
+			Log.e(TAG, "last update of energy data is older than "+mNumHoursBeforeRepoFailNotification+" hours");
+		}
+		
+	}
+
+	@Override
+	public void notifyConnectivityLoss() 
+	{
+		Log.e(TAG, "notified about connection loss");
+		runOnUiThread(new Runnable()
+		{	
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Toast.makeText(SesameTabletActivity.this, "internet connection lost", Toast.LENGTH_LONG).show();
+//				mDataCache.cleanUp();
+			}
+		});
+		
 	}
 
 }

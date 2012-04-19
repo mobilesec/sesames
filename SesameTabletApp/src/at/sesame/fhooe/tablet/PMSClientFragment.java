@@ -73,7 +73,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	private static final String ACTIVE_CB_TAG = "active";
 	private static final String INACTIVE_CB_TAG = "inactive";
 
-	private static final long UI_UPDATE_PERIOD = 10000;
+	private static final long UI_UPDATE_PERIOD = 5000;
 
 	private Timer mUiUpdateTimer = new Timer();
 
@@ -244,6 +244,11 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 
 
 
+	public void onCreate(Bundle _savedInstanceState)
+	{
+		super.onCreate(_savedInstanceState);
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -553,19 +558,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	//	}
 
 
-	/**
-	 * checks if the device currently is connected to the internet
-	 * @return true if the device is connected, false otherwise
-	 */
-	private boolean checkConnectivity() 
-	{
-		ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			return true;
-		}
-		return false;
-	}
+
 
 	@Override
 	public void onDestroy()
@@ -604,15 +597,15 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	public void onResume()
 	{
 		super.onResume();
-		if(checkConnectivity())
-		{
-			Log.i(TAG, "starting updates");
-//			startContinuousUiUpdates();
-		}
-		else
-		{
-			new PMSNoNetworkDialogFragment().show(getFragmentManager(), null);
-		}
+//		if(checkConnectivity())
+//		{
+//			Log.i(TAG, "starting updates");
+			startContinuousUiUpdates();
+//		}
+//		else
+//		{
+//			new PMSNoNetworkDialogFragment().show(getFragmentManager(), null);
+//		}
 	}
 
 	private void startContinuousUiUpdates()

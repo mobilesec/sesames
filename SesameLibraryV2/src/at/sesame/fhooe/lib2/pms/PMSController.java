@@ -39,7 +39,7 @@ implements IPMSDialogActionHandler
 	/**
 	 * the thread that queries the status of all devies in the background
 	 */
-	private DeviceStateUpdater mUpdater;
+//	private DeviceStateUpdater mUpdater;
 
 //	private String mUser = "peter";
 //	private String mPass = "thatpeter";
@@ -87,25 +87,25 @@ implements IPMSDialogActionHandler
 //		setControlContainerVisibility(View.GONE, View.GONE);
 	}
 
-	public void startAutoUpdate()
-	{
-		stopAutoUpdate();
-//		if(mDevicesLoaded)
-		{
-			mUpdater = new DeviceStateUpdater(mAllDevices);
-			mUpdater.startUpdating();
-//			mUpdateThread.start();			
-		}
-	}
+//	public void startAutoUpdate()
+//	{
+//		stopAutoUpdate();
+////		if(mDevicesLoaded)
+//		{
+//			mUpdater = new DeviceStateUpdater(mAllDevices);
+//			mUpdater.startUpdating();
+////			mUpdateThread.start();			
+//		}
+//	}
 
-	public void stopAutoUpdate()
-	{
-		if(null!=mUpdater)
-		{
-			mUpdater.stopUpdating();
-		}
-
-	}
+//	public void stopAutoUpdate()
+//	{
+//		if(null!=mUpdater)
+//		{
+//			mUpdater.stopUpdating();
+//		}
+//
+//	}
 
 //	/**
 //	 * returns a list of all selected devices
@@ -188,7 +188,7 @@ implements IPMSDialogActionHandler
 		{
 			super.onPostExecute(result);
 			mHelper.deselectAll();
-			startAutoUpdate();
+//			startAutoUpdate();
 			PMSDialogFactory.dismissCurrentDialog();
 		}
 
@@ -196,7 +196,7 @@ implements IPMSDialogActionHandler
 		protected void onPreExecute() {
 			super.onPreExecute();
 			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
-			stopAutoUpdate();
+//			stopAutoUpdate();
 		}
 
 		@Override
@@ -335,7 +335,12 @@ implements IPMSDialogActionHandler
 //		PMSDialogFactory.dismissCurrentDialog();
 	}
 	
-	private void loadDevices(HostList _hl)
+//	public boolean updateDevices()
+//	{
+//		return mUpdater.updateAllDevices();
+//	}
+	
+	private boolean loadDevices(HostList _hl)
 	{
 //		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
 		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(_hl.getMacList());
@@ -344,7 +349,7 @@ implements IPMSDialogActionHandler
 			Log.e(TAG, "could not query statuses");
 			//			mNetworkingDialog.dismiss();
 //			PMSDialogFactory.dismissCurrentDialog();
-			return;
+			return false;
 		}
 //		mAllDevices = new ArrayList<ControllableDevice>();
 		for(ExtendedPMSStatus exStat:statuses)
@@ -361,6 +366,7 @@ implements IPMSDialogActionHandler
 			}
 			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		}
+		return true;
 	}
 
 
@@ -510,7 +516,7 @@ implements IPMSDialogActionHandler
 		
 		@Override
 		protected void onPostExecute(Void result) {
-			startAutoUpdate();
+//			startAutoUpdate();
 			PMSDialogFactory.dismissCurrentDialog();
 			super.onPostExecute(result);
 		}
@@ -519,7 +525,7 @@ implements IPMSDialogActionHandler
 		protected void onPreExecute() 
 		{
 			super.onPreExecute();
-			stopAutoUpdate();
+//			stopAutoUpdate();
 			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.shutdown_dialog_title), mMax});
 		}
 		
@@ -577,7 +583,7 @@ implements IPMSDialogActionHandler
 	}
 	
 	
-	public class QueryDevsTask extends AsyncTask<HostList, Void, Void>
+	public class QueryDevsTask extends AsyncTask<HostList, Void, Boolean>
 	{
 		@Override
 		protected void onPreExecute() {
@@ -598,17 +604,21 @@ implements IPMSDialogActionHandler
 //		}
 
 		@Override
-		protected Void doInBackground(HostList... params) {
+		protected Boolean doInBackground(HostList... params) {
 //			queryControllableDevicesSim();
 //			queryControllableDevicesKDF();
+			Boolean result = true;
 			for(HostList hl:params)
 			{
 				if(null!=hl)
 				{
-					loadDevices(hl);					
+					if(!loadDevices(hl))
+					{
+						result = false;
+					}
 				}
 			}
-			return null;
+			return result;
 		}
 		
 	}

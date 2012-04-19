@@ -32,17 +32,19 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 		queryEnergyMeasurementPlaces();
 	}
 
-	private void queryEnergyMeasurementPlaces()
+	private boolean queryEnergyMeasurementPlaces()
 	{
-		queryMeasurementPlaces(SensorType.energy, mEnergyPlaces);
+		return queryMeasurementPlaces(SensorType.energy, mEnergyPlaces);
 	}
 
-	private void queryMeasurementPlaces(SensorType _st, ArrayList<SesameMeasurementPlace> _placeList)
+	private boolean queryMeasurementPlaces(SensorType _st, ArrayList<SesameMeasurementPlace> _placeList)
 	{
-		HashMap<String, String> placeSensorMap = SemanticQueryResultParser
-				.parseSensorsQueryResult(RepositoryAccess
-						.executeQuery(SemanticRepoHelper
-								.getSensorsQuery(_st)));
+		String result = RepositoryAccess.executeQuery(SemanticRepoHelper.getSensorsQuery(_st));
+		if(null==result)
+		{
+			return false;
+		}
+		HashMap<String, String> placeSensorMap = SemanticQueryResultParser.parseSensorsQueryResult(result);
 		Log.d(TAG, "query issued, lenght of result:"+placeSensorMap.size());
 		Iterator<String> placeIt = placeSensorMap.keySet().iterator();
 		while(placeIt.hasNext())
@@ -54,6 +56,7 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 			Log.d(TAG, "added measurementPlace");
 //			mEnergyPlaceSensorMap.put(new SesameMeasurementPlace(_id, _name), value)
 		}
+		return true;
 //		placeStrings = makeUnique(placeStrings);
 ////		ArrayList<SesameMeasurementPlace> places = new ArrayList<SesameMeasurementPlace>(placeStrings.size());
 //		for(int i = 0;i<placeStrings.size();i++)
@@ -64,19 +67,19 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 //		return places;
 	}
 	
-	private ArrayList<String> makeUnique(ArrayList<String> _list)
-	{
-		ArrayList<String> res = new ArrayList<String>();
-		
-		for(String entry:_list)
-		{
-			if(!res.contains(entry))
-			{
-				res.add(entry);
-			}
-		}
-		return res;
-	}
+//	private ArrayList<String> makeUnique(ArrayList<String> _list)
+//	{
+//		ArrayList<String> res = new ArrayList<String>();
+//		
+//		for(String entry:_list)
+//		{
+//			if(!res.contains(entry))
+//			{
+//				res.add(entry);
+//			}
+//		}
+//		return res;
+//	}
 
 	@Override
 	public ArrayList<SesameMeasurementPlace> getTemperatureMeasurementPlaces() {
@@ -140,7 +143,10 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 		String sensorId = _smp.getEnergySensors().get(0).getId();
 		String query = SemanticRepoHelper.getSensorValuesQuery(sensorId, _from, _to);
 		String result = RepositoryAccess.executeQuery(query);
-		
+		if(null==result)
+		{
+			return null;
+		}
 		HashMap<Date, Double> dateValueMap = SemanticQueryResultParser.parseValues(result);
 		
 		Iterator<Map.Entry<Date, Double>> it = dateValueMap.entrySet().iterator();

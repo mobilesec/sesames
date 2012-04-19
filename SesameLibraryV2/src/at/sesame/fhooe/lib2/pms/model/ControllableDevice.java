@@ -37,9 +37,9 @@ implements Runnable
 	private static final int HOUR_FORMAT_THRESHOLD = 180;
 	private static final int SHORT_INACTIVITY_INTERVAL = 10;
 	private static final int LONG_INACTIVITY_INTERVAL = 30; 
-	
+
 	private static final int NUM_UPDATES_BEFORE_DIRTY_RESET = 3;
-	
+
 
 	/**
 	 * enumeration of possible power-off commands
@@ -58,9 +58,9 @@ implements Runnable
 		mac,
 		unknown
 	}
-	
-//	private String mBasicAuthName = "peter";
-//	private String mBasicAuthPass = "thatpeter";
+
+	//	private String mBasicAuthName = "peter";
+	//	private String mBasicAuthPass = "thatpeter";
 
 	/**
 	 * the MAC address of the device
@@ -106,9 +106,9 @@ implements Runnable
 	private int mIdleSince;
 
 	private Context mCtx;
-	
+
 	private int mNumDirtyUpdates = 0;
-	
+
 	private boolean mDesiredAlive;
 
 	//	private boolean mConsumerThreadRunning = true;
@@ -176,7 +176,7 @@ implements Runnable
 
 	private void setDesiredStatus(boolean _alive)
 	{
-//		Log.e(TAG, "desired status set to:"+_alive);
+		//		Log.e(TAG, "desired status set to:"+_alive);
 		mDesiredAlive = _alive;
 	}
 	public void setExtendedPMSStatus(ExtendedPMSStatus _status)
@@ -193,23 +193,23 @@ implements Runnable
 				return;
 			}
 		}
-		
+
 		if(mUseHostnameFromStatus)
 		{
 			mHostname = _status.getHostname();
-//			Log.e(TAG, "hostname="+getHostname());
+			//			Log.e(TAG, "hostname="+getHostname());
 		}
 		else
 		{
-//			Log.e(TAG, "hostname not set");
-//			Log.e(TAG, "hostname="+getHostname());
+			//			Log.e(TAG, "hostname not set");
+			//			Log.e(TAG, "hostname="+getHostname());
 		}
 		mIp = _status.getIp();
 		mIdleSince = _status.getIdleSince();
 		mOs = OS.valueOf(_status.getOs());
 		mAlive = _status.getAlive().equals("1")?true:false;
 		mValid = true;
-		
+
 		if(isAlive()!=mDesiredAlive)
 		{
 			mNumDirtyUpdates++;
@@ -220,7 +220,7 @@ implements Runnable
 			mNumDirtyUpdates = 0;
 			setDesiredStatus(isAlive());
 		}
-//		Log.e(TAG, toString());
+		//		Log.e(TAG, toString());
 	}
 
 	/**
@@ -230,22 +230,30 @@ implements Runnable
 	public boolean wakeUp()
 	{
 		SesameLogger.log(EntryType.PMS, getMac(), "wake-up");
-		setDesiredStatus(true);
-		Log.e(TAG, "waking up "+getHostname());
-//		try
-//		{
+		boolean res = false;
+		try
+		{
+			setDesiredStatus(true);
+			Log.e(TAG, "waking up "+getHostname());
+			//		try
+			//		{
 			//			return mPms.wakeup(mMac);
-			boolean res = mPms.wakeup(mMac);
-//			return new WakeupTask().execute(mMac).get();
-//		} 
-//		catch (InterruptedException e) 
-//		{
-//			e.printStackTrace();
-//		}
-//		catch (ExecutionException e) 
-//		{
-//			e.printStackTrace();
-//		}
+			res = mPms.wakeup(mMac);
+			//			return new WakeupTask().execute(mMac).get();
+			//		} 
+			//		catch (InterruptedException e) 
+			//		{
+			//			e.printStackTrace();
+			//		}
+			//		catch (ExecutionException e) 
+			//		{
+			//			e.printStackTrace();
+			//		}
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 		return res;
 	}
 
@@ -312,14 +320,14 @@ implements Runnable
 		{
 			if(mUseCredentials)
 			{
-//				return PMSProvider.getPMS(mBasicAuthName, mBasicAuthPass).poweroff(mMac, _state.name(), "", mUser, mPassword);
+				//				return PMSProvider.getPMS(mBasicAuthName, mBasicAuthPass).poweroff(mMac, _state.name(), "", mUser, mPassword);
 				return mPms.poweroff(mMac, _state.name(), "", mUser, mPassword);
-//				return new PowerOffTask().execute(mMac, _state.name(), "", mUser, mPassword).get();
+				//				return new PowerOffTask().execute(mMac, _state.name(), "", mUser, mPassword).get();
 			}
 			else
 			{
 				return mPms.poweroff(mMac, _state.name(), "", "", "");
-//				return new PowerOffTask().execute(mMac, _state.name(), "", "", "").get();
+				//				return new PowerOffTask().execute(mMac, _state.name(), "", "", "").get();
 			}
 		} 
 		catch (Exception e) 
@@ -327,11 +335,11 @@ implements Runnable
 			e.printStackTrace();
 			return false;
 		}
-//		catch (ExecutionException e) 
-//		{
-//			e.printStackTrace();
-//		}
-//		return false;
+		//		catch (ExecutionException e) 
+		//		{
+		//			e.printStackTrace();
+		//		}
+		//		return false;
 	}
 
 	/**
@@ -348,7 +356,7 @@ implements Runnable
 		if(mUseHostnameFromStatus)
 		{
 			mHostname = extStat.getHostname();
-			
+
 		}
 		mIp = extStat.getIp();
 		mOs = translateOsToEnum(extStat.getOs());
@@ -498,14 +506,14 @@ implements Runnable
 		}
 		else if(idleMins<HOUR_FORMAT_THRESHOLD)
 		{
-//			return ""+roundShortInterval(idleMins);
+			//			return ""+roundShortInterval(idleMins);
 			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+roundShortInterval(idleMins)+mCtx.getString(R.string.ControllableDevice_minuteString);
 		}
 		else
 		{
 			DecimalFormat df = new DecimalFormat("#.#");
 			String idleString = df.format(roundLongInterval(idleMins));
-//			return idleString;
+			//			return idleString;
 			return mCtx.getString(R.string.ControllableDevice_idleString_prefix)+idleString+mCtx.getString(R.string.controllableDevice_hourString);
 		}
 	}
@@ -565,7 +573,7 @@ implements Runnable
 
 		return sb.toString();
 	}
-	
+
 	public boolean isDirty()
 	{
 		return mDesiredAlive != isAlive();

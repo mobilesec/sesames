@@ -150,7 +150,7 @@ implements ISesameDataListener, ILoginListener
 //	        	Log.d(TAG, "+++++++++smp="+smp.getName());
 //	        	mDataCache.registerEnergyDataListener(this, smp);
 //	        }
-	       mDataCache.startEnergyDataUpdates();
+//	       mDataCache.startEnergyDataUpdates();
 	       
 			return null;
 		}

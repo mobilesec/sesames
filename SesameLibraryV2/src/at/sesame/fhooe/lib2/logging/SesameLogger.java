@@ -27,7 +27,8 @@ public class SesameLogger
 	{
 		FACE_DETECTION,
 		PMS, 
-		POSITION
+		POSITION,
+		APPLICATION_INFO
 	}
 	
 	public static void log(EntryType _type, String _source, String _msg)
