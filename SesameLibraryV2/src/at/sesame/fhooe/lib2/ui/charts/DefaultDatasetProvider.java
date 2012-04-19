@@ -126,15 +126,15 @@ extends AbstractDatasetProvider
 		{
 			throw new DatasetCreationException("x- and y- sizes dont match (x="+xValues.size()+", y="+yValues.size()+")");
 		}
-		for(int i = 0;i<xValues.size();i++)
-		{
-			int xLen = xValues.get(i).length;
-			int yLen = yValues.get(i).length;
-			if(xLen!=yLen)
-			{
-				throw new DatasetCreationException("lenghts of x- and y-values don't match (x="+xLen+", y="+yValues.get(i).length+").");							
-			}
-		}
+//		for(int i = 0;i<xValues.size();i++)
+//		{
+//			int xLen = xValues.get(i).length;
+//			int yLen = yValues.get(i).length;
+//			if(xLen!=yLen)
+//			{
+//				throw new DatasetCreationException("lengths of x- and y-values don't match (x="+xLen+", y="+yValues.get(i).length+").");							
+//			}
+//		}
 		mDataset = new XYMultipleSeriesDataset();
 //		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
 		int length = titles.length;
@@ -145,8 +145,17 @@ extends AbstractDatasetProvider
 			Date[] xV = xValues.get(i);
 			double[] yV = yValues.get(i);
 			int seriesLength = xV.length;
-			for (int k = 0; k < seriesLength; k++) {
-				series.add(xV[k], yV[k]);
+			
+			for (int k = 0; k < seriesLength; k++) 
+			{
+				try
+				{
+					series.add(xV[k], yV[k]);					
+				}
+				catch(ArrayIndexOutOfBoundsException _aioobe)
+				{
+					//don't add data to series, just continue
+				}
 			}
 			mDataset.addSeries(i,series);
 		}

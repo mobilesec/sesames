@@ -979,12 +979,20 @@ implements ISesameDataProvider
 		Log.e(TAG, "updating");
 		if(checkConnectivity())
 		{
-			boolean devicesUpdated = SesameDataCache.mDeviceStateUpdater.updateAllDevices();
+
+			if(!mController.isConnectionInUse())
+			{
+				boolean devicesUpdated = SesameDataCache.mDeviceStateUpdater.updateAllDevices();
+				for(ISesameUpdateListener listener:mUpdateListeners)
+				{
+					listener.notifyPmsUpdate(devicesUpdated);
+				}
+				
+			}
 			boolean energyDataLoaded = refreshEnergyData(mNumDays2LoadEnergyData);
 
 			for(ISesameUpdateListener listener:mUpdateListeners)
 			{
-				listener.notifyPmsUpdate(devicesUpdated);
 				listener.notifyEnergyUpdate(energyDataLoaded);
 			}
 		}

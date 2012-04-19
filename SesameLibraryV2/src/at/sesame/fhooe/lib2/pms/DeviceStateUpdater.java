@@ -27,6 +27,8 @@ public class DeviceStateUpdater
 	private long mUpdatePeriod = 10000;
 
 	private Timer mUpdateTimer = new Timer();
+	
+	private static volatile boolean mUpdateInProgress = false;
 
 //	private String mUser;
 //	private String mPass;
@@ -58,7 +60,7 @@ public class DeviceStateUpdater
 	public boolean updateAllDevices()
 	{
 		Log.i(TAG, "updating");
-
+		mUpdateInProgress = true;
 		long begin = System.currentTimeMillis();
 		ArrayList<ExtendedPMSStatus> statuses = null;
 		try
@@ -68,12 +70,14 @@ public class DeviceStateUpdater
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			mUpdateInProgress = false;
 			return false;
 		}
 
 		if(null==statuses || statuses.isEmpty())
 		{
 			Log.e(TAG, "update failed");
+			mUpdateInProgress = false;
 			return false;
 		}
 		else
@@ -108,6 +112,7 @@ public class DeviceStateUpdater
 				}
 			}
 		}
+		mUpdateInProgress = false;
 		return true;
 //		mUpdateListener.notifyPMSUpdated();
 //		try 
@@ -119,6 +124,20 @@ public class DeviceStateUpdater
 //			Log.e(TAG, "interrupted");
 //		}
 	}
+	
+	
+
+	public static boolean isUpdateInProgress() {
+		return mUpdateInProgress;
+	}
+
+
+
+//	public void setmUpdateInProgress(boolean mUpdateInProgress) {
+//		this.mUpdateInProgress = mUpdateInProgress;
+//	}
+
+
 
 	public void startUpdating()
 	{

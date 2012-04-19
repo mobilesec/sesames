@@ -29,7 +29,7 @@ implements IPMSDialogActionHandler
 	 */
 	private static final String TAG = "PMSController";
 
-
+	private volatile static boolean CONNECTION_IN_USE = false; 
 
 	/**
 	 * a list of all controllable devices available
@@ -158,9 +158,11 @@ implements IPMSDialogActionHandler
 			mFragMan = _fragMan;
 		}
 		@Override
-		protected Void doInBackground(ArrayList<ControllableDevice>... params) {
-			ArrayList<ControllableDevice> selDevs = params[0];
+		protected Void doInBackground(ArrayList<ControllableDevice>... params) 
+		{
 			
+			ArrayList<ControllableDevice> selDevs = params[0];
+			waitForUpdateToFinish();
 			for(ControllableDevice cd:selDevs)
 			{
 //				ControllableDevice cd = selDevs.get(i);
@@ -187,6 +189,7 @@ implements IPMSDialogActionHandler
 		protected void onPostExecute(Void result) 
 		{
 			super.onPostExecute(result);
+			CONNECTION_IN_USE = false;
 			mHelper.deselectAll();
 //			startAutoUpdate();
 			PMSDialogFactory.dismissCurrentDialog();
@@ -195,6 +198,7 @@ implements IPMSDialogActionHandler
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			CONNECTION_IN_USE = true;
 			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
 //			stopAutoUpdate();
 		}
@@ -517,6 +521,7 @@ implements IPMSDialogActionHandler
 		@Override
 		protected void onPostExecute(Void result) {
 //			startAutoUpdate();
+			CONNECTION_IN_USE = false;
 			PMSDialogFactory.dismissCurrentDialog();
 			super.onPostExecute(result);
 		}
@@ -525,6 +530,7 @@ implements IPMSDialogActionHandler
 		protected void onPreExecute() 
 		{
 			super.onPreExecute();
+			CONNECTION_IN_USE = true;
 //			stopAutoUpdate();
 			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.shutdown_dialog_title), mMax});
 		}
@@ -550,6 +556,7 @@ implements IPMSDialogActionHandler
 //			ArrayList<ControllableDevice> selDevs = getSelectedDevices();
 			ArrayList<ControllableDevice> devices = (ArrayList<ControllableDevice>)params[0];
 			PowerOffState state = (PowerOffState)params[1];
+			waitForUpdateToFinish();
 			for(ControllableDevice cd:devices)
 			{
 //				mHelper.markDirty(cd,true);
@@ -705,6 +712,24 @@ implements IPMSDialogActionHandler
 	public void handlePowerClick(ControllableDevice cd) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public boolean isConnectionInUse()
+	{
+		return CONNECTION_IN_USE;
+	}
+	
+	private void waitForUpdateToFinish()
+	{
+		while(DeviceStateUpdater.isUpdateInProgress())
+		{
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 //	@Override

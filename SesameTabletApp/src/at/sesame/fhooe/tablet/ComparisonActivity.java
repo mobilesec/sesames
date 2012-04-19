@@ -168,7 +168,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		titles.add(mRoomName + getString(R.string.global_current));
 
 		ArrayList<SesameMeasurement> currentMeasurements = SesameDataContainer.filterByDate(readings.getMeasurements(), DateHelper.getSchoolStartXDaysAgo(0), DateHelper.getSchoolEndXDaysAgo(0), false);
-		Log.d(TAG, "current:"+Arrays.toString((SesameMeasurement[]) currentMeasurements.toArray(new SesameMeasurement[currentMeasurements.size()])));
+//		Log.d(TAG, "current:"+Arrays.toString((SesameMeasurement[]) currentMeasurements.toArray(new SesameMeasurement[currentMeasurements.size()])));
 		Date[] currentDates = SesameDataContainer.getTimeStampArray(currentMeasurements);
 		dates.add(currentDates);
 		values.add(SesameDataContainer.getValueArray(currentMeasurements));
@@ -245,6 +245,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 
 	private void updateWeekChart()
 	{
+		double multiplicationFactor = 0.00025d;
 		ArrayList<String> titles = new ArrayList<String>();
 		ArrayList<double[]>values = new ArrayList<double[]>();
 		SesameDataContainer data = mDataCache.getAllEnergyReadings(mCurRoom);
@@ -252,38 +253,38 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		titles.add(mRoomName + getString(R.string.global_current));
 		
 		double[] currentValues = extractWeekDayValues(data, 0);
-		values.add(ArrayHelper.multiply(currentValues, 1/4000));
+		values.add(ArrayHelper.multiply(currentValues, multiplicationFactor));
 		
 		if(mSelectedFilters[0])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb1_text));
 			double[] oneWeekAgoValues = extractWeekDayValues(data, 1);
-			values.add(ArrayHelper.multiply(oneWeekAgoValues, 1/4000));
+			values.add(ArrayHelper.multiply(oneWeekAgoValues, multiplicationFactor));
 		}
 		if(mSelectedFilters[1])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb2_text));
 			double[] twoWeeksAgoValues = extractWeekDayValues(data, 2);
-			values.add(ArrayHelper.multiply(twoWeeksAgoValues, 1/4000));
+			values.add(ArrayHelper.multiply(twoWeeksAgoValues, multiplicationFactor));
 		}
 		if(mSelectedFilters[2])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb3_text));
 			double[] threeWeeksAgoValues = extractWeekDayValues(data, 3);
-			values.add(ArrayHelper.multiply(threeWeeksAgoValues, 1/4000));
+			values.add(ArrayHelper.multiply(threeWeeksAgoValues, multiplicationFactor));
 		}
 		if(mSelectedFilters[3])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb4_text));
 			double[] fourWeeksAgoValues = extractWeekDayValues(data, 4);
-			values.add(ArrayHelper.multiply(fourWeeksAgoValues,1/4000));
+			values.add(ArrayHelper.multiply(fourWeeksAgoValues,multiplicationFactor));
 		}
 //		XYMultipleSeriesDataset dataset = DataSimulator.createBarSeries(titles);
 		try {
 			mDatasetProvider.createBarDataSet(titles, values);
 			XYMultipleSeriesDataset dataset = mDatasetProvider.getDataset();
 			mBarRendererProvider.createMultipleSeriesRenderer(dataset);
-			Log.e(TAG, "setting chart view with week/bar chart");
+//			Log.e(TAG, "setting chart view with week/bar chart");
 			setChartView(ChartFactory.getBarChartView(getApplicationContext(), dataset, mBarRendererProvider.getRenderer(), Type.DEFAULT));
 
 		} catch (RendererInitializationException e) {
@@ -368,11 +369,11 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		{
 		case R.id.hd_comparison_layout_dayRadioButt:
 			mCurMode = DisplayMode.day;
-			Log.e(TAG, "display mode set to day");
+//			Log.e(TAG, "display mode set to day");
 			break;
 		case R.id.hd_comparison_layout_weekRadioButt:
 			mCurMode = DisplayMode.week;
-			Log.e(TAG, "display mode set to week");
+//			Log.e(TAG, "display mode set to week");
 			break;
 		default:
 			break;

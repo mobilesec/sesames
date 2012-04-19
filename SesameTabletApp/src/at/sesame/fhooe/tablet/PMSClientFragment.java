@@ -35,7 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
-import at.sesame.fhooe.lib2.pms.ControllableDeviceAdapter;
+//import at.sesame.fhooe.lib2.pms.ControllableDeviceAdapter;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntryComparator;
 import at.sesame.fhooe.lib2.pms.IListEntry;
@@ -161,8 +161,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	private ListView mActiveList;
 	private ListView mInactiveList;
 
-	private ControllableDeviceAdapter mActiveAdapter;
-	private ControllableDeviceAdapter mInactiveAdapter;
+	private DummyAdapterForAir mActiveAdapter;
+	private DummyAdapterForAir mInactiveAdapter;
 
 	private TextView mActiveDevIndicatorLabel;
 	private TextView mInactiveDevIndicatorLabel;
@@ -223,10 +223,10 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	private void initializeLists()
 	{
 		
-		mActiveAdapter = new ControllableDeviceAdapter(mCtx, mActiveListEntries, mPMSHelper);
+		mActiveAdapter = new DummyAdapterForAir(mCtx, mActiveListEntries, mPMSHelper);
 		mActiveList.setAdapter(mActiveAdapter);
 
-		mInactiveAdapter = new ControllableDeviceAdapter(mCtx, mInactiveListEntries, mPMSHelper);
+		mInactiveAdapter = new DummyAdapterForAir(mCtx, mInactiveListEntries, mPMSHelper);
 		mInactiveList.setAdapter(mInactiveAdapter);
 //		startSingleUiUpdate();
 		startContinuousUiUpdates();
@@ -577,11 +577,12 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	
 	public void startSingleUiUpdate()
 	{
-//		if(null==mUiUpdateTimer)
-//		{
+		if(null==mUiUpdateTimer)
+		{
 //			mUiUpdateTimer = new Timer();
-//		}
-		new Timer().schedule(new UiUpdateTask(), 0);
+			mUiUpdateTimer.schedule(new UiUpdateTask(), 0);
+		}
+//		new Timer().schedule(new UiUpdateTask(), 0);
 	}
 
 	public void stopUiUpdates() {

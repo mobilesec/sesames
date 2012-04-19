@@ -14,7 +14,7 @@ extends Mail
 	private static final String SESAME_MAIL_SUBJECT = "Automatic Sesame Notification";
 	private static final String PMS_FAIL_MESSAGE = "PMS updates failed 5 or more times";
 	private static final String REPO_FAIL_MESSAGE = "PMS updates failed 5 or more times";
-	private static final String REPO_OLD_MESSAGE = "Last meter value reveive0d more than three hours ago";
+	private static final String REPO_OLD_MESSAGE = "Last meter value received more than three hours ago";
 	private static final String HEARTBEAT_MESAGE = "knock, knock, everything fine...";
 	
 	public enum NotificationType
@@ -59,7 +59,7 @@ extends Mail
 	{
 		Log.e(TAG, "sending to:"+Arrays.toString(_config.getAddressArray()));
 		setTo(_config.getAddressArray());
-		setBody(_body);
+		setBody(_config.getUser()+"\n"+_body);
 		try
 		{
 			return super.send();

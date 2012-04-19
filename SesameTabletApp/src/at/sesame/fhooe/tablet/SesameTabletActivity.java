@@ -260,7 +260,7 @@ implements INotificationListener, ISesameUpdateListener
 			}
 			else
 			{
-				bodyBuffer.append("no energy update yet...");
+				bodyBuffer.append("\nno energy update yet...");
 			}
 			bodyBuffer.append("\nlast meter reading:");
 			bodyBuffer.append(mDataCache.getLastEnergyDataTimeStamp().toString());
@@ -567,7 +567,7 @@ implements INotificationListener, ISesameUpdateListener
 			if (null != mFaceViewComponent) {
 				FacesDetectedEvent event = mFaceViewComponent.getLastFaceDetectedEvent();
 				if (null == event) {
-					Log.e(TAG, "event was null");
+//					Log.e(TAG, "event was null");
 				} else {
 					// Log.e(TAG, "near faces:" + event.getAmountOfNearFaces());
 					SesameLogger.log(EntryType.FACE_DETECTION, TAG, "" + event.getAmountOfNearFaces());
@@ -581,11 +581,12 @@ implements INotificationListener, ISesameUpdateListener
 	@Override
 	public void notifyPmsUpdate(boolean _success) 
 	{
-		Log.e(TAG, "notified about pms update");
+		Log.i(TAG, "notified about pms update");
 		if(_success)
 		{
 			mPmsUpdateFailCount = 0;
 			mLastPmsUpdate = new Date();
+			mRoomListFrag.updatePmsFragment();
 		}
 		else
 		{
@@ -593,7 +594,7 @@ implements INotificationListener, ISesameUpdateListener
 		}
 		if(mPmsUpdateFailCount>=mMaxPmsUpdateFailCount)
 		{
-			Log.e(TAG, "connection to pms potentially lost...");
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection to pms potentially lost...");
 			new SesameMail().send(mDataCache.getConfigData(), NotificationType.PMS_FAILED);
 		}
 	}
@@ -601,11 +602,12 @@ implements INotificationListener, ISesameUpdateListener
 	@Override
 	public void notifyEnergyUpdate(boolean _success)
 	{
-		Log.e(TAG, "notified about energy update");
+		Log.i(TAG, "notified about energy update");
 		if(_success)
 		{
 			mEnergyUpdateFailCount = 0;
 			mLastEnergyUpdate = new Date();
+			
 		}
 		else
 		{
@@ -614,7 +616,7 @@ implements INotificationListener, ISesameUpdateListener
 		
 		if(mEnergyUpdateFailCount>=mMaxEnergyUpdateFailCount)
 		{
-			Log.e(TAG, "connection to repository lost");
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection to repository lost");
 			new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_FAILED);
 		}
 		
@@ -628,7 +630,7 @@ implements INotificationListener, ISesameUpdateListener
 		
 		if(diff>3600000*mNumHoursBeforeRepoFailNotification)
 		{
-			Log.e(TAG, "last update of energy data is older than "+mNumHoursBeforeRepoFailNotification+" hours");
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "last update of energy data is older than "+mNumHoursBeforeRepoFailNotification+" hours");
 			new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_OLD);
 		}
 		
@@ -637,12 +639,13 @@ implements INotificationListener, ISesameUpdateListener
 	@Override
 	public void notifyConnectivityLoss() 
 	{
-		Log.e(TAG, "notified about connection loss");
+		Log.i(TAG, "notified about connection loss");
 		runOnUiThread(new Runnable()
 		{	
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection lost");
 				Toast.makeText(SesameTabletActivity.this, getString(R.string.connection_loss_message), Toast.LENGTH_LONG).show();
 //				mDataCache.cleanUp();
 			}

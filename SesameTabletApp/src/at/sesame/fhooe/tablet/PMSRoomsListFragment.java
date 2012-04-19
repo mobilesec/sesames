@@ -308,7 +308,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		if(roomName.equals(mCtx.getString(R.string.global_Room1_name)))
 		{
 			//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
-			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room1_name), new EDV1Hosts()).show(mFragMan, null);
+			mPMSClientFrag = new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room1_name), new EDV1Hosts());
 //			if(mShowNotification)
 //			{
 //				Log.e(TAG, "notification");
@@ -327,7 +327,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		else if(roomName.equals(mCtx.getString(R.string.global_Room3_name)))
 		{
 			//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
-			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room3_name), new EDV3Hosts()).show(mFragMan, null);
+			mPMSClientFrag = new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room3_name), new EDV3Hosts());
 			//			new PMS_MockDetailFragment(R.drawable.ic_edv3_pms_detail_no_notification).show(getFragmentManager(), roomName);
 			//			new PMS_DetailFragment(mCtx, new EDV3Hosts()).show(getFragmentManager(), roomName);
 			//			tag = RoomName.EDV_3.name();
@@ -337,7 +337,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		else if(roomName.equals(mCtx.getString(R.string.global_Room6_name)))
 		{
 			//			new PMSClientFragment(mCtx, mFragMan, mUiHandler, new SimulationHosts()).show(mFragMan, null);
-			new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room6_name), new EDV6Hosts()).show(mFragMan, null);
+			mPMSClientFrag = new PMSClientFragment(mCtx, mFragMan, mUiHandler, mCtx.getString(R.string.global_Room6_name), new EDV6Hosts());
 			//			new PMS_MockDetailFragment(R.drawable.ic_edv6_pms_detail_no_notification).show(getFragmentManager(), roomName);
 			//			new PMS_DetailFragment(mCtx, new EDV6Hosts()).show(getFragmentManager(), roomName);
 			//			tag = RoomName.EDV_6.name();
@@ -345,9 +345,21 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 			//			ft.add(new PMS_DetailFragment(mCtx, new EDV6Hosts()), tag);
 
 		}
+		if(null!=mPMSClientFrag)
+		{
+			mPMSClientFrag.show(mFragMan, null);			
+		}
 
 		//		mPMSClientFrag.show(getFragmentManager(), null);
 
+	}
+	
+	public void updatePmsFragment()
+	{
+		if(null!=mPMSClientFrag)
+		{
+			mPMSClientFrag.startSingleUiUpdate();
+		}
 	}
 
 	@Override
