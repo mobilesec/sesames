@@ -66,26 +66,7 @@ implements ISesameDataProvider
 		{
 			while(mRunning)
 			{
-				SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "updating");
-				Log.e(TAG, "updating");
-				if(checkConnectivity())
-				{
-					boolean devicesUpdated = SesameDataCache.mDeviceStateUpdater.updateAllDevices();
-					boolean energyDataLoaded = refreshEnergyData(mNumDays2LoadEnergyData);
-
-					for(ISesameUpdateListener listener:mUpdateListeners)
-					{
-						listener.notifyPmsUpdate(devicesUpdated);
-						listener.notifyEnergyUpdate(energyDataLoaded);
-					}
-				}
-				else
-				{
-					for(ISesameUpdateListener listener:mUpdateListeners)
-					{
-						listener.notifyConnectivityLoss();
-					}
-				}
+				update();
 				if(mRunning)
 				{
 					try
@@ -96,24 +77,32 @@ implements ISesameDataProvider
 						e.printStackTrace();
 					}					
 				}
-				Log.i(TAG, "update thread finished");
-
 			}
+			Log.i(TAG, "update thread finished");
 		}
 	};
 	private boolean mRunning = false;
 	private long mUpdateTimeout = 10000;
+	private Timer mUpdateTimer;
 //	private Thread mUpdateThread;
 	
 	private void startUpdates()
 	{
-		mRunning = true;
-		new Thread(mUpdateRunnable).start();
+//		mRunning = true;
+//		new Thread(mUpdateRunnable).start();
+		stopUpdates();
+		mUpdateTimer = new Timer("update timer");
+		mUpdateTimer.schedule(new UpdateTask(), 0, mUpdateTimeout);
 	}
 	
 	private void stopUpdates()
 	{
-		mRunning = false;
+//		mRunning = false;
+		if(null!=mUpdateTimer)
+		{
+			mUpdateTimer.cancel();
+			mUpdateTimer.purge();
+		}
 	}
 	public void registerSesameUpdateListener(ISesameUpdateListener _listener)
 	{
@@ -335,6 +324,11 @@ implements ISesameDataProvider
 		cleanUp();
 	}
 
+	public SesameConfigData getConfigData()
+	{
+		return mConfigData;
+	}
+	
 	public void init()
 	{
 		long start = System.currentTimeMillis();
@@ -967,5 +961,39 @@ implements ISesameDataProvider
 			return true;
 		}
 		return false;
+	}
+	
+	private class UpdateTask extends TimerTask
+	{
+
+		@Override
+		public void run()
+		{
+			update();
+		}
+		
+	}
+
+	private void update() {
+		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "updating");
+		Log.e(TAG, "updating");
+		if(checkConnectivity())
+		{
+			boolean devicesUpdated = SesameDataCache.mDeviceStateUpdater.updateAllDevices();
+			boolean energyDataLoaded = refreshEnergyData(mNumDays2LoadEnergyData);
+
+			for(ISesameUpdateListener listener:mUpdateListeners)
+			{
+				listener.notifyPmsUpdate(devicesUpdated);
+				listener.notifyEnergyUpdate(energyDataLoaded);
+			}
+		}
+		else
+		{
+			for(ISesameUpdateListener listener:mUpdateListeners)
+			{
+				listener.notifyConnectivityLoss();
+			}
+		}
 	}
 }

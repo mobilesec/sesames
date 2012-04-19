@@ -28,6 +28,11 @@ public class SesameConfigData
 	public ArrayList<String> getMailAddresses() {
 		return mMailAddresses;
 	}
+	
+	public String[] getAddressArray()
+	{
+		return (String[]) mMailAddresses.toArray(new String[mMailAddresses.size()]);
+	}
 
 	@Override
 	public String toString() {

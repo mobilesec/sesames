@@ -26,6 +26,7 @@ import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
+import at.sesame.fhooe.lib2.util.ArrayHelper;
 import at.sesame.fhooe.lib2.util.DateHelper;
 import at.sesame.fhooe.tablet.ComparisonSelectionFragment.DisplayMode;
 
@@ -251,31 +252,31 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 		titles.add(mRoomName + getString(R.string.global_current));
 		
 		double[] currentValues = extractWeekDayValues(data, 0);
-		values.add(currentValues);
+		values.add(ArrayHelper.multiply(currentValues, 1/4000));
 		
 		if(mSelectedFilters[0])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb1_text));
 			double[] oneWeekAgoValues = extractWeekDayValues(data, 1);
-			values.add(oneWeekAgoValues);
+			values.add(ArrayHelper.multiply(oneWeekAgoValues, 1/4000));
 		}
 		if(mSelectedFilters[1])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb2_text));
 			double[] twoWeeksAgoValues = extractWeekDayValues(data, 2);
-			values.add(twoWeeksAgoValues);
+			values.add(ArrayHelper.multiply(twoWeeksAgoValues, 1/4000));
 		}
 		if(mSelectedFilters[2])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb3_text));
 			double[] threeWeeksAgoValues = extractWeekDayValues(data, 3);
-			values.add(threeWeeksAgoValues);
+			values.add(ArrayHelper.multiply(threeWeeksAgoValues, 1/4000));
 		}
 		if(mSelectedFilters[3])
 		{
 			titles.add(mRoomName+getString(R.string.hd_comparison_week_cb4_text));
 			double[] fourWeeksAgoValues = extractWeekDayValues(data, 4);
-			values.add(fourWeeksAgoValues);
+			values.add(ArrayHelper.multiply(fourWeeksAgoValues,1/4000));
 		}
 //		XYMultipleSeriesDataset dataset = DataSimulator.createBarSeries(titles);
 		try {

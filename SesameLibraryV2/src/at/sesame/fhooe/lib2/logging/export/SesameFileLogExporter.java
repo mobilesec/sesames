@@ -19,9 +19,9 @@ implements ILogExporter
 	private static final String TAG = "SesameFileLogExporter";
 	private static final String BACKUP_EXTENSION = ".bak";
 	private static final String FOLDER_NAME = "sesame";
-	private String mExportPath;
+	private static String mExportPath;
 	private String mFileName;
-	private String mBackupFileName;
+	public static final String MAIL_LOG_FILE_NAME = "sesame_log_mail.csv";
 
 	private FileOutputStream mOutputStream;
 
@@ -39,6 +39,11 @@ implements ILogExporter
 	public SesameFileLogExporter(FileOutputStream _fos)
 	{
 		mOutputStream = _fos;
+	}
+	
+	public String getMailLogFilePath()
+	{
+		return mExportPath+MAIL_LOG_FILE_NAME;
 	}
 
 	public SesameFileLogExporter(Context _ctx, ExportLocation _exLoc, String _fileName)
@@ -105,7 +110,7 @@ implements ILogExporter
 	private void setFileName(String _fileName)
 	{
 		mFileName = _fileName;
-		mBackupFileName = mFileName+BACKUP_EXTENSION;
+//		mBackupFileName = mFileName+BACKUP_EXTENSION;
 	}
 
 	@Override
@@ -119,6 +124,7 @@ implements ILogExporter
 		{
 //			boolean res =  writeStringToFile(mExportPath+FOLDER_NAME+mFileName, _log);
 			//		writeStringToFile(mExportPath+mBackupFileName, _log);
+			writeArffFile(mExportPath+MAIL_LOG_FILE_NAME, _log);
 			boolean res = writeArffFile(mExportPath+mFileName, _log);
 			return res;			
 		}

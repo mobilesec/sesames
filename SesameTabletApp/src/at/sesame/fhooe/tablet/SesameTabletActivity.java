@@ -38,11 +38,14 @@ import at.sesame.fhooe.lib2.logging.SesameLogger;
 import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
 import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter;
 import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter.ExportLocation;
+import at.sesame.fhooe.lib2.mail.SesameMail;
+import at.sesame.fhooe.lib2.mail.SesameMail.NotificationType;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
 import at.sesame.fhooe.lib2.ui.EnergyMeterRenderer;
 import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
 import at.sesame.fhooe.lib2.data.ISesameUpdateListener;
+import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter;
 
 
 public class SesameTabletActivity 
@@ -95,14 +98,15 @@ implements INotificationListener, ISesameUpdateListener
 	private FaceDetectionViewComponent		mFaceViewComponent				= new FaceDetectionViewComponent();
 
 	private Timer							mFaceDetectionTimer;
-
+	private Timer mHeartBeatTimer;
+	private static final long HEARTBEAT_PERIOD = 3600000;
 	private FrameLayout						mFaceContainer					= null;
 	
-//	private Date mLastEnergyUpdate;
+	private Date mLastEnergyUpdate;
 //	private Date mLastEnergyUpdateTimeStamp;
-//	private Date mLastPmsUpdate;
+	private Date mLastPmsUpdate;
 	
-	private int mNumHoursBeforeRepoFailNotification = 1;
+	private int mNumHoursBeforeRepoFailNotification = 3;
 //	private int mNumMinutesBeforePmsFailNotification = 5;
 	
 	private int mPmsUpdateFailCount = 0;
@@ -111,7 +115,7 @@ implements INotificationListener, ISesameUpdateListener
 	private int mEnergyUpdateFailCount = 0;
 	private int mMaxEnergyUpdateFailCount = 5;
 
-
+	private SesameFileLogExporter mExporter;
 	// public SesameTabletActivity(Context _ctx, FragmentManager _fm, Handler
 	// _uiHandler)
 	// {
@@ -182,11 +186,12 @@ implements INotificationListener, ISesameUpdateListener
 			PMSDialogFactory.dismissCurrentDialog();
 			String fileName = "sesameLog" + LOG_FILENAME_DATE_FORMAT.format(new Date()) + ".csv";
 
-			SesameFileLogExporter exporter = new SesameFileLogExporter(SesameTabletActivity.this, ExportLocation.EXT_PUB_DIR,
+			mExporter = new SesameFileLogExporter(SesameTabletActivity.this, ExportLocation.EXT_PUB_DIR,
 					fileName);
-			SesameLogger.setExporter(exporter);
+			SesameLogger.setExporter(mExporter);
 
 			SesameLogger.startContinuousExport(LOG_EXPORT_PERIOD);
+			startHeartBeat();
 		}
 
 		@Override
@@ -204,6 +209,64 @@ implements INotificationListener, ISesameUpdateListener
 			// CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
 			mFaceViewComponent.resume(this, mFaceContainer, true);
 			startFaceDetection();
+		}
+	}
+	
+	private void startHeartBeat()
+	{
+		stopHeartBeat();
+		mHeartBeatTimer = new Timer("heartbeat");
+		mHeartBeatTimer.schedule(new HeartBeatTask(), 15000, HEARTBEAT_PERIOD);
+	}
+	
+	private void stopHeartBeat()
+	{
+		if(null!=mHeartBeatTimer)
+		{
+			mHeartBeatTimer.cancel();
+			mHeartBeatTimer.purge();
+		}
+	}
+	
+	
+	private class HeartBeatTask extends TimerTask
+	{
+		@Override
+		public void run()
+		{
+			Log.e(TAG, "################HEARTBEAT");
+			SesameMail mail = new SesameMail();
+			try {
+				mail.addAttachment(mExporter.getMailLogFilePath());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			StringBuffer bodyBuffer = new StringBuffer();
+			if(null!=mLastPmsUpdate)
+			{
+				bodyBuffer.append("last pms update:");
+				bodyBuffer.append(mLastPmsUpdate.toString());				
+			}
+			else
+			{
+				bodyBuffer.append("no update yet...");
+			}
+			
+			if(null!=mLastEnergyUpdate)
+			{
+				bodyBuffer.append("\nlast energy update:");
+				bodyBuffer.append(mLastEnergyUpdate.toString());				
+			}
+			else
+			{
+				bodyBuffer.append("no energy update yet...");
+			}
+			bodyBuffer.append("\nlast meter reading:");
+			bodyBuffer.append(mDataCache.getLastEnergyDataTimeStamp().toString());
+			
+			boolean res = mail.send(mDataCache.getConfigData(), bodyBuffer.toString());
+			Log.e(TAG, "heartbeat mail sent:"+res);
 		}
 	}
 
@@ -457,6 +520,7 @@ implements INotificationListener, ISesameUpdateListener
 	@Override
 	public void onDestroy() {
 		SesameLogger.stopContinuousExporting();
+		stopHeartBeat();
 		stopMeterWheelUpdates();
 		if(null!=mLam)
 		{
@@ -521,6 +585,7 @@ implements INotificationListener, ISesameUpdateListener
 		if(_success)
 		{
 			mPmsUpdateFailCount = 0;
+			mLastPmsUpdate = new Date();
 		}
 		else
 		{
@@ -529,6 +594,7 @@ implements INotificationListener, ISesameUpdateListener
 		if(mPmsUpdateFailCount>=mMaxPmsUpdateFailCount)
 		{
 			Log.e(TAG, "connection to pms potentially lost...");
+			new SesameMail().send(mDataCache.getConfigData(), NotificationType.PMS_FAILED);
 		}
 	}
 
@@ -539,6 +605,7 @@ implements INotificationListener, ISesameUpdateListener
 		if(_success)
 		{
 			mEnergyUpdateFailCount = 0;
+			mLastEnergyUpdate = new Date();
 		}
 		else
 		{
@@ -548,6 +615,7 @@ implements INotificationListener, ISesameUpdateListener
 		if(mEnergyUpdateFailCount>=mMaxEnergyUpdateFailCount)
 		{
 			Log.e(TAG, "connection to repository lost");
+			new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_FAILED);
 		}
 		
 		long lastUpdateMillis = mDataCache.getLastEnergyDataTimeStamp().getTime();
@@ -561,6 +629,7 @@ implements INotificationListener, ISesameUpdateListener
 		if(diff>3600000*mNumHoursBeforeRepoFailNotification)
 		{
 			Log.e(TAG, "last update of energy data is older than "+mNumHoursBeforeRepoFailNotification+" hours");
+			new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_OLD);
 		}
 		
 	}
@@ -574,7 +643,7 @@ implements INotificationListener, ISesameUpdateListener
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				Toast.makeText(SesameTabletActivity.this, "internet connection lost", Toast.LENGTH_LONG).show();
+				Toast.makeText(SesameTabletActivity.this, getString(R.string.connection_loss_message), Toast.LENGTH_LONG).show();
 //				mDataCache.cleanUp();
 			}
 		});

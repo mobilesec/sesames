@@ -38,6 +38,16 @@ public class ArrayHelper
 		return res;
 	}
 	
+	public static double[] multiply(double[] _values, double _factor)
+	{
+		double[] res = new double[_values.length];
+		for(int i = 0;i<res.length;i++)
+		{
+			res[i] = _values[i]*_factor;
+		}
+		return res;
+	}
+	
 	/**
 	 * multiplies each element of the passed double array
 	 * with itself
