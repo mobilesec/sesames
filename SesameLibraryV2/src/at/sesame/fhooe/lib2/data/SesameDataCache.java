@@ -9,10 +9,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.config.ConfigLoader;
@@ -22,6 +21,9 @@ import at.sesame.fhooe.lib2.data.provider.EzanDataProvider;
 import at.sesame.fhooe.lib2.data.semantic.SemanticSesameDataSource;
 import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
 import at.sesame.fhooe.lib2.data.simulation.NotificationSimulator;
+import at.sesame.fhooe.lib2.logging.SesameLogger;
+import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
+import at.sesame.fhooe.lib2.pms.DeviceStateUpdater;
 import at.sesame.fhooe.lib2.pms.PMSController;
 import at.sesame.fhooe.lib2.pms.PMSProvider;
 import at.sesame.fhooe.lib2.pms.hosts.EDV1Hosts;
@@ -40,21 +42,92 @@ implements ISesameDataProvider
 		semantic_repo,
 		webservices
 	}
-	
-	private BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
-		
+
+	//	private BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
+	//		
+	//		@Override
+	//		public void onReceive(Context context, Intent intent) 
+	//		{
+	//			// TODO Auto-generated method stub
+	//			boolean connected = !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+	//			if(!connected)
+	//			{
+	//				notifyConnectionLost();
+	//			}
+	//		}
+	//	};
+
+	private ArrayList<ISesameUpdateListener> mUpdateListeners = new ArrayList<ISesameUpdateListener>();
+
+	private Runnable mUpdateRunnable = new Runnable()
+	{
 		@Override
-		public void onReceive(Context context, Intent intent) 
+		public void run()
 		{
-			// TODO Auto-generated method stub
-			boolean connected = !intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-			if(!connected)
+			while(mRunning)
 			{
-				notifyConnectionLost();
+				SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "updating");
+				Log.e(TAG, "updating");
+				if(checkConnectivity())
+				{
+					boolean devicesUpdated = SesameDataCache.mDeviceStateUpdater.updateAllDevices();
+					boolean energyDataLoaded = refreshEnergyData(mNumDays2LoadEnergyData);
+
+					for(ISesameUpdateListener listener:mUpdateListeners)
+					{
+						listener.notifyPmsUpdate(devicesUpdated);
+						listener.notifyEnergyUpdate(energyDataLoaded);
+					}
+				}
+				else
+				{
+					for(ISesameUpdateListener listener:mUpdateListeners)
+					{
+						listener.notifyConnectivityLoss();
+					}
+				}
+				if(mRunning)
+				{
+					try
+					{
+						Thread.sleep(mUpdateTimeout);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}					
+				}
+				Log.i(TAG, "update thread finished");
+
 			}
 		}
 	};
+	private boolean mRunning = false;
+	private long mUpdateTimeout = 10000;
+//	private Thread mUpdateThread;
 	
+	private void startUpdates()
+	{
+		mRunning = true;
+		new Thread(mUpdateRunnable).start();
+	}
+	
+	private void stopUpdates()
+	{
+		mRunning = false;
+	}
+	public void registerSesameUpdateListener(ISesameUpdateListener _listener)
+	{
+		if(!mUpdateListeners.contains(_listener))
+		{
+			mUpdateListeners.add(_listener);
+		}
+	}
+
+	public void unregisterSesameUpdateListener(ISesameUpdateListener _listener)
+	{
+		mUpdateListeners.remove(_listener);
+	}
+
 	/**
 	 * the tag to identify the logger output of this class
 	 */
@@ -103,9 +176,9 @@ implements ISesameDataProvider
 	private static HashMap<SesameMeasurementPlace, Boolean> mLightDataUpdateMap = new HashMap<SesameMeasurementPlace, Boolean>();
 
 	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mEnergyData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
-	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mHumidityData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
-	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mTemperatureData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
-	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mLightData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
+//	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mHumidityData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
+//	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mTemperatureData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
+//	private static HashMap<SesameMeasurementPlace, SesameDataContainer> mLightData = new HashMap<SesameMeasurementPlace, SesameDataContainer>();
 
 	//	private static Date mFirstEnergyDate;
 	//	private static Date mLastEnergyDate;
@@ -113,10 +186,11 @@ implements ISesameDataProvider
 	private static DataSource mDataSource = DataSource.semantic_repo;
 
 	private static PMSController mController;
+	private static DeviceStateUpdater mDeviceStateUpdater;
 
-		public static SesameMeasurementPlace EDV1_PLACE;
-		public static SesameMeasurementPlace EDV3_PLACE;
-		public static SesameMeasurementPlace EDV6_PLACE;
+	public static SesameMeasurementPlace EDV1_PLACE;
+	public static SesameMeasurementPlace EDV3_PLACE;
+	public static SesameMeasurementPlace EDV6_PLACE;
 
 	//	private static ArrayList<EsmartMeasurementPlace> mEsmartMeasurementPlaces = new ArrayList<EsmartMeasurementPlace>();
 
@@ -145,14 +219,16 @@ implements ISesameDataProvider
 	private HostList mEdv1Hosts = new EDV1Hosts();
 	private HostList mEdv3Hosts = new EDV3Hosts();
 	private HostList mEdv6Hosts = new EDV6Hosts();
-	
+
 	private SesameConfigData mConfigData;
+
+	private int mNumDays2LoadEnergyData = 1;
 
 	//	private NotificationSimulator mEventSim;
 
 	private SesameDataCache(DataSource _source, Context _ctx)
 	{
-//		_ctx.getSystemService(Context.c)
+		//		_ctx.getSystemService(Context.c)
 		mCtx = _ctx;
 		switch(_source)
 		{
@@ -199,7 +275,7 @@ implements ISesameDataProvider
 		init();
 	}
 
-	public void startEnergyDataUpdates()
+	private void startEnergyDataUpdates()
 	{
 		stopEnergyDataUpdates();
 		mEnergyUpdateTimer = new Timer();
@@ -227,7 +303,7 @@ implements ISesameDataProvider
 		mNotificationUpdateTimer.schedule(new NotificationUpdateTask(), _d);
 	}
 
-	public void startNotificationUpdates()
+	private void startNotificationUpdates()
 	{
 
 		mNotificationUpdateTimer = new Timer();
@@ -245,12 +321,14 @@ implements ISesameDataProvider
 
 	public void cleanUp()
 	{
+		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "clean up");
+		stopUpdates();
 		stopEnergyDataUpdates();
 		stopNotificationUpdates();
-		mController.stopAutoUpdate();
+		//		mController.stopAutoUpdate();
 		Log.e(TAG, "Sesame datacache cleaned up");
 	}
-	
+
 	public void notifyConnectionLost()
 	{
 		Log.e(TAG, "notified about connection loss");
@@ -271,8 +349,16 @@ implements ISesameDataProvider
 		//		allHosts.addAll(new EDV1Hosts());
 		mController = new PMSController(mCtx, null, allHosts, null);
 		try {
-			mController.new QueryDevsTask().execute(allHosts).get();
-			mController.startAutoUpdate();
+			boolean devicesLoaded = mController.new QueryDevsTask().execute(allHosts).get();
+			if(!devicesLoaded)
+			{
+				Log.e(TAG, "devices could not be loaded");
+			}
+			else
+			{
+				mDeviceStateUpdater = new DeviceStateUpdater(getAllDevices());
+			}
+			//			mController.startAutoUpdate();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -301,6 +387,7 @@ implements ISesameDataProvider
 		//			ArrayList<EzanMeasurement> data = EzanDataAccess.getEzanMeasurements(emp.getID(), mNoEzanMeasurements);
 		//			mRawEzanData.put(emp, data);
 		//		}
+		startUpdates();
 		long duration = System.currentTimeMillis()-start;
 
 
@@ -331,7 +418,7 @@ implements ISesameDataProvider
 		}
 		return res;
 	}
-	
+
 	public PMSController getController()
 	{
 		return mController;
@@ -387,15 +474,15 @@ implements ISesameDataProvider
 			break;
 		case semantic_repo:
 			Collections.sort(mEnergyMeasurementPlaces, new SesameMeasurementPlaceComparator());
-			
+
 			EDV1_PLACE = mEnergyMeasurementPlaces.get(4);
 			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
 			EDV6_PLACE = mEnergyMeasurementPlaces.get(5);
-			
-//			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
-//			{
-//				Log.i(TAG, smp.toString());
-//			}
+
+			//			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+			//			{
+			//				Log.i(TAG, smp.toString());
+			//			}
 			break;
 		}
 		resetAllUpdateTables();
@@ -421,22 +508,24 @@ implements ISesameDataProvider
 		}
 	}
 
-	private void loadEnergyData(SesameMeasurementPlace _smp, Date _from, Date _to)
+	private boolean loadEnergyData(SesameMeasurementPlace _smp, Date _from, Date _to)
 	{
 		SesameDataContainer data = mEnergyDataSource.getEnergyData(_smp, _from, _to);
 		if(null!=data)
 		{
 			addEnergyData(_smp, data);
+			return true;
 		}
 		else
 		{
 			Log.e(TAG, "data for \""+_smp.getName()+"\" could not be loaded");
+			return false;
 		}
 	}
 
 	private void addEnergyData(SesameMeasurementPlace _smp, SesameDataContainer _data)
 	{
-//		Log.i(TAG, "adding energy data for smp:"+_smp);
+		//		Log.i(TAG, "adding energy data for smp:"+_smp);
 		SesameDataContainer storedData = mEnergyData.get(_smp);
 		if(null==storedData)
 		{
@@ -446,7 +535,7 @@ implements ISesameDataProvider
 		}
 		else
 		{
-//			Log.i(TAG, "number of measurements in container:"+_data.getMeasurements().size());
+			//			Log.i(TAG, "number of measurements in container:"+_data.getMeasurements().size());
 			for(int i = 0;i<_data.getMeasurements().size();i++)
 			{
 				boolean alreadyStored = false;
@@ -463,7 +552,7 @@ implements ISesameDataProvider
 				if(!alreadyStored)
 				{
 					storedData.addData(sm);
-//					Log.i(TAG, "added measurement:"+sm.toString());
+					//					Log.i(TAG, "added measurement:"+sm.toString());
 				}
 				//				else
 				//				{
@@ -615,7 +704,7 @@ implements ISesameDataProvider
 			throw new Exception("no last reading available");
 		}
 		SesameMeasurement sm = energyData.getMeasurements().get(idx);
-//		Log.i(TAG, "last measurement:"+sm.toString());
+		//		Log.i(TAG, "last measurement:"+sm.toString());
 		return sm;
 	}
 
@@ -670,18 +759,27 @@ implements ISesameDataProvider
 		@Override
 		public void run() 
 		{
-//			Log.i(TAG, "updating energy data");
-			if(null==mEnergyMeasurementPlaces)
+			//			Log.i(TAG, "updating energy data");
+			refreshEnergyData(mDays2Load);
+		}
+
+	}
+	private boolean refreshEnergyData(int _days2Load) {
+		if(null==mEnergyMeasurementPlaces)
+		{
+			return false;
+		}
+		boolean res = true;
+		for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+		{
+			if(!loadEnergyData(	smp, 
+					DateHelper.getFirstDateXDaysAgo(_days2Load), 
+					new Date()))
 			{
-				return;
-			}
-			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
-			{
-				loadEnergyData(	smp, 
-						DateHelper.getFirstDateXDaysAgo(mDays2Load), 
-						new Date());
+				res = false;
 			}
 		}
+		return res;
 	}
 
 	private class NotificationUpdateTask extends TimerTask
@@ -805,5 +903,69 @@ implements ISesameDataProvider
 	{
 		return mLightMeasurementPlaces;
 	}
+	
+	public Date getLastEnergyDataTimeStamp()
+	{
+		Date res = new Date(0);
+		Date lastEdv1MeasurementTime = res;
+		Date lastEdv3MeasurementTime = res;
+		Date lastEdv6MeasurementTime = res;
+		
+		
+		try 
+		{
+			lastEdv1MeasurementTime = getLastEnergyReading(EDV1_PLACE).getTimeStamp();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try 
+		{
+			lastEdv3MeasurementTime = getLastEnergyReading(EDV3_PLACE).getTimeStamp();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try 
+		{
+			lastEdv6MeasurementTime = getLastEnergyReading(EDV6_PLACE).getTimeStamp();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(lastEdv1MeasurementTime.after(res))
+		{
+			res = lastEdv1MeasurementTime;
+		}
+		
+		if(lastEdv3MeasurementTime.after(res))
+		{
+			res = lastEdv3MeasurementTime;
+		}
+		
+		if(lastEdv6MeasurementTime.after(res))
+		{
+			res = lastEdv6MeasurementTime;
+		}
+		
+		return res;
+	}
 
+	/**
+	 * checks if the device currently is connected to the internet
+	 * @return true if the device is connected, false otherwise
+	 */
+	private boolean checkConnectivity() 
+	{
+		ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			return true;
+		}
+		return false;
+	}
 }

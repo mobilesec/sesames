@@ -51,61 +51,73 @@ public class DeviceStateUpdater
 		@Override
 		public void run() 
 		{
-//			while(mUpdating)
+			updateAllDevices();
+		}
+	}
+	
+	public boolean updateAllDevices()
+	{
+		Log.i(TAG, "updating");
+
+		long begin = System.currentTimeMillis();
+		ArrayList<ExtendedPMSStatus> statuses = null;
+		try
+		{
+			statuses = PMSProvider.getPMS().extendedStatusList(mMacs);			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+
+		if(null==statuses || statuses.isEmpty())
+		{
+			Log.e(TAG, "update failed");
+			return false;
+		}
+		else
+		{
+			double duration = System.currentTimeMillis()-begin;
+			Log.i(TAG, "update took "+(duration/1000)+" seconds");
+		}
+
+		Log.i(TAG, "received statuses:"+statuses.size());
+
+		for(int i = 0;i<statuses.size();i++)
+		{
+//			if(!mUpdating)
+//			{
+//				break;
+//			}
+
+			for(ControllableDevice cd:mDevs)
 			{
-				Log.i(TAG, "updating");
-
-				long begin = System.currentTimeMillis();
-				ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(mMacs);
-
-				if(null==statuses)
+//				if(!mUpdating)
+//				{
+//					break;
+//				}
+				if(cd.getMac().equals(statuses.get(i).getMac().toLowerCase()))
 				{
-					Log.e(TAG, "update failed");
-					return;
-				}
-				else
-				{
-					double duration = System.currentTimeMillis()-begin;
-					Log.i(TAG, "update took "+(duration/1000)+" seconds");
-				}
-
-				Log.i(TAG, "received statuses:"+statuses.size());
-
-				for(int i = 0;i<statuses.size();i++)
-				{
-					if(!mUpdating)
-					{
-						break;
-					}
-
-					for(ControllableDevice cd:mDevs)
-					{
-						if(!mUpdating)
-						{
-							break;
-						}
-						if(cd.getMac().equals(statuses.get(i).getMac().toLowerCase()))
-						{
-							cd.setExtendedPMSStatus(statuses.get(i));
-//							if(null!=mUiHelper)
-//							{
-//								mUiHelper.markDirty(cd, false);								
-//							}
-//							Log.e(TAG, mDevs.get(i).getHostname()+" updated");
-						}
-					}
-				}
-//				mUpdateListener.notifyPMSUpdated();
-				try 
-				{
-					Thread.sleep(mUpdatePeriod );
-				} 
-				catch (InterruptedException e) 
-				{
-					Log.e(TAG, "interrupted");
+					cd.setExtendedPMSStatus(statuses.get(i));
+//					if(null!=mUiHelper)
+//					{
+//						mUiHelper.markDirty(cd, false);								
+//					}
+//					Log.e(TAG, mDevs.get(i).getHostname()+" updated");
 				}
 			}
 		}
+		return true;
+//		mUpdateListener.notifyPMSUpdated();
+//		try 
+//		{
+//			Thread.sleep(mUpdatePeriod );
+//		} 
+//		catch (InterruptedException e) 
+//		{
+//			Log.e(TAG, "interrupted");
+//		}
 	}
 
 	public void startUpdating()

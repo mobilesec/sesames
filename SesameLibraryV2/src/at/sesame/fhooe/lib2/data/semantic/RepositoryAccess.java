@@ -19,22 +19,32 @@ public class RepositoryAccess
 										.build();
 		mRepo = mCrest.build(IRepositoryService.class);
 	}
+	
 
 	public static String executeQuery(String _query)
 	{
-		try 
+		String res = null;
+		try
 		{
-//			if(nul=Mr
-			return new ExecuteQueryTask().execute(new String[]{_query}).get();
-		} 
-		catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		res = mRepo.executeQuery(_query);
 		}
-		return null;
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return res;
+//		try 
+//		{
+////			if(nul=Mr
+//			return new ExecuteQueryTask().execute(new String[]{_query}).get();
+//		} 
+//		catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
 	}
 	
 	private static class ExecuteQueryTask extends AsyncTask<String, Void, String>

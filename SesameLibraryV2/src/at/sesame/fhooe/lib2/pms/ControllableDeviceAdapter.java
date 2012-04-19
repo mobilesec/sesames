@@ -157,7 +157,7 @@ implements OnClickListener, OnCheckedChangeListener
 		{
 //			long start = System.currentTimeMillis();
 			ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
-			final ControllableDevice cd = cdle.getControllableDevice();
+			ControllableDevice cd = cdle.getControllableDevice();
 			if(item.isSeparator())
 			{
 				SeparatorListEntry sle = (SeparatorListEntry)item;
