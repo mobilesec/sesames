@@ -15,12 +15,15 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.util.Log;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.config.ConfigLoader;
+import at.sesame.fhooe.lib2.config.SesameConfigData;
 import at.sesame.fhooe.lib2.data.provider.EsmartDataProvider;
 import at.sesame.fhooe.lib2.data.provider.EzanDataProvider;
 import at.sesame.fhooe.lib2.data.semantic.SemanticSesameDataSource;
 import at.sesame.fhooe.lib2.data.simulation.DataSimulator;
 import at.sesame.fhooe.lib2.data.simulation.NotificationSimulator;
 import at.sesame.fhooe.lib2.pms.PMSController;
+import at.sesame.fhooe.lib2.pms.PMSProvider;
 import at.sesame.fhooe.lib2.pms.hosts.EDV1Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV3Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV6Hosts;
@@ -142,6 +145,8 @@ implements ISesameDataProvider
 	private HostList mEdv1Hosts = new EDV1Hosts();
 	private HostList mEdv3Hosts = new EDV3Hosts();
 	private HostList mEdv6Hosts = new EDV6Hosts();
+	
+	private SesameConfigData mConfigData;
 
 	//	private NotificationSimulator mEventSim;
 
@@ -255,7 +260,8 @@ implements ISesameDataProvider
 	public void init()
 	{
 		long start = System.currentTimeMillis();
-
+		mConfigData = ConfigLoader.loadConfig();
+		PMSProvider.createPMS(mConfigData.getUser(), mConfigData.getPass());
 		//		mEventSim = new NotificationSimulator();
 		//		startNotificationUpdates();
 		HostList allHosts = new HostList();
@@ -386,10 +392,10 @@ implements ISesameDataProvider
 			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
 			EDV6_PLACE = mEnergyMeasurementPlaces.get(5);
 			
-			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
-			{
-				Log.i(TAG, smp.toString());
-			}
+//			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+//			{
+//				Log.i(TAG, smp.toString());
+//			}
 			break;
 		}
 		resetAllUpdateTables();
@@ -430,7 +436,7 @@ implements ISesameDataProvider
 
 	private void addEnergyData(SesameMeasurementPlace _smp, SesameDataContainer _data)
 	{
-		Log.i(TAG, "adding energy data for smp:"+_smp);
+//		Log.i(TAG, "adding energy data for smp:"+_smp);
 		SesameDataContainer storedData = mEnergyData.get(_smp);
 		if(null==storedData)
 		{
@@ -440,7 +446,7 @@ implements ISesameDataProvider
 		}
 		else
 		{
-			Log.i(TAG, "number of measurements in container:"+_data.getMeasurements().size());
+//			Log.i(TAG, "number of measurements in container:"+_data.getMeasurements().size());
 			for(int i = 0;i<_data.getMeasurements().size();i++)
 			{
 				boolean alreadyStored = false;
@@ -457,7 +463,7 @@ implements ISesameDataProvider
 				if(!alreadyStored)
 				{
 					storedData.addData(sm);
-					Log.i(TAG, "added measurement:"+sm.toString());
+//					Log.i(TAG, "added measurement:"+sm.toString());
 				}
 				//				else
 				//				{
@@ -609,7 +615,7 @@ implements ISesameDataProvider
 			throw new Exception("no last reading available");
 		}
 		SesameMeasurement sm = energyData.getMeasurements().get(idx);
-		Log.i(TAG, "last measurement:"+sm.toString());
+//		Log.i(TAG, "last measurement:"+sm.toString());
 		return sm;
 	}
 
@@ -664,7 +670,7 @@ implements ISesameDataProvider
 		@Override
 		public void run() 
 		{
-			Log.i(TAG, "updating energy data");
+//			Log.i(TAG, "updating energy data");
 			if(null==mEnergyMeasurementPlaces)
 			{
 				return;

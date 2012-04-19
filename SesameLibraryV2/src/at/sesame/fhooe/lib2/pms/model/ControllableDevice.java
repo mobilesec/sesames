@@ -59,8 +59,8 @@ implements Runnable
 		unknown
 	}
 	
-	private String mBasicAuthName = "peter";
-	private String mBasicAuthPass = "thatpeter";
+//	private String mBasicAuthName = "peter";
+//	private String mBasicAuthPass = "thatpeter";
 
 	/**
 	 * the MAC address of the device
@@ -148,7 +148,7 @@ implements Runnable
 		mPassword = _password;
 		mUseCredentials = _useCredentials;
 
-		mPms= PMSProvider.getPMS(mBasicAuthName, mBasicAuthPass);
+		mPms= PMSProvider.getPMS();
 		//		mQueue = new LinkedBlockingQueue();
 		updateStatus();
 	}
@@ -169,7 +169,7 @@ implements Runnable
 		{
 			mHostname = _hostName;
 		}
-		mPms = PMSProvider.getPMS(mBasicAuthName, mBasicAuthPass);
+		mPms = PMSProvider.getPMS();
 		setDesiredStatus(_status.getAlive().equals("1")?true:false);
 		setExtendedPMSStatus(_status);
 	}

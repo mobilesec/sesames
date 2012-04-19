@@ -347,7 +347,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 		hosts.add("00:22:64:14:b3:bd");
 		hosts.add("00:22:64:16:9d:2c");
 		hosts.add("00:22:64:15:23:d4");
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(hosts);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(hosts);
 		for(ExtendedPMSStatus epmss:statuses)
 		{
 			Log.e(TAG, epmss.toString());

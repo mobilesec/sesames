@@ -30,5 +30,8 @@
     <string name="ControllableDevice_idleString_prefix">"Unbenutzt seit "</string>
     <string name="ControllableDevice_minuteString">" Min."</string>
     <string name="controllableDevice_hourString">" Std."</string>
+    <string name="meter_wheel_layout_unit_string">" kWh"</string>
+    <string name="wakeup_dialog_title">Computer werden hochgefahren</string>
+    <string name="shutdown_dialog_title">Computer werden heruntergefahren</string>
 
 </resources>

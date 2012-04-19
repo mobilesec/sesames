@@ -157,7 +157,7 @@ implements OnClickListener, OnCheckedChangeListener
 		{
 //			long start = System.currentTimeMillis();
 			ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
-			ControllableDevice cd = cdle.getControllableDevice();
+			final ControllableDevice cd = cdle.getControllableDevice();
 			if(item.isSeparator())
 			{
 				SeparatorListEntry sle = (SeparatorListEntry)item;
@@ -283,6 +283,10 @@ implements OnClickListener, OnCheckedChangeListener
 					if(cd.getIdleSinceMinutes()>=ControllableDevice.IDLE_NOTIFICATION_THRESHOLD)
 					{
 						holder.IDLE_LABEL.setTextColor(Color.RED);
+					}
+					else
+					{
+						holder.IDLE_LABEL.setTextColor(Color.WHITE);
 					}
 //					long duration = System.currentTimeMillis()-start;
 //					Log.e(TAG, "view generation took:"+duration+"ms");

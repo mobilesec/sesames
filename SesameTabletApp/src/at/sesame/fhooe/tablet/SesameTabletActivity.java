@@ -1,6 +1,5 @@
 package at.sesame.fhooe.tablet;
 
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,10 +12,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -28,11 +25,12 @@ import android.widget.FrameLayout;
 import android.widget.TabHost;
 import at.fhooe.facedetectionview.model.FacesDetectedEvent;
 import at.fhooe.facedetectionviewcomponent.FaceDetectionViewComponent;
+import at.sesame.fhooe.lib2.config.ConfigLoader;
 import at.sesame.fhooe.lib2.data.INotificationListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
-import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.SesameNotification;
+import at.sesame.fhooe.lib2.esmart.service.response.GetServicesResponseHandler;
 import at.sesame.fhooe.lib2.logging.SesameLogger;
 import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
 import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter;
@@ -44,117 +42,114 @@ import at.sesame.fhooe.lib2.ui.MeterWheelFragment;
 
 @SuppressWarnings("unused")
 public class SesameTabletActivity 
-extends FragmentActivity
-implements INotificationListener
+extends FragmentActivity 
+implements INotificationListener 
 {
-	private static final SimpleDateFormat LOG_FILENAME_DATE_FORMAT = new SimpleDateFormat("dd_MM_yy_HH_mm");
-	private static final String TAG = "SesameTabletActivity";
-	private static final long METER_WHEEL_UPDATE_TIMEOUT = 10000;
-	private static final long FACE_DETECTION_UPDATE_PERIOD = 5000;
-	private static final long LOG_EXPORT_PERIOD = 10000;
-	private static int mNotificationId;
-//	private Context mCtx;
-	private LayoutInflater mLi;
-//	private FragmentManager mFragMan;
-	private LocalActivityManager mLam;
+	private static final SimpleDateFormat	LOG_FILENAME_DATE_FORMAT		= new SimpleDateFormat("dd_MM_yy_HH_mm");
+	private static final String				TAG								= "SesameTabletActivity";
+	private static final long				METER_WHEEL_UPDATE_TIMEOUT		= 10000;
+	private static final long				FACE_DETECTION_UPDATE_PERIOD	= 5000;
+	private static final long				LOG_EXPORT_PERIOD				= 10000;
+	private static int						mNotificationId;
+	// private Context mCtx;
+	private LayoutInflater					mLi;
+	// private FragmentManager mFragMan;
+	private LocalActivityManager			mLam;
 
-	private SesameDataCache mDataCache;
+	private SesameDataCache					mDataCache;
 
-	private Timer mMeterWheelUpdateTimer;
+	private Timer							mMeterWheelUpdateTimer;
 
-	private static MeterWheelFragment mEdv1Frag;
-	private static MeterWheelFragment mEdv3Frag;
-	private static MeterWheelFragment mEdv6Frag;
+	private static MeterWheelFragment		mEdv1Frag;
+	private static MeterWheelFragment		mEdv3Frag;
+	private static MeterWheelFragment		mEdv6Frag;
 
-	//	private WheelFragment mEdv1WheelFrag;
-	//	private WheelFragment mEdv3WheelFrag;
-	//	private WheelFragment mEdv6WheelFrag;
+	// private WheelFragment mEdv1WheelFrag;
+	// private WheelFragment mEdv3WheelFrag;
+	// private WheelFragment mEdv6WheelFrag;
 
-	//	private static PMSFragment mPMSFrag;
+	// private static PMSFragment mPMSFrag;
 
-	private PMSRoomsListFragment mRoomListFrag;
-	//	private static TabbedComparisonFragment mTabFrag;
+	private PMSRoomsListFragment			mRoomListFrag;
+	// private static TabbedComparisonFragment mTabFrag;
 
-	private Notification mNotification;
-	private NotificationManager mNotificationMan;
-	private static final String NOTIFICATION_TITLE ="Sesame Notification";
+	private Notification					mNotification;
+	private NotificationManager				mNotificationMan;
+//	private static final String				NOTIFICATION_TITLE				= R.string.sesame_notification_title;
 
-	private static final int WHEEL_TEXT_SIZE = 28;
-	
+	private static final int				WHEEL_TEXT_SIZE					= 28;
 
-	private boolean mShowNotifications = true;
+	private boolean							mShowNotifications				= true;
 
-	private Handler mUiHandler = new Handler();
-	
-//	private SesameMeasurementPlace mEdv1Place;
-//	private SesameMeasurementPlace mEdv3Place;
-//	private SesameMeasurementPlace mEdv6Place;
-	
-	private ArrayList<SesameNotification> mLastNotifications;
-//	private FaceDetectionViewComponent mFaceViewComponent = new FaceDetectionViewComponent();
-	
-	private Timer mFaceDetectionTimer;
+	private Handler							mUiHandler						= new Handler();
 
-	private FrameLayout mFaceContainer = null;
-	
-	//	public SesameTabletActivity(Context _ctx, FragmentManager _fm, Handler _uiHandler)
-	//	{
-	//		mCtx = _ctx;
-	//		mLi = LayoutInflater.from(_ctx);
-	//		mFragMan = _fm;
-	//		mUiHandler = _uiHandler;
-	//		initializeNotification();
-	//		initializeFragments();
-	//		setContentView(R.layout.hd_layout);
-	//		addFragments();
-	////		startMeterWheelUpdates();
-	//	}
+	// private SesameMeasurementPlace mEdv1Place;
+	// private SesameMeasurementPlace mEdv3Place;
+	// private SesameMeasurementPlace mEdv6Place;
 
-	public void onCreate(final Bundle savedInstanceState)
-	{
+	private ArrayList<SesameNotification>	mLastNotifications;
+	private FaceDetectionViewComponent		mFaceViewComponent				= new FaceDetectionViewComponent();
+
+	private Timer							mFaceDetectionTimer;
+
+	private FrameLayout						mFaceContainer					= null;
+
+	// public SesameTabletActivity(Context _ctx, FragmentManager _fm, Handler
+	// _uiHandler)
+	// {
+	// mCtx = _ctx;
+	// mLi = LayoutInflater.from(_ctx);
+	// mFragMan = _fm;
+	// mUiHandler = _uiHandler;
+	// initializeNotification();
+	// initializeFragments();
+	// setContentView(R.layout.hd_layout);
+	// addFragments();
+	// // startMeterWheelUpdates();
+	// }
+
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		setTheme(android.R.style.Theme_Holo_Light);
-		
+
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
-		
+//		Log.i(TAG, ConfigLoader.loadConfig().toString());
 		new CreationTask().execute();
 	}
-	
-	private class CreationTask extends AsyncTask<Void, Void, Void>
-	{
+
+	private class CreationTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Void... params) 
-		{
-			
-			mDataCache = SesameDataCache.getInstance(SesameTabletActivity.this);
-			mDataCache.registerNotificationListener(SesameTabletActivity.this);
-			mDataCache.startEnergyDataUpdates();
-			mDataCache.startNotificationUpdates();
-//			ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
-//			mEdv1Place = places.get(4);
-//			mEdv3Place = places.get(3);
-//			mEdv6Place = places.get(5);
-			
-//			Log.e(TAG, "EDV1:"+mEdv1Place.toString());
-//			Log.e(TAG, "EDV3:"+mEdv3Place.toString());
-//			Log.e(TAG, "EDV6:"+mEdv6Place.toString());
+		protected Void doInBackground(Void... params) {
 
-			initializeNotification();
+			mDataCache = SesameDataCache.getInstance(SesameTabletActivity.this);
+//			mDataCache.registerNotificationListener(SesameTabletActivity.this);
+			mDataCache.startEnergyDataUpdates();
+//			mDataCache.startNotificationUpdates();
+			// ArrayList<SesameMeasurementPlace> places =
+			// mDataCache.getEnergyMeasurementPlaces();
+			// mEdv1Place = places.get(4);
+			// mEdv3Place = places.get(3);
+			// mEdv6Place = places.get(5);
+
+			// Log.e(TAG, "EDV1:"+mEdv1Place.toString());
+			// Log.e(TAG, "EDV3:"+mEdv3Place.toString());
+			// Log.e(TAG, "EDV6:"+mEdv6Place.toString());
+
+//			initializeNotification();
 			initializeFragments();
 			runOnUiThread(new Runnable() {
-				
+
 				@Override
-				public void run() 
-				{	
+				public void run() {
 					setContentView(R.layout.hd_layout);
 
-					mFaceContainer = (FrameLayout)findViewById(R.id.faceContainer1);
+					mFaceContainer = (FrameLayout) findViewById(R.id.faceContainer1);
 					initializeFaceDetectionComponent();
 					addFragments();
 					createTabs();
@@ -164,76 +159,69 @@ implements INotificationListener
 		}
 
 		@Override
-		protected void onPostExecute(Void result) 
-		{
+		protected void onPostExecute(Void result) {
 			PMSDialogFactory.dismissCurrentDialog();
-			String fileName = "sesameLog"+LOG_FILENAME_DATE_FORMAT.format(new Date())+".csv";
+			String fileName = "sesameLog" + LOG_FILENAME_DATE_FORMAT.format(new Date()) + ".csv";
 
-			SesameFileLogExporter exporter = new SesameFileLogExporter(SesameTabletActivity.this,ExportLocation.EXT_PUB_DIR,  fileName);
-			SesameLogger.addExporter(exporter);
-			
+			SesameFileLogExporter exporter = new SesameFileLogExporter(SesameTabletActivity.this, ExportLocation.EXT_PUB_DIR,
+					fileName);
+			SesameLogger.setExporter(exporter);
+
 			SesameLogger.startContinuousExport(LOG_EXPORT_PERIOD);
 		}
 
 		@Override
-		protected void onPreExecute()
-		{
-			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, getSupportFragmentManager(), null, new Object[]{SesameTabletActivity.this});
+		protected void onPreExecute() {
+			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, getSupportFragmentManager(), null,
+					new Object[] { SesameTabletActivity.this });
 		}
-		
+
 	}
-	
-	private void initializeFaceDetectionComponent()
-	{
-		
-		if(null!=mFaceContainer)
-		{
-//			mFaceViewComponent.onPause();
-//		  // CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
-//		  mFaceViewComponent.onResume(this, mFaceContainer, true);
-		  startFaceDetection();
+
+	private void initializeFaceDetectionComponent() {
+
+		if (null != mFaceContainer) {
+			mFaceViewComponent.pause();
+			// CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
+			mFaceViewComponent.resume(this, mFaceContainer, true);
+			startFaceDetection();
 		}
 	}
-	private void createTabs()
-	{
-		
-		TabHost th = (TabHost)findViewById(R.id.hd_tab_fragment_layout_tabhost);
+
+	private void createTabs() {
+
+		TabHost th = (TabHost) findViewById(R.id.hd_tab_fragment_layout_tabhost);
 		th.setup(mLam);
 
-
-		Intent intent;  // Reusable Intent for each tab
+		Intent intent; // Reusable Intent for each tab
 
 		// Create an Intent to launch an Activity for the tab (to be reused)
 		intent = new Intent().setClass(getApplicationContext(), RealTimeActivity.class);
 
 		// Initialize a TabSpec for each tab and add it to the TabHost
-		TabHost.TabSpec spec = th.newTabSpec("realtime").setIndicator("Heute")
-				.setContent(intent);
+		TabHost.TabSpec spec = th.newTabSpec("today").setIndicator(getString(R.string.today_tab_title)).setContent(intent);
 		th.addTab(spec);
 		intent = new Intent().setClass(getApplicationContext(), ComparisonActivity.class);
-		TabHost.TabSpec spec2 = th.newTabSpec("comparison").setIndicator("Vergleich")
-				.setContent(intent);
+		TabHost.TabSpec spec2 = th.newTabSpec("comparison").setIndicator(getString(R.string.comparison_tab_title)).setContent(intent);
 		th.addTab(spec2);
 		th.setCurrentTab(0);
 	}
 
-	//	public void onStart()
-	//	{
-	//		addFragments();
-	//		super.onStart();
-	//	}
+	// public void onStart()
+	// {
+	// addFragments();
+	// super.onStart();
+	// }
 
-	private void initializeNotification()
-	{
+	private void initializeNotification() {
 		int icon = R.drawable.ic_stat_warning;
 		CharSequence tickerText = "Hello NOTIFICATION";
 		long when = System.currentTimeMillis();
 		mNotification = new Notification(icon, tickerText, when);
-		mNotificationMan = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationMan = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
-	private void initializeFragments()
-	{
+	private void initializeFragments() {
 		// Setup EnergyMeterRenderer
 		EnergyMeterRenderer r = new EnergyMeterRenderer();
 		r.setCurrentValueY(0.435f);
@@ -254,156 +242,147 @@ implements INotificationListener
 		String room3Name = getString(R.string.global_Room3_name);
 		String room6Name = getString(R.string.global_Room6_name);
 
-		mEdv1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room1Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
-		mEdv3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room3Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
-		mEdv6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room6Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6, false, r);
-		//		mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
-		//		mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
-		//		mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null, WHEEL_TEXT_SIZE);
-		//		mUiHandler.post(new Runnable() {
-		//			
-		//			@Override
-		//			public void run() {
+		mEdv1Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room1Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6,
+				false, r);
+		mEdv3Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room3Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6,
+				false, r);
+		mEdv6Frag = new MeterWheelFragment(getApplicationContext(), mUiHandler, room6Name, 20.0f, 14.0f, WHEEL_TEXT_SIZE, 6,
+				false, r);
+		// mEdv1WheelFrag = new WheelFragment(mCtx, null, 5, null,
+		// WHEEL_TEXT_SIZE);
+		// mEdv3WheelFrag = new WheelFragment(mCtx, null, 5, null,
+		// WHEEL_TEXT_SIZE);
+		// mEdv6WheelFrag = new WheelFragment(mCtx, null, 5, null,
+		// WHEEL_TEXT_SIZE);
+		// mUiHandler.post(new Runnable() {
+		//
+		// @Override
+		// public void run() {
 		// TODO Auto-generated method stub
-		//				mPMSFrag = new PMSFragment(mCtx, mUiHandler);
-		//			}
-		//		});
+		// mPMSFrag = new PMSFragment(mCtx, mUiHandler);
+		// }
+		// });
 
-		//		try {
-		//			Thread.sleep(10);
-		//		} catch (InterruptedException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
+		// try {
+		// Thread.sleep(10);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
-		//		mTabFrag = new TabbedComparisonFragment(mCtx);
+		// mTabFrag = new TabbedComparisonFragment(mCtx);
 
-				mRoomListFrag = new PMSRoomsListFragment(this, mUiHandler, getSupportFragmentManager());
+		mRoomListFrag = new PMSRoomsListFragment(this, mUiHandler, getSupportFragmentManager());
 
 	}
 
-	private void addFragments()
-	{
+	private void addFragments() {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.add(R.id.hd_layout_edv1Frame, mEdv1Frag);
 		ft.add(R.id.hd_layout_edv3Frame, mEdv3Frag);
 		ft.add(R.id.hd_layout_edv6Frame, mEdv6Frag);
 
-		//		ft.add(R.id.hd_layout_edv1Frame, mEdv1WheelFrag);
-		//		ft.add(R.id.hd_layout_edv3Frame, mEdv3WheelFrag);
-		//		ft.add(R.id.hd_layout_edv6Frame, mEdv6WheelFrag);
+		// ft.add(R.id.hd_layout_edv1Frame, mEdv1WheelFrag);
+		// ft.add(R.id.hd_layout_edv3Frame, mEdv3WheelFrag);
+		// ft.add(R.id.hd_layout_edv6Frame, mEdv6WheelFrag);
 
-		//		ft.add(R.id.hd_layout_pmsFrame, mPMSFrag);
-		//		
-		//		ft.add(R.id.hd_layout_chartFrame, mTabFrag);
-				ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
+		// ft.add(R.id.hd_layout_pmsFrame, mPMSFrag);
+		//
+		// ft.add(R.id.hd_layout_chartFrame, mTabFrag);
+		ft.add(R.id.hd_layout_pmsFrame, mRoomListFrag);
 		ft.commit();
-		//		mFragMan.executePendingTransactions();
+		// mFragMan.executePendingTransactions();
 	}
 
+	// @Override
+	// public void onAttach(Activity activity) {
+	// // TODO Auto-generated method stub
+	// super.onAttach(activity);
+	// mShowNotifications = true;
+	// Log.e(TAG, "onAttach");
+	// initializeFragments();
+	// startMeterWheelUpdates();
+	// // addFragments();
+	// // testNotifications();
+	// }
 
+	// @Override
+	// public void onDetach() {
+	// mShowNotifications = false;
+	// mNotificationMan.cancelAll();
+	// stopMeterWheelUpdates();
+	// super.onDetach();
+	// }
 
-	//	@Override
-	//	public void onAttach(Activity activity) {
-	//		// TODO Auto-generated method stub
-	//		super.onAttach(activity);
-	//		mShowNotifications = true;
-	//		Log.e(TAG, "onAttach");
-	//		initializeFragments();
-	//		startMeterWheelUpdates();
-	////		addFragments();
-	////		testNotifications();
-	//	}
+	// @Override
+	// public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	// Bundle savedInstanceState) {
+	// // TODO Auto-generated method stub
+	// Log.e(TAG, "onCreateView");
+	// View v = mLi.inflate(R.layout.hd_layout, null);
+	// addFragments();
+	// return v;
+	// }
 
-
-
-	//	@Override
-	//	public void onDetach() {
-	//		mShowNotifications = false;
-	//		mNotificationMan.cancelAll();
-	//		stopMeterWheelUpdates();
-	//		super.onDetach();
-	//	}
-
-	//	@Override
-	//	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	//			Bundle savedInstanceState) {
-	//		// TODO Auto-generated method stub
-	//		Log.e(TAG, "onCreateView");
-	//		View v = mLi.inflate(R.layout.hd_layout, null);
-	//		addFragments();
-	//		return v;
-	//	}
-
-	private void stopFaceDetection()
-	{
-		if(null!=mFaceDetectionTimer)
-		{
+	private void stopFaceDetection() {
+		if (null != mFaceDetectionTimer) {
 			mFaceDetectionTimer.cancel();
 			mFaceDetectionTimer.purge();
 		}
 	}
-	
-	private void startFaceDetection() 
-	{
+
+	private void startFaceDetection() {
 		stopFaceDetection();
 		mFaceDetectionTimer = new Timer();
 		mFaceDetectionTimer.schedule(new FaceDetectionQueryTask(), 0, FACE_DETECTION_UPDATE_PERIOD);
 	}
-	public void stopMeterWheelUpdates()
-	{
-		if(null!=mMeterWheelUpdateTimer)
-		{
+
+	public void stopMeterWheelUpdates() {
+		if (null != mMeterWheelUpdateTimer) {
 			mMeterWheelUpdateTimer.cancel();
 			mMeterWheelUpdateTimer.purge();
 		}
 	}
-	public void startMeterWheelUpdates()
-	{
+
+	public void startMeterWheelUpdates() {
 		stopMeterWheelUpdates();
 		mMeterWheelUpdateTimer = new Timer();
 		mMeterWheelUpdateTimer.scheduleAtFixedRate(new MeterWheelUpdateTask(), 0, METER_WHEEL_UPDATE_TIMEOUT);
 	}
 
-	private class MeterWheelUpdateTask extends TimerTask
-	{
+	private class MeterWheelUpdateTask extends TimerTask {
 
 		@Override
 		public void run() {
 
-
-			try 
-			{
+			try {
 				SesameMeasurement lastEdv1Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV1_PLACE);
 				double overallAtPlace1 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV1_PLACE);
-				
+
 				SesameMeasurement lastEdv3Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV3_PLACE);
 				double overallAtPlace3 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV3_PLACE);
-				
+
 				SesameMeasurement lastEdv6Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV6_PLACE);
 				double overallAtPlace6 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV6_PLACE);
-				
+
 				mEdv1Frag.setLastMeasurementDate(lastEdv1Measurement.getTimeStamp());
 				mEdv1Frag.setMeterValue(lastEdv1Measurement.getVal());
 				mEdv1Frag.setWheelValue(overallAtPlace1);
-				
+
 				mEdv3Frag.setLastMeasurementDate(lastEdv3Measurement.getTimeStamp());
 				mEdv3Frag.setMeterValue(lastEdv3Measurement.getVal());
 				mEdv3Frag.setWheelValue(overallAtPlace3);
-				
+
 				mEdv6Frag.setLastMeasurementDate(lastEdv6Measurement.getTimeStamp());
 				mEdv6Frag.setMeterValue(lastEdv6Measurement.getVal());
 				mEdv6Frag.setWheelValue(overallAtPlace6);
-				
 
-//				mEdv3Frag.setMeterValue(currentAtPlace3);
-//				mEdv3Frag.setWheelValue(overallAtPlace3);
-//
-//				mEdv6Frag.setMeterValue(currentAtPlace6);
-//				mEdv6Frag.setWheelValue(overallAtPlace6);
-			} 
-			catch (Exception e) 
-			{
+				// mEdv3Frag.setMeterValue(currentAtPlace3);
+				// mEdv3Frag.setWheelValue(overallAtPlace3);
+				//
+				// mEdv6Frag.setMeterValue(currentAtPlace6);
+				// mEdv6Frag.setWheelValue(overallAtPlace6);
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 			}
 
@@ -411,71 +390,69 @@ implements INotificationListener
 
 	}
 
-	private void showNotification(String _title, String _text)
-	{
-		// UL: in case for HD to correspond with the mocked screenshots for PMS text will be static
-//		_text =  "Computer 'EDV1-CLIENT-02' in Raum EDV1 seit 3h inaktiv";
+	private void showNotification(String _title, String _text) {
+		// UL: in case for HD to correspond with the mocked screenshots for PMS
+		// text will be static
+		// _text = "Computer 'EDV1-CLIENT-02' in Raum EDV1 seit 3h inaktiv";
 
 		Intent notificationIntent = new Intent(getApplicationContext(), SesameTabletActivity.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), mNotificationId, notificationIntent, 0);
 		mNotification.tickerText = _text;
 		mNotification.setLatestEventInfo(getApplicationContext(), _title, _text, contentIntent);
 
-
-
 		mNotificationMan.notify(mNotificationId, mNotification);
 		mNotificationId++;
 	}
 
 	@Override
-	public void notifyAboutNotification(ArrayList<SesameNotification> _notifications) 
-	{
-		Log.i(TAG, "notified about notifications:"+_notifications.size());
-		if(mShowNotifications)
-		{
-			if(null!=mRoomListFrag)
-			{
-//				mRoomListFrag.notifyAboutNotifications(_notifications);				
+	public void notifyAboutNotification(ArrayList<SesameNotification> _notifications) {
+		Log.i(TAG, "notified about notifications:" + _notifications.size());
+		if (mShowNotifications) {
+			if (null != mRoomListFrag) {
+				// mRoomListFrag.notifyAboutNotifications(_notifications);
 			}
-			
-			for(SesameNotification sn:_notifications)
-			{
-//				showNotification(NOTIFICATION_TITLE, sn.toString());			
-//				if(null==mLastNotifications||!mLastNotifications.contains(sn))
+
+			for (SesameNotification sn : _notifications) {
+				// showNotification(NOTIFICATION_TITLE, sn.toString());
+				// if(null==mLastNotifications||!mLastNotifications.contains(sn))
 				{
-//					mRoomListFrag.notifyAboutNotifications(sn);
-					
+					// mRoomListFrag.notifyAboutNotifications(sn);
+
 				}
-//				else
-//				{
-//					Log.i(TAG, "notification already forwarded, discarded");
-//				}
+				// else
+				// {
+				// Log.i(TAG, "notification already forwarded, discarded");
+				// }
 			}
-//			//			mPMSFrag.setShowNotification(true);
+			// // mPMSFrag.setShowNotification(true);
 		}
 
 	}
 
-	//	@Override
-	//	public void onCreate(Bundle savedInstanceState) {
-	//		Log.e(TAG, "onCreate()");
-	//		super.onCreate(savedInstanceState);
-	//	}
+	// @Override
+	// public void onCreate(Bundle savedInstanceState) {
+	// Log.e(TAG, "onCreate()");
+	// super.onCreate(savedInstanceState);
+	// }
 
 	@Override
-	public void onDestroy() 
-	{
+	public void onDestroy() {
 		SesameLogger.stopContinuousExporting();
 		stopMeterWheelUpdates();
-		mLam.dispatchDestroy(isFinishing());
-		mDataCache.cleanUp();
+		if(null!=mLam)
+		{
+			mLam.dispatchDestroy(isFinishing());			
+		}
+		if(null!=mDataCache)
+		{
+			mDataCache.cleanUp();			
+		}
 		super.onDestroy();
 	}
 
 	@Override
-	public void onPause() 
-	{
-//		mFaceViewComponent.onPause();
+	public void onPause() {
+		mFaceViewComponent.pause();
 		stopFaceDetection();
 		stopMeterWheelUpdates();
 		mLam.dispatchPause(isFinishing());
@@ -483,50 +460,39 @@ implements INotificationListener
 	}
 
 	@Override
-	public void onResume() 
-	{
+	public void onResume() {
 		initializeFaceDetectionComponent();
 		startMeterWheelUpdates();
 		mLam.dispatchResume();
 		super.onResume();
 	}
 
-
-	private class FaceDetectionQueryTask extends TimerTask
-	{
+	private class FaceDetectionQueryTask extends TimerTask {
 		@Override
-		public void run() 
-		{
-//					updateFaceDetectionInfo();					
-//			runOnUiThread(new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//					// TODO Auto-generated method stub
-//				}
-//			});
+		public void run() {
+			updateFaceDetectionInfo();
+			// runOnUiThread(new Runnable() {
+			//
+			// @Override
+			// public void run() {
+			// // TODO Auto-generated method stub
+			// }
+			// });
 		}
 
-//		private void updateFaceDetectionInfo() 
-//		{
-//			if(null!=mFaceViewComponent)
-//			{
-//				FacesDetectedEvent event = mFaceViewComponent.getLastFaceDetectedEvent();
-//				if(null==event)
-//				{
-//					Log.e(TAG, "event was null");
-//				}
-//				else
-//				{
-////					Log.e(TAG, "eventNr=" + FacesDetectedEvent.DEBUG_NUMBERING() + ", " + event.toString());
-//					Log.e(TAG, "near faces:"+event.getAmountOfNearFaces());
-//					SesameLogger.log(EntryType.FACE_DETECTION, TAG, ""+event.getAmountOfNearFaces());
-//				}
-//				
-////				Log.e(TAG, "" + event);
-////				System.out.println(event);
-//			}
-//		}	
+		private void updateFaceDetectionInfo() {
+			if (null != mFaceViewComponent) {
+				FacesDetectedEvent event = mFaceViewComponent.getLastFaceDetectedEvent();
+				if (null == event) {
+					Log.e(TAG, "event was null");
+				} else {
+					// Log.e(TAG, "near faces:" + event.getAmountOfNearFaces());
+					SesameLogger.log(EntryType.FACE_DETECTION, TAG, "" + event.getAmountOfNearFaces());
+				}
+				// Log.e(TAG, "" + event);
+				// System.out.println(event);
+			}
+		}
 	}
 
 }

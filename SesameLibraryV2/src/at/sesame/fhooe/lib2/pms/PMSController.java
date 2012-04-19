@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.pms.dialogs.IPMSDialogActionHandler;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSActionInProgressDialogFragment;
@@ -40,8 +41,8 @@ implements IPMSDialogActionHandler
 	 */
 	private DeviceStateUpdater mUpdater;
 
-	private String mUser = "peter";
-	private String mPass = "thatpeter";
+//	private String mUser = "peter";
+//	private String mPass = "thatpeter";
 
 //	private IPmsUi mUi;
 //	private PmsHelper mUiHelper;
@@ -91,7 +92,7 @@ implements IPMSDialogActionHandler
 		stopAutoUpdate();
 //		if(mDevicesLoaded)
 		{
-			mUpdater = new DeviceStateUpdater(mAllDevices, mUser, mPass);
+			mUpdater = new DeviceStateUpdater(mAllDevices);
 			mUpdater.startUpdating();
 //			mUpdateThread.start();			
 		}
@@ -194,7 +195,7 @@ implements IPMSDialogActionHandler
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, "wakeup", mMax});
+			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
 			stopAutoUpdate();
 		}
 
@@ -296,7 +297,7 @@ implements IPMSDialogActionHandler
 //		});
 		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(macs);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");
@@ -337,7 +338,7 @@ implements IPMSDialogActionHandler
 	private void loadDevices(HostList _hl)
 	{
 //		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(_hl.getMacList());
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(_hl.getMacList());
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");
@@ -486,22 +487,22 @@ implements IPMSDialogActionHandler
 	 */
 	public void powerOffDevices(PmsHelper _helper, FragmentManager _fragMan, final ArrayList<ControllableDevice> _devices, final PowerOffState _state)
 	{
-		new PowerOffTask(_state.name(), _devices.size(), _helper, _fragMan).execute(new Object[]{_devices,_state});
+		new PowerOffTask(_devices.size(), _helper, _fragMan).execute(new Object[]{_devices,_state});
 	}
 	
 	
 	private class PowerOffTask extends AsyncTask<Object, Void, Void>
 	{
 
-		private String mTitle;
+//		private String mTitle;
 		private int mMax;
 		private PMSActionInProgressDialogFragment mDialog;
 		private PmsHelper mHelper;
 		private FragmentManager mFragMan;
 		
-		public PowerOffTask(String _title, int _max, PmsHelper _helper, FragmentManager _fragMan)
+		public PowerOffTask(int _max, PmsHelper _helper, FragmentManager _fragMan)
 		{
-			mTitle = _title;
+//			mTitle = _title;
 			mMax  =_max;
 			mHelper = _helper;
 			mFragMan = _fragMan;
@@ -519,7 +520,7 @@ implements IPMSDialogActionHandler
 		{
 			super.onPreExecute();
 			stopAutoUpdate();
-			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mTitle, mMax});
+			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.shutdown_dialog_title), mMax});
 		}
 		
 		
@@ -630,7 +631,7 @@ implements IPMSDialogActionHandler
 		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
 		
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS(mUser, mPass).extendedStatusList(macs);
+		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");
