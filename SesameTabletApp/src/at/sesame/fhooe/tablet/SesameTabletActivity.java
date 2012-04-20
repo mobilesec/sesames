@@ -114,6 +114,15 @@ implements INotificationListener, ISesameUpdateListener
 	
 	private int mEnergyUpdateFailCount = 0;
 	private int mMaxEnergyUpdateFailCount = 5;
+	
+	private Date mLastPmsFailNotification;
+	private Date mLastRepoOldNotification;
+	private Date mLastRepoConnectionLostNotification;
+	
+	private int mNumHoursBeforeNextNotification = 1;
+	
+	private Timer mShutdownTimer;
+	private int mShutdownHour = 23;
 
 	private SesameFileLogExporter mExporter;
 	// public SesameTabletActivity(Context _ctx, FragmentManager _fm, Handler
@@ -140,6 +149,7 @@ implements INotificationListener, ISesameUpdateListener
 
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
+		
 //		Log.i(TAG, ConfigLoader.loadConfig().toString());
 		new CreationTask().execute();
 	}
@@ -192,6 +202,7 @@ implements INotificationListener, ISesameUpdateListener
 
 			SesameLogger.startContinuousExport(LOG_EXPORT_PERIOD);
 			startHeartBeat();
+			startShutdownTask();
 		}
 
 		@Override
@@ -204,11 +215,19 @@ implements INotificationListener, ISesameUpdateListener
 
 	private void initializeFaceDetectionComponent() {
 
-		if (null != mFaceContainer) {
-			mFaceViewComponent.pause();
-			// CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
-			mFaceViewComponent.resume(this, mFaceContainer, true);
-			startFaceDetection();
+		if (null != mFaceContainer) 
+		{
+			try
+			{
+				mFaceViewComponent.pause();
+				// CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
+				mFaceViewComponent.resume(this, mFaceContainer, true);
+				startFaceDetection();
+			}
+			catch(Exception e)
+			{
+				
+			}
 		}
 	}
 	
@@ -234,7 +253,8 @@ implements INotificationListener, ISesameUpdateListener
 		@Override
 		public void run()
 		{
-			Log.e(TAG, "################HEARTBEAT");
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "heartbeat");
+			Log.i(TAG, "################HEARTBEAT################");
 			SesameMail mail = new SesameMail();
 			try {
 				mail.addAttachment(mExporter.getMailLogFilePath());
@@ -266,7 +286,6 @@ implements INotificationListener, ISesameUpdateListener
 			bodyBuffer.append(mDataCache.getLastEnergyDataTimeStamp().toString());
 			
 			boolean res = mail.send(mDataCache.getConfigData(), bodyBuffer.toString());
-			Log.e(TAG, "heartbeat mail sent:"+res);
 		}
 	}
 
@@ -440,15 +459,18 @@ implements INotificationListener, ISesameUpdateListener
 			try {
 				SesameMeasurement lastEdv1Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV1_PLACE);
 				double overallAtPlace1 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV1_PLACE);
+//				Log.e(TAG, "last measurement of EDV1 set to:"+lastEdv1Measurement.toString());
 
 				SesameMeasurement lastEdv3Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV3_PLACE);
 				double overallAtPlace3 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV3_PLACE);
+//				Log.e(TAG, "last measurement of EDV3 set to:"+lastEdv3Measurement.toString());
 
 				SesameMeasurement lastEdv6Measurement = mDataCache.getLastEnergyReading(SesameDataCache.EDV6_PLACE);
 				double overallAtPlace6 = mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV6_PLACE);
+//				Log.e(TAG, "last measurement of EDV6 set to:"+lastEdv6Measurement.toString());
 
 				mEdv1Frag.setLastMeasurementDate(lastEdv1Measurement.getTimeStamp());
-				mEdv1Frag.setMeterValue(lastEdv1Measurement.getVal());
+				mEdv1Frag.setMeterValue(lastEdv1Measurement.getVal());				
 				mEdv1Frag.setWheelValue(overallAtPlace1);
 
 				mEdv3Frag.setLastMeasurementDate(lastEdv3Measurement.getTimeStamp());
@@ -465,11 +487,45 @@ implements INotificationListener, ISesameUpdateListener
 				// mEdv6Frag.setMeterValue(currentAtPlace6);
 				// mEdv6Frag.setWheelValue(overallAtPlace6);
 			} catch (Exception e) {
+//				e.printStackTrace();
 				// TODO Auto-generated catch block
 			}
 
 		}
 
+	}
+	
+	private class ShutdownTask extends TimerTask
+	{
+
+		@Override
+		public void run() 
+		{
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "automatic shutdown");
+			finish();
+		}
+		
+	}
+	
+	private void startShutdownTask()
+	{
+		stopShutdownTask();
+		GregorianCalendar shutdownCal = new GregorianCalendar();
+		shutdownCal.set(Calendar.HOUR_OF_DAY, mShutdownHour);
+		shutdownCal.set(Calendar.MINUTE, 30);
+		shutdownCal.set(Calendar.SECOND, 0);
+		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "automatic shutdown scheduled for: "+shutdownCal.getTime().toString());
+		mShutdownTimer = new Timer("shutdown timer");
+		mShutdownTimer.schedule(new ShutdownTask(), shutdownCal.getTime());
+	}
+	
+	private void stopShutdownTask()
+	{
+		if(null!=mShutdownTimer)
+		{
+			mShutdownTimer.cancel();
+			mShutdownTimer.purge();
+		}
 	}
 
 	private void showNotification(String _title, String _text) {
@@ -518,8 +574,9 @@ implements INotificationListener, ISesameUpdateListener
 	// }
 
 	@Override
-	public void onDestroy() {
-		SesameLogger.stopContinuousExporting();
+	public void onDestroy()
+	{
+		stopShutdownTask();
 		stopHeartBeat();
 		stopMeterWheelUpdates();
 		if(null!=mLam)
@@ -530,6 +587,24 @@ implements INotificationListener, ISesameUpdateListener
 		{
 			mDataCache.cleanUp();			
 		}
+		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "application closed");
+		SesameLogger.export();
+		SesameMail mail = new SesameMail();
+		try {
+			mail.addAttachment(mExporter.getMailLogFilePath());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		mail.setBody("app was shut down");
+		
+		try {
+			mail.send(mDataCache.getConfigData(), "app was shut down");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		SesameLogger.stopContinuousExporting();
 		super.onDestroy();
 	}
 
@@ -595,7 +670,11 @@ implements INotificationListener, ISesameUpdateListener
 		if(mPmsUpdateFailCount>=mMaxPmsUpdateFailCount)
 		{
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection to pms potentially lost...");
-			new SesameMail().send(mDataCache.getConfigData(), NotificationType.PMS_FAILED);
+			if(shouldNotify(mLastPmsFailNotification))
+			{
+				new SesameMail().send(mDataCache.getConfigData(), NotificationType.PMS_FAILED);
+				mLastPmsFailNotification = new Date();
+			}
 		}
 	}
 
@@ -617,7 +696,11 @@ implements INotificationListener, ISesameUpdateListener
 		if(mEnergyUpdateFailCount>=mMaxEnergyUpdateFailCount)
 		{
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection to repository lost");
-			new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_FAILED);
+			if(shouldNotify(mLastRepoConnectionLostNotification))
+			{
+				new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_FAILED);
+				mLastRepoConnectionLostNotification = new Date();
+			}
 		}
 		
 		long lastUpdateMillis = mDataCache.getLastEnergyDataTimeStamp().getTime();
@@ -631,9 +714,25 @@ implements INotificationListener, ISesameUpdateListener
 		if(diff>3600000*mNumHoursBeforeRepoFailNotification)
 		{
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "last update of energy data is older than "+mNumHoursBeforeRepoFailNotification+" hours");
-			new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_OLD);
+			if(shouldNotify(mLastRepoOldNotification))
+			{
+				new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_OLD);
+				mLastRepoOldNotification = new Date();
+			}
 		}
 		
+	}
+	
+	private boolean shouldNotify(Date _d)
+	{
+		if(null==_d)
+		{
+			return true;
+		}
+		GregorianCalendar checkCal = new GregorianCalendar();
+		checkCal.add(Calendar.HOUR_OF_DAY, -1* mNumHoursBeforeNextNotification);
+		
+		return _d.before(checkCal.getTime());
 	}
 
 	@Override

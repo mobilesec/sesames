@@ -13,6 +13,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import at.sesame.fhooe.lib2.Constants;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.config.ConfigLoader;
 import at.sesame.fhooe.lib2.config.SesameConfigData;
@@ -707,11 +708,17 @@ implements ISesameDataProvider
 		synchronized (this) 
 		{
 			final SesameDataContainer energyData = mEnergyData.get(_smp);
+			ArrayList<SesameMeasurement> measurementsSinceTrialStart = SesameDataContainer.filterByDate(energyData.getMeasurements(), Constants.getTrialStartDate(), new Date(), false);
 			double overall = 0;
 
-			for(int i = 0;i<energyData.getMeasurements().size();i++)
+//			for(int i = 0;i<energyData.getMeasurements().size();i++)
+//			{
+//				overall += energyData.getMeasurements().get(i).getVal();
+//			}
+			
+			for(SesameMeasurement sm:measurementsSinceTrialStart)
 			{
-				overall += energyData.getMeasurements().get(i).getVal();
+				overall += sm.getVal();
 			}
 			return overall/4000; //sum of all measurements (every 15 min) division by 4==> 15 min->1 h, division by 1000==>Wh->kWh			
 		}
@@ -976,7 +983,6 @@ implements ISesameDataProvider
 
 	private void update() {
 		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "updating");
-		Log.e(TAG, "updating");
 		if(checkConnectivity())
 		{
 

@@ -18,4 +18,10 @@ public class Constants
 		GregorianCalendar cal = new GregorianCalendar(2011, 10, 04);
 		return cal.getTime();
 	}
+	
+	public static Date getTrialStartDate()
+	{
+		GregorianCalendar cal = new GregorianCalendar(2012, 3, 23);
+		return cal.getTime();
+	}
 }

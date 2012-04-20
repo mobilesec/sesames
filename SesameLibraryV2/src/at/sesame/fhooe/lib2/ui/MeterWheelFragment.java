@@ -84,7 +84,7 @@ extends Fragment
 		mRenderer = _renderer;
 		mHeaderText = _header;
 		mHeaderTextSize = _headerSize;
-		mBottomText = mCtx.getString(R.string.MeterWheelFrag_bottom_text)+mDateFormat.format(Constants.getStartDate());
+		mBottomText = mCtx.getString(R.string.MeterWheelFrag_bottom_text)+mDateFormat.format(Constants.getTrialStartDate());
 		mBottomTextSize = _bottomSize;
 		mWheelTextSize = _wheelTextSize;
 		mNumDigits = _numDigits;
@@ -298,6 +298,10 @@ extends Fragment
 	private int[] getDigits(double _val)
 	{
 		int n = (int) Math.floor(Math.log10(_val) + 1);
+		if(n<0)
+		{
+			n=0;
+		}
 		int i;
 		int[] res = new int[n];
 		for ( i = 0; i < n; ++i, _val /= 10 )
