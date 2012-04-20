@@ -59,10 +59,19 @@ extends ArrayAdapter<ComputerRoomInformation>
 		active.setTextColor(Color.WHITE);
 		
 		TextView notifications = (TextView)mView.findViewById(R.id.notificationLabel);
-		notifications.setVisibility(View.VISIBLE);
+		notifications.setVisibility(View.INVISIBLE);
+		
+		// if there's no notification but operation in progress use another background color
+		if (info.getNumNotifications()>0) {
+			notifications.setBackgroundResource(R.drawable.notification_background);
+		} else {
+			notifications.setBackgroundResource(R.drawable.waiting_background);
+		}
+		
 		if(info.isDirty())
 		{
 			notifications.setText("...");
+			notifications.setVisibility(View.VISIBLE);
 		}
 		else
 		{
