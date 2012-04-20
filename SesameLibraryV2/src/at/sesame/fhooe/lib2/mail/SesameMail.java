@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import android.util.Log;
 import at.sesame.fhooe.lib2.config.SesameConfigData;
+import at.sesame.fhooe.lib2.logging.SesameLogger;
+import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
 
 public class SesameMail 
 extends Mail
@@ -57,9 +59,10 @@ extends Mail
 	
 	public boolean send(SesameConfigData _config, String _body)
 	{
-		Log.e(TAG, "sending to:"+Arrays.toString(_config.getAddressArray()));
+//		Log.e(TAG, "sending to:"+Arrays.toString(_config.getAddressArray()));
+		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "sending mail to: "+Arrays.toString(_config.getAddressArray()));
 		setTo(_config.getAddressArray());
-		setBody(_config.getUser()+"\n"+_body);
+		setBody(_config.getUser()+"\n\n"+_body);
 		try
 		{
 			return super.send();

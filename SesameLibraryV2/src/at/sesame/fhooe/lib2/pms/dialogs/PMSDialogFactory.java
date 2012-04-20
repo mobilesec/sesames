@@ -7,6 +7,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import at.sesame.fhooe.lib2.logging.SesameLogger;
+import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSActionDialogFragment.PMSActionDialogType;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
 
@@ -107,8 +109,16 @@ public class PMSDialogFactory
 
 		if(null!=mShownDialog&& null!=_fm)
 		{
-			mShownDialog.show(_fm, null);
-			Log.i(TAG, "showing dialog:"+mShownDialog.toString());
+			try
+			{
+				mShownDialog.show(_fm, null);
+				Log.i(TAG, "showing dialog:"+mShownDialog.toString());				
+			}
+			catch(Exception e)
+			{
+				Log.e(TAG, "could not show dialog");
+				SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "failed to show dialog");
+			}
 
 		}
 		else

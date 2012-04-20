@@ -60,7 +60,7 @@ public class PmsHelper
 
 	private IPMSUpdateListener mUpdateListener;
 	
-	private SesameDataCache mCache = SesameDataCache.getInstance(null);
+	private SesameDataCache mCache;// = SesameDataCache.getInstance(null);
 
 	//	private ArrayList<ControllableDeviceListEntry> mEntries;
 	//	/**
@@ -75,6 +75,7 @@ public class PmsHelper
 	public PmsHelper(Context _ctx, FragmentManager _fm, IPMSUpdateListener _updateListener, String _roomName, ViewGroup _activeDeviceControl, ViewGroup _inactiveDeviceControl)
 	{
 		mCtx = _ctx;
+		mCache = SesameDataCache.getInstance(mCtx);
 		mRoomName = _roomName;
 //		mController = new PMSController(mCtx, this, _hosts2Load, _fm);
 		mUpdateListener = _updateListener;

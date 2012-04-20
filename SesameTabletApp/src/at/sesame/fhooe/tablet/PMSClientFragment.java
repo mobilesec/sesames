@@ -964,7 +964,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	public void onClick(View arg0) 
 	{
 		if (arg0.getId() == R.id.sleepButton) {
-			mPMSHelper.handleSleepAll();
+//			mPMSHelper.handleSleepAll();
 		} else if (arg0.getId() == R.id.shutDownButton) {
 			Log.i(TAG, "shut down all");
 			mPMSHelper.handlePowerOffAll();
@@ -1380,8 +1380,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 			{
 				final long start = System.currentTimeMillis();
 
-				final ArrayList<ControllableDevice> activeDevs  = SesameDataCache.getInstance(null).getDevices(mTitle, true);
-				final ArrayList<ControllableDevice> inactiveDevs = SesameDataCache.getInstance(null).getDevices(mTitle, false);
+				final ArrayList<ControllableDevice> activeDevs  = SesameDataCache.getInstance(mCtx).getDevices(mTitle, true);
+				final ArrayList<ControllableDevice> inactiveDevs = SesameDataCache.getInstance(mCtx).getDevices(mTitle, false);
 				
 				final ArrayList<ControllableDeviceListEntry> activeEntries = new ArrayList<ControllableDeviceListEntry>();
 				final ArrayList<ControllableDeviceListEntry> inactiveEntries = new ArrayList<ControllableDeviceListEntry>();

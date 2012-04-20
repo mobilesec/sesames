@@ -248,15 +248,17 @@ implements OnClickListener, OnCheckedChangeListener
 						}
 						holder.CONTAINER.removeAllViews();
 						holder.CONTAINER.addView(holder.POWER_BUTT);
+						holder.CB.setEnabled(true);
 					}
 					else
 					{
 						//						LayoutInflater inflater = mLi.in
 //						ProgressBar pg = (ProgressBar ) mLi.inflate(R.layout.dirty_progressbar, null);
 						//						pg.setIndeterminate(true);
-
+						holder.CB.setEnabled(false);
 						holder.CONTAINER.removeAllViews();
 						holder.CONTAINER.addView(holder.DIRTY_BAR);
+						
 					}
 
 					if(null!=holder.CB)
