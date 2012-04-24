@@ -18,6 +18,6 @@ public interface IRepositoryService
 	@Path("/repositories/smartbuilding")
 //	@Path("/repositories/test")
 //	@ResponseHandler(RepositoryResponseHandler.class)
-	@ConnectionTimeout(30000)
+	@ConnectionTimeout(60000)
 	String executeQuery(@QueryParam("query")String query);
 }

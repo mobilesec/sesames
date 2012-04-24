@@ -14,9 +14,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -70,6 +73,10 @@ implements INotificationListener, ISesameUpdateListener
 	private static MeterWheelFragment		mEdv1Frag;
 	private static MeterWheelFragment		mEdv3Frag;
 	private static MeterWheelFragment		mEdv6Frag;
+	
+	private boolean mRepoAvailable = false;
+	private boolean mPmsAvailable = false;
+	private boolean mRepoDataNew = false;
 
 	// private WheelFragment mEdv1WheelFrag;
 	// private WheelFragment mEdv3WheelFrag;
@@ -139,6 +146,7 @@ implements INotificationListener, ISesameUpdateListener
 	// // startMeterWheelUpdates();
 	// }
 
+	
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -149,9 +157,40 @@ implements INotificationListener, ISesameUpdateListener
 
 		mLam = new LocalActivityManager(this, false);
 		mLam.dispatchCreate(savedInstanceState);
+		String fileName = "sesameLog" + LOG_FILENAME_DATE_FORMAT.format(new Date()) + ".csv";
+
+		mExporter = new SesameFileLogExporter(SesameTabletActivity.this, ExportLocation.EXT_PUB_DIR,
+				fileName);
+		SesameLogger.setExporter(mExporter);
+
+		SesameLogger.startContinuousExport(LOG_EXPORT_PERIOD);
 		
+		if(!checkConnectivity())
+		{
+			Toast.makeText(this, "Netzwerk nicht verbunden.\n Anwendung wird beendet.\n Bitte stellen sie eine Internetverbindung her und starten sie die Anwendung erneut", Toast.LENGTH_LONG).show();
+			new Timer().schedule(new ShutdownTask(), 5000);
+		}
+		else
+		{
+			
+			startShutdownTask();
 //		Log.i(TAG, ConfigLoader.loadConfig().toString());
-		new CreationTask().execute();
+			new CreationTask().execute();			
+		}
+	}
+	
+	/**
+	 * checks if the device currently is connected to the internet
+	 * @return true if the device is connected, false otherwise
+	 */
+	private boolean checkConnectivity() 
+	{
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			return true;
+		}
+		return false;
 	}
 
 	private class CreationTask extends AsyncTask<Void, Void, Void> {
@@ -194,15 +233,7 @@ implements INotificationListener, ISesameUpdateListener
 		@Override
 		protected void onPostExecute(Void result) {
 			PMSDialogFactory.dismissCurrentDialog();
-			String fileName = "sesameLog" + LOG_FILENAME_DATE_FORMAT.format(new Date()) + ".csv";
-
-			mExporter = new SesameFileLogExporter(SesameTabletActivity.this, ExportLocation.EXT_PUB_DIR,
-					fileName);
-			SesameLogger.setExporter(mExporter);
-
-			SesameLogger.startContinuousExport(LOG_EXPORT_PERIOD);
 			startHeartBeat();
-			startShutdownTask();
 		}
 
 		@Override
@@ -235,7 +266,7 @@ implements INotificationListener, ISesameUpdateListener
 	{
 		stopHeartBeat();
 		mHeartBeatTimer = new Timer("heartbeat");
-		mHeartBeatTimer.schedule(new HeartBeatTask(), 15000, HEARTBEAT_PERIOD);
+		mHeartBeatTimer.schedule(new HeartBeatTask(), 60000, HEARTBEAT_PERIOD);
 	}
 	
 	private void stopHeartBeat()
@@ -263,14 +294,19 @@ implements INotificationListener, ISesameUpdateListener
 				e.printStackTrace();
 			}
 			StringBuffer bodyBuffer = new StringBuffer();
+			
+			bodyBuffer.append("PMS available: "+mPmsAvailable);
+			bodyBuffer.append("\nRepo available: "+mRepoAvailable);
+			bodyBuffer.append("\nRepo data new: "+mRepoDataNew);
+			
 			if(null!=mLastPmsUpdate)
 			{
-				bodyBuffer.append("last pms update:");
+				bodyBuffer.append("\nlast pms update:");
 				bodyBuffer.append(mLastPmsUpdate.toString());				
 			}
 			else
 			{
-				bodyBuffer.append("no update yet...");
+				bodyBuffer.append("\nno pms update yet...");
 			}
 			
 			if(null!=mLastEnergyUpdate)
@@ -283,7 +319,15 @@ implements INotificationListener, ISesameUpdateListener
 				bodyBuffer.append("\nno energy update yet...");
 			}
 			bodyBuffer.append("\nlast meter reading:");
-			bodyBuffer.append(mDataCache.getLastEnergyDataTimeStamp().toString());
+			try
+			{
+				bodyBuffer.append(mDataCache.getLastEnergyDataTimeStamp().toString());
+				
+			}
+			catch(Exception e)
+			{
+				
+			}
 			
 			boolean res = mail.send(mDataCache.getConfigData(), bodyBuffer.toString());
 		}
@@ -448,7 +492,7 @@ implements INotificationListener, ISesameUpdateListener
 	public void startMeterWheelUpdates() {
 		stopMeterWheelUpdates();
 		mMeterWheelUpdateTimer = new Timer();
-		mMeterWheelUpdateTimer.scheduleAtFixedRate(new MeterWheelUpdateTask(), 0, METER_WHEEL_UPDATE_TIMEOUT);
+		mMeterWheelUpdateTimer.schedule(new MeterWheelUpdateTask(), 0, METER_WHEEL_UPDATE_TIMEOUT);
 	}
 
 	private class MeterWheelUpdateTask extends TimerTask {
@@ -661,6 +705,7 @@ implements INotificationListener, ISesameUpdateListener
 		{
 			mPmsUpdateFailCount = 0;
 			mLastPmsUpdate = new Date();
+			mPmsAvailable = true;
 			mRoomListFrag.updatePmsFragment();
 		}
 		else
@@ -670,11 +715,16 @@ implements INotificationListener, ISesameUpdateListener
 		if(mPmsUpdateFailCount>=mMaxPmsUpdateFailCount)
 		{
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection to pms potentially lost...");
-			if(shouldNotify(mLastPmsFailNotification))
+			if(mPmsAvailable)
 			{
 				new SesameMail().send(mDataCache.getConfigData(), NotificationType.PMS_FAILED);
-				mLastPmsFailNotification = new Date();
 			}
+			mPmsAvailable = false;
+//			if(shouldNotify(mLastPmsFailNotification))
+//			{
+//				new SesameMail().send(mDataCache.getConfigData(), NotificationType.PMS_FAILED);
+//				mLastPmsFailNotification = new Date();
+//			}
 		}
 	}
 
@@ -684,6 +734,7 @@ implements INotificationListener, ISesameUpdateListener
 		Log.i(TAG, "notified about energy update");
 		if(_success)
 		{
+			mRepoAvailable = true;
 			mEnergyUpdateFailCount = 0;
 			mLastEnergyUpdate = new Date();
 			
@@ -696,11 +747,16 @@ implements INotificationListener, ISesameUpdateListener
 		if(mEnergyUpdateFailCount>=mMaxEnergyUpdateFailCount)
 		{
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection to repository lost");
-			if(shouldNotify(mLastRepoConnectionLostNotification))
+			if(mRepoAvailable)
 			{
 				new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_FAILED);
-				mLastRepoConnectionLostNotification = new Date();
 			}
+			mRepoAvailable = false;
+//			if(shouldNotify(mLastRepoConnectionLostNotification))
+//			{
+//				new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_FAILED);
+//				mLastRepoConnectionLostNotification = new Date();
+//			}
 		}
 		
 		long lastUpdateMillis = mDataCache.getLastEnergyDataTimeStamp().getTime();
@@ -714,26 +770,35 @@ implements INotificationListener, ISesameUpdateListener
 		if(diff>3600000*mNumHoursBeforeRepoFailNotification)
 		{
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "last update of energy data is older than "+mNumHoursBeforeRepoFailNotification+" hours");
-			if(shouldNotify(mLastRepoOldNotification))
+			if(mRepoDataNew)
 			{
 				new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_OLD);
-				mLastRepoOldNotification = new Date();
 			}
+			mRepoDataNew = false;
+//			if(shouldNotify(mLastRepoOldNotification))
+//			{
+//				new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_OLD);
+//				mLastRepoOldNotification = new Date();
+//			}
+		}
+		else
+		{
+			mRepoDataNew = true;
 		}
 		
 	}
 	
-	private boolean shouldNotify(Date _d)
-	{
-		if(null==_d)
-		{
-			return true;
-		}
-		GregorianCalendar checkCal = new GregorianCalendar();
-		checkCal.add(Calendar.HOUR_OF_DAY, -1* mNumHoursBeforeNextNotification);
-		
-		return _d.before(checkCal.getTime());
-	}
+//	private boolean shouldNotify(Date _d)
+//	{
+//		if(null==_d)
+//		{
+//			return true;
+//		}
+//		GregorianCalendar checkCal = new GregorianCalendar();
+//		checkCal.add(Calendar.HOUR_OF_DAY, -1* mNumHoursBeforeNextNotification);
+//		
+//		return _d.before(checkCal.getTime());
+//	}
 
 	@Override
 	public void notifyConnectivityLoss() 
