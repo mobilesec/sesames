@@ -12,7 +12,10 @@ import java.util.concurrent.ExecutionException;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 import at.sesame.fhooe.lib2.Constants;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.config.ConfigLoader;
@@ -348,6 +351,7 @@ implements ISesameDataProvider
 			if(!devicesLoaded)
 			{
 				Log.e(TAG, "devices could not be loaded");
+				//TODO: end app!
 			}
 			else
 			{
@@ -469,10 +473,16 @@ implements ISesameDataProvider
 			break;
 		case semantic_repo:
 			Collections.sort(mEnergyMeasurementPlaces, new SesameMeasurementPlaceComparator());
+			if(null == mEnergyMeasurementPlaces || mEnergyMeasurementPlaces.size()<6)
+			{
 
+			}
 			EDV1_PLACE = mEnergyMeasurementPlaces.get(4);
 			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
 			EDV6_PLACE = mEnergyMeasurementPlaces.get(5);
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "edv1:"+EDV1_PLACE.toString());
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "edv3:"+EDV3_PLACE.toString());
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "edv6:"+EDV6_PLACE.toString());
 
 			//			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
 			//			{
@@ -988,22 +998,32 @@ implements ISesameDataProvider
 
 			if(!mController.isConnectionInUse())
 			{
-				boolean devicesUpdated = SesameDataCache.mDeviceStateUpdater.updateAllDevices();
+				boolean energyDataLoaded = refreshEnergyData(mNumDays2LoadEnergyData);
+				
 				for(ISesameUpdateListener listener:mUpdateListeners)
 				{
-					listener.notifyPmsUpdate(devicesUpdated);
+					listener.notifyEnergyUpdate(energyDataLoaded);
+				}
+				try
+				{
+					boolean devicesUpdated = SesameDataCache.mDeviceStateUpdater.updateAllDevices();
+					for(ISesameUpdateListener listener:mUpdateListeners)
+					{
+						listener.notifyPmsUpdate(devicesUpdated);
+					}		
+				}
+				catch(Exception e)
+				{
+//					e.printStackTrace();
+					SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "PMS update failed");
+					//ignore null pointer due to uninitialized updater
 				}
 				
-			}
-			boolean energyDataLoaded = refreshEnergyData(mNumDays2LoadEnergyData);
-
-			for(ISesameUpdateListener listener:mUpdateListeners)
-			{
-				listener.notifyEnergyUpdate(energyDataLoaded);
 			}
 		}
 		else
 		{
+			
 			for(ISesameUpdateListener listener:mUpdateListeners)
 			{
 				listener.notifyConnectivityLoss();
