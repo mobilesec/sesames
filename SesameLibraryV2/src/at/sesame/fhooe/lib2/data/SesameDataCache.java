@@ -1,6 +1,7 @@
 package at.sesame.fhooe.lib2.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -473,6 +474,7 @@ implements ISesameDataProvider
 			break;
 		case semantic_repo:
 			Collections.sort(mEnergyMeasurementPlaces, new SesameMeasurementPlaceComparator());
+			Log.e(TAG, Arrays.toString((SesameMeasurementPlace[]) mEnergyMeasurementPlaces.toArray(new SesameMeasurementPlace[mEnergyMeasurementPlaces.size()])));
 			if(null == mEnergyMeasurementPlaces || mEnergyMeasurementPlaces.size()<6)
 			{
 

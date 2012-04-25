@@ -8,5 +8,12 @@
 	<classpathentry kind="lib" path="libs/achartengine-0.7.0.jar"/>
 	<classpathentry kind="lib" path="libs/codegist-crest-2.0.0-RC1-all.jar"/>
 	<classpathentry kind="lib" path="libs/jackson-all-1.8.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Sesame/eclipse/plugins/at.fhooe.andruid.runtime_0.12.4.201204251551/aspectjrt.jar"/>
+	<classpathentry kind="lib" path="C:/Sesame/eclipse/plugins/at.fhooe.andruid.runtime_0.12.4.201204251551/xstream.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Sesame/eclipse/plugins/at.fhooe.andruid.runtime_0.12.4.201204251551/andruid.jar">
+		<attributes>
+			<attribute name="org.eclipse.ajdt.aspectpath" value="org.eclipse.ajdt.aspectpath"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
