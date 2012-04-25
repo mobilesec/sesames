@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.pms.SeparatorListEntry.ListType;
 import at.sesame.fhooe.lib2.pms.hosts.HostList;
@@ -178,7 +179,7 @@ public class PmsHelper
 
 			@Override
 			public void run() {
-				Toast.makeText(mCtx, "only devices from the same category (active/inactive) can be selected at the same time.", Toast.LENGTH_LONG).show();
+				Toast.makeText(mCtx, R.string.selection_fail_message, Toast.LENGTH_LONG).show();
 
 			}
 		});
@@ -425,7 +426,17 @@ public class PmsHelper
 		{
 			if(cd.isAlive()==selectionFlag)
 			{
-				mSelectionMap.put(cd.getMac(), _select);
+				if(cd.isAlive())
+				{
+					if(cd.getIdleSinceMinutes()>=ControllableDevice.IDLE_NOTIFICATION_THRESHOLD)
+					{
+						mSelectionMap.put(cd.getMac(), _select);
+					}
+				}
+				else
+				{
+					mSelectionMap.put(cd.getMac(), _select);					
+				}
 			}
 		}
 		//		for(IListEntry entry:listToCheck)
@@ -456,13 +467,13 @@ public class PmsHelper
 	 */
 	public boolean handleMultipleSelectionAttempt(ListType _type, boolean _isChecked)
 	{
-		System.out.println("handle multiple selection attempt");
-		System.out.println("selected type = "+mSelectedType.name());
+//		System.out.println("handle multiple selection attempt");
+//		System.out.println("selected type = "+mSelectedType.name());
 		boolean res  = false;
 		switch(_type)
 		{
 		case active:
-			System.out.println("active group selection");
+//			System.out.println("active group selection");
 			switch(mSelectedType)
 			{
 			case active:
@@ -477,7 +488,7 @@ public class PmsHelper
 			}
 			break;
 		case inactive:
-			System.out.println("inactive group selection");
+//			System.out.println("inactive group selection");
 			switch(mSelectedType)
 			{
 			case inactive:
@@ -504,15 +515,15 @@ public class PmsHelper
 		switch(mSelectedType)
 		{
 		case active:
-			System.out.println("active");
+//			System.out.println("active");
 			setControlContainerVisibility(View.VISIBLE, View.GONE);
 			break;
 		case inactive:
-			System.out.println("inactive");
+//			System.out.println("inactive");
 			setControlContainerVisibility(View.GONE, View.VISIBLE);
 			break;
 		case none:
-			System.out.println("none");
+//			System.out.println("none");
 			setControlContainerVisibility(View.GONE, View.GONE);
 			break;
 		}
@@ -523,7 +534,7 @@ public class PmsHelper
 	 */
 	public void deselectAll()
 	{
-		System.out.println("deselect all");
+//		System.out.println("deselect all");
 		initializeSelectionMap();
 		setSelectedType(SelectedType.none);
 
@@ -566,7 +577,7 @@ public class PmsHelper
 
 	private synchronized void setSelectedType(SelectedType _type)
 	{
-		System.out.println("setSelectedType:"+_type.name());
+//		System.out.println("setSelectedType:"+_type.name());
 		mSelectedType = _type;
 		updateMultipleSelectionWidgets();
 	}
@@ -590,7 +601,7 @@ public class PmsHelper
 	 */
 	public void setControlContainerVisibility(final int _v1, final int _v2)
 	{
-		System.out.println("set control container visibility ("+_v1+", "+_v2+")");
+//		System.out.println("set control container visibility ("+_v1+", "+_v2+")");
 		if(null==mActiveDeviceControlContainer || null==mInactiveDeviceControlContainer)
 		{
 			return;

@@ -8,18 +8,13 @@
 package at.sesame.fhooe.lib2.pms;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import org.codegist.crest.CRest;
 import org.codegist.crest.CRestBuilder;
 import org.codegist.crest.io.http.HttpClientHttpChannelFactory;
 import org.codegist.crest.serializer.jackson.JacksonDeserializer;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import android.util.Log;
-import at.sesame.fhooe.lib2.pms.asynctasks.DeviceListTask;
+import android.util.Base64;
 import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
 import at.sesame.fhooe.lib2.pms.model.PMSStatus;
 import at.sesame.fhooe.lib2.pms.proxy.ProxyHelper;
@@ -62,6 +57,7 @@ public class PMSProvider
 		CRest crest = new  CRestBuilder().bindDeserializer(JacksonDeserializer.class,PMSStatus.class, ExtendedPMSStatus.class)
 										.setHttpChannelFactory(new HttpClientHttpChannelFactory(ProxyHelper.getProxiedAllAcceptingHttpsClient()))
 										.basicAuth(_user, _pwd)
+//										.placeholder("basic.auth.digest", Base64.encodeToString((_user + ":" + _pwd).getBytes(), Base64.DEFAULT))
 										.build();
 		mPMSService = crest.build(IPMSService.class);
 	}

@@ -1470,7 +1470,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 		{
 			Log.e(TAG, "no checkbox recognized");
 		}
-
+		startSingleUiUpdate();
 	}
 
 	@Override

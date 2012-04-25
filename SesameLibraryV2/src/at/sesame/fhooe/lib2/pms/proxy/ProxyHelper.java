@@ -114,7 +114,7 @@ public class ProxyHelper
 
 			CredentialsProvider cp = defClient.getCredentialsProvider();
 			cp.setCredentials(new AuthScope(proxy.getHostName(),proxy.getPort()), new UsernamePasswordCredentials("test01", "testme!#"));
-//			defClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+			defClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 				
 			HttpRequestInterceptor preemptiveAuth = new HttpRequestInterceptor() 
 			{
