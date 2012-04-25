@@ -248,7 +248,7 @@ implements OnClickListener, OnCheckedChangeListener
 						}
 						holder.CONTAINER.removeAllViews();
 						holder.CONTAINER.addView(holder.POWER_BUTT);
-						holder.CB.setEnabled(true);
+//						holder.CB.setEnabled(true);
 					}
 					else
 					{
@@ -280,16 +280,25 @@ implements OnClickListener, OnCheckedChangeListener
 
 					holder.IP_LABEL.setText(cd.getIp());
 
+					holder.IDLE_LABEL.setText("");
 //					idleLabel.setText(mContext.getString(R.string.ControllableDeviceAdapter_idleLabel_text)+cd.getIdleSince());
-					holder.IDLE_LABEL.setText(cd.getIdleString());
-					if(cd.getIdleSinceMinutes()>=ControllableDevice.IDLE_NOTIFICATION_THRESHOLD)
+					if(cd.isAlive())
 					{
-						holder.IDLE_LABEL.setTextColor(Color.RED);
+						if(cd.getIdleSinceMinutes()>=ControllableDevice.IDLE_NOTIFICATION_THRESHOLD)
+						{
+							holder.IDLE_LABEL.setTextColor(Color.RED);
+							holder.IDLE_LABEL.setText(cd.getIdleString());
+							holder.CB.setEnabled(true);
+						}
+						else
+						{
+							holder.IDLE_LABEL.setTextColor(Color.WHITE);
+							holder.IDLE_LABEL.setText("");
+							holder.CB.setEnabled(false);
+						}
+						
 					}
-					else
-					{
-						holder.IDLE_LABEL.setTextColor(Color.WHITE);
-					}
+
 //					long duration = System.currentTimeMillis()-start;
 //					Log.e(TAG, "view generation took:"+duration+"ms");
 				}

@@ -8,12 +8,17 @@
 package at.sesame.fhooe.lib2.pms.entitywriter;
 
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.codegist.crest.annotate.HeaderParam;
+import org.codegist.crest.config.ParamConfig;
 import org.codegist.crest.config.ParamType;
 import org.codegist.crest.entity.EntityWriter;
 import org.codegist.crest.io.Request;
+import org.codegist.crest.param.DefaultParam;
 import org.codegist.crest.param.Param;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,7 +113,7 @@ implements EntityWriter
 		}
 		//TODO remove!!
 		//		json.remove(paramList.get(0).getParamConfig().getName());
-		
+//		_req.getParams(ParamType.HEADER).add(new Def
 	}
 
 	@Override
