@@ -39,118 +39,118 @@ implements IPMSDialogActionHandler
 	/**
 	 * the thread that queries the status of all devies in the background
 	 */
-//	private DeviceStateUpdater mUpdater;
+	//	private DeviceStateUpdater mUpdater;
 
-//	private String mUser = "peter";
-//	private String mPass = "thatpeter";
+	//	private String mUser = "peter";
+	//	private String mPass = "thatpeter";
 
-//	private IPmsUi mUi;
-//	private PmsHelper mUiHelper;
-//	private FragmentManager mFragMan;
+	//	private IPmsUi mUi;
+	//	private PmsHelper mUiHelper;
+	//	private FragmentManager mFragMan;
 
-//	private boolean mDevicesLoaded = false;
+	//	private boolean mDevicesLoaded = false;
 
-//	
-//
-//	/**
-//	 * list of all displayed list entries
-//	 */
-//	private ArrayList<IListEntry> mEntries = new ArrayList<IListEntry>();
+	//	
+	//
+	//	/**
+	//	 * list of all displayed list entries
+	//	 */
+	//	private ArrayList<IListEntry> mEntries = new ArrayList<IListEntry>();
 
 
 	/**
 	 * the currently selected device
 	 */
-//	private ControllableDevice mSelectedDevice;
-	
+	//	private ControllableDevice mSelectedDevice;
+
 
 
 	private Context mCtx;
-//	private Handler mUiHandler;
+	//	private Handler mUiHandler;
 
-	public PMSController(Context _ctx, PmsHelper _helper, HostList _hosts2Load, FragmentManager _fragMan)
+	public PMSController(Context _ctx, HostList _hosts2Load)
 	{
-//		mDevicesLoaded = false;
+		//		mDevicesLoaded = false;
 		mCtx = _ctx;
-//		mUiHandler = _uiHandler;
-//		mUi = _listener;
-//		mUiHelper = _helper;
-//
-//		mFragMan = _fragMan;
+		//		mUiHandler = _uiHandler;
+		//		mUi = _listener;
+		//		mUiHelper = _helper;
+		//
+		//		mFragMan = _fragMan;
 
-//			new QueryDevsTask().execute(new HostList[]{_hosts2Load});
+		//			new QueryDevsTask().execute(new HostList[]{_hosts2Load});
 
 
-//		queryControllableDevicesSim();
-//		mActiveDeviceControlContainer = _activeDeviceControl;
-//		mInactiveDeviceControlContainer = _inactiveDeviceControl;
-//		setControlContainerVisibility(View.GONE, View.GONE);
+		//		queryControllableDevicesSim();
+		//		mActiveDeviceControlContainer = _activeDeviceControl;
+		//		mInactiveDeviceControlContainer = _inactiveDeviceControl;
+		//		setControlContainerVisibility(View.GONE, View.GONE);
 	}
 
-//	public void startAutoUpdate()
-//	{
-//		stopAutoUpdate();
-////		if(mDevicesLoaded)
-//		{
-//			mUpdater = new DeviceStateUpdater(mAllDevices);
-//			mUpdater.startUpdating();
-////			mUpdateThread.start();			
-//		}
-//	}
+	//	public void startAutoUpdate()
+	//	{
+	//		stopAutoUpdate();
+	////		if(mDevicesLoaded)
+	//		{
+	//			mUpdater = new DeviceStateUpdater(mAllDevices);
+	//			mUpdater.startUpdating();
+	////			mUpdateThread.start();			
+	//		}
+	//	}
 
-//	public void stopAutoUpdate()
-//	{
-//		if(null!=mUpdater)
-//		{
-//			mUpdater.stopUpdating();
-//		}
-//
-//	}
+	//	public void stopAutoUpdate()
+	//	{
+	//		if(null!=mUpdater)
+	//		{
+	//			mUpdater.stopUpdating();
+	//		}
+	//
+	//	}
 
-//	/**
-//	 * returns a list of all selected devices
-//	 * @return a list of all selected devices
-//	 */
-//	private ArrayList<ControllableDevice> getSelectedDevices()
-//	{
-//		ArrayList<ControllableDevice> res = new ArrayList<ControllableDevice>();
-//		//		synchronized (mAllDevices) 
-//		{
-//			for(ControllableDevice cd:mAllDevices)
-//			{
-//				if(mSelection.get(cd.getMac()))
-//				{
-//					res.add(cd);
-//				}
-//			}
-//		}
-//
-//		return res;
-//	}
-//	
-//	public HashMap<String, Boolean> getSelectionMap()
-//	{
-//		return mSelection;
-//	}
+	//	/**
+	//	 * returns a list of all selected devices
+	//	 * @return a list of all selected devices
+	//	 */
+	//	private ArrayList<ControllableDevice> getSelectedDevices()
+	//	{
+	//		ArrayList<ControllableDevice> res = new ArrayList<ControllableDevice>();
+	//		//		synchronized (mAllDevices) 
+	//		{
+	//			for(ControllableDevice cd:mAllDevices)
+	//			{
+	//				if(mSelection.get(cd.getMac()))
+	//				{
+	//					res.add(cd);
+	//				}
+	//			}
+	//		}
+	//
+	//		return res;
+	//	}
+	//	
+	//	public HashMap<String, Boolean> getSelectionMap()
+	//	{
+	//		return mSelection;
+	//	}
 
-	
 
-	
+
+
 
 
 
 	public void wakeupDevices(PmsHelper _helper, FragmentManager _fragMan, final ArrayList<ControllableDevice> _selectedDevs)
 	{
-			new WakeupTask(_selectedDevs.size(), _helper, _fragMan).execute(_selectedDevs);
+		new WakeupTask(_selectedDevs.size(), _helper, _fragMan).execute(_selectedDevs);
 	}
-	
+
 	private class WakeupTask extends AsyncTask<ArrayList<ControllableDevice>, Void, Void>
 	{
 		private PMSActionInProgressDialogFragment mDialog;
 		private int mMax;
 		private PmsHelper mHelper;
 		private FragmentManager mFragMan;
-		
+
 		public WakeupTask(int _max, PmsHelper _helper, FragmentManager _fragMan)
 		{
 			mMax = _max;
@@ -160,16 +160,19 @@ implements IPMSDialogActionHandler
 		@Override
 		protected Void doInBackground(ArrayList<ControllableDevice>... params) 
 		{
-			
+
 			ArrayList<ControllableDevice> selDevs = params[0];
 			waitForUpdateToFinish();
 			for(ControllableDevice cd:selDevs)
 			{
-//				ControllableDevice cd = selDevs.get(i);
-//				mHelper.markDirty(cd, true);
-				try {
-				cd.wakeUp();
-//				aipdf.incrementProgressBy(1);
+
+				//				ControllableDevice cd = selDevs.get(i);
+				//				mHelper.markDirty(cd, true);
+				try 
+				{
+					cd.wakeUp();
+					mHelper.notifyPMSUpdated();
+					//				aipdf.incrementProgressBy(1);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -191,7 +194,7 @@ implements IPMSDialogActionHandler
 			super.onPostExecute(result);
 			CONNECTION_IN_USE = false;
 			mHelper.deselectAll();
-//			startAutoUpdate();
+			//			startAutoUpdate();
 			PMSDialogFactory.dismissCurrentDialog();
 		}
 
@@ -200,7 +203,7 @@ implements IPMSDialogActionHandler
 			super.onPreExecute();
 			CONNECTION_IN_USE = true;
 			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
-//			stopAutoUpdate();
+			//			stopAutoUpdate();
 		}
 
 		@Override
@@ -216,7 +219,7 @@ implements IPMSDialogActionHandler
 				Log.e(TAG, "could not update dialog (null)");
 			}
 		}
-		
+
 	}
 
 	/**
@@ -290,15 +293,15 @@ implements IPMSDialogActionHandler
 		//		Log.e(TAG, clients);
 
 		//		mNetworkingDialog.setMax(hosts.size());
-//		mUiHandler.post(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				// TODO Auto-generated method stub
-//				PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, mFragMan, PMSController.this, new Object[]{mCtx});
-//				
-//			}
-//		});
+		//		mUiHandler.post(new Runnable() {
+		//			
+		//			@Override
+		//			public void run() {
+		//				// TODO Auto-generated method stub
+		//				PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, mFragMan, PMSController.this, new Object[]{mCtx});
+		//				
+		//			}
+		//		});
 		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
 		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
@@ -309,18 +312,18 @@ implements IPMSDialogActionHandler
 			PMSDialogFactory.dismissCurrentDialog();
 			return;
 		}
-//		mAllDevices = new ArrayList<ControllableDevice>();
+		//		mAllDevices = new ArrayList<ControllableDevice>();
 		for(ExtendedPMSStatus exStat:statuses)
 		{
-//			Log.e(TAG, "passed mac="+exStat.getMac());
+			//			Log.e(TAG, "passed mac="+exStat.getMac());
 			String passedHost = hosts.get(exStat.getMac());
-//			Log.e(TAG, "HOST in LIST="+passedHost);
+			//			Log.e(TAG, "HOST in LIST="+passedHost);
 			ControllableDevice cd = new ControllableDevice(mCtx, exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
 			//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
 			if(cd.isValid())
 			{
 				mAllDevices.add(cd);
-//				mSelection.put(cd.getMac(), false);
+				//				mSelection.put(cd.getMac(), false);
 			}
 			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		}
@@ -336,37 +339,37 @@ implements IPMSDialogActionHandler
 		//				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		//			}
 
-//		PMSDialogFactory.dismissCurrentDialog();
+		//		PMSDialogFactory.dismissCurrentDialog();
 	}
-	
-//	public boolean updateDevices()
-//	{
-//		return mUpdater.updateAllDevices();
-//	}
-	
+
+	//	public boolean updateDevices()
+	//	{
+	//		return mUpdater.updateAllDevices();
+	//	}
+
 	private boolean loadDevices(HostList _hl)
 	{
-//		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
+		//		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
 		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(_hl.getMacList());
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");
 			//			mNetworkingDialog.dismiss();
-//			PMSDialogFactory.dismissCurrentDialog();
+			//			PMSDialogFactory.dismissCurrentDialog();
 			return false;
 		}
-//		mAllDevices = new ArrayList<ControllableDevice>();
+		//		mAllDevices = new ArrayList<ControllableDevice>();
 		for(ExtendedPMSStatus exStat:statuses)
 		{
-//			Log.e(TAG, "passed mac="+exStat.getMac());
+			//			Log.e(TAG, "passed mac="+exStat.getMac());
 			String passedHost = _hl.getHostNameForMac(exStat.getMac());
-//			Log.e(TAG, "HOST in LIST="+passedHost);
+			//			Log.e(TAG, "HOST in LIST="+passedHost);
 			ControllableDevice cd = new ControllableDevice(mCtx, exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
 			//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
 			if(cd.isValid())
 			{
 				mAllDevices.add(cd);
-//				mSelection.put(cd.getMac(), false);
+				//				mSelection.put(cd.getMac(), false);
 			}
 			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		}
@@ -377,45 +380,45 @@ implements IPMSDialogActionHandler
 
 	private void queryControllableDevicesTest(int numDummyEntries)
 	{
-//		mNetworkingDialog.show(mFragMan, null);
-//		ArrayList<String> macs = PMSProvider.getDeviceList();
+		//		mNetworkingDialog.show(mFragMan, null);
+		//		ArrayList<String> macs = PMSProvider.getDeviceList();
 		ArrayList<String>macs = new ArrayList<String>(numDummyEntries);
 		for(int i = 0;i<numDummyEntries;i++)
 		{
 			macs.add("invalid_mac_"+i);
 		}
-//		
-//		JSONObject buffer = new JSONObject();
-//		for(int i = 0;i<macs.size();i++)
-//		{
-//			try {
-//				buffer.put("mac", macs.get(i));
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			ControllableDevice cd = new ControllableDevice(getApplication(), macs.get(i), null/*"host "+i*/, "schule\\\\sesame_pms", " my_sesame_pms", true);
-//			//			if(cd.isValid())
-//			{
-//				mAllDevices.add(cd);
-//				Log.e(TAG, "controllable device added..."+mAllDevices.size());
-//				mSelection.put(cd.getMac(), false);
-//			}
-//			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
-//		}
-//		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
-//		if(null==statuses)
-//		{
-//			Log.e(TAG, "retrieving device information failed...");
-//			return;
-//		}
-//		for(int i = 0;i<statuses.size();i++)
-//		{
-//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), statuses.get(i), null, "schule\\\\sesame_pms", " my_sesame_pms", true);
-//			mAllDevices.add(cd);
-//			mSelection.put(cd.getMac(), false);
-//		}
-		
+		//		
+		//		JSONObject buffer = new JSONObject();
+		//		for(int i = 0;i<macs.size();i++)
+		//		{
+		//			try {
+		//				buffer.put("mac", macs.get(i));
+		//			} catch (JSONException e) {
+		//				// TODO Auto-generated catch block
+		//				e.printStackTrace();
+		//			}
+		//			ControllableDevice cd = new ControllableDevice(getApplication(), macs.get(i), null/*"host "+i*/, "schule\\\\sesame_pms", " my_sesame_pms", true);
+		//			//			if(cd.isValid())
+		//			{
+		//				mAllDevices.add(cd);
+		//				Log.e(TAG, "controllable device added..."+mAllDevices.size());
+		//				mSelection.put(cd.getMac(), false);
+		//			}
+		//			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
+		//		}
+		//		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
+		//		if(null==statuses)
+		//		{
+		//			Log.e(TAG, "retrieving device information failed...");
+		//			return;
+		//		}
+		//		for(int i = 0;i<statuses.size();i++)
+		//		{
+		//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), statuses.get(i), null, "schule\\\\sesame_pms", " my_sesame_pms", true);
+		//			mAllDevices.add(cd);
+		//			mSelection.put(cd.getMac(), false);
+		//		}
+
 		for(int i =0;i<macs.size();i++)
 		{
 			ExtendedPMSStatus status = new ExtendedPMSStatus();
@@ -425,53 +428,53 @@ implements IPMSDialogActionHandler
 			status.setOs(ControllableDevice.OS.unknown.name());
 			status.setAlive("0");
 			mAllDevices.add(new ControllableDevice(mCtx, status, status.getHostname(), "schule\\\\sesame_pms", " my_sesame_pms", true));
-//			mPmsController.getSelectionMap().put(macs.get(i), false);
+			//			mPmsController.getSelectionMap().put(macs.get(i), false);
 		}
-//		mNetworkingDialog.dismiss();
+		//		mNetworkingDialog.dismiss();
 	}
-	
 
 
 
-	
-	
-	
 
-//	/**
-//	 * this method is called whenever the power icon of a list entry was pressed
-//	 * @param _cd the ControllableDevice associated with the list entry
-//	 */
-//	public void handlePowerClick(ControllableDevice _cd)
-//	{
-////		ControllableDeviceListEntry cdle = getListEntryFromDevice(_cd);
-////		if(null==cdle)
-////		{
-////			return;
-////		}
-////		mSelectedDevice = cdle.getControllableDevice();
-//		mSelectedDevice = _cd;
-//
-//		if(mSelectedDevice.isAlive())
-//		{
-//
-//			//			showDialog(ACTIVE_DEVICE_ACTION_DIALOG);
-//			new PMSActionDialogFragment(this, mSelectedDevice, PMSActionDialogType.ActiveDeviceActionDialog)
-//			.show(mFragMan, null);
-//		}
-//		else
-//		{
-//			//			showDialog(INACTIVE_DEVICE_ACTION_DIALOG);
-//			new PMSActionDialogFragment(this, mSelectedDevice, PMSActionDialogType.InactiveDeviceActionDialog)
-//			.show(mFragMan, null);
-//		}
-//	}
+
+
+
+
+	//	/**
+	//	 * this method is called whenever the power icon of a list entry was pressed
+	//	 * @param _cd the ControllableDevice associated with the list entry
+	//	 */
+	//	public void handlePowerClick(ControllableDevice _cd)
+	//	{
+	////		ControllableDeviceListEntry cdle = getListEntryFromDevice(_cd);
+	////		if(null==cdle)
+	////		{
+	////			return;
+	////		}
+	////		mSelectedDevice = cdle.getControllableDevice();
+	//		mSelectedDevice = _cd;
+	//
+	//		if(mSelectedDevice.isAlive())
+	//		{
+	//
+	//			//			showDialog(ACTIVE_DEVICE_ACTION_DIALOG);
+	//			new PMSActionDialogFragment(this, mSelectedDevice, PMSActionDialogType.ActiveDeviceActionDialog)
+	//			.show(mFragMan, null);
+	//		}
+	//		else
+	//		{
+	//			//			showDialog(INACTIVE_DEVICE_ACTION_DIALOG);
+	//			new PMSActionDialogFragment(this, mSelectedDevice, PMSActionDialogType.InactiveDeviceActionDialog)
+	//			.show(mFragMan, null);
+	//		}
+	//	}
 
 
 
 	@Override
 	public void handleDialogPowerOff(ControllableDevice _cd) 
 	{
-//		mUiHelper.markDirty(_cd, true);
+		//		mUiHelper.markDirty(_cd, true);
 		_cd.powerOff(PowerOffState.shutdown);
 
 	}
@@ -479,7 +482,7 @@ implements IPMSDialogActionHandler
 	@Override
 	public void handleDialogSleep(ControllableDevice _cd) 
 	{
-//		mUiHelper.markDirty(_cd, true);
+		//		mUiHelper.markDirty(_cd, true);
 		_cd.powerOff(PowerOffState.sleep);
 
 	}
@@ -487,10 +490,10 @@ implements IPMSDialogActionHandler
 	@Override
 	public void handleDialogWakeUp(ControllableDevice _cd) 
 	{
-//		mUiHelper.markDirty(_cd, true);
+		//		mUiHelper.markDirty(_cd, true);
 		_cd.wakeUp();
 	}
-	
+
 	/**
 	 * powers off or puts to sleep all currently selected devices based on the passed PowerOffState
 	 * @param _state determines whether to shut down or put to sleep all selected devices 
@@ -499,28 +502,28 @@ implements IPMSDialogActionHandler
 	{
 		new PowerOffTask(_devices.size(), _helper, _fragMan).execute(new Object[]{_devices,_state});
 	}
-	
-	
+
+
 	private class PowerOffTask extends AsyncTask<Object, Void, Void>
 	{
 
-//		private String mTitle;
+		//		private String mTitle;
 		private int mMax;
 		private PMSActionInProgressDialogFragment mDialog;
 		private PmsHelper mHelper;
 		private FragmentManager mFragMan;
-		
+
 		public PowerOffTask(int _max, PmsHelper _helper, FragmentManager _fragMan)
 		{
-//			mTitle = _title;
+			//			mTitle = _title;
 			mMax  =_max;
 			mHelper = _helper;
 			mFragMan = _fragMan;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Void result) {
-//			startAutoUpdate();
+			//			startAutoUpdate();
 			CONNECTION_IN_USE = false;
 			PMSDialogFactory.dismissCurrentDialog();
 			super.onPostExecute(result);
@@ -531,11 +534,11 @@ implements IPMSDialogActionHandler
 		{
 			super.onPreExecute();
 			CONNECTION_IN_USE = true;
-//			stopAutoUpdate();
+			//			stopAutoUpdate();
 			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.shutdown_dialog_title), mMax});
 		}
-		
-		
+
+
 
 		@Override
 		protected void onProgressUpdate(Void... values) {
@@ -545,7 +548,7 @@ implements IPMSDialogActionHandler
 
 		@Override
 		protected Void doInBackground(Object... params) {
-//			mUpdateThread.pause();
+			//			mUpdateThread.pause();
 			//					stopAutoUpdate();
 			//					try {
 			//						Thread.sleep(16000);
@@ -553,17 +556,18 @@ implements IPMSDialogActionHandler
 			//						// TODO Auto-generated catch block
 			//						e1.printStackTrace();
 			//					}
-//			ArrayList<ControllableDevice> selDevs = getSelectedDevices();
+			//			ArrayList<ControllableDevice> selDevs = getSelectedDevices();
 			ArrayList<ControllableDevice> devices = (ArrayList<ControllableDevice>)params[0];
 			PowerOffState state = (PowerOffState)params[1];
 			waitForUpdateToFinish();
 			for(ControllableDevice cd:devices)
 			{
-//				mHelper.markDirty(cd,true);
-				
+				//				mHelper.markDirty(cd,true);
+
 				try 
 				{
 					cd.powerOff(state);
+					mHelper.notifyPMSUpdated();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -586,34 +590,34 @@ implements IPMSDialogActionHandler
 
 			return null;
 		}
-		
+
 	}
-	
-	
+
+
 	public class QueryDevsTask extends AsyncTask<HostList, Void, Boolean>
 	{
 		@Override
 		protected void onPreExecute() {
-//			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, mFragMan, null, new Object[]{mCtx});
+			//			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, mFragMan, null, new Object[]{mCtx});
 		}
 
-//		@Override
-//		protected void onPostExecute(Void result) {
-////			mUi.notifyPMSUpdated();
-//			mDevicesLoaded = true;
-//			if(null!=mUiHelper)
-//			{
-//				mUiHelper.notifyDevicesLoaded();				
-//			}
-////			Log.e(TAG, Arrays.toString((ControllableDevice[]) mAllDevices.toArray(new ControllableDevice[mAllDevices.size()])));
-////			startAutoUpdate();
-////			PMSDialogFactory.dismissCurrentDialog();
-//		}
+		//		@Override
+		//		protected void onPostExecute(Void result) {
+		////			mUi.notifyPMSUpdated();
+		//			mDevicesLoaded = true;
+		//			if(null!=mUiHelper)
+		//			{
+		//				mUiHelper.notifyDevicesLoaded();				
+		//			}
+		////			Log.e(TAG, Arrays.toString((ControllableDevice[]) mAllDevices.toArray(new ControllableDevice[mAllDevices.size()])));
+		////			startAutoUpdate();
+		////			PMSDialogFactory.dismissCurrentDialog();
+		//		}
 
 		@Override
 		protected Boolean doInBackground(HostList... params) {
-//			queryControllableDevicesSim();
-//			queryControllableDevicesKDF();
+			//			queryControllableDevicesSim();
+			//			queryControllableDevicesKDF();
 			Boolean result = true;
 			for(HostList hl:params)
 			{
@@ -627,51 +631,51 @@ implements IPMSDialogActionHandler
 			}
 			return result;
 		}
-		
+
 	}
 	private void queryControllableDevicesSim() 
 	{
-//		Log.i(TAG, "SIMULATION");
+		//		Log.i(TAG, "SIMULATION");
 		//		ArrayList<String> macs = PMSProvider.getDeviceList();
 		HashMap<String,String>hosts = new HashMap<String, String>();
 		hosts.put("00:24:81:1C:3D:90", "Topf");
 		hosts.put("00:21:5A:17:40:CE", "dangl");
-		
 
-//		String clients = PMSProvider.getPMS().getClients();
-//		Log.e(TAG, clients);
 
-//		mNetworkingDialog.setMax(hosts.size());
-//		showNetworkingDialog();
-		
-//		new PMSNetworkingInProgressDialogFragment(mCtx).show(mFragMan, null);
+		//		String clients = PMSProvider.getPMS().getClients();
+		//		Log.e(TAG, clients);
+
+		//		mNetworkingDialog.setMax(hosts.size());
+		//		showNetworkingDialog();
+
+		//		new PMSNetworkingInProgressDialogFragment(mCtx).show(mFragMan, null);
 		//		String[] macStrings = new String[hosts.size()];
 		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
-		
+
 		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(macs);
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");
-//			dismissNetworkingDialog();
+			//			dismissNetworkingDialog();
 			PMSDialogFactory.dismissCurrentDialog();
 			return;
 		}
-//		mAllDevices = new ArrayList<ControllableDevice>();
+		//		mAllDevices = new ArrayList<ControllableDevice>();
 		for(ExtendedPMSStatus exStat:statuses)
 		{
-//			Log.e(TAG, "passed mac="+exStat.getMac());
+			//			Log.e(TAG, "passed mac="+exStat.getMac());
 			String passedHost = hosts.get(exStat.getMac());
-//			Log.e(TAG, "HOST in LIST="+passedHost);
+			//			Log.e(TAG, "HOST in LIST="+passedHost);
 			ControllableDevice cd = new ControllableDevice(mCtx, exStat, passedHost, "schule\\\\sesame_pms", " my_sesame_pms", true);
 			//			ControllableDevice cd = new ControllableDevice(getApplicationContext(), host.getValue(), host.getKey(), "schule\\sesame_pms", " my_sesame_pms", true);
 			if(cd.isValid())
 			{
 				mAllDevices.add(cd);
-//				mSelection.put(cd.getMac(), false);
+				//				mSelection.put(cd.getMac(), false);
 			}
 			//			PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		}
-		
+
 
 		//			for(int i = 0;i<macs.size();i++)
 		//			{
@@ -684,9 +688,9 @@ implements IPMSDialogActionHandler
 		//				PMSClientActivity.this.mNetworkingDialog.incrementProgressBy(1);
 		//			}
 
-//		PMSDialogFactory.dismissCurrentDialog();
+		//		PMSDialogFactory.dismissCurrentDialog();
 	}
-	
+
 	/**
 	 * searches the list of ControllableDevices for the first occurrence of the passed mac address 
 	 * @param _mac the mac address of the device that should be retrieved
@@ -711,14 +715,14 @@ implements IPMSDialogActionHandler
 
 	public void handlePowerClick(ControllableDevice cd) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public boolean isConnectionInUse()
 	{
 		return CONNECTION_IN_USE;
 	}
-	
+
 	private void waitForUpdateToFinish()
 	{
 		while(DeviceStateUpdater.isUpdateInProgress())
@@ -732,15 +736,15 @@ implements IPMSDialogActionHandler
 		}
 	}
 
-//	@Override
-//	public void notifyPMSUpdated() 
-//	{
-//		Log.i(TAG, "notified about pms update");
-//		if(null!=mUiHelper)
-//		{
-//			mUiHelper.notifyPMSUpdated();			
-//		}
-////		mUpdateListener.notifyPMSUpdated();
-//		
-//	}
+	//	@Override
+	//	public void notifyPMSUpdated() 
+	//	{
+	//		Log.i(TAG, "notified about pms update");
+	//		if(null!=mUiHelper)
+	//		{
+	//			mUiHelper.notifyPMSUpdated();			
+	//		}
+	////		mUpdateListener.notifyPMSUpdated();
+	//		
+	//	}
 }

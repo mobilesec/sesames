@@ -706,7 +706,7 @@ implements INotificationListener, ISesameUpdateListener
 			mPmsUpdateFailCount = 0;
 			mLastPmsUpdate = new Date();
 			mPmsAvailable = true;
-			mRoomListFrag.updatePmsFragment();
+			mRoomListFrag.notifyPMSUpdated();
 		}
 		else
 		{

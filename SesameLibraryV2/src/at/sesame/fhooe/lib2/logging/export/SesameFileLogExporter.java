@@ -49,7 +49,7 @@ implements ILogExporter
 	public SesameFileLogExporter(Context _ctx, ExportLocation _exLoc, String _fileName)
 	{
 		mCtx = _ctx;
-		logPaths(_ctx);
+//		logPaths(_ctx);
 		String exportPath = "";
 		switch(_exLoc)
 		{
@@ -87,13 +87,13 @@ implements ILogExporter
 		setFileName(_fileName);
 	}
 
-	private void logPaths(Context _ctx)
-	{
-		Log.e(TAG, Environment.getRootDirectory().getAbsolutePath());
-		Log.e(TAG, Environment.getDataDirectory().getAbsolutePath());
-		Log.e(TAG, Environment.getExternalStorageDirectory().getAbsolutePath());
-		Log.e(TAG, _ctx.getFilesDir().getAbsolutePath());
-	}
+//	private void logPaths(Context _ctx)
+//	{
+//		Log.e(TAG, Environment.getRootDirectory().getAbsolutePath());
+//		Log.e(TAG, Environment.getDataDirectory().getAbsolutePath());
+//		Log.e(TAG, Environment.getExternalStorageDirectory().getAbsolutePath());
+//		Log.e(TAG, _ctx.getFilesDir().getAbsolutePath());
+//	}
 
 	public SesameFileLogExporter(String _path, String _fileName)
 	{

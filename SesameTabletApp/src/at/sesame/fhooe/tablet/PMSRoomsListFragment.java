@@ -354,19 +354,16 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 
 	}
 	
-	public void updatePmsFragment()
-	{
-		if(null!=mPMSClientFrag)
-		{
-			mPMSClientFrag.startSingleUiUpdate();
-		}
-	}
 
 	@Override
 	public void notifyPMSUpdated() 
 	{
 //		Log.i(TAG, "notified about pms update");
 		updateComputerRoomInfos();	
+		if(null!=mPMSClientFrag)
+		{
+			mPMSClientFrag.startSingleUiUpdate();
+		}
 	}
 	
 	public class UpdateTask extends TimerTask

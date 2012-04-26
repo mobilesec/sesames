@@ -320,7 +320,7 @@ implements ISesameDataProvider
 		stopEnergyDataUpdates();
 		stopNotificationUpdates();
 		//		mController.stopAutoUpdate();
-		Log.e(TAG, "Sesame datacache cleaned up");
+		Log.i(TAG, "Sesame datacache cleaned up");
 	}
 
 	public void notifyConnectionLost()
@@ -346,7 +346,7 @@ implements ISesameDataProvider
 		allHosts.addAll(mEdv3Hosts.getHosts());
 		allHosts.addAll(mEdv6Hosts.getHosts());
 		//		allHosts.addAll(new EDV1Hosts());
-		mController = new PMSController(mCtx, null, allHosts, null);
+		mController = new PMSController(mCtx, allHosts);
 		try {
 			boolean devicesLoaded = mController.new QueryDevsTask().execute(allHosts).get();
 			if(!devicesLoaded)

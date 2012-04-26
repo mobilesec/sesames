@@ -770,7 +770,6 @@ public class PmsHelper
 		ArrayList<ControllableDevice> res = new ArrayList<ControllableDevice>();
 		for(ControllableDevice cd:mCache.getDevicesForRoom(mRoomName))
 		{
-			System.out.println(cd);
 			if(mSelectionMap.get(cd.getMac()))
 			{
 				res.add(cd);
