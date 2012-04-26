@@ -71,7 +71,10 @@ public class FaceDetectionViewComponentActivity extends Activity implements Gene
 		FrameLayout preview = (FrameLayout) o;
 
 		// CHOICE 1: DEFAULT SETTINGS, THIS IS WHAT SHOULD GET USED NORMALLY
-		mFaceViewComponent.resume(this, preview, false);
+		if (!mFaceViewComponent.resume(this, preview, false)) {
+			// couldn't init the face component
+			// TODO handle if necessary
+		}
 
 		// CHOICE 2: SPECIFIC SETTINGS FOR DEBUGGING
 		// mFaceViewComponent.onResume(this, preview, 1, false, false,

@@ -106,8 +106,10 @@ public class FaceDetectionViewComponent {
 	 *            power-saving-function there).
 	 * @param _markFaces
 	 *            if true, found faces get marked with rectangles.
+	 * @return true if the face detection component could be initialized
+	 *         correclty, false otherwise.
 	 */
-	public void resume(Context _context, ViewGroup _viewGroup, int _subsamplingFactor, Feature[] _haarcascadeFeatures,
+	public boolean resume(Context _context, ViewGroup _viewGroup, int _subsamplingFactor, Feature[] _haarcascadeFeatures,
 			ProcessImageTrigger _trigger, boolean _doFaceDetection, boolean _markFaces) {
 		// remember viewgroup
 		mViewGroup = _viewGroup;
@@ -116,6 +118,10 @@ public class FaceDetectionViewComponent {
 		// mCamera =
 		// CVideoRecordUtil.getCameraInstance(CameraInfo.CAMERA_FACING_BACK);
 		mCamera = VideoRecordUtil.getCameraInstance(CameraInfo.CAMERA_FACING_FRONT);
+		if (mCamera == null) {
+			LOGGER.error("FaceDetectionViewComponent: unable to obtain camera, aborting");
+			return false;
+		}
 		// set camera orientation to 90°
 		// mCamera.setDisplayOrientation(90);
 		VideoRecordUtil.setCameraDisplayOrientation((Activity) _context, CameraInfo.CAMERA_FACING_FRONT, mCamera);
@@ -161,6 +167,7 @@ public class FaceDetectionViewComponent {
 		// mLastYuvImageEvent = _arg;
 		// }
 		// });
+		return true;
 	}
 
 	/**
@@ -172,13 +179,14 @@ public class FaceDetectionViewComponent {
 	 * @param _viewGroup
 	 * @param _markFaces
 	 */
-	public void resume(Context _context, ViewGroup _viewGroup, boolean _markFacesInUi) {
-		resume(_context, _viewGroup, 1, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 }, new ProcessImageTrigger() {
-			@Override
-			public boolean processNextImage() {
-				return true;
-			}
-		}, true, _markFacesInUi);
+	public boolean resume(Context _context, ViewGroup _viewGroup, boolean _markFacesInUi) {
+		return resume(_context, _viewGroup, 1, new FaceDetector.Feature[] { Feature.FRONTALFACE_ALT2 },
+				new ProcessImageTrigger() {
+					@Override
+					public boolean processNextImage() {
+						return true;
+					}
+				}, true, _markFacesInUi);
 	}
 
 	/**
