@@ -289,12 +289,14 @@ implements OnClickListener, OnCheckedChangeListener
 							holder.IDLE_LABEL.setTextColor(Color.RED);
 							holder.IDLE_LABEL.setText(cd.getIdleString());
 							holder.CB.setEnabled(true);
+							holder.CB.setVisibility(View.VISIBLE);
 						}
 						else
 						{
 							holder.IDLE_LABEL.setTextColor(Color.WHITE);
 							holder.IDLE_LABEL.setText("");
 							holder.CB.setEnabled(false);
+							holder.CB.setVisibility(View.INVISIBLE);
 						}
 						
 					}
