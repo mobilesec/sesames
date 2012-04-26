@@ -171,7 +171,6 @@ extends Fragment
 
 			for(WheelView wv:mWheels)
 			{
-				Log.e(TAG, "adding wheelview...");
 				mWheelContainer.addView(wv);
 			}
 		}
@@ -227,6 +226,11 @@ extends Fragment
 				wv.setCurrentItem(0);
 				wv.setVisibleItems(1);
 				wv.setCyclic(true);
+				wv.setOnClickListener(null);
+				wv.setOnDragListener(null);
+				wv.setOnGenericMotionListener(null);
+				wv.setOnTouchListener(null);
+				wv.setEnabled(false);
 				wv.setInterpolator(new BounceInterpolator());
 				//		wv.invalidateWheel(true);
 				mWheels.add(wv);
