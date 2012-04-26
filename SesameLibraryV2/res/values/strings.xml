@@ -33,6 +33,5 @@
     <string name="meter_wheel_layout_unit_string">" kWh"</string>
     <string name="wakeup_dialog_title">Computer werden hochgefahren</string>
     <string name="shutdown_dialog_title">Computer werden heruntergefahren</string>
-    <string name="selection_fail_message">only devices from the same category (active/inactive) can be selected at the same time.</string>
-
+    <string name="selection_fail_message">Es können nur eingeschaltene oder ausgeschaltene Computer gleichzeitig ausgewählt werden.</string>
 </resources>
