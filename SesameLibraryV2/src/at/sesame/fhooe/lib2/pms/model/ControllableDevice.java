@@ -33,7 +33,7 @@ implements Runnable
 	private static final String TAG = "ControllableDevice";
 
 	private static final int IDLE_DISPLAY_THRESHOLD = 5;
-	public static final int IDLE_NOTIFICATION_THRESHOLD = 40;
+	public static final int IDLE_NOTIFICATION_THRESHOLD = 30;
 	private static final int HOUR_FORMAT_THRESHOLD = 180;
 	private static final int SHORT_INACTIVITY_INTERVAL = 10;
 	private static final int LONG_INACTIVITY_INTERVAL = 30; 
@@ -234,6 +234,7 @@ implements Runnable
 		try
 		{
 			setDesiredStatus(true);
+			mIdleSince = 0;
 			Log.e(TAG, "waking up "+getHostname());
 			//		try
 			//		{
@@ -500,7 +501,7 @@ implements Runnable
 	public String getIdleString()
 	{
 		int idleMins = getIdleSinceMinutes(); 
-		if(idleMins<IDLE_DISPLAY_THRESHOLD)
+		if(idleMins<=IDLE_DISPLAY_THRESHOLD)
 		{
 			return "";
 		}

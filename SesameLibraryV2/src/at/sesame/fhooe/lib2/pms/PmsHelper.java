@@ -829,9 +829,7 @@ public class PmsHelper
 	}
 
 	public void notifyPMSUpdated() {
-//		deselectAll();
-//		initializeDirtyMap();
-//		mUpdateListener.notifyPMSUpdated();
+		mUpdateListener.notifyPMSUpdated();
 		
 	}
 }

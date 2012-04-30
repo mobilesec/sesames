@@ -194,6 +194,7 @@ implements IPMSDialogActionHandler
 			super.onPostExecute(result);
 			CONNECTION_IN_USE = false;
 			mHelper.deselectAll();
+			mHelper.notifyPMSUpdated();
 			//			startAutoUpdate();
 			PMSDialogFactory.dismissCurrentDialog();
 		}

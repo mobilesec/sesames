@@ -208,6 +208,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	private String mTitle;
 	public PMSClientFragment(Context _ctx, FragmentManager _fragMan, Handler _handler, String _title, HostList _hosts2Load)
 	{
+		
 		mCtx = _ctx;
 //		mFragMan = _fragMan;
 //		mHostList = _hosts2Load;
@@ -579,7 +580,6 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 	{
 		if(null==mUiUpdateTimer)
 		{
-			Log.e(TAG, "starting single ui update");
 			mUiUpdateTimer = new Timer();
 		}
 		mUiUpdateTimer.schedule(new UiUpdateTask(), 0);
@@ -1427,6 +1427,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 						mActiveAdapter.clear();
 //						mActiveAdapter.setNotifyOnChange(true);
 						mActiveAdapter.addAll(activeEntries);
+						mActiveAdapter.notifyDataSetChanged();
+						mActiveList.invalidate();
 //						//		mActiveListEntries.add(new SeparatorListEntry(mCtx, ListType.active, activeDevs.size()));
 //
 						
@@ -1434,6 +1436,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 						mInactiveAdapter.clear();
 //						mInactiveAdapter.setNotifyOnChange(true);
 						mInactiveAdapter.addAll(inactiveEntries);
+						mInactiveAdapter.notifyDataSetChanged();
+						mInactiveList.invalidate();
 //						//		mInactiveListEntries.add(new SeparatorListEntry(mCtx, ListType.inactive, inactiveDevs.size()));
 //
 //						//			
@@ -1442,7 +1446,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 //						mActiveAdapter.notifyDataSetChanged();
 //						mInactiveAdapter.notifyDataSetChanged();
 						long duration = System.currentTimeMillis()-start;
-						Log.e(TAG, "updating ui done, adapter notified"+duration+"ms");
+						Log.i(TAG, "updating ui done, adapter notified ("+duration+" ms)");
 //						PMSDialogFactory.dismissCurrentDialog();
 					}
 				});
@@ -1477,6 +1481,7 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 
 	@Override
 	public void notifyPMSUpdated() {
+
 		startSingleUiUpdate();
 		
 	}

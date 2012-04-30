@@ -129,7 +129,7 @@ implements INotificationListener, ISesameUpdateListener
 	private int mNumHoursBeforeNextNotification = 1;
 	
 	private Timer mShutdownTimer;
-	private int mShutdownHour = 23;
+	private int mShutdownHour = 20;
 
 	private SesameFileLogExporter mExporter;
 	// public SesameTabletActivity(Context _ctx, FragmentManager _fm, Handler
@@ -649,6 +649,7 @@ implements INotificationListener, ISesameUpdateListener
 			e.printStackTrace();
 		}
 		SesameLogger.stopContinuousExporting();
+		android.os.Process.killProcess(android.os.Process.myPid());
 		super.onDestroy();
 	}
 
