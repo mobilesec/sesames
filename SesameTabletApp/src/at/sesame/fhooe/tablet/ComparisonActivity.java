@@ -35,7 +35,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 {
 	private static final String TAG = "ComparisonActivity";
 
-	private static final int UPDATE_PERIOD = 5000;
+	private static final int UPDATE_PERIOD = 15000;
 	private Timer mUpdateTimer;
 
 	private DisplayMode mCurMode = DisplayMode.day;

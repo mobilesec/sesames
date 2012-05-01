@@ -29,7 +29,7 @@ public class RealTimeActivity
 extends Activity implements OnCheckedChangeListener 
 {
 	private static final String TAG = "RealTimeActivity";
-	private static final int UPDATE_PERIOD = 5000;
+	private static final int UPDATE_PERIOD = 15000;
 	private Timer mUpdateTimer;
 	private SesameDataCache mDataCache = SesameDataCache.getInstance(null);
 	
@@ -85,7 +85,7 @@ extends Activity implements OnCheckedChangeListener
 	{
 		stopUpdates();
 		mUpdateTimer = new Timer();
-		mUpdateTimer.scheduleAtFixedRate(new UpdateTask(), 0, UPDATE_PERIOD);
+		mUpdateTimer.schedule(new UpdateTask(), 0, UPDATE_PERIOD);
 	}
 
 	private void initializeView() 

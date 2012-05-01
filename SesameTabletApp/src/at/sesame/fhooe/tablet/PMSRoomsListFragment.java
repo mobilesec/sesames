@@ -307,7 +307,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		String roomName = cri.getRoomName();
 		if(null!=mPMSClientFrag)
 		{
-			mPMSClientFrag.dismiss();
+//			mPMSClientFrag.dismiss();
 			mPMSClientFrag = null;
 		}
 		if(roomName.equals(mCtx.getString(R.string.global_Room1_name)))
