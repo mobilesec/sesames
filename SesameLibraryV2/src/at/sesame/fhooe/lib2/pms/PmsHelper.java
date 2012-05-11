@@ -1,6 +1,7 @@
 package at.sesame.fhooe.lib2.pms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import android.content.Context;
@@ -76,7 +77,7 @@ public class PmsHelper
 	public PmsHelper(Context _ctx, FragmentManager _fm, IPMSUpdateListener _updateListener, String _roomName, ViewGroup _activeDeviceControl, ViewGroup _inactiveDeviceControl)
 	{
 		mCtx = _ctx;
-		mCache = SesameDataCache.getInstance(mCtx);
+		mCache = SesameDataCache.getInstance();
 		mRoomName = _roomName;
 //		mController = new PMSController(mCtx, this, _hosts2Load, _fm);
 		mUpdateListener = _updateListener;
@@ -202,6 +203,7 @@ public class PmsHelper
 		//			return false;
 		//		}
 		//		cdle.setSelection(_select);
+		Log.e(TAG, "setting selection for "+_cd.getHostname()+" to "+_select);
 		mSelectionMap.put(_cd.getMac(), _select);
 
 		if(_cd.isAlive())
@@ -319,6 +321,7 @@ public class PmsHelper
 
 	public ControllableDeviceListEntry setUiInfo(ControllableDeviceListEntry _cdle)
 	{
+		Log.e(TAG, mSelectionMap.toString());
 		ControllableDevice cd = _cdle.getControllableDevice();
 		//		Log.i(TAG, "updating list entry:"+_cdle.toString());
 		//		Log.i(TAG, "device from entry:"+cd.toString());

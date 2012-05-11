@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import at.sesame.fhooe.lib2.NotificationCenter;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.ISesameUpdateListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
@@ -139,7 +141,10 @@ implements OnItemClickListener, ISesameUpdateListener
 		protected Void doInBackground(Void... params) 
 		{
 
-			SesameDataCache.createInstance(PMSRoomsListActivity.this);
+			if(null==SesameDataCache.getInstance())
+			{
+				SesameDataCache.createInstance(PMSRoomsListActivity.this);				
+			}
 			return null;
 		}
 
@@ -163,6 +168,7 @@ implements OnItemClickListener, ISesameUpdateListener
 			mList.setDividerHeight(1);
 			SesameDataCache.getInstance().registerSesameUpdateListener(PMSRoomsListActivity.this);
 			PMSDialogFactory.dismissCurrentDialog();
+			NotificationCenter.start(PMSRoomsListActivity.this, PMSRoomsListActivity.class);
 //			startHeartBeat();
 		}
 
@@ -273,7 +279,7 @@ implements OnItemClickListener, ISesameUpdateListener
 
 	private void updateComputerRoomInfos()
 	{
-		if(null==SesameDataCache.getInstance())
+		if(null==SesameDataCache.getInstance()||null==mAdapter)
 		{
 			return;
 		}

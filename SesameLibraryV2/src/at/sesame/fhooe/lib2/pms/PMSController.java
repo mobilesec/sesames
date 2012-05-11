@@ -514,9 +514,11 @@ implements IPMSDialogActionHandler
 		private PmsHelper mHelper;
 		private FragmentManager mFragMan;
 
+
 		public PowerOffTask(int _max, PmsHelper _helper, FragmentManager _fragMan)
 		{
 			//			mTitle = _title;
+//			mCtx = _ctx;
 			mMax  =_max;
 			mHelper = _helper;
 			mFragMan = _fragMan;

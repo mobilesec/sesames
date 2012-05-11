@@ -23,6 +23,7 @@ import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameDataContainer;
 import at.sesame.fhooe.lib2.data.SesameMeasurement;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+import at.sesame.fhooe.lib2.pms.IComparisonSelectionListener;
 import at.sesame.fhooe.lib2.ui.charts.DefaultDatasetProvider;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.DatasetCreationException;
 import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException;
@@ -51,7 +52,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 
 	private String mRoomName;
 
-	private SesameDataCache mDataCache = SesameDataCache.getInstance(null);
+	private SesameDataCache mDataCache = SesameDataCache.getInstance();
 
 	private SesameMeasurementPlace mCurRoom;
 

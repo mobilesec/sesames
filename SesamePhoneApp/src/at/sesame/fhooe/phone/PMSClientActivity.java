@@ -9,52 +9,34 @@ package at.sesame.fhooe.phone;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import at.sesame.fhooe.lib2.R;
-import at.sesame.fhooe.lib2.pms.ControllableDeviceAdapter;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceComparator;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
 import at.sesame.fhooe.lib2.pms.IListEntry;
 import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
-import at.sesame.fhooe.lib2.pms.PMSController;
 import at.sesame.fhooe.lib2.pms.PMSProvider;
+import at.sesame.fhooe.lib2.pms.PmsHelper;
 import at.sesame.fhooe.lib2.pms.SeparatorListEntry;
 import at.sesame.fhooe.lib2.pms.SeparatorListEntry.ListType;
-import at.sesame.fhooe.lib2.pms.dialogs.IPMSDialogActionHandler;
-import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
-import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
 import at.sesame.fhooe.lib2.pms.errorhandling.ErrorForwarder;
 import at.sesame.fhooe.lib2.pms.errorhandling.IErrorReceiver;
-import at.sesame.fhooe.lib2.pms.list.commands.CommandAdapter;
-import at.sesame.fhooe.lib2.pms.list.commands.CommandListEntry;
-import at.sesame.fhooe.lib2.pms.list.commands.CommandListEntry.CommandType;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
-import at.sesame.fhooe.lib2.pms.model.ControllableDevice.PowerOffState;
 import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
 
 
@@ -67,7 +49,7 @@ import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
  *
  */
 public class PMSClientActivity 
-extends FragmentActivity 
+extends SesamePhoneActivity 
 implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 {
 	/**
@@ -143,7 +125,9 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	/**
 	 * the adapter used for displaying the list entries
 	 */
-	private ControllableDeviceAdapter mAdapter;
+	private DummyAdapterForAir mAdapter;
+	
+	private Timer mUiUpdateTimer;
 
 	//	/**
 	//	 * the thread that queries the status of all devies in the background
@@ -187,12 +171,12 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	 */
 	private Button mWakeUpAllButt;
 
-	public static final String BUNDLE_USER_KEY = "user";
-	public static final String BUNDLE_PASS_KEY = "pass";
-
-
-	private String mUser;
-	private String  mPass;
+//	public static final String BUNDLE_USER_KEY = "user";
+//	public static final String BUNDLE_PASS_KEY = "pass";
+//
+//
+//	private String mUser;
+//	private String  mPass;
 
 //	private PmsUiHelper mUiHelper;
 //	private PMSController mPmsController;
@@ -221,6 +205,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	//	 */
 	//	private ProgressDialog mActionInProgressDialog;
 
+	private PmsHelper mPmsHelper;
+	
 	@Override
 	public void onCreate(Bundle _savedInstance)
 	{
@@ -231,15 +217,15 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 		//		setupNetworkingDialog();
 		//		setupActionInProgressDialog();
 
-		if(!checkConnectivity())
-		{
-			//			showDialog(NO_NETWORK_DIALOG);
-			PMSDialogFactory.showDialog(DialogType.NO_NETWORK_DIALOG, getSupportFragmentManager(), null, null);
-			return;
-		}
+//		if(!checkConnectivity())
+//		{
+//			//			showDialog(NO_NETWORK_DIALOG);
+//			PMSDialogFactory.showDialog(DialogType.NO_NETWORK_DIALOG, getSupportFragmentManager(), null, null);
+//			return;
+//		}
 
-		mUser = getIntent().getExtras().getString(BUNDLE_USER_KEY);
-		mPass = getIntent().getExtras().getString(BUNDLE_PASS_KEY);
+//		mUser = getIntent().getExtras().getString(BUNDLE_USER_KEY);
+//		mPass = getIntent().getExtras().getString(BUNDLE_PASS_KEY);
 
 		ErrorForwarder.getInstance().register(this);
 		//		queryControllableDevicesSim();
@@ -249,13 +235,15 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 		ViewGroup activeDeviceControlContainer = (ViewGroup)findViewById(R.id.activeDeviceControllContainer);
 		ViewGroup inactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
+		mPmsHelper = new PmsHelper(this, getSupportFragmentManager(), this, getComputerRoomInformation().getRoomName(), activeDeviceControlContainer, inactiveDeviceControlContainer);
+		mDevList = (ListView)findViewById(R.id.deviceList);
 		//		setControlContainerVisibility(View.GONE, View.GONE);
 
 //		mUiHelper = new PmsUiHelper(getApplicationContext(), this, activeDeviceControlContainer, inactiveDeviceControlContainer);
 		//		refreshListEntries();
-//		mAdapter = new ControllableDeviceAdapter(this, this, mEntries, mUiHelper);
-//		mDevList = (ListView)findViewById(R.id.deviceList);
-//		mDevList.setAdapter(mAdapter);
+		mAdapter = new DummyAdapterForAir(this, mEntries, mPmsHelper);
+		mDevList = (ListView)findViewById(R.id.deviceList);
+		mDevList.setAdapter(mAdapter);
 
 
 		mSleepAllButt = (Button)findViewById(R.id.sleepButton);
@@ -266,7 +254,146 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
 		mWakeUpAllButt.setOnClickListener(this);
+		
+		startSingleUiUpdate();
 
+	}
+	
+	private class UiUpdateTask extends TimerTask
+	{
+
+		@Override
+		public void run()
+		{
+
+//			if(mPMSHelper.areDevicesLoaded())
+			{
+				final long start = System.currentTimeMillis();
+//				ArrayList<ControllableDevice> allDevices = SesameDataCache.getInstance().getAllDevices();
+				
+
+				final ArrayList<ControllableDevice> activeDevs  = SesameDataCache.getInstance().getDevices(getComputerRoomInformation().getRoomName(), true);
+				final ArrayList<ControllableDevice> inactiveDevs = SesameDataCache.getInstance().getDevices(getComputerRoomInformation().getRoomName(), false);
+				
+//				ControllableDeviceListEntryComparator cdlec = new ControllableDeviceListEntryComparator();
+				ControllableDeviceComparator cdc = new ControllableDeviceComparator();
+				Collections.sort(activeDevs, cdc);
+				Collections.sort(inactiveDevs, cdc);
+//				for()
+//				ArrayList<IListEntry> copyOfEntries = (ArrayList<IListEntry>) mEntries.clone();
+				mEntries.clear();
+				mEntries.add(new SeparatorListEntry(PMSClientActivity.this, ListType.active, activeDevs.size()));
+				
+				for(ControllableDevice cd:activeDevs)
+				{
+					ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
+//					mPmsHelper.setUiInfo(cdle);
+
+					mEntries.add(cdle);
+				}
+
+				mEntries.add(new SeparatorListEntry(PMSClientActivity.this, ListType.inactive, inactiveDevs.size()));
+				for(ControllableDevice cd:inactiveDevs)
+				{
+					ControllableDeviceListEntry cdle = new ControllableDeviceListEntry(cd);
+//					mPmsHelper.setUiInfo(cdle);
+					mEntries.add(cdle);
+				}
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						mAdapter.notifyDataSetChanged();
+					}
+				});
+
+//				runOnUiThread(new Runnable() {
+//					//				
+//					@Override
+//					public void run() 
+//					{
+//
+////						mActiveDevIndicatorLabel.setText(getString(R.string.pms_activeDeviceSeparatorText)+activeDevs.size()+")");
+////						mInactiveDevIndicatorLabel.setText(getString(R.string.pms_inactiveDeviceSeparatorText)+inactiveDevs.size()+")");
+//
+//
+////						mActiveAdapter.setNotifyOnChange(false);
+//						mAdapter.clear();
+////						mActiveAdapter.setNotifyOnChange(true);
+//						mActiveAdapter.addAll(activeEntries);
+//						mActiveAdapter.notifyDataSetChanged();
+//						mActiveList.invalidate();
+////						//		mActiveListEntries.add(new SeparatorListEntry(mCtx, ListType.active, activeDevs.size()));
+////
+//						
+////						mInactiveAdapter.setNotifyOnChange(false);
+//						mInactiveAdapter.clear();
+////						mInactiveAdapter.setNotifyOnChange(true);
+//						mInactiveAdapter.addAll(inactiveEntries);
+//						mInactiveAdapter.notifyDataSetChanged();
+//						mInactiveList.invalidate();
+////						//		mInactiveListEntries.add(new SeparatorListEntry(mCtx, ListType.inactive, inactiveDevs.size()));
+////
+////						//			
+//						
+//						// TODO Auto-generated method stub
+////						mActiveAdapter.notifyDataSetChanged();
+////						mInactiveAdapter.notifyDataSetChanged();
+////						PMSDialogFactory.dismissCurrentDialog();
+//					}
+//				});
+				long duration = System.currentTimeMillis()-start;
+				Log.i(TAG, "updating ui done, adapter notified ("+duration+" ms)");
+			}
+//			else
+//			{
+//				Log.e(TAG, "devices not loaded");
+//			}
+
+		}
+	}
+	
+	
+	public void startSingleUiUpdate()
+	{
+		if(null==mUiUpdateTimer)
+		{
+			mUiUpdateTimer = new Timer();
+		}
+		mUiUpdateTimer.schedule(new UiUpdateTask(), 0);
+//		new Timer().schedule(new UiUpdateTask(), 0);
+	}
+
+	public void stopUiUpdates() {
+//		mPMSHelper.stopUpdates();
+		if(null!=mUiUpdateTimer)
+		{
+			mUiUpdateTimer.cancel();
+			mUiUpdateTimer.purge();
+		}
+		mUiUpdateTimer = null;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		Log.e(TAG, "optionsMenuSelected");
+		switch(item.getItemId())
+		{
+		case R.id.pms_item:
+			return true;
+		case R.id.today_item:
+			startActivity(getTodayIntent());
+			finish();
+			return true;
+		case R.id.week_item:
+			startActivity(getComparisonIntent());
+			finish();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	//	private void startAutoUpdate()
@@ -1699,22 +1826,22 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	//		return null;
 	//	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) 
-	{
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.pms_menu, menu);
-
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) 
-	{
-		finish();
-		//		startActivity(new Intent(this, SesamePhoneAppActivity.class));
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) 
+//	{
+//		MenuInflater inflater = getMenuInflater();
+//		inflater.inflate(R.menu.pms_menu, menu);
+//
+//		return true;
+//	}
+//
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) 
+//	{
+//		finish();
+//		//		startActivity(new Intent(this, SesamePhoneAppActivity.class));
+//		return true;
+//	}
 
 	@Override
 	public void notifyPMSUpdated() {

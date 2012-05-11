@@ -52,7 +52,7 @@ public class PMSDialogFactory
 				throw new IllegalArgumentException("passed parameter for networking in progress dialog was not ok");
 			}
 			//			Looper.prepare();
-			dialog2Show = new PMSNetworkingInProgressDialogFragment((Context)_params[0]);
+			dialog2Show = new PMSNetworkingInProgressDialogFragment();
 			//			Looper.loop();
 			break;
 		case ACTIVE_DEVICE_ACTION_DIALOG:

@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioGroup;
+import at.sesame.fhooe.lib2.pms.IComparisonSelectionListener;
 
 public class ComparisonSelectionFragment
 extends Fragment

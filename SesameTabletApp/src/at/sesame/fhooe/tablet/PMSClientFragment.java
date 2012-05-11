@@ -1382,8 +1382,8 @@ implements OnClickListener, OnCheckedChangeListener, IErrorReceiver, IPMSUpdateL
 			{
 				final long start = System.currentTimeMillis();
 
-				final ArrayList<ControllableDevice> activeDevs  = SesameDataCache.getInstance(mCtx).getDevices(mTitle, true);
-				final ArrayList<ControllableDevice> inactiveDevs = SesameDataCache.getInstance(mCtx).getDevices(mTitle, false);
+				final ArrayList<ControllableDevice> activeDevs  = SesameDataCache.getInstance().getDevices(mTitle, true);
+				final ArrayList<ControllableDevice> inactiveDevs = SesameDataCache.getInstance().getDevices(mTitle, false);
 				
 				final ArrayList<ControllableDeviceListEntry> activeEntries = new ArrayList<ControllableDeviceListEntry>();
 				final ArrayList<ControllableDeviceListEntry> inactiveEntries = new ArrayList<ControllableDeviceListEntry>();

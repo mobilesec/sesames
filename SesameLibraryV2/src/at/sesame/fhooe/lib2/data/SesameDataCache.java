@@ -177,7 +177,7 @@ implements ISesameDataProvider
 	//	private static Date mFirstEnergyDate;
 	//	private static Date mLastEnergyDate;
 
-	private static DataSource mDataSource = DataSource.semantic_repo;
+	private static DataSource mDataSource = DataSource.mock;
 
 	private static PMSController mController;
 	private static DeviceStateUpdater mDeviceStateUpdater;
@@ -313,12 +313,12 @@ implements ISesameDataProvider
 		}
 	}
 
-	public void cleanUp()
+	public static void cleanUp()
 	{
 		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "clean up");
-		stopUpdates();
-		stopEnergyDataUpdates();
-		stopNotificationUpdates();
+		getInstance().stopUpdates();
+		getInstance().stopEnergyDataUpdates();
+		getInstance().stopNotificationUpdates();
 		//		mController.stopAutoUpdate();
 		Log.i(TAG, "Sesame datacache cleaned up");
 	}
@@ -599,12 +599,13 @@ implements ISesameDataProvider
 	//		return res;
 	//	}
 
-	public static SesameDataCache getInstance(Context _ctx)
+	public static void createInstance(Context _ctx)
 	{
-		if(null==mInstance)
-		{
-			mInstance = new SesameDataCache(mDataSource, _ctx);
-		}
+		mInstance = new SesameDataCache(mDataSource, _ctx);
+	}
+	
+	public static SesameDataCache getInstance()
+	{
 		return mInstance;
 	}
 
@@ -974,6 +975,15 @@ implements ISesameDataProvider
 	 */
 	private boolean checkConnectivity() 
 	{
+		Log.e(TAG, "checkConnectivity");
+		if(null==mCtx)
+		{
+			Log.e(TAG, "context was null");
+		}
+		else
+		{
+			Log.i(TAG, "context was ok");
+		}
 		ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnectedOrConnecting()) {

@@ -14,17 +14,17 @@ extends DialogFragment
 {
 	private static final String TAG = "PMSNetworking...";
 //	private ProgressDialog mDialog;
-	private Context  mCtx;;
-	public PMSNetworkingInProgressDialogFragment(Context _ctx)
-	{
-		mCtx = _ctx;
-	}
+//	private Context  mCtx;;
+//	public PMSNetworkingInProgressDialogFragment(Context _ctx)
+//	{
+//		mCtx = _ctx;
+//	}
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Log.e(TAG, "creating progress dialog...");
 		// TODO Auto-generated method stub
-		ProgressDialog pd = new ProgressDialog(mCtx);
-		pd.setMessage(mCtx.getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
+		ProgressDialog pd = new ProgressDialog(this.getActivity());
+		pd.setMessage(getActivity().getString(R.string.PMSClientActivity_networkingProgressDialogTitle));
 //		mNetworkingDialog.setCancelable(false);
 		pd.setCanceledOnTouchOutside(false);
 		//		mNetworkingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);

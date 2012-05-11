@@ -1,7 +1,12 @@
 package at.sesame.fhooe.lib2.data;
 
-public class SesameSensor 
+import java.io.Serializable;
+
+public class SesameSensor
+implements Serializable
 {
+	private static final long serialVersionUID = -1301172509511571135L;
+
 	public enum SensorType
 	{
 		light,

@@ -227,8 +227,8 @@ extends Fragment
 				wv.setVisibleItems(1);
 				wv.setCyclic(true);
 				wv.setOnClickListener(null);
-				wv.setOnDragListener(null);
-				wv.setOnGenericMotionListener(null);
+//				wv.setOnDragListener(null);
+//				wv.setOnGenericMotionListener(null);
 				wv.setOnTouchListener(null);
 				wv.setEnabled(false);
 				wv.setInterpolator(new BounceInterpolator());

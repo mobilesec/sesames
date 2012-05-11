@@ -173,7 +173,7 @@ implements INotificationListener, ISesameUpdateListener
 		else
 		{
 			
-			startShutdownTask();
+//			startShutdownTask();
 //		Log.i(TAG, ConfigLoader.loadConfig().toString());
 			new CreationTask().execute();			
 		}
@@ -196,9 +196,11 @@ implements INotificationListener, ISesameUpdateListener
 	private class CreationTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Void... params) {
+		protected Void doInBackground(Void... params) 
+		{
 
-			mDataCache = SesameDataCache.getInstance(SesameTabletActivity.this);
+			SesameDataCache.createInstance(SesameTabletActivity.this);
+			mDataCache = SesameDataCache.getInstance();
 			mDataCache.registerSesameUpdateListener(SesameTabletActivity.this);
 //			mDataCache.registerNotificationListener(SesameTabletActivity.this);
 //			mDataCache.startEnergyDataUpdates();
@@ -233,7 +235,7 @@ implements INotificationListener, ISesameUpdateListener
 		@Override
 		protected void onPostExecute(Void result) {
 			PMSDialogFactory.dismissCurrentDialog();
-			startHeartBeat();
+//			startHeartBeat();
 		}
 
 		@Override
@@ -649,8 +651,8 @@ implements INotificationListener, ISesameUpdateListener
 			e.printStackTrace();
 		}
 		SesameLogger.stopContinuousExporting();
-		android.os.Process.killProcess(android.os.Process.myPid());
 		super.onDestroy();
+//		android.os.Process.killProcess(android.os.Process.myPid());
 	}
 
 	@Override

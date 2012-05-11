@@ -34,4 +34,6 @@
     <string name="wakeup_dialog_title">Computer werden hochgefahren</string>
     <string name="shutdown_dialog_title">Computer werden heruntergefahren</string>
     <string name="selection_fail_message">Es können nur eingeschaltene oder ausgeschaltene Computer gleichzeitig ausgewählt werden.</string>
+    <string name="energy_graph_y_title">Watt</string>
+    <string name="energy_bar_y_title">kWh</string>
 </resources>

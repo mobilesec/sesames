@@ -24,11 +24,7 @@ public class DummyAdapterForAir extends ControllableDeviceAdapter {
 		return super.getView(_pos, _convertView, _parent);
 	}
 
-	@Override
-	public void onClick(View arg0) {
-		// TODO Auto-generated method stub
-		super.onClick(arg0);
-	}
+
 
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

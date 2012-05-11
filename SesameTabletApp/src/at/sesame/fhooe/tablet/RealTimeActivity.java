@@ -31,7 +31,7 @@ extends Activity implements OnCheckedChangeListener
 	private static final String TAG = "RealTimeActivity";
 	private static final int UPDATE_PERIOD = 15000;
 	private Timer mUpdateTimer;
-	private SesameDataCache mDataCache = SesameDataCache.getInstance(null);
+	private SesameDataCache mDataCache = SesameDataCache.getInstance();
 	
 	private boolean mShowEdv1 = true;
 	private boolean mShowEdv3 = true;

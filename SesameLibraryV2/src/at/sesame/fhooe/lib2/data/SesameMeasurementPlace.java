@@ -1,11 +1,14 @@
 package at.sesame.fhooe.lib2.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import at.sesame.fhooe.lib2.data.SesameSensor.SensorType;
 
-public class SesameMeasurementPlace 
+public class SesameMeasurementPlace
+implements Serializable
 {
+	private static final long serialVersionUID = 328968722349093586L;
 	private int mId;
 	private String mName;
 	private ArrayList<SesameSensor> mSensors = new ArrayList<SesameSensor>();

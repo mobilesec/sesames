@@ -23,6 +23,7 @@ import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameNotification;
 import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
 import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
+import at.sesame.fhooe.lib2.pms.PMSRoomListAdapter;
 import at.sesame.fhooe.lib2.pms.hosts.EDV1Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV3Hosts;
 import at.sesame.fhooe.lib2.pms.hosts.EDV6Hosts;
@@ -61,9 +62,9 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		mCtx = _ctx;
 
 		mUiHandler = _uiHandler;
-		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 0, 0, false));
-		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 0, 0, false));
-		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 0, 0, false));
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), SesameDataCache.EDV1_PLACE, 0, 0, false));
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), SesameDataCache.EDV3_PLACE, 0, 0, false));
+		mInfos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), SesameDataCache.EDV6_PLACE, 0, 0, false));
 		//		mInfos = createDummyInfos();
 		mFragMan = _fm;
 		//		mPMSClientFrag = new PMSClientFragment(_ctx, _fm, mUiHandler);
@@ -123,9 +124,9 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 				if(mInfos.size()!=3)
 				{
 //					Log.i(TAG, "size of list not 3 ==> creating new");
-					ComputerRoomInformation cri1 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), activeInactive1[1], activeInactive1[0], false);
-					ComputerRoomInformation cri3 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), activeInactive3[1], activeInactive3[0], false);
-					ComputerRoomInformation cri6 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), activeInactive6[1], activeInactive6[0], false);
+					ComputerRoomInformation cri1 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), SesameDataCache.EDV1_PLACE, activeInactive1[1], activeInactive1[0], false);
+					ComputerRoomInformation cri3 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), SesameDataCache.EDV3_PLACE, activeInactive3[1], activeInactive3[0], false);
+					ComputerRoomInformation cri6 = new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), SesameDataCache.EDV6_PLACE, activeInactive6[1], activeInactive6[0], false);
 					mInfos.add(cri1);
 					mInfos.add(cri3);
 					mInfos.add(cri6);
@@ -163,7 +164,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	
 		for(String mac:_hosts.getMacList())
 		{
-			ControllableDevice cd = SesameDataCache.getInstance(null).getDeviceByMac(mac);
+			ControllableDevice cd = SesameDataCache.getInstance().getDeviceByMac(mac);
 			if(null!=cd)
 			{
 				if(cd.getIdleSinceMinutes()>=ControllableDevice.IDLE_NOTIFICATION_THRESHOLD)
@@ -179,7 +180,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	{
 		for(String mac:_hosts.getMacList())
 		{
-			ControllableDevice cd = SesameDataCache.getInstance(null).getDeviceByMac(mac);
+			ControllableDevice cd = SesameDataCache.getInstance().getDeviceByMac(mac);
 			if(null!=cd)
 			{
 				if(cd.isDirty())
@@ -199,7 +200,7 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 		//		ArrayList<ControllableDevice> devices = mPmsHelper.get
 		for(String mac:_hosts.getMacList())
 		{
-			ControllableDevice cd = SesameDataCache.getInstance(null).getDeviceByMac(mac);
+			ControllableDevice cd = SesameDataCache.getInstance().getDeviceByMac(mac);
 			if(null!=cd)
 			{
 				if(cd.isAlive())
@@ -219,9 +220,9 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	private ArrayList<ComputerRoomInformation> createDummyInfos()
 	{
 		ArrayList<ComputerRoomInformation> infos = new ArrayList<ComputerRoomInformation>();
-		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), 10, 5, false));
-		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), 5, 12, false));
-		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), 6, 15, false));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room1_name), SesameDataCache.EDV1_PLACE, 10, 5, false));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room3_name), SesameDataCache.EDV3_PLACE, 5, 12, false));
+		infos.add(new ComputerRoomInformation(mCtx.getString(R.string.global_Room6_name), SesameDataCache.EDV6_PLACE, 6, 15, false));
 		return infos;
 	}
 
@@ -400,6 +401,10 @@ extends Fragment implements IPMSUpdateListener, OnItemClickListener
 	public void onDestroy() 
 	{
 		stopUpdates();
+//		if(null!=mPMSClientFrag)
+//		{
+//			mPMSClientFrag.dismiss();
+//		}
 		super.onDestroy();
 	}
 

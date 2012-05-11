@@ -1,16 +1,24 @@
 package at.sesame.fhooe.lib2.pms;
 
-public class ComputerRoomInformation 
+import java.io.Serializable;
+
+import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
+
+public class ComputerRoomInformation
+implements Serializable
 {
+	private static final long serialVersionUID = -1805971564346397759L;
 	private String mRoomName;
+	private SesameMeasurementPlace mMeasurementPlace;
 	private int mNumIdleComputers;
 	private int mNumActiveComputers;
 	private int mNumNotifications;
 	private boolean mDirty;
 	
-	public ComputerRoomInformation(String _name, int _numIdleComputers,int _numActiveComputers, boolean _dirty) 
+	public ComputerRoomInformation(String _roomName, SesameMeasurementPlace _mp, int _numIdleComputers,int _numActiveComputers, boolean _dirty) 
 	{
-		this.mRoomName = _name;
+		this.mRoomName = _roomName;
+		this.mMeasurementPlace = _mp;
 		this.mNumIdleComputers = _numIdleComputers;
 		this.mNumActiveComputers = _numActiveComputers;
 		this.mDirty = _dirty;
@@ -33,9 +41,9 @@ public class ComputerRoomInformation
 		this.mNumActiveComputers = _numActiveComputers;
 	}
 	
-	public String getRoomName() {
-		return mRoomName;
-	}
+//	public String getRoomName() {
+//		return mRoomName;
+//	}
 	
 	public int getNumNotifications() {
 		return mNumNotifications;
@@ -54,12 +62,21 @@ public class ComputerRoomInformation
 	{
 		mDirty = _dirty;
 	}
+	
+	public String getRoomName()
+	{
+		return mRoomName;
+	}
+
+	public SesameMeasurementPlace getMeasurementPlace() {
+		return mMeasurementPlace;
+	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("ComputerRoomInformation [mName=");
-		builder.append(mRoomName);
+		builder.append(mMeasurementPlace);
 		builder.append(", mNumIdleComputers=");
 		builder.append(mNumIdleComputers);
 		builder.append(", mNumActiveComputers=");

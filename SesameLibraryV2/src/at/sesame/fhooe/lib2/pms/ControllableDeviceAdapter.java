@@ -8,6 +8,7 @@
 package at.sesame.fhooe.lib2.pms;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.pms.SeparatorListEntry.ListType;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
@@ -35,7 +37,7 @@ import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
 
 public class ControllableDeviceAdapter 
 extends ArrayAdapter<IListEntry>
-implements OnClickListener, OnCheckedChangeListener
+implements OnCheckedChangeListener
 {
 	/**
 	 * the tag to identify the logger output of this class
@@ -138,7 +140,7 @@ implements OnClickListener, OnCheckedChangeListener
 	public View getView(int _pos, View _convertView, ViewGroup _parent)
 	{
 //		Log.e(TAG, "getView "+_pos);
-		View rowView = _convertView;
+//		View rowView = _convertView;
 		if(null==mDevs||(mDevs.size()-1)<_pos)
 		{
 			Log.e(TAG, "tried to access devices @"+_pos);
@@ -150,35 +152,46 @@ implements OnClickListener, OnCheckedChangeListener
 			{
 				Log.e(TAG, "devs were null");
 			}
-			return rowView;
+			return _convertView;
 		}
 		IListEntry item = mDevs.get(_pos);
 		if(null!=item)
 		{
 //			long start = System.currentTimeMillis();
-			ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
-			ControllableDevice cd = cdle.getControllableDevice();
+			
 			if(item.isSeparator())
 			{
 				SeparatorListEntry sle = (SeparatorListEntry)item;
-				rowView = mLi.inflate(R.layout.controllable_device_listseparator, null);
+				_convertView = mLi.inflate(R.layout.controllable_device_listseparator, null);
 
-
-				TextView tv = (TextView)rowView.findViewById(R.id.separatorNameLabel);
+				TextView tv = (TextView)_convertView.findViewById(R.id.separatorNameLabel);
 				tv.setText(sle.getTitle());
 
-				CheckBox separatorCb = (CheckBox)rowView.findViewById(R.id.separatorCheckBox);
+				
+				CheckBox separatorCb = (CheckBox)_convertView.findViewById(R.id.separatorCheckBox);
 				separatorCb.setChecked(sle.isSelected());
 				separatorCb.setOnCheckedChangeListener(this);
+				
 				//the separator associated with the checkbox is set as tag for the checkbox to 
 				//be able to determine which separator was selected in onCheckedChanged
 				separatorCb.setTag(sle);
+//				_convertView.setTag(null);
+				return _convertView;
 			}
 			else
 			{
-				if(null==rowView)
+				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
+				mUiHelper.setUiInfo(cdle);
+				Log.e(TAG, "cdle #"+_pos+": selected="+cdle.isSelected());
+				ControllableDevice cd = cdle.getControllableDevice();
+				ViewHolder holder;
+//				if(null==_convertView)
+//				{
+//				}
+				if(null==_convertView)
 				{
-					ViewHolder vh = new ViewHolder();
+					_convertView = mLi.inflate(R.layout.controllable_device_listitem_not_selected, null);
+					 holder = new ViewHolder();
 //					vh.CONTROLLABLE_DEV = ((ControllableDeviceListEntry)item).getControllableDevice();
 					
 //				System.out.println("adapter found device:"+cdle.isSelected());
@@ -188,22 +201,36 @@ implements OnClickListener, OnCheckedChangeListener
 //					}
 //					else
 //					{
-						rowView = mLi.inflate(R.layout.controllable_device_listitem_not_selected, null);
+					
 //					}
-					vh.OS_VIEW = (ImageView)rowView.findViewById(R.id.osIconView);
-					vh.CONTAINER = (FrameLayout)rowView.findViewById(R.id.controllable_device_list_item_placeholder);
-					vh.DIRTY_BAR = (ProgressBar)mLi.inflate(R.layout.dirty_progressbar, null);
-				
-					vh.CB = (CheckBox)rowView.findViewById(R.id.controllable_device_list_item_selection_box);
-					vh.NAME_LABEL =(TextView) rowView.findViewById(R.id.nameLabel);
-					vh.IP_LABEL = (TextView)rowView.findViewById(R.id.ipLabel);
-					vh.IDLE_LABEL = (TextView)rowView.findViewById(R.id.idleLabel);
-					rowView.setTag(vh);
+					holder.OS_VIEW = (ImageView)_convertView.findViewById(R.id.osIconView);
+					holder.CONTAINER = (FrameLayout)_convertView.findViewById(R.id.controllable_device_list_item_placeholder);
+					holder.DIRTY_BAR = (ProgressBar)mLi.inflate(R.layout.dirty_progressbar, null);
+					
+					holder.CB = (CheckBox)_convertView.findViewById(R.id.controllable_device_list_item_selection_box);
+//					holder.CB.setChecked(cdle.isSelected());
+//					holder.CB.setTag(cd);
+					holder.NAME_LABEL =(TextView) _convertView.findViewById(R.id.nameLabel);
+					holder.IP_LABEL = (TextView)_convertView.findViewById(R.id.ipLabel);
+					holder.IDLE_LABEL = (TextView)_convertView.findViewById(R.id.idleLabel);
+					_convertView.setTag(holder);
 				}
-				ViewHolder holder = (ViewHolder)rowView.getTag();
+				else
+				{
+					 holder = (ViewHolder)_convertView.getTag();
+					
+				}
+
+				
+				
+				Log.e(TAG, "holder for "+_pos+": "+holder);
 				if(null!=cd)
 				{
 
+					if(null==holder.OS_VIEW)
+					{
+						Log.e(TAG, "os view of holder was null");
+					}
 					switch(cd.getOs())
 					{
 					case windows:
@@ -234,7 +261,7 @@ implements OnClickListener, OnCheckedChangeListener
 //						ImageButton powerView = (ImageButton)v.findViewById(R.id.controllable_device_list_item_powerIconView);
 
 						holder.POWER_BUTT = new ImageButton(mContext);	
-						holder.POWER_BUTT.setOnClickListener(this);
+//						holder.POWER_BUTT.setOnClickListener(this);
 						holder.POWER_BUTT.setTag(cd);
 						holder.POWER_BUTT.setBackgroundColor(Color.TRANSPARENT);
 
@@ -267,8 +294,8 @@ implements OnClickListener, OnCheckedChangeListener
 						holder.CB.setChecked(cdle.isSelected());
 
 						holder.CB.setOnCheckedChangeListener(this);
-						//the ControllableDevice associated with the checkbox is set as tag for the checkbox to 
-						//be able to determine which device was selected in onCheckedChanged
+//						the ControllableDevice associated with the checkbox is set as tag for the checkbox to 
+//						be able to determine which device was selected in onCheckedChanged
 						holder.CB.setTag(cd);
 					}
 					else
@@ -319,21 +346,21 @@ implements OnClickListener, OnCheckedChangeListener
 			}
 		}
 
-		return rowView;
+		return _convertView;
 	}
 
-	@Override
-	public void onClick(View arg0) 
-	{
-		ControllableDevice cd = extractDeviceFromTag(arg0);
-		mUiHelper.handlePowerClick(cd);
-//		mUi.handlePowerClick(cd);
-//		if(cd.isAlive())
-//		{
-//			PMSDialogFactory.showDialog(DialogType.ACTIVE_DEVICE_ACTION_DIALOG, _fm, _handler, _params)
-//		}
-
-	}
+//	@Override
+//	public void onClick(View arg0) 
+//	{
+//		ControllableDevice cd = extractDeviceFromTag(arg0);
+//		mUiHelper.handlePowerClick(cd);
+////		mUi.handlePowerClick(cd);
+////		if(cd.isAlive())
+////		{
+////			PMSDialogFactory.showDialog(DialogType.ACTIVE_DEVICE_ACTION_DIALOG, _fm, _handler, _params)
+////		}
+//
+//	}
 
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
@@ -419,7 +446,112 @@ implements OnClickListener, OnCheckedChangeListener
 			return -1;
 		}
 	}
-	
-	
 
+	@Override
+	public int getItemViewType(int position) {
+		// TODO Auto-generated method stub
+		if(mDevs.get(position).isSeparator())
+		{
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+
+	@Override
+	public int getViewTypeCount() {
+		// TODO Auto-generated method stub
+		return 2;
+	}
+
+	@Override
+	public IListEntry getItem(int position) {
+		// TODO Auto-generated method stub
+		return mDevs.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+//	@Override
+//	public void notifyDataSetChanged()
+//	{
+//		ArrayList<IListEntry> copy = ((ArrayList<IListEntry>) mDevs.clone());
+//		
+//		ArrayList<ControllableDeviceListEntry> activeEntries = new ArrayList<ControllableDeviceListEntry>();
+//		ArrayList<ControllableDeviceListEntry> inactiveEntries = new ArrayList<ControllableDeviceListEntry>();
+//		SeparatorListEntry activeSeparator = null;
+//		SeparatorListEntry inactiveSeparator = null;
+//		for(IListEntry le:copy)
+//		{
+//			if(!le.isSeparator())
+//			{
+//				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)le;
+//				if(cdle.getControllableDevice().isAlive())
+//				{
+//					activeEntries.add(cdle);
+//				}
+//				else
+//				{
+//					inactiveEntries.add(cdle);
+//				}
+//			}
+//			else
+//			{
+//				SeparatorListEntry sle = (SeparatorListEntry)le;
+//				if(sle.getType().equals(ListType.active))
+//				{
+//					activeSeparator = sle;
+//				}
+//				else
+//				{
+//					inactiveSeparator = sle;
+//				}
+//			}
+//		}
+//		
+//		Collections.sort(activeEntries, new ControllableDeviceListEntryComparator());
+//		Collections.sort(inactiveEntries, new ControllableDeviceListEntryComparator());
+//		
+//		mDevs.clear();
+//		mDevs.add(activeSeparator);
+//		for(ControllableDeviceListEntry cdle:activeEntries)
+//		{
+//			mDevs.add(cdle);
+//		}
+//		mDevs.add(inactiveSeparator);
+//		
+//		for(ControllableDeviceListEntry cdle:inactiveEntries)
+//		{
+//			mDevs.add(cdle);
+//		}
+//		
+//		super.notifyDataSetChanged();
+//	}
+	
+	
+	
+//	public ControllableDeviceListEntry getEntryForDevice(ControllableDevice _cd)
+//	{
+//		for(IListEntry le:mDevs)
+//		{
+//			if(!le.isSeparator())
+//			{
+//				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)le;
+//				if(cdle.getControllableDevice().equals(_cd))
+//				{
+//					return cdle;
+//				}
+//			}
+//		}
+//		return null;
+//	}
+
+	
+	
 }

@@ -54,7 +54,6 @@ implements ISesameDataListener, ILoginListener
 	private ViewPager mPager;
 	private Handler mUiHandler = new Handler();
 	
-	private SesameDataCache mDataCache;
 	
 	private MeterWheelFragment mEnergyMeterRoom1Frag;
 	private MeterWheelFragment mEnergyMeterRoom3Frag;
@@ -117,7 +116,7 @@ implements ISesameDataListener, ILoginListener
 		protected Void doInBackground(Void... params) {
 			mRendererProvider = new PhoneChartRendererProvider(getApplicationContext(), false);
 //	        new LoginDialogFragment().show(getSupportFragmentManager(), this);
-	        mDataCache = SesameDataCache.getInstance(SesamePhoneAppActivity.this);
+	        SesameDataCache.createInstance(SesamePhoneAppActivity.this);
 //	        ArrayList<SesameMeasurementPlace> places = mDataCache.getEnergyMeasurementPlaces();
 //			mEdv1Place = places.get(0);
 //			mEdv3Place = places.get(1);
@@ -238,7 +237,7 @@ implements ISesameDataListener, ILoginListener
 		
 //		Log.e(TAG, "################today Start = "+today.toGMTString());
 //		ArrayList<SesameMeasurement> todayMeasurements = _data.filterByDate(DateHelper.getFirstDateXDaysAgo(38), DateHelper.getFirstDateXDaysAgo(37));
-		ArrayList<SesameMeasurement> todayMeasurements = mDataCache.getEnergyReadings(_smp, DateHelper.getFirstDateXDaysAgo(2), new Date(), false).getMeasurements();
+		ArrayList<SesameMeasurement> todayMeasurements = SesameDataCache.getInstance().getEnergyReadings(_smp, DateHelper.getFirstDateXDaysAgo(2), new Date(), false).getMeasurements();
 		double[] todayData = SesameDataContainer.getValueArray(todayMeasurements);
 //		double[] todayData = _data.getValuesBetweenDates(lastWeek, sixDaysAgo);
 		
@@ -321,8 +320,12 @@ implements ISesameDataListener, ILoginListener
 	}
 
 	@Override
-	protected void onDestroy() {
-		mDataCache.cleanUp();
+	protected void onDestroy() 
+	{
+		if(null!=SesameDataCache.getInstance())
+		{
+			SesameDataCache.getInstance().cleanUp();			
+		}
 		super.onDestroy();
 	}
 	
@@ -340,8 +343,8 @@ implements ISesameDataListener, ILoginListener
 	{
 		Intent i = new Intent(this, PMSClientActivity.class);
 //		Bundle extras = new Bundle();
-		i.putExtra(PMSClientActivity.BUNDLE_USER_KEY, mUser);
-		i.putExtra(PMSClientActivity.BUNDLE_PASS_KEY, mPass);
+//		i.putExtra(PMSClientActivity.BUNDLE_USER_KEY, mUser);
+//		i.putExtra(PMSClientActivity.BUNDLE_PASS_KEY, mPass);
 		
 		startActivity(i);
 		return true;
@@ -410,13 +413,13 @@ implements ISesameDataListener, ILoginListener
 //			Log.d(TAG, "updating edv1 from "+smp.getName());
 			try {
 				updateChartFragment(mEdv1Chart, SesameDataCache.EDV1_PLACE);
-				updateMeterWheelFragment(mEnergyMeterRoom1Frag, mDataCache.getLastEnergyReading(SesameDataCache.EDV1_PLACE).getVal(), mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV1_PLACE));
+				updateMeterWheelFragment(mEnergyMeterRoom1Frag, SesameDataCache.getInstance().getLastEnergyReading(SesameDataCache.EDV1_PLACE).getVal(), SesameDataCache.getInstance().getOverallEnergyConsumtion(SesameDataCache.EDV1_PLACE));
 				
 				updateChartFragment(mEdv3Chart, SesameDataCache.EDV3_PLACE);
-				updateMeterWheelFragment(mEnergyMeterRoom3Frag, mDataCache.getLastEnergyReading(SesameDataCache.EDV3_PLACE).getVal(), mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV3_PLACE));
+				updateMeterWheelFragment(mEnergyMeterRoom3Frag, SesameDataCache.getInstance().getLastEnergyReading(SesameDataCache.EDV3_PLACE).getVal(), SesameDataCache.getInstance().getOverallEnergyConsumtion(SesameDataCache.EDV3_PLACE));
 				
 				updateChartFragment(mEdv6Chart,SesameDataCache.EDV6_PLACE);
-				updateMeterWheelFragment(mEnergyMeterRoom6Frag, mDataCache.getLastEnergyReading(SesameDataCache.EDV6_PLACE).getVal(), mDataCache.getOverallEnergyConsumtion(SesameDataCache.EDV6_PLACE));
+				updateMeterWheelFragment(mEnergyMeterRoom6Frag, SesameDataCache.getInstance().getLastEnergyReading(SesameDataCache.EDV6_PLACE).getVal(), SesameDataCache.getInstance().getOverallEnergyConsumtion(SesameDataCache.EDV6_PLACE));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -37,5 +37,14 @@
     <string name="mainXML_separatorSelectionText">select all</string>
     <string name="PMSClientActivity_cantShutDownDialogMessage">shut down of the computer is currently not possible</string>
     <string name="PMSClientActivity_cantWakeUpDialogMessage">the computer can currently not be turned on.</string>
+     <string name="global_current">" aktuell "</string>
+    <string name="hd_comparison_day_cb1_text">" vor 1 Woche"</string>
+    <string name="hd_comparison_day_cb2_text">" vor 2 Wochen"</string>
+    <string name="hd_comparison_day_cb3_text">" vor 3 Wochen"</string>
+    <string name="hd_comparison_day_cb4_text">" vor 4 Wochen"</string>
+    <string name="hd_comparison_week_cb1_text">" vor 1 Woche"</string>
+    <string name="hd_comparison_week_cb2_text">" vor 2 Wochen"</string>
+    <string name="hd_comparison_week_cb3_text">" vor 3 Wochen"</string>
+    <string name="hd_comparison_week_cb4_text">" vor 4 Wochen"</string>
 
 </resources>
