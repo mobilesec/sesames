@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<user>
+	</user>
+	<pass>
+	</pass>
+	<mails>
+		<address>peter.riedl@fh-hagenberg.at</address>
+		<address></address>
+	</mails>
+</config>

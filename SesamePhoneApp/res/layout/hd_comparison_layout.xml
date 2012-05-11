@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/controlContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <RadioGroup
+            android:id="@+id/hd_comparison_layout_day_week_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/hd_comparison_layout_dayRadioButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Tagesvergleich"
+                android:textColor="#ffffffff" />
+
+            <RadioButton
+                android:id="@+id/hd_comparison_layout_weekRadioButt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wochenvergleich"
+                android:textColor="#ffffffff" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/filterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="filtern" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <FrameLayout
+            android:id="@+id/hd_comparison_layout_chartFrame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+        </FrameLayout>
+
+        <!--
+              <fragment
+            android:id="@+id/comparisonSelectionFragment1"
+            android:name="at.sesame.fhooe.phone.ComparisonSelectionFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        -->
+    </LinearLayout>
+
+</LinearLayout>

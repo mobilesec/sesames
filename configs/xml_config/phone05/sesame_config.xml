@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<user>sesamePhone05</user>
+	<pass>open_sesame_05</pass>
+	<mails>
+		<address>peter.riedl@fh-hagenberg.at</address>
+		<address>lehner@ftw.at</address>
+	</mails>
+</config>

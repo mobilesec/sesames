@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<user>sesameTablet01</user>
+	<pass>open_sesame_01</pass>
+	<mails>
+		<address>peter.riedl@fh-hagenberg.at</address>
+	</mails>
+</config>
