@@ -19,6 +19,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -483,9 +486,35 @@ implements OnItemClickListener, ISesameUpdateListener
 		ComputerRoomInformation cri = mAdapter.getItem(arg2);
 		
 		Intent i = new Intent(this, PMSClientActivity.class);
-		i.putExtra(SesamePhoneActivity.COMPUTER_ROOM_INFO_KEY, cri);
+		i.putExtra(PMSClientActivity.COMPUTER_ROOM_INFO_KEY, cri);
 		startActivity(i);
 //		
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.sesame_phone_menu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch(item.getItemId())
+		{
+		case R.id.today_item:
+			startActivity(new Intent(this, TodayChartActivity.class));
+//			finish();
+			return true;
+		case R.id.week_item:
+			startActivity(new Intent(this, ComparisonActivity.class));
+//			finish();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 	
 

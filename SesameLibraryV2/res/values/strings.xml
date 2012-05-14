@@ -36,4 +36,6 @@
     <string name="selection_fail_message">Es können nur eingeschaltene oder ausgeschaltene Computer gleichzeitig ausgewählt werden.</string>
     <string name="energy_graph_y_title">Watt</string>
     <string name="energy_bar_y_title">kWh</string>
+    <string name="pms_room_list_current_consumption_prefix">"aktueller Verbrauch: "</string>
+    <string name="pms_room_list_overall_consumption_prefix">"Gesamtverbrauch: "</string>
 </resources>

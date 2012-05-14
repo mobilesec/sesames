@@ -30,13 +30,13 @@
                 android:text="Wochenvergleich"
                 android:textColor="#ffffffff" />
         </RadioGroup>
-
-        <Button
-            android:id="@+id/filterButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="filtern" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/filterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="filtern" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"

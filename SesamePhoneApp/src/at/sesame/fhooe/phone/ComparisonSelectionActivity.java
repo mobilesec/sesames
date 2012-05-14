@@ -18,6 +18,7 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 	
 	public static final String BUNDLE_ROOM_NAME_KEY = "at.sesame.fhooe.roomname";
 	public static final String BUNDLE_TIMES_KEY = "at.sesame.fhooe.times";
+	public static final String BUNDLE_MODE_KEY = "at.sesame.fhooe.mode";
 	
 	public enum DisplayMode
 	{
@@ -143,6 +144,22 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 		mCb4 = (CheckBox)findViewById(R.id.hd_comparison_selection_box4);
 //		cb4.setText(mCb4Text);
 		mCb4.setOnCheckedChangeListener(this);
+		
+		Bundle extras = getIntent().getExtras();
+		
+		if(null!=extras)
+		{
+			String modeName = extras.getString(BUNDLE_MODE_KEY);
+			
+			setDisplayMode(DisplayMode.valueOf(modeName));
+		}
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState)
+	{
+		outState.putSerializable(BUNDLE_MODE_KEY, mCurMode.toString());
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override

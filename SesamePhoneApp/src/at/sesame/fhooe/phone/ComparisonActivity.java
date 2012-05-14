@@ -12,6 +12,7 @@ import org.achartengine.GraphicalView;
 import org.achartengine.chart.BarChart.Type;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,7 +37,8 @@ import at.sesame.fhooe.phone.ComparisonSelectionActivity.DisplayMode;
 
 
 public class ComparisonActivity 
-extends SesamePhoneActivity implements OnCheckedChangeListener, IComparisonSelectionListener, OnClickListener
+extends Activity 
+implements OnCheckedChangeListener, IComparisonSelectionListener, OnClickListener
 {
 	private static final String TAG = "ComparisonActivity";
 
@@ -451,33 +453,34 @@ extends SesamePhoneActivity implements OnCheckedChangeListener, IComparisonSelec
 		startUpdates();
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		Log.e(TAG, "optionsMenuSelected");
-		switch(item.getItemId())
-		{
-		case R.id.pms_item:
-			startActivity(getPmsIntent());
-			finish();
-			return true;
-		case R.id.today_item:
-			startActivity(getTodayIntent());
-			finish();
-			return true;
-		case R.id.week_item:
-//			startActivity(getComparisonIntent());
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item)
+//	{
+//		Log.e(TAG, "optionsMenuSelected");
+//		switch(item.getItemId())
+//		{
+//		case R.id.pms_item:
+//			startActivity(getPmsIntent());
 //			finish();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+//			return true;
+//		case R.id.today_item:
+//			startActivity(getTodayIntent());
+//			finish();
+//			return true;
+//		case R.id.week_item:
+////			startActivity(getComparisonIntent());
+////			finish();
+//			return true;
+//		default:
+//			return super.onOptionsItemSelected(item);
+//		}
+//	}
 
 	@Override
-	public void onClick(View v) {
+	public void onClick(View v) 
+	{
 		Intent i = new Intent(this, ComparisonSelectionActivity.class);
-		
+		i.putExtra(ComparisonSelectionActivity.BUNDLE_MODE_KEY, mCurMode.toString());
 		startActivityForResult(i, 0);
 		
 	}

@@ -1,5 +1,6 @@
 package at.sesame.fhooe.lib2.data;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import at.sesame.fhooe.lib2.util.DateHelper;
 public class SesameDataCache
 implements ISesameDataProvider
 {
+	
 	private enum DataSource
 	{
 		mock,
@@ -316,6 +318,10 @@ implements ISesameDataProvider
 	public static void cleanUp()
 	{
 		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "clean up");
+		if(null==getInstance())
+		{
+			return;
+		}
 		getInstance().stopUpdates();
 		getInstance().stopEnergyDataUpdates();
 		getInstance().stopNotificationUpdates();

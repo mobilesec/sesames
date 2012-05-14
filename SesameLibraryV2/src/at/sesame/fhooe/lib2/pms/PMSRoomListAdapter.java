@@ -1,5 +1,6 @@
 package at.sesame.fhooe.lib2.pms;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +15,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
 
 
 public class PMSRoomListAdapter 
 extends ArrayAdapter<ComputerRoomInformation> 
 {
 	private static final String TAG = "PMSListAdapter";
+	private static final DecimalFormat LIST_VALUE_FORMAT = new DecimalFormat("#.##");
 	private ArrayList<ComputerRoomInformation> mInfos;
 	private LayoutInflater mLi;
 	private Context mCtx;
@@ -45,20 +48,33 @@ extends ArrayAdapter<ComputerRoomInformation>
 		
 		ComputerRoomInformation info = mInfos.get(position);
 //		Log.e(TAG, info.toString());
-		TextView header = (TextView)mView.findViewById(R.id.textView1);
+		TextView header = (TextView)mView.findViewById(R.id.computerRoomListNameLabel);
 		header.setText(info.getRoomName());
 		header.setTextColor(Color.WHITE);
 
-		TextView idle = (TextView)mView.findViewById(R.id.textView2);
+		TextView idle = (TextView)mView.findViewById(R.id.computerRoomListInactiveLabel);
 		idle.setText(mCtx.getString(R.string.pms_room_list_inactive_prefix)+info.getNumIdleComputers());
 		idle.setTextColor(Color.WHITE);
 		
-		TextView active = (TextView)mView.findViewById(R.id.textView3);
+		TextView active = (TextView)mView.findViewById(R.id.computerRoomListActiveLabel);
 		active.setText(mCtx.getString(R.string.pms_room_list_active_prefix)+info.getNumActiveComputers());
 		active.setTextColor(Color.WHITE);
 		
 		TextView notifications = (TextView)mView.findViewById(R.id.notificationLabel);
 		notifications.setVisibility(View.INVISIBLE);
+		
+		TextView currentConsumption = (TextView)mView.findViewById(R.id.computerRoomListCurrentConsumptionLabel);
+		try {
+			double val = SesameDataCache.getInstance().getLastEnergyReading(info.getMeasurementPlace()).getVal();
+			currentConsumption.setText(mCtx.getString(R.string.pms_room_list_current_consumption_prefix)+LIST_VALUE_FORMAT.format(val));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		TextView overallConsumption = (TextView)mView.findViewById(R.id.computerRoomListOverallConsumptionLabel);
+		double val = SesameDataCache.getInstance().getOverallEnergyConsumtion(info.getMeasurementPlace());
+		overallConsumption.setText(mCtx.getString(R.string.pms_room_list_overall_consumption_prefix)+LIST_VALUE_FORMAT.format(val));
 		
 		// if there's no notification but operation in progress use another background color
 		if (info.getNumNotifications()>0) {

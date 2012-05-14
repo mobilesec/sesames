@@ -12,10 +12,12 @@ import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +28,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
+import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceComparator;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
 import at.sesame.fhooe.lib2.pms.IListEntry;
@@ -49,13 +52,15 @@ import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
  *
  */
 public class PMSClientActivity 
-extends SesamePhoneActivity 
+extends FragmentActivity 
 implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 {
 	/**
 	 * the tag to identify the logger output of this class
 	 */
 	private static final String TAG = "PMSClientActivity";
+	
+	public static final String COMPUTER_ROOM_INFO_KEY = "at.sesame.fhooe.mp";
 
 	//	/**
 	//	 * integer constant for displaying the dialog for actions on active devices
@@ -206,12 +211,18 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	//	private ProgressDialog mActionInProgressDialog;
 
 	private PmsHelper mPmsHelper;
+	private ComputerRoomInformation mComputerRoomInfo;
 	
 	@Override
 	public void onCreate(Bundle _savedInstance)
 	{
 		super.onCreate(_savedInstance);
 		setContentView(R.layout.pms);
+		Bundle data = getIntent().getExtras();
+		if(null!=data)
+		{
+			mComputerRoomInfo = (ComputerRoomInformation) data.getSerializable(COMPUTER_ROOM_INFO_KEY);
+		}
 
 //		mPmsController = new PMSController(this, this, getSupportFragmentManager());
 		//		setupNetworkingDialog();
@@ -235,7 +246,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 		ViewGroup activeDeviceControlContainer = (ViewGroup)findViewById(R.id.activeDeviceControllContainer);
 		ViewGroup inactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
-		mPmsHelper = new PmsHelper(this, getSupportFragmentManager(), this, getComputerRoomInformation().getRoomName(), activeDeviceControlContainer, inactiveDeviceControlContainer);
+		mPmsHelper = new PmsHelper(this, getSupportFragmentManager(), this, mComputerRoomInfo.getRoomName(), activeDeviceControlContainer, inactiveDeviceControlContainer);
 		mDevList = (ListView)findViewById(R.id.deviceList);
 		//		setControlContainerVisibility(View.GONE, View.GONE);
 
@@ -259,6 +270,13 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 	}
 	
+	@Override
+	protected void onSaveInstanceState(Bundle outState)
+	{
+		outState.putSerializable(COMPUTER_ROOM_INFO_KEY, mComputerRoomInfo);
+		super.onSaveInstanceState(outState);
+	}
+	
 	private class UiUpdateTask extends TimerTask
 	{
 
@@ -272,8 +290,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 //				ArrayList<ControllableDevice> allDevices = SesameDataCache.getInstance().getAllDevices();
 				
 
-				final ArrayList<ControllableDevice> activeDevs  = SesameDataCache.getInstance().getDevices(getComputerRoomInformation().getRoomName(), true);
-				final ArrayList<ControllableDevice> inactiveDevs = SesameDataCache.getInstance().getDevices(getComputerRoomInformation().getRoomName(), false);
+				final ArrayList<ControllableDevice> activeDevs  = SesameDataCache.getInstance().getDevices(mComputerRoomInfo.getRoomName(), true);
+				final ArrayList<ControllableDevice> inactiveDevs = SesameDataCache.getInstance().getDevices(mComputerRoomInfo.getRoomName(), false);
 				
 //				ControllableDeviceListEntryComparator cdlec = new ControllableDeviceListEntryComparator();
 				ControllableDeviceComparator cdc = new ControllableDeviceComparator();
@@ -375,26 +393,26 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 		mUiUpdateTimer = null;
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		Log.e(TAG, "optionsMenuSelected");
-		switch(item.getItemId())
-		{
-		case R.id.pms_item:
-			return true;
-		case R.id.today_item:
-			startActivity(getTodayIntent());
-			finish();
-			return true;
-		case R.id.week_item:
-			startActivity(getComparisonIntent());
-			finish();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item)
+//	{
+//		Log.e(TAG, "optionsMenuSelected");
+//		switch(item.getItemId())
+//		{
+//		case R.id.pms_item:
+//			return true;
+//		case R.id.today_item:
+//			startActivity(getTodayIntent());
+//			finish();
+//			return true;
+//		case R.id.week_item:
+//			startActivity(getComparisonIntent());
+//			finish();
+//			return true;
+//		default:
+//			return super.onOptionsItemSelected(item);
+//		}
+//	}
 
 	//	private void startAutoUpdate()
 	//	{

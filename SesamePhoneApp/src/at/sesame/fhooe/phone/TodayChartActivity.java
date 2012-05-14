@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import org.achartengine.ChartFactory;
 import org.achartengine.model.XYMultipleSeriesDataset;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -24,7 +25,7 @@ import at.sesame.fhooe.lib2.ui.charts.exceptions.RendererInitializationException
 import at.sesame.fhooe.lib2.util.DateHelper;
 
 public class TodayChartActivity 
-extends SesamePhoneActivity
+extends Activity
 implements OnCheckedChangeListener
 {
 	private static final String TAG = "TodayChartActivity";
@@ -222,25 +223,25 @@ implements OnCheckedChangeListener
 		super.onDestroy();
 	}
 	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		Log.e(TAG, "optionsMenuSelected");
-		switch(item.getItemId())
-		{
-		case R.id.pms_item:
-			startActivity(getPmsIntent());
-			finish();
-			return true;
-		case R.id.today_item:
-			return true;
-		case R.id.week_item:
-			startActivity(getComparisonIntent());
-			finish();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item)
+//	{
+//		Log.e(TAG, "optionsMenuSelected");
+//		switch(item.getItemId())
+//		{
+//		case R.id.pms_item:
+//			startActivity(getPmsIntent());
+//			finish();
+//			return true;
+//		case R.id.today_item:
+//			return true;
+//		case R.id.week_item:
+//			startActivity(getComparisonIntent());
+//			finish();
+//			return true;
+//		default:
+//			return super.onOptionsItemSelected(item);
+//		}
+//	}
 
 }
