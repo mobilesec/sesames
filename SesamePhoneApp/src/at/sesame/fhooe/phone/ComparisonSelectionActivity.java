@@ -3,9 +3,13 @@ package at.sesame.fhooe.phone;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import at.sesame.fhooe.lib2.pms.IComparisonSelectionListener;
 
@@ -19,6 +23,8 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 	public static final String BUNDLE_ROOM_NAME_KEY = "at.sesame.fhooe.roomname";
 	public static final String BUNDLE_TIMES_KEY = "at.sesame.fhooe.times";
 	public static final String BUNDLE_MODE_KEY = "at.sesame.fhooe.mode";
+	
+	private ImageButton mBackButt;
 	
 	public enum DisplayMode
 	{
@@ -42,6 +48,8 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 	private DisplayMode mCurMode = DisplayMode.day;
 	
 	private String mSelectedRoomName = "";
+
+	private RadioGroup mRg;
 	
 //	private Context mCtx;
 //	
@@ -78,11 +86,15 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 	@Override
 	public void onBackPressed() 
 	{
+		createResult();
+		super.onBackPressed();
+	}
+
+	private void createResult() {
 		Intent data = new Intent();
 		data.putExtra(BUNDLE_TIMES_KEY, mCheckedFilters);
 		data.putExtra(BUNDLE_ROOM_NAME_KEY, mSelectedRoomName);
 		setResult(Activity.RESULT_OK, data);
-		super.onBackPressed();
 	}
 
 	private void updateCheckBoxes()
@@ -125,12 +137,11 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 //		LayoutInflater inflater = null!=_li?_li:LayoutInflater.from(mCtx);
 		setContentView(R.layout.hd_comparison_selection_layout);
 		
-		RadioGroup rg = (RadioGroup)findViewById(R.id.hd_comparison_selection_room_group);
-		onCheckedChanged(rg, rg.getCheckedRadioButtonId());
-		rg.setOnCheckedChangeListener(this);
+		mRg = (RadioGroup)findViewById(R.id.hd_comparison_selection_room_group);
+		mRg.setOnCheckedChangeListener(this);
 		
 		mCb1 = (CheckBox)findViewById(R.id.hd_comparison_selection_box1);
-//		cb1.setText(mCb1Text);
+//		cb1.setText(R.string.gl);
 		mCb1.setOnCheckedChangeListener(this);
 		
 		mCb2 = (CheckBox)findViewById(R.id.hd_comparison_selection_box2);
@@ -143,7 +154,18 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 		
 		mCb4 = (CheckBox)findViewById(R.id.hd_comparison_selection_box4);
 //		cb4.setText(mCb4Text);
+		
 		mCb4.setOnCheckedChangeListener(this);
+		
+		mBackButt = (ImageButton)findViewById(R.id.comparisonSelectionBackButton);
+		mBackButt.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				createResult();
+				finish();
+			}
+		});
 		
 		Bundle extras = getIntent().getExtras();
 		
@@ -151,7 +173,38 @@ implements OnCheckedChangeListener, android.widget.RadioGroup.OnCheckedChangeLis
 		{
 			String modeName = extras.getString(BUNDLE_MODE_KEY);
 			
+			mSelectedRoomName = extras.getString(BUNDLE_ROOM_NAME_KEY);
+			Log.e(TAG, "roomName="+mSelectedRoomName+" ("+getRadioButtonIndexForRoomName()+")");
+			mRg.check(getRadioButtonIndexForRoomName());
+			
+			mCheckedFilters = extras.getBooleanArray(BUNDLE_TIMES_KEY);
+			
+			mCb1.setChecked(mCheckedFilters[0]);
+			mCb2.setChecked(mCheckedFilters[1]);
+			mCb3.setChecked(mCheckedFilters[2]);
+			mCb4.setChecked(mCheckedFilters[3]);
+			
 			setDisplayMode(DisplayMode.valueOf(modeName));
+		}
+	}
+	
+	private int getRadioButtonIndexForRoomName()
+	{
+		if(mSelectedRoomName.equals(getString(R.string.global_Room1_name)))
+		{
+			return mRg.getChildAt(0).getId();
+		}
+		else if(mSelectedRoomName.equals(getString(R.string.global_Room3_name)))
+		{
+			return mRg.getChildAt(1).getId();
+		}
+		else if(mSelectedRoomName.equals(getString(R.string.global_Room6_name)))
+		{
+			return mRg.getChildAt(2).getId();
+		}
+		else
+		{
+			return -1;
 		}
 	}
 	

@@ -1,6 +1,5 @@
 package at.sesame.fhooe.lib2.data;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,10 +13,8 @@ import java.util.concurrent.ExecutionException;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
+
 import at.sesame.fhooe.lib2.Constants;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.config.ConfigLoader;
@@ -179,7 +176,7 @@ implements ISesameDataProvider
 	//	private static Date mFirstEnergyDate;
 	//	private static Date mLastEnergyDate;
 
-	private static DataSource mDataSource = DataSource.mock;
+	private static DataSource mDataSource = DataSource.semantic_repo;
 
 	private static PMSController mController;
 	private static DeviceStateUpdater mDeviceStateUpdater;

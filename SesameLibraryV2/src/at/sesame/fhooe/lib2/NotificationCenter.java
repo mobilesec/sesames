@@ -71,9 +71,9 @@ public class NotificationCenter
 		@Override
 		public void run() 
 		{
-			Random r = new Random();
-//			showNotification(getNumNotifications(EDV1_HOSTS), getNumNotifications(EDV3_HOSTS), getNumNotifications(EDV6_HOSTS));
-			showNotification(r.nextInt(20), r.nextInt(20), r.nextInt(20));
+			showNotification(getNumNotifications(EDV1_HOSTS), getNumNotifications(EDV3_HOSTS), getNumNotifications(EDV6_HOSTS));
+//			Random r = new Random();
+//			showNotification(r.nextInt(20), r.nextInt(20), r.nextInt(20));
 		}
 		
 	}
@@ -99,42 +99,43 @@ public class NotificationCenter
 	@SuppressWarnings("deprecation")
 	private static void showNotification(int _numEdv1Notifications, int _numEdv3Notifications, int _numEdv6Notifications)
 	{
-		final StringBuilder textBuilder = new StringBuilder();
+		final StringBuilder tickerBuilder = new StringBuilder();
 		String prefix = "Warnungen für ";
-		if(_numEdv1Notifications == 0 && _numEdv3Notifications == 0 && _numEdv6Notifications == 0)
+		int numNotifications = _numEdv1Notifications+_numEdv3Notifications+_numEdv6Notifications;
+		if(numNotifications == 0)
 		{
 			return;
 		}
 		if(_numEdv1Notifications!=0)
 		{
-			textBuilder.append(prefix);
-			textBuilder.append(mCtx.getString(R.string.global_Room1_name));
-			textBuilder.append(": ");
-			textBuilder.append(_numEdv1Notifications);
+			tickerBuilder.append(prefix);
+			tickerBuilder.append(mCtx.getString(R.string.global_Room1_name));
+			tickerBuilder.append(": ");
+			tickerBuilder.append(_numEdv1Notifications);
 		}
 		
 		if(_numEdv3Notifications!=0)
 		{
 			if(_numEdv1Notifications!=0)
 			{
-				textBuilder.append("\n");
+				tickerBuilder.append("\n");
 			}
-			textBuilder.append(prefix);
-			textBuilder.append(mCtx.getString(R.string.global_Room3_name));
-			textBuilder.append(": ");
-			textBuilder.append(_numEdv3Notifications);
+			tickerBuilder.append(prefix);
+			tickerBuilder.append(mCtx.getString(R.string.global_Room3_name));
+			tickerBuilder.append(": ");
+			tickerBuilder.append(_numEdv3Notifications);
 		}
 		
 		if(_numEdv6Notifications!=0)
 		{
 			if(_numEdv1Notifications!=0 && _numEdv3Notifications !=0)
 			{
-				textBuilder.append("\n");
+				tickerBuilder.append("\n");
 			}
-			textBuilder.append(prefix);
-			textBuilder.append(mCtx.getString(R.string.global_Room6_name));
-			textBuilder.append(": ");
-			textBuilder.append(_numEdv6Notifications);
+			tickerBuilder.append(prefix);
+			tickerBuilder.append(mCtx.getString(R.string.global_Room6_name));
+			tickerBuilder.append(": ");
+			tickerBuilder.append(_numEdv6Notifications);
 		}
 
 //		new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -146,19 +147,18 @@ public class NotificationCenter
 //			}
 //		});
 		
-		Notification not = new Notification(R.drawable.ic_stat_warning, textBuilder.toString(), System.currentTimeMillis());
-		not.ledARGB = 0xff00ff00;
-		not.ledOffMS = 500;
-		not.ledOnMS = 500;
-		not.tickerText = textBuilder.toString();
+		Notification not = new Notification(R.drawable.ic_stat_warning, tickerBuilder.toString(), System.currentTimeMillis());
+		not.ledARGB = Color.argb(255, 255, 0, 0);
+		not.ledOffMS = 1000;
+		not.ledOnMS = 1000;
+		not.tickerText = tickerBuilder.toString();
 		not.flags |= Notification.FLAG_SHOW_LIGHTS;
-		long[] vibrate = {0,100,200,300};
-		not.vibrate = vibrate;
-		not.defaults |= Notification.DEFAULT_LIGHTS;
+		not.vibrate = new long[]{0,1000,500,1000};
+//		not.defaults |= Notification.DEFAULT_LIGHTS;
 		
 		Intent notificationIntent = new Intent(mCtx, mIntentClass);
 		PendingIntent contentIntent = PendingIntent.getActivity(mCtx, NOTIFICATION_ID, notificationIntent, 0);
-		not.setLatestEventInfo(mCtx, NOTIFICATION_TITLE, textBuilder.toString(), contentIntent);
+		not.setLatestEventInfo(mCtx, NOTIFICATION_TITLE, "Anzahl der Warunungen: "+numNotifications, contentIntent);
 //		builder.setContentTitle(NOTIFICATION_TITLE);
 //		builder.setLights(Color.RED, 500, 500);
 //		builder.setContentText(textBuilder.toString());

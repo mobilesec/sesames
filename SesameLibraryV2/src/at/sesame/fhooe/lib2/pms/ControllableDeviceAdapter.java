@@ -378,7 +378,7 @@ implements OnCheckedChangeListener
 			boolean selected = mUiHelper.handleMultipleSelectionAttempt(sle.getType(), isChecked);
 			System.out.println("result of group selection:"+selected);
 			sle.setSelected(selected);
-			buttonView.setChecked(selected);
+//			buttonView.setChecked(selected);
 			break;
 		}
 		buttonView.setOnCheckedChangeListener(this);

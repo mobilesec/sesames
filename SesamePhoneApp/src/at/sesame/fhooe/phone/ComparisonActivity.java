@@ -15,12 +15,11 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
@@ -51,7 +50,7 @@ implements OnCheckedChangeListener, IComparisonSelectionListener, OnClickListene
 
 	private RadioGroup mDayWeekGroup;
 	
-	private Button mFilterButt;
+	private ImageButton mFilterButt;
 
 	private boolean[] mSelectedFilters = new boolean[]{false, false, false, false};
 
@@ -64,6 +63,7 @@ implements OnCheckedChangeListener, IComparisonSelectionListener, OnClickListene
 	private SesameMeasurementPlace mCurRoom;
 
 	private DefaultDatasetProvider mDatasetProvider = new DefaultDatasetProvider();
+	
 	
 //	private SesameMeasurementPlace mEdv1Place;
 //	private SesameMeasurementPlace mEdv3Place;
@@ -84,6 +84,13 @@ implements OnCheckedChangeListener, IComparisonSelectionListener, OnClickListene
 //		mEdv3Place = places.get(3);
 //		mEdv6Place = places.get(5);
 		mCurRoom = SesameDataCache.EDV1_PLACE;
+		
+		if(null!=savedInstanceState)
+		{
+			mRoomName = savedInstanceState.getString(ComparisonSelectionActivity.BUNDLE_ROOM_NAME_KEY);
+			mSelectedFilters = savedInstanceState.getBooleanArray(ComparisonSelectionActivity.BUNDLE_TIMES_KEY);
+			mCurMode = DisplayMode.valueOf(savedInstanceState.getString(ComparisonSelectionActivity.BUNDLE_MODE_KEY));
+		}
 		initializeView();
 	}
 	
@@ -144,7 +151,7 @@ implements OnCheckedChangeListener, IComparisonSelectionListener, OnClickListene
 //		mCsf.setDisplayMode(mCurMode);
 		mDayWeekGroup = (RadioGroup)findViewById(R.id.hd_comparison_layout_day_week_group);
 		mDayWeekGroup.setOnCheckedChangeListener(this);
-		mFilterButt = (Button)findViewById(R.id.filterButton);
+		mFilterButt = (ImageButton)findViewById(R.id.filterButton);
 		mFilterButt.setOnClickListener(this);
 		updateChart();
 		//		mView.invalidate();
@@ -401,8 +408,8 @@ implements OnCheckedChangeListener, IComparisonSelectionListener, OnClickListene
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		mSelectedFilters = arg2.getBooleanArrayExtra(ComparisonSelectionActivity.BUNDLE_TIMES_KEY);
-		String roomName = arg2.getStringExtra(ComparisonSelectionActivity.BUNDLE_ROOM_NAME_KEY);
-		notifyRoomSelection(roomName);
+		mRoomName = arg2.getStringExtra(ComparisonSelectionActivity.BUNDLE_ROOM_NAME_KEY);
+		notifyRoomSelection(mRoomName);
 		
 		
 	}
@@ -479,9 +486,30 @@ implements OnCheckedChangeListener, IComparisonSelectionListener, OnClickListene
 	@Override
 	public void onClick(View v) 
 	{
-		Intent i = new Intent(this, ComparisonSelectionActivity.class);
-		i.putExtra(ComparisonSelectionActivity.BUNDLE_MODE_KEY, mCurMode.toString());
-		startActivityForResult(i, 0);
+		showFilterActivity();
 		
+	}
+
+	private void showFilterActivity()
+	{
+		Intent i = new Intent(this, ComparisonSelectionActivity.class);
+		i.putExtras(getState());
+		startActivityForResult(i, 0);
+	}
+	
+	private Bundle getState()
+	{
+		Bundle b = new Bundle();
+		b.putString(ComparisonSelectionActivity.BUNDLE_MODE_KEY, mCurMode.toString());
+		b.putString(ComparisonSelectionActivity.BUNDLE_ROOM_NAME_KEY, mRoomName);
+		b.putBooleanArray(ComparisonSelectionActivity.BUNDLE_TIMES_KEY, mSelectedFilters);
+		return b;
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) 
+	{
+		outState.putAll(getState());
+		super.onSaveInstanceState(outState);
 	}
 }

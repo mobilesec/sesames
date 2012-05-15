@@ -31,12 +31,12 @@
                 android:textColor="#ffffffff" />
         </RadioGroup>
     </LinearLayout>
-
-    <Button
+
+    <ImageButton
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="filtern" />
+        android:src="@drawable/ic_menu_pms" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
@@ -8,7 +8,7 @@
         android:id="@+id/hd_comparison_selection_"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.9"
+        android:layout_weight="0.4"
         android:orientation="vertical" >
 
         <TextView
@@ -35,21 +35,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="EDV 1"
+                    android:text="@string/global_Room1_name"
                     android:textColor="#ffffffff" />
 
                 <RadioButton
                     android:id="@+id/hd_comparison_selection_room3RadioButt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EDV 3"
+                    android:text="@string/global_Room3_name"
                     android:textColor="#ffffffff" />
 
                 <RadioButton
                     android:id="@+id/hd_comparison_selection_room6RadioButt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EDV 6"
+                    android:text="@string/global_Room6_name"
                     android:textColor="#ffffffff" />
             </RadioGroup>
         </ScrollView>
@@ -59,7 +59,7 @@
         android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="0.5"
         android:orientation="vertical" >
 
         <TextView
@@ -78,7 +78,7 @@
 
             <LinearLayout
                 android:id="@+id/lv3"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
@@ -112,5 +112,12 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/comparisonSelectionBackButton"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:src="@drawable/ic_stat_warning" />
 
 </LinearLayout>
