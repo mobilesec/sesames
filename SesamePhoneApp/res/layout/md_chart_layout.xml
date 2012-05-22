@@ -3,6 +3,7 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/app_background"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -27,7 +28,6 @@
             android:layout_centerHorizontal="true"
             android:text="medium_density_chart"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
     </RelativeLayout>
 
     <FrameLayout

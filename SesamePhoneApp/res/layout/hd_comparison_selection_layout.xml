@@ -2,7 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="@drawable/app_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="2dp" >
 
     <LinearLayout
         android:id="@+id/hd_comparison_selection_"
@@ -112,12 +115,12 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
+
     <ImageButton
         android:id="@+id/comparisonSelectionBackButton"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.1"
-        android:src="@drawable/ic_stat_warning" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_selector"
+        android:src="@drawable/ic_button_ok" />
 
 </LinearLayout>

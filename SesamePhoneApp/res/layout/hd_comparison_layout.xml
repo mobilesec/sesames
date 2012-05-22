@@ -2,17 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="@drawable/app_background"
+    android:orientation="vertical"
+    android:padding="2dp" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="[TITLE]"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
         android:id="@+id/controlContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" >
 
         <RadioGroup
             android:id="@+id/hd_comparison_layout_day_week_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="horizontal" >
 
             <RadioButton
@@ -20,23 +30,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Tagesvergleich"
+                android:text="Täglich"
                 android:textColor="#ffffffff" />
 
             <RadioButton
                 android:id="@+id/hd_comparison_layout_weekRadioButt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wochenvergleich"
+                android:text="Wöchentlich"
                 android:textColor="#ffffffff" />
         </RadioGroup>
+
+        <ImageButton
+            android:id="@+id/filterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
+            android:background="@drawable/button_selector"
+            android:src="@drawable/ic_button_settings" />
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/filterButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_menu_pms" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -55,7 +67,7 @@
             android:id="@+id/comparisonSelectionFragment1"
             android:name="at.sesame.fhooe.phone.ComparisonSelectionFragment"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" />
         -->
     </LinearLayout>
 

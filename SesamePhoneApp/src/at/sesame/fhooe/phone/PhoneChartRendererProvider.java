@@ -4,73 +4,71 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Paint.Align;
 import at.sesame.fhooe.lib2.ui.charts.AbstractRendererProvider;
 
-public class PhoneChartRendererProvider 
-extends AbstractRendererProvider 
-{
+public class PhoneChartRendererProvider extends AbstractRendererProvider {
 	private int mFillColorAlpha = 180;
-	
-	
-	public PhoneChartRendererProvider(Context _ctx) 
-	{
+
+	public PhoneChartRendererProvider(Context _ctx) {
 		super(_ctx);
 	}
-	
-	public PhoneChartRendererProvider(Context _ctx, boolean _createFixedLabels)
-	{
+
+	public PhoneChartRendererProvider(Context _ctx, boolean _createFixedLabels) {
 		super(_ctx, _createFixedLabels);
 	}
-	
+
+	private int getIndexForTitle(String title) {
+		if (title.contains(mCtx.getString(R.string.global_current))) {
+			return 0;
+		} else if (title.contains(mCtx
+				.getString(R.string.hd_comparison_day_cb1_text))) {
+			return 1;
+		} else if (title.contains(mCtx
+				.getString(R.string.hd_comparison_day_cb2_text))) {
+			return 2;
+		} else if (title.contains(mCtx
+				.getString(R.string.hd_comparison_day_cb3_text))) {
+			return 3;
+		} else if (title.contains(mCtx
+				.getString(R.string.hd_comparison_day_cb4_text))) {
+			return 4;
+		} else {
+			return -1;
+		}
+	}
+
 	@Override
 	public XYSeriesRenderer setupSeriesRenderer(XYSeries arg0) {
 		XYSeriesRenderer xysr = new XYSeriesRenderer();
-
-		
-		int color;
-		if(arg0.getTitle().contains("aktuell"))
-		{
-			color = Color.GREEN;
-			mFillColorAlpha = 180;
-		}
-		else
-		{
-			color = Color.CYAN;
-			mFillColorAlpha = 50;
-		}
+		int color = getColorForSeries(arg0);
 		xysr.setColor(color);
 		xysr.setLineWidth(3.0f);
 		xysr.setFillBelowLine(true);
-		xysr.setFillBelowLineColor(Color.argb(mFillColorAlpha,
-				Color.red(color), Color.green(color), Color.blue(color)));
+		xysr.setFillBelowLineColor(applyAlphaForColor(mFillColorAlpha, color));
+		xysr.setPointStyle(getHistoricalPointStyle(getIndexForTitle(arg0
+				.getTitle())));
 		return xysr;
+	}
+
+	private int getColorForSeries(XYSeries _series) {
+		String title = _series.getTitle();
+		int color = getColorForRoom(title);
+		return getHistoricalColor(color, getIndexForTitle(title));
 	}
 
 	@Override
 	protected void setupRenderer() {
 		super.setupRenderer();
-		mRenderer.setShowGrid(true);
-		mRenderer.setGridColor(0x50ffffff);
-		mRenderer.setApplyBackgroundColor(false);
-		mRenderer.setMarginsColor(0x00ffffff);
-		//mRenderer.setMargins(new int[] { 0, 100, 70, 100 });
 		mRenderer.setAxesColor(0xffffffff);
 		mRenderer.setLabelsColor(0xffffffff);
-		//mRenderer.setLabelsTextSize(20);
+		mRenderer.setMarginsColor(0x00ffffff);
 		mRenderer.setClickEnabled(false);
-		//mRenderer.setLegendTextSize(50);
-		//mRenderer.setLegendHeight(70);
 		mRenderer.setPanEnabled(false, false);
 		mRenderer.setZoomButtonsVisible(false);
 		mRenderer.setZoomEnabled(false, false);
-		mRenderer.setYTitle("kW");
-		mRenderer.setXLabels(10);
-		//mRenderer.setXLabelsAlign(Align.CENTER);
-		mRenderer.setXLabelsAngle(-45);
-		//mRenderer.setAxisTitleTextSize(20);
+		mRenderer.setYAxisMin(0);
+		// mRenderer.setYAxisMax(2500);
+		mRenderer.setYTitle(mCtx.getString(R.string.energy_graph_y_title));
 	}
-	
-	
+
 }

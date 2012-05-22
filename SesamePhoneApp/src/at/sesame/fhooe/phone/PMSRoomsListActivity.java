@@ -173,9 +173,11 @@ implements OnItemClickListener, ISesameUpdateListener
 			mList.setAdapter(mAdapter);
 			mList.setOnItemClickListener(PMSRoomsListActivity.this);
 
-			// style seperator
+			// set styling
 			mList.setDivider(new ColorDrawable(Color.WHITE));
 			mList.setDividerHeight(1);
+			mList.setBackgroundResource(R.drawable.app_background);
+			
 			SesameDataCache.getInstance().registerSesameUpdateListener(PMSRoomsListActivity.this);
 			PMSDialogFactory.dismissCurrentDialog();
 			NotificationCenter.start(PMSRoomsListActivity.this, PMSRoomsListActivity.class);
