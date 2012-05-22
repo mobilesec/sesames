@@ -138,6 +138,13 @@ implements OnItemClickListener, ISesameUpdateListener
 		
 	}
 	
+	
+	
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
+	}
+
 	private class CreationTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
