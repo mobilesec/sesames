@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageButton
+            android:id="@+id/notification_app_filter_settings_butt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_launcher" />
+
+        <ToggleButton android:text="ToggleButton"
+            android:id="@+id/notification_app_filter_toggle_butt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/notification_app_filter_settings_butt"
+            android:textOn="@string/notification_app_filter_on_text" android:textOff="@string/notification_app_filter_off_text"/>
+
+        <ImageButton
+            android:id="@+id/notification_app_refresh_butt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_launcher" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:orientation="horizontal" >
+
+        <FrameLayout
+            android:id="@+id/edv1Frame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/edv3Frame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        
+
+        <FrameLayout
+            android:id="@+id/edv6Frame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        </LinearLayout>
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:orientation="horizontal" >
+
+        <FrameLayout
+            android:id="@+id/class1Frame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/class2Frame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:id="@+id/miscFrame"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <!--
+    <TableLayout android:layout_width="match_parent" >
+
+ 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <ScrollView
+                android:id="@+id/edv1Frame"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+
+                
+                     <fragment
+                    android:id="@+id/edv1Notificationfragment"
+                    android:name="at.sesame.fhooe.notification.SesameNotificationfragment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" >
+
+                    Preview: layout=@layout/notification_fragment_layout
+                </fragment>
+               
+            </ScrollView>
+
+            <ScrollView
+                android:id="@+id/edv3Frame"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+
+                
+                <fragment
+                    android:id="@+id/edv3Notificationfragment"
+                    android:name="at.sesame.fhooe.notification.SesameNotificationfragment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" >
+
+                    Preview: layout=@layout/notification_fragment_layout
+                </fragment>
+               
+            </ScrollView>
+
+            <ScrollView
+                android:id="@+id/edv6Frame"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+
+                
+                <fragment
+                    android:id="@+id/edv6Notificationfragment"
+                    android:name="at.sesame.fhooe.notification.SesameNotificationfragment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" >
+
+                    Preview: layout=@layout/notification_fragment_layout
+                </fragment>
+               
+            </ScrollView>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <FrameLayout
+                android:id="@+id/class1Frame"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+
+                
+                <fragment
+                    android:id="@+id/class1Notificationfragment"
+                    android:name="at.sesame.fhooe.notification.SesameNotificationfragment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" >
+
+                    Preview: layout=@layout/notification_fragment_layout
+                </fragment>
+               
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/class2Frame"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+
+                
+                <fragment
+                    android:id="@+id/class2Notificationfragment"
+                    android:name="at.sesame.fhooe.notification.SesameNotificationfragment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" >
+
+                    Preview: layout=@layout/notification_fragment_layout
+                </fragment>
+               
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/miscFrame"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" >
+
+                
+                <fragment
+                    android:id="@+id/miscNotificationfragment"
+                    android:name="at.sesame.fhooe.notification.SesameNotificationfragment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" >
+
+                    Preview: layout=@layout/notification_fragment_layout
+                </fragment>
+               
+            </FrameLayout>
+        </TableRow>
+    </TableLayout>
+        -->
+
+    </LinearLayout>

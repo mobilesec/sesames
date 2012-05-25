@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, NotificationAppActivity!</string>
+    <string name="app_name">NotificationApp</string>
+    <string name="notification_dialog_title">Benachrichtigung</string>
+    <string name="filter_dialog_from_label_text">Benachrichtigungen zeigen ab:</string>
+    <string name="filter_dialog_to_label_text">Benachrichtigungen zeigen bis:</string>
+    <string name="notification_app_filter_on_text">filter on</string>
+    <string name="notification_app_filter_off_text">filter off</string>
+    <string name="filter_dialog_title">Filter</string>
+
+</resources>
