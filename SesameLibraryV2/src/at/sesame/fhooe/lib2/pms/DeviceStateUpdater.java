@@ -59,7 +59,7 @@ public class DeviceStateUpdater
 	
 	public boolean updateAllDevices()
 	{
-		Log.i(TAG, "updating");
+		Log.e(TAG, "*****************updating");
 		mUpdateInProgress = true;
 		long begin = System.currentTimeMillis();
 		ArrayList<ExtendedPMSStatus> statuses = null;

@@ -143,6 +143,7 @@ implements OnItemClickListener, ISesameUpdateListener
 	@Override
 	public void onBackPressed() {
 		moveTaskToBack(true);
+		SesameDataCache.cleanUp();
 	}
 
 	private class CreationTask extends AsyncTask<Void, Void, Void> {
@@ -567,7 +568,7 @@ implements OnItemClickListener, ISesameUpdateListener
 	public void onDestroy() 
 	{
 		stopUpdates();
-		SesameDataCache.cleanUp();
+//		SesameDataCache.cleanUp();
 //		if(null!=mPMSClientFrag)
 //		{
 //			mPMSClientFrag.dismiss();

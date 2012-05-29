@@ -350,8 +350,18 @@ implements IPMSDialogActionHandler
 
 	private boolean loadDevices(HostList _hl)
 	{
+		Log.e(TAG, "loading device list for:"+_hl.toString());
 		//		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
-		ArrayList<ExtendedPMSStatus> statuses = PMSProvider.getPMS().extendedStatusList(_hl.getMacList());
+		ArrayList<ExtendedPMSStatus> statuses = null;
+		try
+		{
+			statuses = PMSProvider.getPMS().extendedStatusList(_hl.getMacList());
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		if(null==statuses)
 		{
 			Log.e(TAG, "could not query statuses");

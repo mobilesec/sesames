@@ -27,7 +27,7 @@ public class NotificationCenter
 	private static final long NOTIFICATION_PERIOD = 30000;
 	
 	private static final int NOTIFICATION_ID = 1;
-	private static final CharSequence NOTIFICATION_TITLE = "Sesame notification";
+//	private static final CharSequence NOTIFICATION_TITLE = "Sesame notification";
 	
 	private static NotificationManager mNotifyMan;
 	
@@ -158,7 +158,7 @@ public class NotificationCenter
 		
 		Intent notificationIntent = new Intent(mCtx, mIntentClass);
 		PendingIntent contentIntent = PendingIntent.getActivity(mCtx, NOTIFICATION_ID, notificationIntent, 0);
-		not.setLatestEventInfo(mCtx, NOTIFICATION_TITLE, "Anzahl der Warunungen: "+numNotifications, contentIntent);
+		not.setLatestEventInfo(mCtx, mCtx.getString(R.string.notification_title), mCtx.getString(R.string.notification_text)+numNotifications, contentIntent);
 //		builder.setContentTitle(NOTIFICATION_TITLE);
 //		builder.setLights(Color.RED, 500, 500);
 //		builder.setContentText(textBuilder.toString());

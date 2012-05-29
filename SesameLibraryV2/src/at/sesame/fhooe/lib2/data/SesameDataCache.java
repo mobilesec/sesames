@@ -87,7 +87,7 @@ implements ISesameDataProvider
 //	};
 	private boolean mRunning = false;
 	private long mUpdateTimeout = 10000;
-	private Timer mUpdateTimer;
+	private static Timer mUpdateTimer;
 //	private Thread mUpdateThread;
 	
 	private void startUpdates()
@@ -99,7 +99,7 @@ implements ISesameDataProvider
 		mUpdateTimer.schedule(new UpdateTask(), 0, mUpdateTimeout);
 	}
 	
-	private void stopUpdates()
+	private static void stopUpdates()
 	{
 //		mRunning = false;
 		if(null!=mUpdateTimer)
@@ -199,11 +199,11 @@ implements ISesameDataProvider
 	 */
 	private static SesameDataCache mInstance;
 
-	private Timer mEnergyUpdateTimer;
+	private static Timer mEnergyUpdateTimer;
 	private static final long ENERGY_DATA_UPDATE_INTERVAL = 20000; //every 20 seconds
 
 
-	private Timer mNotificationUpdateTimer;
+	private static Timer mNotificationUpdateTimer;
 
 	private static final long NOTIFICATION_UPDATE_INTERVAL = 20000;//every 20 seconds
 
@@ -275,7 +275,7 @@ implements ISesameDataProvider
 		mEnergyUpdateTimer.schedule(new EnergyUpdateTask(), 0, ENERGY_DATA_UPDATE_INTERVAL);
 	}
 
-	private void stopEnergyDataUpdates()
+	private static void stopEnergyDataUpdates()
 	{
 		if(null!=mEnergyUpdateTimer)
 		{
@@ -303,7 +303,7 @@ implements ISesameDataProvider
 		mNotificationUpdateTimer.schedule(new NotificationUpdateTask(), 0, NOTIFICATION_UPDATE_INTERVAL);
 	}
 
-	private void stopNotificationUpdates()
+	private static void stopNotificationUpdates()
 	{
 		if(null!=mNotificationUpdateTimer)
 		{
@@ -315,13 +315,13 @@ implements ISesameDataProvider
 	public static void cleanUp()
 	{
 		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "clean up");
-		if(null==getInstance())
-		{
-			return;
-		}
-		getInstance().stopUpdates();
-		getInstance().stopEnergyDataUpdates();
-		getInstance().stopNotificationUpdates();
+//		if(null==getInstance())
+//		{
+//			return;
+//		}
+		stopUpdates();
+		stopEnergyDataUpdates();
+		stopNotificationUpdates();
 		//		mController.stopAutoUpdate();
 		Log.i(TAG, "Sesame datacache cleaned up");
 	}
