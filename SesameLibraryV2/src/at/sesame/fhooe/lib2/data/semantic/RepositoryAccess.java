@@ -1,7 +1,5 @@
 package at.sesame.fhooe.lib2.data.semantic;
 
-import java.util.concurrent.ExecutionException;
-
 import org.codegist.crest.CRest;
 import org.codegist.crest.CRestBuilder;
 import org.codegist.crest.io.http.HttpClientHttpChannelFactory;
@@ -30,6 +28,7 @@ public class RepositoryAccess
 		}
 		catch (Exception e) {
 			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return res;
 //		try 

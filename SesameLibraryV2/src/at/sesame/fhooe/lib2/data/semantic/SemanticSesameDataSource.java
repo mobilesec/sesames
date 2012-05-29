@@ -26,6 +26,7 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 {
 	private static final String TAG = "SemanticSesameDataSource";
 	private ArrayList<SesameMeasurementPlace> mEnergyPlaces = new ArrayList<SesameMeasurementPlace>();
+	private ArrayList<SesameMeasurementPlace> mLightPlaces = new ArrayList<SesameMeasurementPlace>();
 
 	public SemanticSesameDataSource()
 	{
@@ -36,12 +37,18 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 	{
 		return queryMeasurementPlaces(SensorType.energy, mEnergyPlaces);
 	}
+	
+	private boolean queryLightMeasurementPlaces()
+	{
+		return queryMeasurementPlaces(SensorType.light, mLightPlaces );
+	}
 
 	private boolean queryMeasurementPlaces(SensorType _st, ArrayList<SesameMeasurementPlace> _placeList)
 	{
 		String result = RepositoryAccess.executeQuery(SemanticRepoHelper.getSensorsQuery(_st));
 		if(null==result)
 		{
+			Log.e(TAG, "could not query measurement places");
 			return false;
 		}
 		HashMap<String, String> placeSensorMap = SemanticQueryResultParser.parseSensorsQueryResult(result);
@@ -96,7 +103,11 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 	@Override
 	public ArrayList<SesameMeasurementPlace> getLightMeasurementPlaces() {
 		// TODO Auto-generated method stub
-		return null;
+		if(null==mLightPlaces || mLightPlaces.isEmpty())
+		{
+			queryLightMeasurementPlaces();
+		}
+		return mLightPlaces;
 	}
 
 	@Override

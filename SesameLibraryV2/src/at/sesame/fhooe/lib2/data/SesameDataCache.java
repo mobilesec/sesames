@@ -63,28 +63,28 @@ implements ISesameDataProvider
 
 	private ArrayList<ISesameUpdateListener> mUpdateListeners = new ArrayList<ISesameUpdateListener>();
 
-	private Runnable mUpdateRunnable = new Runnable()
-	{
-		@Override
-		public void run()
-		{
-			while(mRunning)
-			{
-				update();
-				if(mRunning)
-				{
-					try
-					{
-						Thread.sleep(mUpdateTimeout);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}					
-				}
-			}
-			Log.i(TAG, "update thread finished");
-		}
-	};
+//	private Runnable mUpdateRunnable = new Runnable()
+//	{
+//		@Override
+//		public void run()
+//		{
+//			while(mRunning)
+//			{
+//				update();
+//				if(mRunning)
+//				{
+//					try
+//					{
+//						Thread.sleep(mUpdateTimeout);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}					
+//				}
+//			}
+//			Log.i(TAG, "update thread finished");
+//		}
+//	};
 	private boolean mRunning = false;
 	private long mUpdateTimeout = 10000;
 	private Timer mUpdateTimer;

@@ -133,6 +133,33 @@ public class SemanticRepoHelper
 		return queryBuilder.toString();
 	}
 	
+	public static String getEnhancedNotificationQuery(String _room, String _sensorId, Date _start, Date _end)
+	{
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("select ?room ?sensor ?alert ?time ?message where{?alert <");
+		queryBuilder.append(PREFIXES.get(RDF_PREFIX_KEY));
+		queryBuilder.append("type> <");
+		queryBuilder.append(PREFIXES.get(DEFAULT_PREFIX_KEY));
+		queryBuilder.append("LightAlert> . ?alert <");
+		queryBuilder.append(PREFIXES.get(DEFAULT_PREFIX_KEY));
+		queryBuilder.append("atInstant> ?time . ?alert <");
+		queryBuilder.append(PREFIXES.get(DEFAULT_PREFIX_KEY));
+		queryBuilder.append("alertFromLightDevice> ?sensor . ?alert <");
+		queryBuilder.append(PREFIXES.get(DEFAULT_PREFIX_KEY));
+		queryBuilder.append("hasAlertMesage> ?message . ?sensor <");
+		queryBuilder.append(PREFIXES.get(DEFAULT_PREFIX_KEY));
+		queryBuilder.append("locatedAt> ?room. filter(?time >= ");
+		queryBuilder.append(getRDFTimeString(_start));
+		queryBuilder.append("). filter(?time < ");
+		queryBuilder.append(getRDFTimeString(_end));
+		queryBuilder.append("). filter( ?room = <");
+		queryBuilder.append(PREFIXES.get(DEFAULT_PREFIX_KEY));
+		queryBuilder.append(_room);
+		queryBuilder.append(">)}");
+		
+		return queryBuilder.toString();
+	}
+	
 	public static String getNotificationQuery()
 	{
 		StringBuilder queryBuilder = new StringBuilder();

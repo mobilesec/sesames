@@ -429,7 +429,7 @@ extends FragmentActivity implements OnCheckedChangeListener, IComparisonSelectio
 	protected void onResume() 
 	{
 		super.onResume();
-		startUpdates();
+//		startUpdates();
 	}
 
 	

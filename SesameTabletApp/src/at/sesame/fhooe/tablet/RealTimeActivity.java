@@ -176,6 +176,7 @@ extends Activity implements OnCheckedChangeListener
 //			Log.e(TAG, "maxDate = "+new Date((long)maxX).toString());
 			
 			mChartFrame.removeAllViews();
+			mChartFrame.invalidate();
 			mChartFrame.addView(ChartFactory.getTimeChartView(getApplicationContext(), data, mRendererProvider.getRenderer(), ""));
 //			mChartFrame.invalidate();
 		} catch (RendererInitializationException e) {
@@ -209,7 +210,7 @@ extends Activity implements OnCheckedChangeListener
 	protected void onResume() 
 	{
 		super.onResume();
-		startUpdates();
+//		startUpdates();
 	}
 
 	@Override

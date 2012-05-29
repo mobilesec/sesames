@@ -11,7 +11,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -24,6 +23,7 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
+import android.util.Log;
 import at.sesame.fhooe.lib2.pms.proxy.MySSLSocketFactory;
 
 public class RequestInterceptingClientProvider 
@@ -72,6 +72,7 @@ public class RequestInterceptingClientProvider
 				{
 					//				Log.e(TAG, request.getRequestLine().toString());
 					request.setHeader("Accept", "application/sparql-results+json");
+					Log.e(TAG, request.getRequestLine().toString());
 					//				request.setHeader("Accept","application/rdf+xml");
 					//				request.setHeader("Content-Type", "application/x-www-form-urlencoded");
 					//				request.setHeader("Accept", "application/sparql-results+xml, */*;q=0.5");

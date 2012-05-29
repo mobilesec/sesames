@@ -1,18 +1,17 @@
 package at.sesame.fhooe.lib2.pms;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.opengl.Visibility;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
@@ -23,6 +22,7 @@ extends ArrayAdapter<ComputerRoomInformation>
 {
 	private static final String TAG = "PMSListAdapter";
 	private static final DecimalFormat LIST_VALUE_FORMAT = new DecimalFormat("#.##");
+	private static final SimpleDateFormat LAST_MEASUREMENT_FORMAT = new SimpleDateFormat(" (HH:mm)");
 	private ArrayList<ComputerRoomInformation> mInfos;
 	private LayoutInflater mLi;
 	private Context mCtx;
@@ -49,7 +49,13 @@ extends ArrayAdapter<ComputerRoomInformation>
 		ComputerRoomInformation info = mInfos.get(position);
 //		Log.e(TAG, info.toString());
 		TextView header = (TextView)mView.findViewById(R.id.computerRoomListNameLabel);
-		header.setText(info.getRoomName());
+		try {
+			Date lastMeasurementDate = SesameDataCache.getInstance().getLastEnergyReading(info.getMeasurementPlace()).getTimeStamp();
+			header.setText(info.getRoomName()+LAST_MEASUREMENT_FORMAT.format(lastMeasurementDate));
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		header.setTextColor(Color.WHITE);
 
 		TextView idle = (TextView)mView.findViewById(R.id.computerRoomListInactiveLabel);
@@ -66,7 +72,7 @@ extends ArrayAdapter<ComputerRoomInformation>
 		TextView currentConsumption = (TextView)mView.findViewById(R.id.computerRoomListCurrentConsumptionLabel);
 		try {
 			double val = SesameDataCache.getInstance().getLastEnergyReading(info.getMeasurementPlace()).getVal();
-			currentConsumption.setText(mCtx.getString(R.string.pms_room_list_current_consumption_prefix)+LIST_VALUE_FORMAT.format(val));
+			currentConsumption.setText(mCtx.getString(R.string.pms_room_list_current_consumption_prefix)+LIST_VALUE_FORMAT.format(val)+" W");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,7 +80,7 @@ extends ArrayAdapter<ComputerRoomInformation>
 		
 		TextView overallConsumption = (TextView)mView.findViewById(R.id.computerRoomListOverallConsumptionLabel);
 		double val = SesameDataCache.getInstance().getOverallEnergyConsumtion(info.getMeasurementPlace());
-		overallConsumption.setText(mCtx.getString(R.string.pms_room_list_overall_consumption_prefix)+LIST_VALUE_FORMAT.format(val));
+		overallConsumption.setText(mCtx.getString(R.string.pms_room_list_overall_consumption_prefix)+LIST_VALUE_FORMAT.format(val)+" kW");
 		
 		// if there's no notification but operation in progress use another background color
 		if (info.getNumNotifications()>0) {

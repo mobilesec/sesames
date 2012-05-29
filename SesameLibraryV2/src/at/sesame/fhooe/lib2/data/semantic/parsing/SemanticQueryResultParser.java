@@ -5,18 +5,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import android.util.Log;
+
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-import at.sesame.fhooe.lib2.data.SesameDataContainer.SesameDataType;
+import at.sesame.fhooe.lib2.data.EnhancedSesameNotification;
+import at.sesame.fhooe.lib2.data.SesameDataCache;
+import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 import at.sesame.fhooe.lib2.data.SesameNotification;
+import at.sesame.fhooe.lib2.data.SesameSensor;
 import at.sesame.fhooe.lib2.data.SesameNotification.NotificationType;
+import at.sesame.fhooe.lib2.data.SesameSensor.SensorType;
 
 public class SemanticQueryResultParser 
 {
 	private static final String TAG = "SemanticQueryResultParser";
+
 
 	private static JSONArray extractValues(String _result)
 	{
@@ -59,6 +64,47 @@ public class SemanticQueryResultParser
 		catch(Exception _e)
 		{
 			_e.printStackTrace();
+		}
+		return res;
+	}
+	
+	public static ArrayList<EnhancedSesameNotification> parseEnhancedNotifications(String _result)
+	{
+		ArrayList<EnhancedSesameNotification> res = new ArrayList<EnhancedSesameNotification>();
+		JSONArray arr = extractValues(_result);
+	
+		Log.e(TAG, arr.toString());
+		try
+		{
+			for (int i = 0; i < arr.length(); i++) 
+			{
+				JSONObject jsonObject = arr.getJSONObject(i);
+				
+				JSONObject sensorObject = jsonObject.getJSONObject("sensor");
+				String sensorId = removeSesamePrefix(sensorObject.getString("value"));
+				
+				JSONObject roomObject = jsonObject.getJSONObject("room");
+				String roomId = removeSesamePrefix(roomObject.getString("value"));
+				
+//				JSONObject alertObject = jsonObject.getJSONObject("alert");
+//				String alertId = alertObject.getString("value");
+				
+				JSONObject messageObject = jsonObject.getJSONObject("message");
+				String message = messageObject.getString("value");
+				
+				JSONObject timeObject = jsonObject.getJSONObject("time");
+				String timeString = timeObject.getString("value");
+				Date d;
+				
+				d = SemanticRepoHelper.OPEN_RDF_DATE_FORMAT.parse(timeString);
+				
+				res.add(new EnhancedSesameNotification(new SesameMeasurementPlace(roomId), d, new SesameSensor(sensorId, SensorType.light), message));
+			}
+			
+		}
+		catch (Exception e) 
+		{
+			// TODO: handle exception
 		}
 		return res;
 	}

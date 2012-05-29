@@ -153,7 +153,7 @@ public class NotificationCenter
 		not.ledOnMS = 1000;
 		not.tickerText = tickerBuilder.toString();
 		not.flags |= Notification.FLAG_SHOW_LIGHTS;
-		not.vibrate = new long[]{0,1000,500,1000};
+//		not.vibrate = new long[]{0,1000,500,1000};
 //		not.defaults |= Notification.DEFAULT_LIGHTS;
 		
 		Intent notificationIntent = new Intent(mCtx, mIntentClass);
