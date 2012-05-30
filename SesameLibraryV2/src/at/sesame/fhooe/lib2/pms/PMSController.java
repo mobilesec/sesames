@@ -160,7 +160,8 @@ implements IPMSDialogActionHandler
 		@Override
 		protected Void doInBackground(ArrayList<ControllableDevice>... params) 
 		{
-
+			CONNECTION_IN_USE = true;
+			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
 			ArrayList<ControllableDevice> selDevs = params[0];
 			waitForUpdateToFinish();
 			for(ControllableDevice cd:selDevs)
@@ -199,13 +200,13 @@ implements IPMSDialogActionHandler
 			PMSDialogFactory.dismissCurrentDialog();
 		}
 
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			CONNECTION_IN_USE = true;
-			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
-			//			stopAutoUpdate();
-		}
+//		@Override
+//		protected void onPreExecute() {
+//			super.onPreExecute();
+//			CONNECTION_IN_USE = true;
+//			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
+//			//			stopAutoUpdate();
+//		}
 
 		@Override
 		protected void onProgressUpdate(Void... values) {
@@ -511,7 +512,16 @@ implements IPMSDialogActionHandler
 	 */
 	public void powerOffDevices(PmsHelper _helper, FragmentManager _fragMan, final ArrayList<ControllableDevice> _devices, final PowerOffState _state)
 	{
-		new PowerOffTask(_devices.size(), _helper, _fragMan).execute(new Object[]{_devices,_state});
+		new PowerOffTask(_helper, _fragMan).execute(new Object[]{_devices,_state});
+	}
+	
+	/**
+	 * powers off or puts to sleep all currently selected devices based on the passed PowerOffState
+	 * @param _state determines whether to shut down or put to sleep all selected devices 
+	 */
+	public void powerOffDevices(PmsHelper _helper, FragmentManager _fragMan, final ArrayList<ControllableDevice> _devices, final PowerOffState _state, PMSActionInProgressDialogFragment _dialog)
+	{
+		new PowerOffTask(_helper, _fragMan, _dialog).execute(new Object[]{_devices,_state});
 	}
 
 
@@ -525,20 +535,30 @@ implements IPMSDialogActionHandler
 		private FragmentManager mFragMan;
 
 
-		public PowerOffTask(int _max, PmsHelper _helper, FragmentManager _fragMan)
+		public PowerOffTask(PmsHelper _helper, FragmentManager _fragMan)
 		{
 			//			mTitle = _title;
 //			mCtx = _ctx;
-			mMax  =_max;
+			
+//			CONNECTION_IN_USE = true;
+//			//			stopAutoUpdate();
+//			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.shutdown_dialog_title), mMax});
+			this(_helper, _fragMan, null);
+		}
+		
+		public PowerOffTask(PmsHelper _helper, FragmentManager _fragMan, PMSActionInProgressDialogFragment _dialog)
+		{
 			mHelper = _helper;
+			mMax  =mHelper.getSelectedDevices().size();
 			mFragMan = _fragMan;
+			mDialog = _dialog;
 		}
 
 		@Override
 		protected void onPostExecute(Void result) {
 			//			startAutoUpdate();
 			CONNECTION_IN_USE = false;
-			PMSDialogFactory.dismissCurrentDialog();
+//			PMSDialogFactory.dismissCurrentDialog();
 			super.onPostExecute(result);
 		}
 
@@ -548,7 +568,10 @@ implements IPMSDialogActionHandler
 			super.onPreExecute();
 			CONNECTION_IN_USE = true;
 			//			stopAutoUpdate();
-			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.shutdown_dialog_title), mMax});
+			if(null==mDialog)
+			{
+				mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.shutdown_dialog_title), mMax});				
+			}
 		}
 
 
@@ -556,11 +579,15 @@ implements IPMSDialogActionHandler
 		@Override
 		protected void onProgressUpdate(Void... values) {
 			super.onProgressUpdate(values);
-			mDialog.incrementProgressBy(1);
+			if(null!=mDialog)
+			{
+				mDialog.incrementProgressBy(1);				
+			}
 		}
 
 		@Override
 		protected Void doInBackground(Object... params) {
+			
 			//			mUpdateThread.pause();
 			//					stopAutoUpdate();
 			//					try {
@@ -594,6 +621,7 @@ implements IPMSDialogActionHandler
 				this.publishProgress(new Void[]{});
 			}
 			mHelper.deselectAll();
+			PMSDialogFactory.dismissCurrentDialog();
 			//					startAutoUpdate();
 			//					mUpdateThread.resumeAfterPause();
 			//					for(ControllableDevice cd:selDevs)

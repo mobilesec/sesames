@@ -12,14 +12,12 @@ import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -33,13 +31,18 @@ import at.sesame.fhooe.lib2.pms.ControllableDeviceComparator;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceListEntry;
 import at.sesame.fhooe.lib2.pms.IListEntry;
 import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
+import at.sesame.fhooe.lib2.pms.PMSController;
 import at.sesame.fhooe.lib2.pms.PMSProvider;
 import at.sesame.fhooe.lib2.pms.PmsHelper;
 import at.sesame.fhooe.lib2.pms.SeparatorListEntry;
 import at.sesame.fhooe.lib2.pms.SeparatorListEntry.ListType;
+import at.sesame.fhooe.lib2.pms.dialogs.PMSActionInProgressDialogFragment;
+import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
+import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
 import at.sesame.fhooe.lib2.pms.errorhandling.ErrorForwarder;
 import at.sesame.fhooe.lib2.pms.errorhandling.IErrorReceiver;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
+import at.sesame.fhooe.lib2.pms.model.ControllableDevice.PowerOffState;
 import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
 
 
@@ -62,36 +65,6 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	
 	public static final String COMPUTER_ROOM_INFO_KEY = "at.sesame.fhooe.mp";
 
-	//	/**
-	//	 * integer constant for displaying the dialog for actions on active devices
-	//	 */
-	//	private static final int ACTIVE_DEVICE_ACTION_DIALOG = 0;
-	//
-	//	/**
-	//	 * integer constant for displaying the dialog for actions on inactive devices
-	//	 */
-	//	private static final int INACTIVE_DEVICE_ACTION_DIALOG = 1;
-	//
-	//	/**
-	//	 * integer constant for displaying the dialog when no internet connection is detected
-	//	 */
-	//	private static final int NO_NETWORK_DIALOG = 2;
-	//
-	//	/**
-	//	 * integer constant for displaying the dialog when the shutdown of a computer failed
-	//	 */
-	//	private static final int CANT_SHUTDOWN_DIALOG = 3;
-	//
-	//	/**
-	//	 * integer constant for displaying the dialog when the wake up of a computer failed
-	//	 */
-	//	private static final int CANT_WAKEUP_DIALOG = 4;
-	//
-	//	/**
-	//	 * integer constant for displaying the dialog when a list of devices is shut down or woken up
-	//	 */
-	//	private static final int ACTION_IN_PROGRESS_DIALOG = 5;
-	//
 	/**
 	 * the key under which the hostname information is stored in the bundle for onPrepareDialog
 	 */
@@ -246,7 +219,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 		ViewGroup activeDeviceControlContainer = (ViewGroup)findViewById(R.id.activeDeviceControllContainer);
 		ViewGroup inactiveDeviceControlContainer = (ViewGroup)findViewById(R.id.inactiveDeviceControllContainer);
-		mPmsHelper = new PmsHelper(this, getSupportFragmentManager(), this, mComputerRoomInfo.getRoomName(), activeDeviceControlContainer, inactiveDeviceControlContainer);
+		mPmsHelper = new PmsHelper(PMSClientActivity.this, getSupportFragmentManager(), this, mComputerRoomInfo.getRoomName(), activeDeviceControlContainer, inactiveDeviceControlContainer);
 		mDevList = (ListView)findViewById(R.id.deviceList);
 		//		setControlContainerVisibility(View.GONE, View.GONE);
 
@@ -1394,15 +1367,22 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	@Override
 	public void onClick(View arg0) 
 	{
-//		if (arg0.getId() == R.id.sleepButton) {
-//			mPmsController.powerOffDevices(mUiHelper.getSelectedDevices(),PowerOffState.sleep);
-//		} else if (arg0.getId() == R.id.shutDownButton) {
-//			Log.e(TAG, "shut down all");
-//			mPmsController.powerOffDevices(mUiHelper.getSelectedDevices(),PowerOffState.shutdown);
-//		} else if (arg0.getId() == R.id.wakeUpButton) {
-//			Log.e(TAG, "wake up all");
+//		PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), null, new Object[]{this, getString(R.string.wakeup_dialog_title), mPmsHelper.getSelectedDevices().size()});
+		PMSController controller = SesameDataCache.getInstance().getController();
+		if (arg0.getId() == R.id.sleepButton) 
+		{
+			PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), controller, new Object[]{this, getString(R.string.shutdown_dialog_title), mPmsHelper.getSelectedDevices().size()});
+			controller.powerOffDevices(mPmsHelper, getSupportFragmentManager(), mPmsHelper.getSelectedDevices(),PowerOffState.sleep);
+		} else if (arg0.getId() == R.id.shutDownButton) {
+			Log.e(TAG, "shut down all");
+			PMSActionInProgressDialogFragment dialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), controller, new Object[]{this, getString(R.string.shutdown_dialog_title), mPmsHelper.getSelectedDevices().size()});
+			controller.powerOffDevices(mPmsHelper, getSupportFragmentManager(), mPmsHelper.getSelectedDevices(),PowerOffState.shutdown, dialog);
+		} else if (arg0.getId() == R.id.wakeUpButton) {
+			Log.e(TAG, "wake up all");
+			PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), controller, new Object[]{this, getString(R.string.wakeup_dialog_title), mPmsHelper.getSelectedDevices().size()});
 //			mPmsController.wakeupDevices(mUiHelper.getSelectedDevices());
-//		}
+			controller.wakeupDevices(mPmsHelper, getSupportFragmentManager(), mPmsHelper.getSelectedDevices());
+		}
 	}
 
 	//	/**
@@ -1805,6 +1785,8 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 		//		showDialog(CANT_WAKEUP_DIALOG, getBundledHostname(_mac));
 //		PMSDialogFactory.showDialog(DialogType.CANT_WAKEUP_DIALOG, getSupportFragmentManager(), mPmsController, new Object[]{_mac});
 	}
+	
+	
 
 	/**
 	 * stores the hostname of a device in a new bundle. the entry is made for the key BUNDLE_HOSTNAME_KEY

@@ -377,7 +377,7 @@ implements OnCheckedChangeListener
 			SeparatorListEntry sle = extractSeparatorFromTag(buttonView);
 			boolean selected = mUiHelper.handleMultipleSelectionAttempt(sle.getType(), isChecked);
 			System.out.println("result of group selection:"+selected);
-			sle.setSelected(selected);
+			sle.setSelected(isChecked);
 //			buttonView.setChecked(selected);
 			break;
 		}
