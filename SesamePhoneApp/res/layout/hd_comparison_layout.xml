@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="[TITLE]"
+        android:text="Vergleich"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
@@ -30,14 +30,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Täglich"
+                android:text="Tagesvgl."
                 android:textColor="#ffffffff" />
 
             <RadioButton
                 android:id="@+id/hd_comparison_layout_weekRadioButt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wöchentlich"
+                android:text="Wochenvgl."
                 android:textColor="#ffffffff" />
         </RadioGroup>
 

@@ -38,6 +38,6 @@
     <string name="energy_bar_y_title">kWh</string>
     <string name="pms_room_list_current_consumption_prefix">"aktueller Verbrauch: "</string>
     <string name="pms_room_list_overall_consumption_prefix">"Gesamtverbrauch: "</string>
-    <string name="notification_title">Sesame Notification</string>
+    <string name="notification_title">Computer sind schon länger unbenutzt!</string>
     <string name="notification_text">"Anzahl der Warunungen: "</string>
 </resources>
