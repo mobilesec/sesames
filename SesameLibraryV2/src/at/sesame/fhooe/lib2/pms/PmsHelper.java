@@ -321,7 +321,7 @@ public class PmsHelper
 
 	public ControllableDeviceListEntry setUiInfo(ControllableDeviceListEntry _cdle)
 	{
-		Log.e(TAG, mSelectionMap.toString());
+//		Log.e(TAG, mSelectionMap.toString());
 		ControllableDevice cd = _cdle.getControllableDevice();
 		//		Log.i(TAG, "updating list entry:"+_cdle.toString());
 		//		Log.i(TAG, "device from entry:"+cd.toString());

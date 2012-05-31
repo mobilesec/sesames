@@ -321,9 +321,7 @@ implements ISesameDataListener, ILoginListener
 
 	@Override
 	protected void onDestroy() 
-	{
-		Log.e(TAG, "‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹DESSTROY");
-		SesameDataCache.cleanUp();			
+	{			
 		super.onDestroy();
 	}
 	

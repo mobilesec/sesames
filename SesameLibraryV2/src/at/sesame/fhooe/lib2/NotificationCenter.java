@@ -1,9 +1,7 @@
 package at.sesame.fhooe.lib2;
 
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -11,11 +9,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
-import at.sesame.fhooe.lib2.pms.hosts.*;
+import at.sesame.fhooe.lib2.pms.hosts.EDV1Hosts;
+import at.sesame.fhooe.lib2.pms.hosts.EDV3Hosts;
+import at.sesame.fhooe.lib2.pms.hosts.EDV6Hosts;
+import at.sesame.fhooe.lib2.pms.hosts.HostList;
 import at.sesame.fhooe.lib2.pms.model.ControllableDevice;
 
 
@@ -24,7 +22,7 @@ public class NotificationCenter
 	private static final String TAG = "NotificationCenter";
 	
 	private static Timer mNotificationTimer;
-	private static final long NOTIFICATION_PERIOD = 30000;
+	private static final long NOTIFICATION_PERIOD = 3600000;
 	
 	private static final int NOTIFICATION_ID = 1;
 //	private static final CharSequence NOTIFICATION_TITLE = "Sesame notification";

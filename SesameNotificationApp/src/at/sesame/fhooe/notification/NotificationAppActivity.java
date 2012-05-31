@@ -174,7 +174,7 @@ implements IFilterResultReceiver
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		SesameDataCache.cleanUp();
+//		SesameDataCache.cleanUp();
 	}
 
 	@Override

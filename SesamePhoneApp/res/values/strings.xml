@@ -37,7 +37,7 @@
     <string name="energy_graph_y_title">Watt</string>
     <string name="energy_bar_y_title">kWh</string>
     <string name="pms_room_list_current_consumption_prefix">"Aktueller Verbrauch: "</string>
-    <string name="pms_room_list_overall_consumption_prefix">"Gesamtverbrauch: "</string>
+    <string name="pms_room_list_overall_consumption_prefix">"Verbrauch seit: "</string>
      <string name="global_current">" aktuell "</string>
     <string name="hd_comparison_day_cb1_text">" vor 1 Woche"</string>
     <string name="hd_comparison_day_cb2_text">" vor 2 Wochen"</string>
@@ -47,5 +47,6 @@
     <string name="hd_comparison_week_cb2_text">" vor 2 Wochen"</string>
     <string name="hd_comparison_week_cb3_text">" vor 3 Wochen"</string>
     <string name="hd_comparison_week_cb4_text">" vor 4 Wochen"</string>
+    <string name="connection_loss_message">"Internetverbindung unterbrochen, es werden keine aktuellen daten angezeigt "</string>
 
 </resources>

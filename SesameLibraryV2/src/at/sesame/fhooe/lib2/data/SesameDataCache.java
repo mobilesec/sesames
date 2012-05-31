@@ -13,7 +13,10 @@ import java.util.concurrent.ExecutionException;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import at.sesame.fhooe.lib2.Constants;
 import at.sesame.fhooe.lib2.R;
@@ -329,7 +332,7 @@ implements ISesameDataProvider
 	public void notifyConnectionLost()
 	{
 		Log.e(TAG, "notified about connection loss");
-		cleanUp();
+//		cleanUp();
 	}
 
 	public SesameConfigData getConfigData()
@@ -355,7 +358,7 @@ implements ISesameDataProvider
 			if(!devicesLoaded)
 			{
 				Log.e(TAG, "devices could not be loaded");
-				//TODO: end app!
+				exitAppAndNotify();
 			}
 			else
 			{
@@ -480,7 +483,7 @@ implements ISesameDataProvider
 			Log.e(TAG, Arrays.toString((SesameMeasurementPlace[]) mEnergyMeasurementPlaces.toArray(new SesameMeasurementPlace[mEnergyMeasurementPlaces.size()])));
 			if(null == mEnergyMeasurementPlaces || mEnergyMeasurementPlaces.size()<6)
 			{
-
+				exitAppAndNotify();
 			}
 			EDV1_PLACE = mEnergyMeasurementPlaces.get(4);
 			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
@@ -496,6 +499,26 @@ implements ISesameDataProvider
 			break;
 		}
 		resetAllUpdateTables();
+	}
+
+	private void exitAppAndNotify() {
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			
+			@Override
+			public void run() 
+			{
+				Toast.makeText(mCtx, "Daten konnten nicht geladen werden, Anwendung wird beendet", Toast.LENGTH_LONG).show();
+			}
+		});
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.exit(0);
+		
 	}
 
 	private void resetAllUpdateTables()
@@ -1011,7 +1034,7 @@ implements ISesameDataProvider
 		if(checkConnectivity())
 		{
 
-			if(!mController.isConnectionInUse())
+			if(!PMSController.isConnectionInUse())
 			{
 				boolean energyDataLoaded = refreshEnergyData(mNumDays2LoadEnergyData);
 				

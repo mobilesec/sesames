@@ -1,11 +1,13 @@
 package at.sesame.fhooe.phone;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,21 +16,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 import at.sesame.fhooe.lib2.NotificationCenter;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.ISesameUpdateListener;
@@ -36,9 +33,11 @@ import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameNotification;
 import at.sesame.fhooe.lib2.logging.SesameLogger;
 import at.sesame.fhooe.lib2.logging.SesameLogger.EntryType;
+import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter;
+import at.sesame.fhooe.lib2.logging.export.SesameFileLogExporter.ExportLocation;
 import at.sesame.fhooe.lib2.mail.SesameMail;
+import at.sesame.fhooe.lib2.mail.SesameMail.NotificationType;
 import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
-import at.sesame.fhooe.lib2.pms.IPMSUpdateListener;
 import at.sesame.fhooe.lib2.pms.PMSRoomListAdapter;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory;
 import at.sesame.fhooe.lib2.pms.dialogs.PMSDialogFactory.DialogType;
@@ -54,7 +53,8 @@ public class PMSRoomsListActivity
 extends FragmentActivity 
 implements OnItemClickListener, ISesameUpdateListener
 {
-	private static final String TAG = "PMSRoomListFragment";
+	private static final String TAG = "PMSRoomListActivity";
+	private static final SimpleDateFormat	LOG_FILENAME_DATE_FORMAT		= new SimpleDateFormat("dd_MM_yy_HH_mm");
 	private static final int UPDATE_PERIOD = 5000;
 	
 	private boolean mRepoAvailable = false;
@@ -93,13 +93,22 @@ implements OnItemClickListener, ISesameUpdateListener
 	private HostList mEdv6Hosts = new EDV6Hosts();
 	
 	private Timer mUpdateTimer;
+	private Timer mShutdownTimer;
+	private int mShutdownHour = 19;
 	
 //	private SesameDataCache mCache;
+	private SesameFileLogExporter mExporter;
+	private static final long LOG_EXPORT_PERIOD = 10000;
 
 	public void onCreate(Bundle _savedInstanceState)
 	{
 		super.onCreate(_savedInstanceState);
+		String fileName = "sesameLog" + LOG_FILENAME_DATE_FORMAT.format(new Date()) + ".csv";
+		mExporter = new SesameFileLogExporter(PMSRoomsListActivity.this, ExportLocation.EXT_PUB_DIR,
+				fileName);
+		SesameLogger.setExporter(mExporter);
 
+		SesameLogger.startContinuousExport(LOG_EXPORT_PERIOD);
 		if(!checkConnectivity())
 		{
 			Toast.makeText(this, "Netzwerk nicht verbunden.\n Anwendung wird beendet.\n Bitte stellen sie eine Internetverbindung her und starten sie die Anwendung erneut", Toast.LENGTH_LONG).show();
@@ -110,6 +119,25 @@ implements OnItemClickListener, ISesameUpdateListener
 			
 			new CreationTask().execute();			
 		}
+	}
+	private void stopShutdownTask()
+	{
+		if(null!=mShutdownTimer)
+		{
+			mShutdownTimer.cancel();
+			mShutdownTimer.purge();
+		}
+	}
+	private void startShutdownTask()
+	{
+		stopShutdownTask();
+		GregorianCalendar shutdownCal = new GregorianCalendar();
+		shutdownCal.set(Calendar.HOUR_OF_DAY, mShutdownHour);
+		shutdownCal.set(Calendar.MINUTE, 30);
+		shutdownCal.set(Calendar.SECOND, 0);
+		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "automatic shutdown scheduled for: "+shutdownCal.getTime().toString());
+		mShutdownTimer = new Timer("shutdown timer");
+		mShutdownTimer.schedule(new ShutdownTask(), shutdownCal.getTime());
 	}
 	
 	/**
@@ -143,7 +171,7 @@ implements OnItemClickListener, ISesameUpdateListener
 	@Override
 	public void onBackPressed() {
 		moveTaskToBack(true);
-		SesameDataCache.cleanUp();
+//		SesameDataCache.cleanUp();
 	}
 
 	private class CreationTask extends AsyncTask<Void, Void, Void> {
@@ -181,8 +209,10 @@ implements OnItemClickListener, ISesameUpdateListener
 			
 			SesameDataCache.getInstance().registerSesameUpdateListener(PMSRoomsListActivity.this);
 			PMSDialogFactory.dismissCurrentDialog();
+			updateComputerRoomInfos();
 			NotificationCenter.start(PMSRoomsListActivity.this, PMSRoomsListActivity.class);
-//			startHeartBeat();
+			startHeartBeat();
+			startShutdownTask();
 		}
 
 		@Override
@@ -210,6 +240,7 @@ implements OnItemClickListener, ISesameUpdateListener
 	}
 	
 	
+	
 	private class HeartBeatTask extends TimerTask
 	{
 		@Override
@@ -219,7 +250,7 @@ implements OnItemClickListener, ISesameUpdateListener
 			Log.i(TAG, "################HEARTBEAT################");
 			SesameMail mail = new SesameMail();
 			try {
-//				mail.addAttachment(mExporter.getMailLogFilePath());
+				mail.addAttachment(mExporter.getMailLogFilePath());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -568,7 +599,25 @@ implements OnItemClickListener, ISesameUpdateListener
 	public void onDestroy() 
 	{
 		stopUpdates();
-//		SesameDataCache.cleanUp();
+		SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "application closed");
+		SesameLogger.export();
+		SesameMail mail = new SesameMail();
+		try {
+			mail.addAttachment(mExporter.getMailLogFilePath());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		mail.setBody("app was shut down");
+		
+		try {
+			mail.send(SesameDataCache.getInstance().getConfigData(), "app was shut down");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		SesameLogger.stopContinuousExporting();
+		SesameDataCache.cleanUp();
 //		if(null!=mPMSClientFrag)
 //		{
 //			mPMSClientFrag.dismiss();
@@ -576,11 +625,13 @@ implements OnItemClickListener, ISesameUpdateListener
 		super.onDestroy();
 	}
 
-
-
 	@Override
 	public void onPause() {
-		stopUpdates();
+//		stopUpdates();
+		if(null!=SesameDataCache.getInstance())
+		{
+			SesameDataCache.getInstance().unregisterSesameUpdateListener(this);			
+		}
 		super.onPause();
 	}
 
@@ -588,7 +639,11 @@ implements OnItemClickListener, ISesameUpdateListener
 	public void onResume() 
 	{
 		super.onResume();
-		startUpdates();
+		
+		if(null!=SesameDataCache.getInstance())
+		{
+			SesameDataCache.getInstance().registerSesameUpdateListener(PMSRoomsListActivity.this);
+		}
 	}
 
 	public void notifyAboutNotifications(final ArrayList<SesameNotification> _notifications) 
@@ -703,21 +758,113 @@ implements OnItemClickListener, ISesameUpdateListener
 	}
 
 	@Override
-	public void notifyPmsUpdate(boolean _success) {
-		updateComputerRoomInfos();
+	public void notifyPmsUpdate(boolean _success) 
+	{
+		Log.e(TAG, "notified about pms update:"+_success);
+		
+		if(_success)
+		{
+			mPmsUpdateFailCount = 0;
+			mLastPmsUpdate = new Date();
+			mPmsAvailable = true;
+			updateComputerRoomInfos();
+		}
+		else
+		{
+			mPmsUpdateFailCount++;
+		}
+		if(mPmsUpdateFailCount>=mMaxPmsUpdateFailCount)
+		{
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection to pms potentially lost...");
+			if(mPmsAvailable)
+			{
+				new SesameMail().send(SesameDataCache.getInstance().getConfigData(), NotificationType.PMS_FAILED);
+			}
+			mPmsAvailable = false;
+//			if(shouldNotify(mLastPmsFailNotification))
+//			{
+//				new SesameMail().send(mDataCache.getConfigData(), NotificationType.PMS_FAILED);
+//				mLastPmsFailNotification = new Date();
+//			}
+		}
 		
 	}
 
 	@Override
-	public void notifyEnergyUpdate(boolean _success) {
+	public void notifyEnergyUpdate(boolean _success) 
+	{
 		// TODO Auto-generated method stub
+		Log.e(TAG, "notified about energyUpdate:"+_success);
+		if(_success)
+		{
+			mRepoAvailable = true;
+			mEnergyUpdateFailCount = 0;
+			mLastEnergyUpdate = new Date();
+			
+		}
+		else
+		{
+			mEnergyUpdateFailCount++;
+		}
+		
+		if(mEnergyUpdateFailCount>=mMaxEnergyUpdateFailCount)
+		{
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection to repository lost");
+			if(mRepoAvailable)
+			{
+				new SesameMail().send(SesameDataCache.getInstance().getConfigData(), NotificationType.REPO_FAILED);
+			}
+			mRepoAvailable = false;
+//			if(shouldNotify(mLastRepoConnectionLostNotification))
+//			{
+//				new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_FAILED);
+//				mLastRepoConnectionLostNotification = new Date();
+//			}
+		}
+		
+		long lastUpdateMillis = SesameDataCache.getInstance().getLastEnergyDataTimeStamp().getTime();
+		long nowMillis = new Date().getTime();
+		long diff = nowMillis-lastUpdateMillis;
+		if(diff<0)
+		{
+			Log.e(TAG, "error computing diff for energy update times");
+		}
+		
+		if(diff>3600000*mNumHoursBeforeRepoFailNotification)
+		{
+			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "last update of energy data is older than "+mNumHoursBeforeRepoFailNotification+" hours");
+			if(mRepoDataNew)
+			{
+				new SesameMail().send(SesameDataCache.getInstance().getConfigData(), NotificationType.REPO_OLD);
+			}
+			mRepoDataNew = false;
+//			if(shouldNotify(mLastRepoOldNotification))
+//			{
+//				new SesameMail().send(mDataCache.getConfigData(), NotificationType.REPO_OLD);
+//				mLastRepoOldNotification = new Date();
+//			}
+		}
+		else
+		{
+			mRepoDataNew = true;
+		}
 		
 	}
 
 	@Override
 	public void notifyConnectivityLoss() {
 		// TODO Auto-generated method stub
-		
+		Log.e(TAG, "notified about connectivity loss");
+		runOnUiThread(new Runnable()
+		{	
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "connection lost");
+				Toast.makeText(PMSRoomsListActivity.this, getString(R.string.connection_loss_message), Toast.LENGTH_LONG).show();
+//				mDataCache.cleanUp();
+			}
+		});
 	}
 	
 

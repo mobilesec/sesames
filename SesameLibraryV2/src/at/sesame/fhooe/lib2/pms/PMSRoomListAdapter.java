@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import at.sesame.fhooe.lib2.Constants;
 import at.sesame.fhooe.lib2.R;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 
@@ -23,6 +24,7 @@ extends ArrayAdapter<ComputerRoomInformation>
 	private static final String TAG = "PMSListAdapter";
 	private static final DecimalFormat LIST_VALUE_FORMAT = new DecimalFormat("#.##");
 	private static final SimpleDateFormat LAST_MEASUREMENT_FORMAT = new SimpleDateFormat(" (HH:mm)");
+	private static final SimpleDateFormat TRIAL_START_FORMAT = new SimpleDateFormat("dd.MM.yyyy: ");
 	private ArrayList<ComputerRoomInformation> mInfos;
 	private LayoutInflater mLi;
 	private Context mCtx;
@@ -80,7 +82,7 @@ extends ArrayAdapter<ComputerRoomInformation>
 		
 		TextView overallConsumption = (TextView)mView.findViewById(R.id.computerRoomListOverallConsumptionLabel);
 		double val = SesameDataCache.getInstance().getOverallEnergyConsumtion(info.getMeasurementPlace());
-		overallConsumption.setText(mCtx.getString(R.string.pms_room_list_overall_consumption_prefix)+LIST_VALUE_FORMAT.format(val)+" kW");
+		overallConsumption.setText(mCtx.getString(R.string.pms_room_list_overall_consumption_prefix)+TRIAL_START_FORMAT.format(Constants.getTrialStartDate())+LIST_VALUE_FORMAT.format(val)+" kWh");
 		
 		// if there's no notification but operation in progress use another background color
 		if (info.getNumNotifications()>0) {

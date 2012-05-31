@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import at.sesame.fhooe.lib2.R;
+import at.sesame.fhooe.lib2.data.ISesameUpdateListener;
 import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.pms.ComputerRoomInformation;
 import at.sesame.fhooe.lib2.pms.ControllableDeviceComparator;
@@ -56,7 +57,7 @@ import at.sesame.fhooe.lib2.pms.model.ExtendedPMSStatus;
  */
 public class PMSClientActivity 
 extends FragmentActivity 
-implements OnClickListener, IErrorReceiver, IPMSUpdateListener
+implements OnClickListener, IErrorReceiver, IPMSUpdateListener, ISesameUpdateListener
 {
 	/**
 	 * the tag to identify the logger output of this class
@@ -238,7 +239,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 		mWakeUpAllButt = (Button)findViewById(R.id.wakeUpButton);
 		mWakeUpAllButt.setOnClickListener(this);
-		
+		SesameDataCache.getInstance().registerSesameUpdateListener(this);
 		startSingleUiUpdate();
 
 	}
@@ -608,7 +609,7 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 	//					}
 	//				}
 	//			});	
-	//			break;
+	//			break; 
 	//
 	//		case INACTIVE_DEVICE_ACTION_DIALOG:
 	//			//			strings.add(getString(R.string.PMSClientActivity_inactiveDeviceDialogWakeUpCommand));
@@ -1371,17 +1372,17 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 		PMSController controller = SesameDataCache.getInstance().getController();
 		if (arg0.getId() == R.id.sleepButton) 
 		{
-			PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), controller, new Object[]{this, getString(R.string.shutdown_dialog_title), mPmsHelper.getSelectedDevices().size()});
-			controller.powerOffDevices(mPmsHelper, getSupportFragmentManager(), mPmsHelper.getSelectedDevices(),PowerOffState.sleep);
+			PMSActionInProgressDialogFragment dialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), controller, new Object[]{this, getString(R.string.shutdown_dialog_title), mPmsHelper.getSelectedDevices().size()});
+			controller.powerOffDevices(mPmsHelper, getSupportFragmentManager(), mPmsHelper.getSelectedDevices(),PowerOffState.sleep, dialog);
 		} else if (arg0.getId() == R.id.shutDownButton) {
 			Log.e(TAG, "shut down all");
 			PMSActionInProgressDialogFragment dialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), controller, new Object[]{this, getString(R.string.shutdown_dialog_title), mPmsHelper.getSelectedDevices().size()});
 			controller.powerOffDevices(mPmsHelper, getSupportFragmentManager(), mPmsHelper.getSelectedDevices(),PowerOffState.shutdown, dialog);
 		} else if (arg0.getId() == R.id.wakeUpButton) {
 			Log.e(TAG, "wake up all");
-			PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), controller, new Object[]{this, getString(R.string.wakeup_dialog_title), mPmsHelper.getSelectedDevices().size()});
+			PMSActionInProgressDialogFragment dialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, getSupportFragmentManager(), controller, new Object[]{this, getString(R.string.wakeup_dialog_title), mPmsHelper.getSelectedDevices().size()});
 //			mPmsController.wakeupDevices(mUiHelper.getSelectedDevices());
-			controller.wakeupDevices(mPmsHelper, getSupportFragmentManager(), mPmsHelper.getSelectedDevices());
+			controller.wakeupDevices(mPmsHelper, getSupportFragmentManager(), mPmsHelper.getSelectedDevices(), dialog);
 		}
 	}
 
@@ -1845,10 +1846,30 @@ implements OnClickListener, IErrorReceiver, IPMSUpdateListener
 
 	@Override
 	public void notifyPMSUpdated() {
-		Log.e(TAG, "notified by update thread");
-		refreshListEntries();
-
+//		Log.e(TAG, "notified by update thread");
+//		refreshListEntries();
+//		startSingleUiUpdate();
 	}
+
+	@Override
+	public void notifyPmsUpdate(boolean _success) {
+		// TODO Auto-generated method stub
+		startSingleUiUpdate();
+		
+	}
+
+	@Override
+	public void notifyEnergyUpdate(boolean _success) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyConnectivityLoss() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 //	@Override
 //	public int getNumSelectedDevices() {

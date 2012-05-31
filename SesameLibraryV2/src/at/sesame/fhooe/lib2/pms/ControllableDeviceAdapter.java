@@ -182,7 +182,7 @@ implements OnCheckedChangeListener
 			{
 				ControllableDeviceListEntry cdle = (ControllableDeviceListEntry)item;
 				mUiHelper.setUiInfo(cdle);
-				Log.e(TAG, "cdle #"+_pos+": selected="+cdle.isSelected());
+//				Log.e(TAG, "cdle #"+_pos+": selected="+cdle.isSelected());
 				ControllableDevice cd = cdle.getControllableDevice();
 				ViewHolder holder;
 //				if(null==_convertView)
@@ -223,7 +223,7 @@ implements OnCheckedChangeListener
 
 				
 				
-				Log.e(TAG, "holder for "+_pos+": "+holder);
+//				Log.e(TAG, "holder for "+_pos+": "+holder);
 				if(null!=cd)
 				{
 

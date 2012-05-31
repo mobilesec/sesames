@@ -127,7 +127,7 @@ public class DeviceStateUpdater
 	
 	
 
-	public static boolean isUpdateInProgress() {
+	public synchronized static boolean isUpdateInProgress() {
 		return mUpdateInProgress;
 	}
 

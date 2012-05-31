@@ -141,7 +141,11 @@ implements IPMSDialogActionHandler
 
 	public void wakeupDevices(PmsHelper _helper, FragmentManager _fragMan, final ArrayList<ControllableDevice> _selectedDevs)
 	{
-		new WakeupTask(_selectedDevs.size(), _helper, _fragMan).execute(_selectedDevs);
+		new WakeupTask(_helper, _fragMan).execute(_selectedDevs);
+	}
+	public void wakeupDevices(PmsHelper _helper, FragmentManager _fragMan, final ArrayList<ControllableDevice> _selectedDevs, PMSActionInProgressDialogFragment _dialog)
+	{
+		new WakeupTask(_helper, _fragMan, _dialog).execute(_selectedDevs);
 	}
 
 	private class WakeupTask extends AsyncTask<ArrayList<ControllableDevice>, Void, Void>
@@ -151,17 +155,22 @@ implements IPMSDialogActionHandler
 		private PmsHelper mHelper;
 		private FragmentManager mFragMan;
 
-		public WakeupTask(int _max, PmsHelper _helper, FragmentManager _fragMan)
+		public WakeupTask(PmsHelper _helper, FragmentManager _fragMan)
 		{
-			mMax = _max;
+			this(_helper, _fragMan, null);
+		}
+		public WakeupTask(PmsHelper _helper,FragmentManager _fragMan,PMSActionInProgressDialogFragment _dialog) 
+		{
 			mHelper = _helper;
+			mMax = _helper.getSelectedDevices().size();
+			mDialog = _dialog;
 			mFragMan = _fragMan;
 		}
 		@Override
 		protected Void doInBackground(ArrayList<ControllableDevice>... params) 
 		{
-			CONNECTION_IN_USE = true;
-			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
+//			CONNECTION_IN_USE = true;
+//			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
 			ArrayList<ControllableDevice> selDevs = params[0];
 			waitForUpdateToFinish();
 			for(ControllableDevice cd:selDevs)
@@ -200,13 +209,16 @@ implements IPMSDialogActionHandler
 			PMSDialogFactory.dismissCurrentDialog();
 		}
 
-//		@Override
-//		protected void onPreExecute() {
-//			super.onPreExecute();
-//			CONNECTION_IN_USE = true;
-//			mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});
-//			//			stopAutoUpdate();
-//		}
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			CONNECTION_IN_USE = true;
+			if(null==mDialog)
+			{
+				mDialog = (PMSActionInProgressDialogFragment) PMSDialogFactory.showDialog(DialogType.ACTION_IN_PROGRESS_DIALOG, mFragMan, PMSController.this, new Object[]{mCtx, mCtx.getString(R.string.wakeup_dialog_title), mMax});				
+			}
+			//			stopAutoUpdate();
+		}
 
 		@Override
 		protected void onProgressUpdate(Void... values) {
@@ -351,7 +363,6 @@ implements IPMSDialogActionHandler
 
 	private boolean loadDevices(HostList _hl)
 	{
-		Log.e(TAG, "loading device list for:"+_hl.toString());
 		//		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
 		ArrayList<ExtendedPMSStatus> statuses = null;
 		try
@@ -558,7 +569,7 @@ implements IPMSDialogActionHandler
 		protected void onPostExecute(Void result) {
 			//			startAutoUpdate();
 			CONNECTION_IN_USE = false;
-//			PMSDialogFactory.dismissCurrentDialog();
+			PMSDialogFactory.dismissCurrentDialog();
 			super.onPostExecute(result);
 		}
 
@@ -613,7 +624,7 @@ implements IPMSDialogActionHandler
 					e.printStackTrace();
 				}
 				try {
-					Thread.sleep(50);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -621,7 +632,6 @@ implements IPMSDialogActionHandler
 				this.publishProgress(new Void[]{});
 			}
 			mHelper.deselectAll();
-			PMSDialogFactory.dismissCurrentDialog();
 			//					startAutoUpdate();
 			//					mUpdateThread.resumeAfterPause();
 			//					for(ControllableDevice cd:selDevs)
@@ -759,7 +769,7 @@ implements IPMSDialogActionHandler
 
 	}
 
-	public boolean isConnectionInUse()
+	public synchronized static boolean isConnectionInUse()
 	{
 		return CONNECTION_IN_USE;
 	}
@@ -769,6 +779,7 @@ implements IPMSDialogActionHandler
 		while(DeviceStateUpdater.isUpdateInProgress())
 		{
 			try {
+				Log.i(TAG, "waiting for update to finish");
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
