@@ -12,11 +12,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
-import android.widget.ToggleButton;
-import at.sesame.fhooe.lib2.data.SesameDataCache;
 import at.sesame.fhooe.lib2.data.SesameMeasurementPlace;
 
 
@@ -43,7 +42,7 @@ implements IFilterResultReceiver
 			}
 		});
 		
-		ToggleButton filterToggle = (ToggleButton)findViewById(R.id.notification_app_filter_toggle_butt);
+		CheckBox filterToggle = (CheckBox)findViewById(R.id.notification_app_filter_toggle_butt);
 		filterToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override

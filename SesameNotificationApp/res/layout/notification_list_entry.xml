@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:background="@drawable/list_background"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:padding="5dp" >
 
     <LinearLayout
         android:layout_width="0dp"
@@ -31,6 +32,7 @@
         android:id="@+id/notification_list_entry_detail_butt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_selector"
         android:src="@drawable/ic_action_details" />
 
 </LinearLayout>

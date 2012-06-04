@@ -8,6 +8,7 @@
     <string name="filter_dialog_to_label_text">Benachrichtigungen zeigen bis:</string>
     <string name="notification_app_filter_on_text">Filter an</string>
     <string name="notification_app_filter_off_text">Filter aus</string>
+    <string name="notification_app_filter_text">Filter aktivieren</string>
     <string name="filter_dialog_title">Filter</string>
 
 </resources>
