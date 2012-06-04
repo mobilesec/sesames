@@ -2,7 +2,8 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/TableLayout1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:padding="20dp" >
 
     <TableRow
         android:id="@+id/tableRow1"
@@ -34,15 +35,14 @@
         <DatePicker
             android:id="@+id/filter_dialog_from_date_picker"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <DatePicker
             android:id="@+id/filter_dialog_to_date_picker"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
+            android:layout_height="wrap_content" />
     </TableRow>
-
+
     <TableRow
         android:id="@+id/tableRow3"
         android:layout_width="match_parent"
@@ -59,8 +59,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
                 android:text="@android:string/ok" />
-
         </RelativeLayout>
 
         <RelativeLayout
@@ -74,8 +76,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
                 android:text="@android:string/cancel" />
-
         </RelativeLayout>
     </TableRow>
 
