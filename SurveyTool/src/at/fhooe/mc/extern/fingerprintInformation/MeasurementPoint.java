@@ -1,5 +1,7 @@
 package at.fhooe.mc.extern.fingerprintInformation;
 
+import java.io.Serializable;
+
 /**
  * subclass of FingerPrintItem specifying all MeasurementPoint specific
  * information
@@ -7,7 +9,8 @@ package at.fhooe.mc.extern.fingerprintInformation;
  *
  */
 public class MeasurementPoint 
-extends FingerPrintItem 
+extends FingerPrintItem
+implements Serializable
 {
 	/**
 	 * constant containing the separator used in the CSV file

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/mp_selection_menu_reset_pos" android:titleCondensed="reset" android:title="reset position"></item>
+    <item android:id="@+id/mp_selection_menu_select_mp" android:titleCondensed="select" android:title="select MP"></item>
+    
+
+</menu>

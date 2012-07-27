@@ -361,8 +361,9 @@ implements IPMSDialogActionHandler
 	//		return mUpdater.updateAllDevices();
 	//	}
 
-	private boolean loadDevices(HostList _hl)
+	private synchronized boolean loadDevices(final HostList _hl)
 	{
+		
 		//		ArrayList<String> macs = new ArrayList<String>(hosts.keySet());
 		ArrayList<ExtendedPMSStatus> statuses = null;
 		try
@@ -376,7 +377,7 @@ implements IPMSDialogActionHandler
 		}
 		if(null==statuses)
 		{
-			Log.e(TAG, "could not query statuses");
+			Log.e(TAG, "************could not query statuses");
 			//			mNetworkingDialog.dismiss();
 			//			PMSDialogFactory.dismissCurrentDialog();
 			return false;
@@ -647,33 +648,41 @@ implements IPMSDialogActionHandler
 
 	public class QueryDevsTask extends AsyncTask<HostList, Void, Boolean>
 	{
-		@Override
-		protected void onPreExecute() {
-			//			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, mFragMan, null, new Object[]{mCtx});
-		}
-
-		//		@Override
-		//		protected void onPostExecute(Void result) {
-		////			mUi.notifyPMSUpdated();
-		//			mDevicesLoaded = true;
-		//			if(null!=mUiHelper)
-		//			{
-		//				mUiHelper.notifyDevicesLoaded();				
-		//			}
-		////			Log.e(TAG, Arrays.toString((ControllableDevice[]) mAllDevices.toArray(new ControllableDevice[mAllDevices.size()])));
-		////			startAutoUpdate();
-		////			PMSDialogFactory.dismissCurrentDialog();
-		//		}
+//		@Override
+//		protected void onPreExecute() {
+//			//			PMSDialogFactory.showDialog(DialogType.NETWORKING_IN_PROGRESS, mFragMan, null, new Object[]{mCtx});
+//		}
+//
+//		//		@Override
+//		//		protected void onPostExecute(Void result) {
+//		////			mUi.notifyPMSUpdated();
+//		//			mDevicesLoaded = true;
+//		//			if(null!=mUiHelper)
+//		//			{
+//		//				mUiHelper.notifyDevicesLoaded();				
+//		//			}
+//		////			Log.e(TAG, Arrays.toString((ControllableDevice[]) mAllDevices.toArray(new ControllableDevice[mAllDevices.size()])));
+//		////			startAutoUpdate();
+//		////			PMSDialogFactory.dismissCurrentDialog();
+//		//		}
 
 		@Override
 		protected Boolean doInBackground(HostList... params) {
 			//			queryControllableDevicesSim();
 			//			queryControllableDevicesKDF();
 			Boolean result = true;
+			Log.e(TAG, "lists to load:"+params.length);
 			for(HostList hl:params)
 			{
 				if(null!=hl)
 				{
+					Log.e(TAG, "loading devices for:");
+					HashMap<String, String> map = hl.getHosts();
+					
+					for(String s:map.keySet())
+					{
+						Log.e(TAG, s+"->"+map.get(s));
+					}
 					if(!loadDevices(hl))
 					{
 						result = false;

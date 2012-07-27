@@ -18,7 +18,8 @@ import android.net.wifi.ScanResult;
  *
  */
 @SuppressWarnings("serial")
-public class FingerPrint implements Serializable 
+public class FingerPrint 
+implements Serializable 
 {
 	/**
 	 * the BSSID associated with the FingerPrint

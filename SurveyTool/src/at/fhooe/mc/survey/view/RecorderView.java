@@ -33,12 +33,14 @@ import at.fhooe.mc.R;
 import at.fhooe.mc.consts.ConstParameters;
 import at.fhooe.mc.extern.fingerprintInformation.AccessPoint;
 import at.fhooe.mc.extern.fingerprintInformation.FPIParser;
+import at.fhooe.mc.extern.fingerprintInformation.FingerPrint;
 import at.fhooe.mc.extern.fingerprintInformation.FingerPrintItem;
 import at.fhooe.mc.extern.fingerprintInformation.FingerPrintItem.Type;
 import at.fhooe.mc.extern.fingerprintInformation.MeasurementPoint;
 import at.fhooe.mc.extern.fingerprintInformation.Room;
 import at.fhooe.mc.extern.util.ARFFGenerator;
 import at.fhooe.mc.extern.util.ARFFGenerator.ARFFType;
+import at.fhooe.mc.graphical.GraphicalMpSelector;
 import at.fhooe.mc.notification.Toasts;
 import at.fhooe.mc.survey.recorder.WifiRecorder;
 
@@ -55,7 +57,7 @@ public class RecorderView extends Activity implements OnClickListener,
 
 	/** LOG_TAG for easier Log-Management **/
 	private static final String LOG_TAG = "RecorderView";
-
+	
 	/** bundle key for all mp's in rooms **/
 	public static final String RESULT_BUNDLE_MP_IN_ROOM_KEY = "at.fhooe.mc.survey.mpInRooms";
 
@@ -68,8 +70,8 @@ public class RecorderView extends Activity implements OnClickListener,
 	/** Dialog ID for Measurement in Progress **/
 	private static final int MEASUREMENT_IN_PROGRESS_DIALOG = 1;
 
-	/** Dialog ID for room selection **/
-	private static final int SELCECT_ROOM_DIALOG = 2;
+//	/** Dialog ID for room selection **/
+//	private static final int SELCECT_ROOM_DIALOG = 2;
 
 	/** Current MP Name Key **/
 	private static final String CURRENT_MP_NAME_KEY = "curMPName";
@@ -83,11 +85,13 @@ public class RecorderView extends Activity implements OnClickListener,
 	/** Code for save information **/
 	private static final int SAVE_INFORMATION_REQUEST_CODE = 0;
 
+	public static final int MP_SELECTION_REQUEST_CODE = 1;
+
 	/** Code for settings page **/
 	private static final int SETTINGS_CODE = 1;
 
-	/** Code for visual mode page **/
-	private static final int VISUAL_CODE = 2;
+//	/** Code for visual mode page **/
+//	private static final int VISUAL_CODE = 2;
 
 	/** the WifiRecorder to record, store and export the fingerprints **/
 	private WifiRecorder m_Recorder;
@@ -113,17 +117,17 @@ public class RecorderView extends Activity implements OnClickListener,
 	/** Array with all AccessPoints extracted from the xml file. **/
 	private ArrayList<AccessPoint> m_allAPs = new ArrayList<AccessPoint>();
 
-	/** Array with all names of MeasurementPoints **/
-	private ArrayList<String> m_allMPNames;
+//	/** Array with all names of MeasurementPoints **/
+//	private ArrayList<String> m_allMPNames;
 
-	/** Array with all names of Rooms **/
-	private ArrayList<String> m_allRoomNames;
+//	/** Array with all names of Rooms **/
+//	private ArrayList<String> m_allRoomNames;
 
-	/** Array List with ArrayList of all Rooms and their MPs in it **/
-	private ArrayList<ArrayList<MeasurementPoint>> m_MPinRooms = new ArrayList<ArrayList<MeasurementPoint>>();
+//	/** Array List with ArrayList of all Rooms and their MPs in it **/
+//	private ArrayList<ArrayList<MeasurementPoint>> m_MPinRooms = new ArrayList<ArrayList<MeasurementPoint>>();
 
-	/** The name of the actual MeasurementPoint **/
-	private String m_actMPName = null;
+//	/** The name of the actual MeasurementPoint **/
+//	private String m_actMPName = null;
 
 	/** The button to open the visual mode **/
 	private Button m_openVisualMode;
@@ -132,6 +136,8 @@ public class RecorderView extends Activity implements OnClickListener,
 	private boolean m_isRunning = false;
 
 	private Timer m_saveTimer;
+	
+	private MeasurementPoint mCurMp = null;
 
 	/**
 	 * Called when the activity is first created.
@@ -146,11 +152,11 @@ public class RecorderView extends Activity implements OnClickListener,
 		super.onCreate(_savedInstanceState);
 		setContentView(R.layout.recorder_view);
 
-		if (_savedInstanceState != null) {
-			m_actMPName = _savedInstanceState.getString(CURRENT_MP_NAME_KEY);
-		} else {
-			Log.e(LOG_TAG, "saved instance was null");
-		}
+//		if (_savedInstanceState != null) {
+//			m_actMPName = _savedInstanceState.getString(CURRENT_MP_NAME_KEY);
+//		} else {
+//			Log.e(LOG_TAG, "saved instance was null");
+//		}
 
 		m_select_MP = (Button) findViewById(R.id.chooseMPButton);
 		m_select_MP.setEnabled(true);
@@ -163,7 +169,7 @@ public class RecorderView extends Activity implements OnClickListener,
 		m_openVisualMode = (Button) findViewById(R.id.recorder_view_visualButton);
 		m_openVisualMode.setEnabled(true);
 		m_openVisualMode.setOnClickListener(this);
-		m_openVisualMode.setEnabled(false);
+//		m_openVisualMode.setEnabled(false);
 
 		m_actMPLabel = (TextView) findViewById(R.id.recorder_view_actMPLabel);
 
@@ -256,48 +262,48 @@ public class RecorderView extends Activity implements OnClickListener,
 		Toasts.fPIloadSuccess(getApplicationContext());
 
 		// generate ArrayList with rooms and mp's in it
-		for (int i = 0; i < m_allRooms.size(); i++) {
-
-			m_MPinRooms.add(new ArrayList<MeasurementPoint>());
-			for (int j = 0; j < items.size(); j++) {
-				// check if room name of fpi is equal to actual room name
-				if (items.get(j).getRoom()
-						.compareTo(m_allRooms.get(i).getName()) == 0) {
-					m_MPinRooms.get(i).add((MeasurementPoint) items.get(j));
-				}
-			}
-		}
+//		for (int i = 0; i < m_allRooms.size(); i++) {
+//
+//			m_MPinRooms.add(new ArrayList<MeasurementPoint>());
+//			for (int j = 0; j < items.size(); j++) {
+//				// check if room name of fpi is equal to actual room name
+//				if (items.get(j).getRoom()
+//						.compareTo(m_allRooms.get(i).getName()) == 0) {
+//					m_MPinRooms.get(i).add((MeasurementPoint) items.get(j));
+//				}
+//			}
+//		}
 
 	}
 
-	/**
-	 * Creates the Locations with all MP names
-	 */
-	private void createLocations() {
+//	/**
+//	 * Creates the Locations with all MP names
+//	 */
+//	private void createLocations() {
+//
+//		m_allMPNames = new ArrayList<String>();
+//		for (FingerPrintItem mp : m_allMPs) {
+//			m_allMPNames.add(mp.getName());
+//		}
+//	}
 
-		m_allMPNames = new ArrayList<String>();
-		for (FingerPrintItem mp : m_allMPs) {
-			m_allMPNames.add(mp.getName());
-		}
-	}
-
-	/**
-	 * Creates the Rooms with all room names
-	 */
-	private void createRooms() {
-
-		m_allRoomNames = new ArrayList<String>();
-		for (int i = 0; i < m_allRooms.size(); i++) {
-			m_allRoomNames.add(m_allRooms.get(i).getName());
-		}
-	}
+//	/**
+//	 * Creates the Rooms with all room names
+//	 */
+//	private void createRooms() {
+//
+//		m_allRoomNames = new ArrayList<String>();
+//		for (int i = 0; i < m_allRooms.size(); i++) {
+//			m_allRoomNames.add(m_allRooms.get(i).getName());
+//		}
+//	}
 
 	/**
 	 * Called when App is resumed
 	 */
 	public void onResume() {
 		super.onResume();
-		Log.e(LOG_TAG, "onResume():" + m_actMPName);
+//		Log.e(LOG_TAG, "onResume():" + m_actMPName);
 		m_isRunning = true;
 		if (ConstParameters.autoSaveActive) {
 			startAutoSave();
@@ -376,7 +382,7 @@ public class RecorderView extends Activity implements OnClickListener,
 				Toasts.emptyMpList(getApplicationContext());
 				return d;
 			}
-			createLocations();
+//			createLocations();
 
 			builder.setOnCancelListener(new OnCancelListener() {
 				@Override
@@ -385,53 +391,58 @@ public class RecorderView extends Activity implements OnClickListener,
 				}
 			});
 			builder.setTitle(R.string.RecorderView_Dialog_choose_mp);
-			String[] locations = new String[m_allMPs.size()];
-			m_allMPNames.toArray(locations);
-			Log.e(LOG_TAG, Arrays.toString(locations));
-			builder.setItems(locations, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-					setCurrentMP(getMPbyName(m_allMPNames.get(item)));
-					removeDialog(MP_SELECTION_DIALOG);
-				}
-			});
-			d = builder.create();
-			d.show();
-			break;
-
-		case SELCECT_ROOM_DIALOG:
-			if (m_allMPs.isEmpty()) {
-				Toasts.emptyMpList(getApplicationContext());
-				return d;
+//			String[] locations = new String[m_allMPs.size()];
+//			m_allMPNames.toArray(locations);
+//			Log.e(LOG_TAG, Arrays.toString(locations));
+			ArrayList<String> mpNames = new ArrayList<String>(m_allAPs.size());
+			for(MeasurementPoint mp:m_allMPs)
+			{
+				mpNames.add(mp.getName());
 			}
-			createRooms();
-			builder.setOnCancelListener(new OnCancelListener() {
-				@Override
-				public void onCancel(DialogInterface dialog) {
-					removeDialog(MP_SELECTION_DIALOG);
-				}
-			});
-			builder.setTitle(R.string.Recorder_View_choose_Room);
-			String[] rooms = new String[m_allRoomNames.size()];
-			m_allRoomNames.toArray(rooms);
-			Log.e(LOG_TAG, Arrays.toString(rooms));
-			builder.setItems(rooms, new DialogInterface.OnClickListener() {
+			builder.setItems((String[]) mpNames.toArray(new String[mpNames.size()]), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
-
-					Log.e(LOG_TAG, "chosen room: " + m_allRoomNames.get(item));
-
-					startViusalModeWithRoom(item);
-
+					setCurrentMP(m_allMPs.get(item));
 					removeDialog(MP_SELECTION_DIALOG);
 				}
 			});
 			d = builder.create();
 			d.show();
 			break;
+
+//		case SELCECT_ROOM_DIALOG:
+//			if (m_allMPs.isEmpty()) {
+//				Toasts.emptyMpList(getApplicationContext());
+//				return d;
+//			}
+//			createRooms();
+//			builder.setOnCancelListener(new OnCancelListener() {
+//				@Override
+//				public void onCancel(DialogInterface dialog) {
+//					removeDialog(MP_SELECTION_DIALOG);
+//				}
+//			});
+//			builder.setTitle(R.string.Recorder_View_choose_Room);
+//			String[] rooms = new String[m_allRoomNames.size()];
+//			m_allRoomNames.toArray(rooms);
+//			Log.e(LOG_TAG, Arrays.toString(rooms));
+//			builder.setItems(rooms, new DialogInterface.OnClickListener() {
+//				public void onClick(DialogInterface dialog, int item) {
+//
+//					Log.e(LOG_TAG, "chosen room: " + m_allRoomNames.get(item));
+//
+//					startViusalModeWithRoom(item);
+//
+//					removeDialog(MP_SELECTION_DIALOG);
+//				}
+//			});
+//			d = builder.create();
+//			d.show();
+//			break;
 
 		case MEASUREMENT_IN_PROGRESS_DIALOG:
 			ProgressDialog pd = new ProgressDialog(this);
 			String message = getString(R.string.RecorderView_act_mp)
-					+ m_actMPName;
+					+ mCurMp.getName();
 			Log.e(LOG_TAG, message);
 			pd.setMessage(message);
 			pd.setCancelable(false);
@@ -450,33 +461,34 @@ public class RecorderView extends Activity implements OnClickListener,
 	 *            the mp to set
 	 */
 	protected void setCurrentMP(MeasurementPoint _mp) {
-		m_actMPName = _mp.getName();
+//		m_actMPName = _mp.getName();
+		mCurMp = _mp;
 		m_Recorder.setCurrentMP(_mp);
-		m_actMPLabel.setText(m_actMPName);
+		m_actMPLabel.setText(mCurMp.getName());
 	}
 
-	/**
-	 * Starts the visual mode with the chosen room
-	 * 
-	 * @param _roomNumber
-	 *            the number of chosen room
-	 */
-	private void startViusalModeWithRoom(int _roomNumber) {
-
-		// store all mps in room for the visual mode view
-		Bundle bundle = new Bundle();
-		bundle.putSerializable(RESULT_BUNDLE_MP_IN_ROOM_KEY, m_MPinRooms);
-		bundle.putInt(RESULT_BUNDLE_ROOM_NUMBER_KEY, _roomNumber);
-
-		Intent i = new Intent();
-		i.putExtras(bundle);
-		i.setClass(getApplicationContext(), VisualModeView.class);
-
-		// deactivate the automatic mode in visual mode
-		m_autoModeCheckBox.setChecked(false);
-
-		startActivityForResult(i, VISUAL_CODE);
-	}
+//	/**
+//	 * Starts the visual mode with the chosen room
+//	 * 
+//	 * @param _roomNumber
+//	 *            the number of chosen room
+//	 */
+//	private void startViusalModeWithRoom(int _roomNumber) {
+//
+//		// store all mps in room for the visual mode view
+//		Bundle bundle = new Bundle();
+//		bundle.putSerializable(RESULT_BUNDLE_MP_IN_ROOM_KEY, m_MPinRooms);
+//		bundle.putInt(RESULT_BUNDLE_ROOM_NUMBER_KEY, _roomNumber);
+//
+//		Intent i = new Intent();
+//		i.putExtras(bundle);
+//		i.setClass(getApplicationContext(), VisualModeView.class);
+//
+//		// deactivate the automatic mode in visual mode
+//		m_autoModeCheckBox.setChecked(false);
+//
+//		startActivityForResult(i, VISUAL_CODE);
+//	}
 
 	/**
 	 * Starts the measurement with actual mp
@@ -484,7 +496,7 @@ public class RecorderView extends Activity implements OnClickListener,
 	protected boolean startMeasureWithMP() {
 
 		// act MP name valid
-		if (m_actMPName != null) {
+		if (mCurMp != null) {
 			// check wifi again before measurement
 			if (!isConnected(getApplicationContext())) {
 				// problem occurred
@@ -528,18 +540,36 @@ public class RecorderView extends Activity implements OnClickListener,
 			break;
 		case R.id.chooseMPButton:
 			showDialog(MP_SELECTION_DIALOG);
+			
 			break;
 
 		case R.id.recorder_view_visualButton:
 
-			if (m_allMPs.isEmpty()) {
-				Toasts.emptyMpList(getApplicationContext());
-			} else {
-				Log.e(LOG_TAG, "open Visual Mode");
-
-				showDialog(SELCECT_ROOM_DIALOG);
-
+//			if (m_allMPs.isEmpty()) {
+//				Toasts.emptyMpList(getApplicationContext());
+//			} else {
+//				Log.e(LOG_TAG, "open Visual Mode");
+//
+//				showDialog(SELCECT_ROOM_DIALOG);
+//
+//			}
+			Intent i = new Intent(getApplicationContext(), GraphicalMpSelector.class);
+			for(MeasurementPoint mp:m_allMPs)
+			{
+				Log.e("CHECKCHECK", mp.getName()+": "+mp.getFingerPrints().size());
 			}
+//			ArrayList<MeasurementPoint> list = new ArrayList<MeasurementPoint>();
+//			for(int j = 0;j<10;j++)
+//			{
+//				MeasurementPoint mp = new MeasurementPoint("MP "+j, "egal", 10, 10);
+//				for(int k = 0;k<10;k++)
+//				{
+//					mp.addFingerPrint(new FingerPrint("asdf", 100, 0));					
+//				}
+//				list.add(mp);
+//			}
+			i.putExtra("asdf", m_allMPs);
+			startActivityForResult(i, MP_SELECTION_REQUEST_CODE);
 			break;
 		}
 
@@ -651,7 +681,7 @@ public class RecorderView extends Activity implements OnClickListener,
 	public void notifyScanFinished(int _scanNr) {
 		if (_scanNr % 2 == 0) {
 			Toast.makeText(getApplicationContext(),
-					m_actMPName + ":" + _scanNr + " Messungen empfangen",
+					mCurMp.getName() + ":" + _scanNr + " Messungen empfangen",
 					Toast.LENGTH_SHORT).show();
 		}
 	}
@@ -664,10 +694,10 @@ public class RecorderView extends Activity implements OnClickListener,
 	 * @return the next MeasurementPoint, null if no MeasurementPoint was found
 	 */
 	private MeasurementPoint getNextMP() {
-		MeasurementPoint mp = getMPbyName(m_actMPName);
+//		MeasurementPoint mp = getMPbyName(m_actMPName);
 		for (int i = 0; i < m_allMPs.size(); i++) {
 			MeasurementPoint toCheck = m_allMPs.get(i);
-			if (toCheck.equals(mp)) {
+			if (toCheck.equals(mCurMp)) {
 				try {
 					return m_allMPs.get(i + 1);
 				} catch (IndexOutOfBoundsException _aioobe) {
@@ -691,7 +721,7 @@ public class RecorderView extends Activity implements OnClickListener,
 				return;
 			}
 			boolean state = arg0.isChecked();
-			if (null == m_actMPName || m_actMPName.compareTo("") == 0) {
+			if (null == mCurMp) {
 				Log.e(LOG_TAG, "curMP was null");
 				setCurrentMP(m_allMPs.get(0));
 			}
@@ -755,6 +785,11 @@ public class RecorderView extends Activity implements OnClickListener,
 			}
 
 			break;
+		case MP_SELECTION_REQUEST_CODE:
+//			setCurrentMP((MeasurementPoint)data.getSerializableExtra(GraphicalMpSelector.SELECTED_MP_KEY));
+			String selectedMpName = data.getStringExtra(GraphicalMpSelector.SELECTED_MP_KEY);
+			setCurrentMP(getMPbyName(selectedMpName));
+			break;
 
 		}
 
@@ -795,7 +830,7 @@ public class RecorderView extends Activity implements OnClickListener,
 			autoSave();
 
 		}
-
 	}
 
+	
 }

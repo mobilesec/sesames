@@ -158,7 +158,7 @@ public class ARFFGenerator
 			exportBuffer.append("\n");
 			break;
 		}
-		Log.e(TAG, exportBuffer.toString());
+//		Log.e(TAG, exportBuffer.toString());
 		mUniqueBssids= getUniqueBSSIDs(_items);
 
 		for(String s:mUniqueBssids)
@@ -171,15 +171,15 @@ public class ARFFGenerator
 			exportBuffer.append("\n");
 		}
 		writeDataToBuffer(exportBuffer,_items, _type);
-		Log.e(TAG, exportBuffer.toString());
-		Log.e(TAG,"#####LINECOUNT="+mArffLineCount);
+//		Log.e(TAG, exportBuffer.toString());
+//		Log.e(TAG,"#####LINECOUNT="+mArffLineCount);
 		StringBuffer pathBuffer = new StringBuffer(Environment.getExternalStorageDirectory().getAbsolutePath());
 		pathBuffer.append("/");
 		pathBuffer.append(_fileName);
 		pathBuffer.append(getTimestampString());
 		pathBuffer.append(ARFF_ENDING);
 		boolean result = writeArffFile(pathBuffer.toString(), exportBuffer.toString());
-		Log.e(TAG, "writing result:"+result);
+//		Log.e(TAG, "writing result:"+result);
 		return true;
 	}
 
@@ -335,9 +335,9 @@ public class ARFFGenerator
 		for(FingerPrintItem fpi:_items)
 		{
 			//			Log.e(TAG, fpi.toString());
-			Log.e(TAG, "writing data for "+fpi.getName());
+//			Log.e(TAG, "writing data for "+fpi.getName());
 			String room = fpi.getRoom();
-			Log.e(TAG, "processing results for room:"+room);
+//			Log.e(TAG, "processing results for room:"+room);
 			_sb.append(writeRSSIToBuffer(room, fpi));
 		}
 	}
@@ -347,7 +347,7 @@ public class ARFFGenerator
 		mArffLineCount = 0;
 		for(FingerPrintItem fpi:_items)
 		{
-			Log.e(TAG, fpi.toString());
+//			Log.e(TAG, fpi.toString());
 			String mp = fpi.getName();
 			_sb.append(writeRSSIToBuffer(mp, fpi));
 		}
@@ -376,10 +376,10 @@ public class ARFFGenerator
 		if(null==scanIDs)
 		{
 			//TODO check
-			Log.e(TAG, "no fingerprints available, skipping");
+//			Log.e(TAG, "no fingerprints available, skipping");
 			return "";
 		}
-		Log.e(TAG, "fingerprints found, processing");
+//		Log.e(TAG, "fingerprints found, processing");
 		StringBuffer resultBuffer = new StringBuffer();
 		
 		for(Integer id:scanIDs)

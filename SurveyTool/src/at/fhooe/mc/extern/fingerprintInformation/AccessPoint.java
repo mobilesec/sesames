@@ -7,6 +7,8 @@
  ******************************************************************************/
 package at.fhooe.mc.extern.fingerprintInformation;
 
+import java.io.Serializable;
+
 /**
  * subclass of FingerPrintItem specifying all Access Point specific
  * information
@@ -14,7 +16,8 @@ package at.fhooe.mc.extern.fingerprintInformation;
  *
  */
 public class AccessPoint 
-extends FingerPrintItem 
+extends FingerPrintItem
+implements Serializable
 {
 
 	/**
