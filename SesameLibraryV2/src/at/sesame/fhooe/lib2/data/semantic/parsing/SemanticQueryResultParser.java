@@ -31,6 +31,7 @@ public class SemanticQueryResultParser
 			jsonResult = new JSONObject(_result);
 			JSONObject resultObject = jsonResult.getJSONObject("results");
 			JSONArray jsonResultArray = resultObject.getJSONArray("bindings");
+//			Log.e(TAG, "??????Length of JSON result ARRAY:"+jsonResultArray.length());
 			return jsonResultArray;
 		} 
 		catch (Exception e)
@@ -48,15 +49,23 @@ public class SemanticQueryResultParser
 		{
 			for (int i = 0; i < jsonResultArray.length(); i++) 
 			{
+				Log.e(TAG, "PARSING RESULT:"+i);
 				JSONObject jsonObject = jsonResultArray.getJSONObject(i);
 				JSONObject sensorObject = jsonObject.getJSONObject("y");
 				String sensorId = sensorObject.getString("value");
+				
 				//				Log.i(TAG, "Meter="+meterString);
 				//				removeSesamePrefix(meterString);
 				//				res.add(removeSesamePrefix(resultString));
 				JSONObject measurementPlaceObject = jsonObject.getJSONObject("x");
 				String measurmentPlaceId = measurementPlaceObject.getString("value");
-				res.put(removeSesamePrefix(measurmentPlaceId), removeSesamePrefix(sensorId));
+				String reducedPlace = removeSesamePrefix(measurmentPlaceId);
+				String reducedID = removeSesamePrefix(sensorId);
+//				Log.e(TAG, "putting:"+reducedPlace+"@"+reducedID);
+				if(!reducedID.contains("Volt"))
+				{
+					res.put( reducedPlace, reducedID);					
+				}
 				//				Log.i(TAG, "MeasurementPlace="+measurmentPlaceString);
 				//				removeSesamePrefix(measurmentPlaceString);
 			}

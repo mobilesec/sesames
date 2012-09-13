@@ -51,6 +51,7 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 			Log.e(TAG, "could not query measurement places");
 			return false;
 		}
+//		Log.e(TAG, "-----------RESPONSE:"+result);
 		HashMap<String, String> placeSensorMap = SemanticQueryResultParser.parseSensorsQueryResult(result);
 		Log.d(TAG, "query issued, lenght of result:"+placeSensorMap.size());
 		Iterator<String> placeIt = placeSensorMap.keySet().iterator();
@@ -60,7 +61,7 @@ implements IEnergyDataSource, IHumidityDataSource, ILightDataSource, ITemperatur
 			SesameMeasurementPlace smp = new SesameMeasurementPlace(mp);
 			smp.addSensor(new SesameSensor(placeSensorMap.get(mp), _st));
 			_placeList.add(smp);
-			Log.d(TAG, "added measurementPlace");
+			Log.d(TAG, "added measurementPlace:"+smp);
 //			mEnergyPlaceSensorMap.put(new SesameMeasurementPlace(_id, _name), value)
 		}
 		return true;

@@ -21,7 +21,7 @@ public class Constants
 	
 	public static Date getTrialStartDate()
 	{
-		GregorianCalendar cal = new GregorianCalendar(2012, 3, 23);
+		GregorianCalendar cal = new GregorianCalendar(2012, 17, 23);
 		return cal.getTime();
 	}
 }

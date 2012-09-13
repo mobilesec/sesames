@@ -479,15 +479,32 @@ implements ISesameDataProvider
 		case webservices:
 			break;
 		case semantic_repo:
-			Collections.sort(mEnergyMeasurementPlaces, new SesameMeasurementPlaceComparator());
-			Log.e(TAG, Arrays.toString((SesameMeasurementPlace[]) mEnergyMeasurementPlaces.toArray(new SesameMeasurementPlace[mEnergyMeasurementPlaces.size()])));
-			if(null == mEnergyMeasurementPlaces || mEnergyMeasurementPlaces.size()<6)
+//			Collections.sort(mEnergyMeasurementPlaces, new SesameMeasurementPlaceComparator());
+//			Log.e(TAG, Arrays.toString((SesameMeasurementPlace[]) mEnergyMeasurementPlaces.toArray(new SesameMeasurementPlace[mEnergyMeasurementPlaces.size()])));
+//			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "PlaceList:");
+//			int cnt = 0;
+//			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+//			{
+//				SesameLogger.log(EntryType.APPLICATION_INFO, TAG, ""+cnt+":"+smp);
+//				cnt++;
+//			}
+			if(null == mEnergyMeasurementPlaces || mEnergyMeasurementPlaces.size()<4)
 			{
 				exitAppAndNotify();
 			}
-			EDV1_PLACE = mEnergyMeasurementPlaces.get(4);
-			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
-			EDV6_PLACE = mEnergyMeasurementPlaces.get(5);
+			EDV1_PLACE = mEnergyMeasurementPlaces.get(0);
+			EDV3_PLACE = mEnergyMeasurementPlaces.get(2);
+			EDV6_PLACE = mEnergyMeasurementPlaces.get(3);
+//			EDV1_PLACE = mEnergyMeasurementPlaces.get(4);
+//			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
+//			EDV6_PLACE = mEnergyMeasurementPlaces.get(5);
+//			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "PlaceList:");
+//			int cnt = 0;
+//			for(SesameMeasurementPlace smp:mEnergyMeasurementPlaces)
+//			{
+//				SesameLogger.log(EntryType.APPLICATION_INFO, TAG, ""+cnt+":"+smp);
+//				cnt++;
+//			}
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "edv1:"+EDV1_PLACE.toString());
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "edv3:"+EDV3_PLACE.toString());
 			SesameLogger.log(EntryType.APPLICATION_INFO, TAG, "edv6:"+EDV6_PLACE.toString());
