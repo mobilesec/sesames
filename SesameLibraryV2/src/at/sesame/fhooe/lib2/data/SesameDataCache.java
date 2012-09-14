@@ -493,8 +493,8 @@ implements ISesameDataProvider
 				exitAppAndNotify();
 			}
 			EDV1_PLACE = mEnergyMeasurementPlaces.get(0);
-			EDV3_PLACE = mEnergyMeasurementPlaces.get(2);
-			EDV6_PLACE = mEnergyMeasurementPlaces.get(3);
+			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
+			EDV6_PLACE = mEnergyMeasurementPlaces.get(2);
 //			EDV1_PLACE = mEnergyMeasurementPlaces.get(4);
 //			EDV3_PLACE = mEnergyMeasurementPlaces.get(3);
 //			EDV6_PLACE = mEnergyMeasurementPlaces.get(5);
