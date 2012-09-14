@@ -39,5 +39,5 @@
     <string name="pms_room_list_current_consumption_prefix">"aktueller Verbrauch: "</string>
     <string name="pms_room_list_overall_consumption_prefix">"Seit "</string>
     <string name="notification_title">Computer sind schon länger unbenutzt!</string>
-    <string name="notification_text">"Anzahl der Warunungen: "</string>
+    <string name="notification_text">"Anzahl der Warnungen: "</string>
 </resources>
